@@ -7,145 +7,10 @@
 #include <utility>
 #include "WinManager.h"
 #include "helperFunctions.h"
-
-const int INITIAL_VISIBILITY = 5;
-const float SOL = 3e8; // m/s
-const int INITIAL_MAX_VELOCITY = 0.1*SOL;
-const int G = 10; // m/s^2
-const int INITIAL_MAX_ACC = 25*G;
-const int INITIAL_HULL_RADIUS = 1000; // m
-const int INITIAL_MAX_SENSORENERGY = 10;
-const float MAP_SIZE = 1e5; //m //Solar System has a diameter of 9.09 billion km (if it ends at Neptune), might be too big
-const float INITIAL_VELOCITY = 1e-6*SOL; //1e-2*SOL;
-const int ROUND_TIME = 20; // s
-//const int MAP_SCALE = 10; // 1 coord = MAP_SCALE real meters 
-const float PI = 3.1415926535898;
-const int ACTIVE_SENSOR_MINVIS = 0;
-const int PASSIVE_SENSOR_MINVIS = 10;
+#include "constants.h"
+#include "Point.h"
 
 using namespace std;
-
-struct Point
-{
-  enum Exception {WRONG_INDEX};
-  float x,y,z;
-  Point& randomize()
-  {
-    //I am not sure if this is random
-    /*int distFromO = ((float) rand() / RAND_MAX  - 0.5) * MAP_SIZE;
-    this->x = (float) rand() / RAND_MAX - 0.5;
-    float angle = (float) rand() / (RAND_MAX/(2*PI));
-    this->y = cos(angle);
-    this->z = sin(angle);
-    (*this) = (*this)*distFromO;*/
-    
-    //this certainly is random, but slow
-    bool notEnd;
-    do
-    {
-      for (int i=0; i<=2; i++)
-      {
-        (*this)[i] = ((float) rand() / RAND_MAX - 0.5) * MAP_SIZE;
-      }
-      notEnd = this->length() > MAP_SIZE/2;
-    } while (notEnd);
-    return *this;
-  }
-  float& operator[](int n)
-  {
-    switch (n) 
-    {
-      case 0:
-      return x;
-      break;
-
-      case 1:
-      return y;
-      break;
-
-      case 2:
-      return z;
-      break;
-
-      default:
-      throw WRONG_INDEX;
-    }
-  } 
-  float operator[](int n) const
-  {
-    switch (n) 
-    {
-      case 0:
-      return x;
-      break;
-
-      case 1:
-      return y;
-      break;
-
-      case 2:
-      return z;
-      break;
-
-      default:
-      throw WRONG_INDEX;
-    }
-  }
-  float length() const
-  {
-    const Point& p = *this;
-    return sqrt(p[0]*p[0]+p[1]*p[1]+p[2]*p[2]);
-  }
-  Point operator+(const Point& other) const
-  {
-    Point res;
-    res[0] = (*this)[0]+other[0];
-    res[1] = (*this)[1]+other[1];
-    res[2] = (*this)[2]+other[2];
-    return res;
-  }
-  Point operator*(float scalar) const 
-  {
-    Point res;
-    res[0] = (*this)[0]*scalar;
-    res[1] = (*this)[1]*scalar;
-    res[2] = (*this)[2]*scalar;
-    return res;
-  }
-  Point operator*(const Point& other) const
-  {
-    Point res;
-    res.x = this->x * other.x;
-    res.y = this->y * other.y;
-    res.z = this->z * other.z;
-    return res;
-  }
-  Point operator/(const Point& other) const
-  {
-    Point res;
-    res.x = this->x / other.x;
-    res.y = this->y / other.y;
-    res.z = this->z / other.z;
-    return res;
-  }
-  Point operator-(const Point& other) const
-  {
-    return (*this) + (other*(-1));
-  }
-  friend float distance(const Point& p1, const Point& p2)
-  {
-    return (p1-p2).length();
-  }
-  friend ostream& operator<<(ostream& os, const Point& p)
-  {
-    cout << '(' << p.x << ", " << p.y << ", " << p.z << ')'; //no endl
-    return os;
-  }
-  friend Point operator*(float scalar, Point p)
-  {
-    return p*scalar;
-  }
-};
 
 struct Ship 
 {
@@ -678,16 +543,12 @@ class Game
 
 public:
 
-  Game(unsigned int numOfShips) : numOfShips(numOfShips), winManager(numOfShips)
+  Game(unsigned int numOfShips) : 
+  numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
   {
     for (int i=0; i<numOfShips; i++) 
     {
       ships.push_back(Ship(Point().randomize(), i));
-    }
-    projectiles.resize(numOfShips);
-    for (int& pl : projectiles)
-    {
-      pl = -1; //no projectiles yet
     }
     mainGameLoop();
   }
