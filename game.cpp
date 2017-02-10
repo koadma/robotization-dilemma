@@ -2,11 +2,11 @@
 #include <cstdlib>
 #include <vector>
 #include <ctime>
-#include <sstream>
 #include <cmath>
 #include <algorithm>
 #include <utility>
 #include "WinManager.h"
+#include "helperFunctions.h"
 
 const int INITIAL_VISIBILITY = 5;
 const float SOL = 3e8; // m/s
@@ -23,95 +23,7 @@ const float PI = 3.1415926535898;
 const int ACTIVE_SENSOR_MINVIS = 0;
 const int PASSIVE_SENSOR_MINVIS = 10;
 
-
 using namespace std;
-
-void solve2(float a, float b, float c, float sol[2], int& numOfSol)
-{
-  if (a == 0)
-  {
-    throw 1;
-  }
-  float disc = pow(b,2)-4*a*c;
-  if (disc > 0)
-  {
-    numOfSol = 2;
-    sol[0] = (-b+sqrt(disc))/(2*a);
-    sol[1] = (-b-sqrt(disc))/(2*a);
-  } else if (disc = 0)
-  {
-    numOfSol = 1;
-    sol[0] = -b/(2*a);
-  } else
-  {
-    numOfSol = 0;
-  }
-}
-
-template <typename T>
-int sgn(T val)
-{
-  return (T(0) < val) - (val < T(0));
-}
-
-template<class T>
-ostream& operator<<(ostream& os, const vector<T>& vec)
-{
-  for(int i=0; i<vec.size(); i++)
-  {
-    os << vec[i] << ((i==vec.size()-1)?"":" ");
-  }
-  return os;
-}
-
-void terminalClear()
-{
-  /*
-  //user can scroll back on some terminal
-  for (int i=0; i<50; i++)
-  {
-    cout << '\n';
-  }
-  */
-  #ifdef _WIN32
-    system("cls"); //when i cross-compile and run it in wine, this does not work fsr
-  #else
-    system("clear"); //(on my terminal, i can scroll back)
-  #endif
-}
-
-void waitForEnter()
-{
-  #ifdef _WIN32
-    //todo: cin.ignore and cin.peek
-    string inp;
-    getline(cin, inp); //
-    getline(cin, inp); //ugly
-  #else
-    system("read"); //ugly, inelegant, slow, not portable
-  #endif
-}
-
-template <typename T>
-T strTo(string str)
-{
-  stringstream ss(str);
-  T n;
-  ss >> n;
-  return n;
-}
-
-vector<string> tokenize(string str)
-{
-  stringstream ss(str);
-  vector<string> tokens;
-  string temp;
-  while (ss >> temp)
-  {
-    tokens.push_back(temp);
-  }
-  return tokens;
-}
 
 struct Point
 {
