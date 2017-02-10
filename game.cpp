@@ -9,37 +9,9 @@
 #include "helperFunctions.h"
 #include "constants.h"
 #include "Point.h"
+#include "Ship.h"
 
 using namespace std;
-
-struct Ship 
-{
-  Point place;
-  Point velocity = {0, 0, 0};
-  int owner; //0..numOfShips-1
-  int maxVelocity = INITIAL_MAX_VELOCITY;
-  int maxAcceleration = INITIAL_MAX_ACC;
-  int maxSensorEnergy = INITIAL_MAX_SENSORENERGY;
-  int hullRadius = INITIAL_HULL_RADIUS;
-  bool isDestroyed = false;
-  Ship(Point place, int owner) : place(place), owner(owner), 
-    velocity
-    ( 
-      ((-1)*INITIAL_VELOCITY/place.length())*place
-    ) {}
-  friend ostream& operator<<(ostream& os, const Ship& s)
-  {
-    if (s.isDestroyed)
-    {
-      os << "A hajó megsemmisült!"; // no endl
-    } else
-    {
-      os << "Helyvektor: " << s.place << endl;
-      os << "Sebességvektor: " << s.velocity; // no endl
-    }
-    return os;
-  }
-};
 
 struct Bubble
 {
@@ -79,59 +51,12 @@ struct Bubble
   }
 };
 
+
 class Game
 {
-  struct Command
-  {
-    Point accel = {0, 0, 0};
-    bool didFire = false;
-    int aim;
-    //Point aim = {0, 0, 0};
-    int sensorEnergy = 0; // 0..
-    friend ostream& operator<<(ostream& os, const Command& c)
-    {
-      cout << "Gyorsulás: " << c.accel << endl;
-      cout << "Tüzel-e: " << (c.didFire?"igen":"nem") << endl;
-      (c.didFire ? (cout << "Cél: " << c.aim << endl) : (cout));
-      cout << "Sensor energia: " <<c. sensorEnergy; //no endl
-      return os;
-    }
-  };
-  
-  struct SensorDataElement
-  {
-    enum Type {Active, Passive};
-    Type detectType;
-    int player;
-    Point place;
-    Point velocity;
-    Point nextPlace;
-    bool sureFire;
-    friend ostream& operator<<(ostream& os, const SensorDataElement& sde)
-    {
-      cout << ((sde.detectType == Active)?"Aktív":"Passzív") << " szenzor jelzett!" << endl;
-      cout << "Játékos: " << sde.player << endl;
-      cout << "Hely: " << sde.place << endl;
-      cout << "Sebesség: " << sde.velocity << endl;
-      cout << "Jósolt hely: " << sde.nextPlace << endl;
-      cout << "Biztos-e a találat: " << (sde.sureFire?"igen":"nem"); // no endl
-      return os;
-    }
-  };
-
-  typedef vector<SensorDataElement> SensorData;
-
-  struct Round
-  {
-    vector<Command> commands;
-    vector<SensorData> datas;
-    Round(unsigned int numOfShips) : commands(numOfShips), datas(numOfShips) {}
-  };
-
   unsigned int numOfShips;
   vector<Ship> ships;
   int roundNumber = 0;
-  vector<Round> rounds;
   WinManager winManager; //bug: 2 people reach origo at the same time
   vector<Bubble> bubbles;
   vector<int> projectiles; //ugly
@@ -148,146 +73,46 @@ class Game
   void giveInformation(int currentPlayer)
   {
     cout << "Kör eleji információk:" << endl;
-    //time
     cout << roundNumber << ". kör" << endl << endl;
-    //own ship data
     cout << ships[currentPlayer] << endl << endl;
-    //other ship data
-    //with SensorDataElement class
-    if (roundNumber > 0 && not ships[currentPlayer].isDestroyed)
-    {
-      for (SensorDataElement sde : rounds[roundNumber-1].datas[currentPlayer])
-      {
-        cout << sde << endl << endl;
-      }
-    }
+    ships[currentPlayer].giveSensorData();
     cout << "----------------------" << endl;
   }
 
-  void getCommand(int currentPlayer)
-  //with Command class
-  {
-    cout << "Adj meg parancsokat!" << endl;
-    Command& currentPlayerCommand = rounds[roundNumber].commands[currentPlayer];
-    string input;
-    do
-    {
-      getline(cin, input);
-      if (input == "" or input == "\n")
-      {
-        continue;
-      }
-      vector<string> cmd = tokenize(input);
-      //parse (move x y z, aim x, sensor energy, data) 
-      //todo:rewrite
-      if (cmd[0] == "move")
-      {
-        if (cmd.size() != 4)
-        {
-          cout << "Rossz számú szó!" << endl;
-        } else
-        {
-          currentPlayerCommand.accel = {strTo<float>(cmd[1]), strTo<float>(cmd[2]), strTo<float>(cmd[3])};
-          //check max acc
-          if (currentPlayerCommand.accel.length() > ships[currentPlayer].maxAcceleration)
-          {
-            cout << "Túl nagy gyorsulást adtál meg!" << endl;
-            cout << "A hajód " << ships[currentPlayer].maxAcceleration << " gyorsulásra képes!" << endl;
-            currentPlayerCommand.accel = {0, 0, 0};
-          } 
-        }
-      } else if (cmd[0] == "aim")
-      {
-        if (cmd.size() != 2)
-        {
-          cout << "Rossz számú szó!" << endl;
-        } else
-        {
-          if (cmd[1] == "off")
-          {
-            currentPlayerCommand.didFire = false;
-          } else
-          {
-            int target = strTo<float>(cmd[1]);
-            //Is the aiming sure?
-            bool valid = false;
-            for (auto sde : rounds[(roundNumber>0?(roundNumber-1):roundNumber)].datas[currentPlayer]) //ugly
-            {
-              if (sde.player == target && sde.sureFire)
-              {
-                valid = true;
-              }
-            }
-            if (valid)
-            {
-              currentPlayerCommand.didFire = true;
-              currentPlayerCommand.aim = strTo<float>(cmd[1]);
-            } else
-            {
-              cout << "Nem biztos a lövés!" << endl;
-            }
-          }
-        }
-      } else if(cmd[0] == "sensor")
-      {
-        if (cmd.size() == 2)
-        {
-          currentPlayerCommand.sensorEnergy = strTo<float>(cmd[1]);
-          //check max sensor energy
-          if (strTo<float>(cmd[1]) > ships[currentPlayer].maxSensorEnergy)
-          {
-            cout << "Túl nagy szenzor energiát adtál meg!" << endl;
-            cout << "A hajód " << ships[currentPlayer].maxSensorEnergy << "-re képes!" << endl;
-            currentPlayerCommand.sensorEnergy = 0;
-          }
-        } else
-        {
-          cout << "Rossz számú szó!" << endl;
-        }
-      } else if (cmd[0] == "data")
-      {
-        cout << currentPlayerCommand << endl;
-      } else
-      {
-        cout << "Ismeretlen parancs!" << endl;
-      }
-    } while (input != "over");
-  }
   
   void manageBubbles()
   {
     //create bubbles
     for (int player=0; player<numOfShips; player++)
     {
-      Ship ship = ships[player];
-      Command c = rounds[roundNumber].commands[player];
-      if (not ship.isDestroyed)
+      const Ship& ship = ships[player];
+      if (not ship.isDestroyed())
       {
         //passive bubble
-        int vis = floor(c.accel.length())+(c.didFire?10:0)+(c.sensorEnergy); //placeholder
+        int vis = ship.getVisibility(); 
         bubbles.push_back(Bubble
         {
-          ship.place,      //place 
-          player,          //emitter
-          ship.velocity,   //emitterVelocity
-          vis,             //visibility 
-          0,               //age 
-          Bubble::Passive, //btype
-          0                //receiver
+          ship.getPlace(),    //place 
+          player,             //emitter
+          ship.getVelocity(), //emitterVelocity
+          vis,                //visibility 
+          0,                  //age 
+          Bubble::Passive,    //btype
+          0                   //receiver
         });
         
         //active bubble
-        if (c.sensorEnergy > 0)
+        if (ship.getSensorRadiation() > 0)
         {
           bubbles.push_back(Bubble
           {
-            ship.place,
+            ship.getPlace(),
             player,
-            ship.velocity,
-            c.sensorEnergy,   //visibility
-            0,                //age
+            ship.getVelocity(),
+            ship.getSensorRadiation(),   //visibility
+            0,                          //age
             Bubble::Active,
-            0                 //receiver
+            0                         //receiver
           });
         }
       }
@@ -305,17 +130,18 @@ class Game
     //firing(creating projectiles)
     for (int player = 0; player<numOfShips; player++)
     {
-      Command c = rounds[roundNumber].commands[player];
-      if(c.didFire)
+      const Ship& ship = ships[player];
+      if(ship.didFire())
       {
-        int oldT = projectiles[c.aim];
-        int newT = floor( distance(ships[player].place, ships[c.aim].place) / SOL );
+        int target = ship.getAim();
+        int oldT = projectiles[target];
+        int newT = floor( distance(ships[player].getPlace(), ships[target].getPlace()) / SOL );
         if (oldT == -1)
         {
-          projectiles[c.aim] = newT;
+          projectiles[target] = newT;
         } else
         {
-          projectiles[c.aim] = min(oldT, newT);
+          projectiles[target] = min(oldT, newT);
         }
       }
     }
@@ -326,7 +152,10 @@ class Game
       {
         if (projectiles[player] == 0) //reached
         {
-          ships[player].isDestroyed = true;
+          string x;
+          cout << "LOOOL" << endl;
+          cin >> x;
+          ships[player].destroy();
           winManager.lose(player);
         }
         projectiles[player]--;
@@ -334,60 +163,19 @@ class Game
     }
   }
 
-  pair<Point, Point> moveObject(Point place, Point velocity, Point accel, float time, float maxVelocity)
-  {
-    Point endVelocity;
-    Point endPlace;
-    float solut[2];
-    int numOfSolut;
-    float a = pow(accel.length(), 2);
-    float b = 2*(velocity.x*accel.x + velocity.y*accel.y + velocity.z*accel.z);
-    float c = pow(velocity.length(), 2) - pow(maxVelocity, 2);
-    if (a == 0)
-    {
-      endVelocity = velocity;
-      endPlace = place + velocity*time;
-    } else
-    {
-      solve2(a, b, c, solut, numOfSolut);
-      if (numOfSolut != 2)
-      {
-        throw 1;
-      }
-      float reachMaxT = max(solut[0], solut[1]);
-      if (reachMaxT < 0)
-      {
-        throw 1;
-      }
-      if (reachMaxT > time)
-      {
-        endVelocity = velocity + accel*time;
-        endPlace = place + velocity * time + accel*(pow(time, 2)/2);
-      } else
-      {
-        endVelocity = velocity + accel*reachMaxT;
-        endPlace = place + endVelocity*(time-reachMaxT) + accel*(pow(reachMaxT, 2)/2);
-      }
-    }
-    return make_pair(endPlace, endVelocity);
-  }
   
   void moveShips()
   {
     for (int player = 0; player<numOfShips; player++)
     {
-      const Command& c = rounds[roundNumber].commands[player];
-      Ship& s = ships[player];
-      if (not s.isDestroyed)
+      if (not ships[player].isDestroyed())
       {
-        pair<Point, Point> res = moveObject(s.place, s.velocity, c.accel, ROUND_TIME, s.maxVelocity);
-        s.place = res.first;
+        ships[player].move(ROUND_TIME);
         //reaching origo == win
-        if (s.place.length() <= s.hullRadius) //can go over, if the ship is fast
+        if (ships[player].getPlace().length() <= ships[player].getHullRadius()) //can go over, if the ship is fast
         {
           winManager.win(player);
         }
-        s.velocity = res.second;
       }
     }
   }
@@ -418,6 +206,7 @@ class Game
   //todo: a bubble can be destroyed, when every player detects it
     for (int player = 0; player < numOfShips; player++)
     {
+      ships[player].flushSensorData();
       for (Bubble bubble : bubbles)
       {
         //I dont want self-detections.
@@ -425,23 +214,22 @@ class Game
         {
           continue;
         }
-        int dist = distance(bubble.origin, ships[player].place);
+        int dist = distance(bubble.origin, ships[player].getPlace());
         if (dist < bubble.age*SOL*ROUND_TIME && 
             dist > (bubble.age-1)*SOL*ROUND_TIME) // collision was in this round
         {
-          SensorData& sd = rounds[roundNumber].datas[player];
           //passive sensor
           if (bubble.btype == Bubble::Active || bubble.btype == Bubble::Passive)
           {
             if (didDetectPassively(bubble, player))
             {
-              sd.push_back(SensorDataElement
+              ships[player].sense(SensorDataElement
               {
                 SensorDataElement::Passive, //detectType
                 bubble.emitter,         //player
                 bubble.origin,          //place
                 bubble.emitterVelocity, //velocity
-                moveObject(bubble.origin, bubble.emitterVelocity, {0, 0, 0}, ROUND_TIME, 0).first, //nextPlace
+                Point(),//moveObject(bubble.origin, bubble.emitterVelocity, {0, 0, 0}, ROUND_TIME, 0).first, 
                 isSureFire(bubble, player) //sureFire?
               });
             }
@@ -452,13 +240,13 @@ class Game
           {
             if (didDetectActively(bubble, player))
             {
-              sd.push_back(SensorDataElement
+              ships[player].sense(SensorDataElement
               {
                 SensorDataElement::Active,
                 bubble.emitter,
                 bubble.origin,
                 bubble.emitterVelocity,
-                moveObject(bubble.origin, bubble.emitterVelocity, {0, 0, 0}, ROUND_TIME, 0).first,
+                Point(),//placeHolder
                 isSureFire(bubble, player)
               });
             }
@@ -469,13 +257,13 @@ class Game
           {
             bubbles.push_back(Bubble
             {
-              ships[player].place,      //place 
-              player,                   //emitter
-              ships[player].velocity,   //emitterVelocity
-              bubble.visibility,        //visibility 
-              0,                        //age 
-              Bubble::Reflection,       //btype
-              bubble.emitter            //receiver
+              ships[player].getPlace(),       //place 
+              player,                         //emitter
+              ships[player].getVelocity(),    //emitterVelocity
+              bubble.visibility,              //visibility 
+              0,                              //age 
+              Bubble::Reflection,             //btype
+              bubble.emitter                  //receiver
             }); 
           }
         }
@@ -520,19 +308,18 @@ class Game
   {
     do
     {
-      rounds.push_back(Round(numOfShips));
       adminPhase(); // ONLY FOR TEST
       waitForEnter();
-      for(int i=0; i<numOfShips; i++)
+      for(int player=0; player<numOfShips; player++)
       {
-        askToContinue(i);
-        giveInformation(i);
-        if (ships[i].isDestroyed)
+        askToContinue(player);
+        giveInformation(player);
+        if (ships[player].isDestroyed())
         {
           waitForEnter();
         } else
         {
-          getCommand(i);
+          ships[player].getCommand();
         }
       }
       playRound();

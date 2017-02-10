@@ -1,3 +1,6 @@
+#ifndef __CONSTANTS_H__
+#define __CONSTANTS_H__
+
 const int INITIAL_VISIBILITY = 5;
 const float SOL = 3e8; // m/s
 const int INITIAL_MAX_VELOCITY = 0.1*SOL;
@@ -12,3 +15,5 @@ const int ROUND_TIME = 20; // s
 const float PI = 3.1415926535898;
 const int ACTIVE_SENSOR_MINVIS = 0;
 const int PASSIVE_SENSOR_MINVIS = 10;
+
+#endif

@@ -50,6 +50,7 @@ void WinManager::win(unsigned int player)
     throw ALREADY_LOST;
   }
   isGameOver = true;
+  hasWin = true;
   winner = player;
 }
 
