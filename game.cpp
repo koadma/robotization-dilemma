@@ -6,15 +6,17 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
+#include "WinManager.h"
 
 const int INITIAL_VISIBILITY = 5;
 const float SOL = 3e8; // m/s
-const int INTIAL_MAX_VELOCITY = 0.1*SOL;
+const int INITIAL_MAX_VELOCITY = 0.1*SOL;
 const int G = 10; // m/s^2
 const int INITIAL_MAX_ACC = 25*G;
 const int INITIAL_HULL_RADIUS = 1000; // m
 const int INITIAL_MAX_SENSORENERGY = 10;
 const float MAP_SIZE = 1e5; //m //Solar System has a diameter of 9.09 billion km (if it ends at Neptune), might be too big
+const float INITIAL_VELOCITY = 1e-6*SOL; //1e-2*SOL;
 const int ROUND_TIME = 20; // s
 //const int MAP_SCALE = 10; // 1 coord = MAP_SCALE real meters 
 const float PI = 3.1415926535898;
@@ -137,13 +139,6 @@ struct Point
     } while (notEnd);
     return *this;
   }
-  Point& operator=(const Point& other)
-  {
-    this->x = other.x;
-    this->y = other.y;
-    this->z = other.z;
-    return (*this);
-  }
   float& operator[](int n)
   {
     switch (n) 
@@ -245,7 +240,7 @@ struct Ship
   Point place;
   Point velocity = {0, 0, 0};
   int owner; //0..numOfShips-1
-  int maxVelocity = INTIAL_MAX_VELOCITY;
+  int maxVelocity = INITIAL_MAX_VELOCITY;
   int maxAcceleration = INITIAL_MAX_ACC;
   int maxSensorEnergy = INITIAL_MAX_SENSORENERGY;
   int hullRadius = INITIAL_HULL_RADIUS;
@@ -253,7 +248,7 @@ struct Ship
   Ship(Point place, int owner) : place(place), owner(owner), 
     velocity
     ( 
-      ((-1)*(0.01)*(SOL/place.length()))*place
+      ((-1)*INITIAL_VELOCITY/place.length())*place
     ) {}
   friend ostream& operator<<(ostream& os, const Ship& s)
   {
@@ -353,14 +348,14 @@ class Game
   {
     vector<Command> commands;
     vector<SensorData> datas;
-    Round(unsigned int numOfShips) : commands{numOfShips}, datas{numOfShips} {}
+    Round(unsigned int numOfShips) : commands(numOfShips), datas(numOfShips) {}
   };
 
   unsigned int numOfShips;
   vector<Ship> ships;
   int roundNumber = 0;
   vector<Round> rounds;
-  bool gameOver = false;
+  WinManager winManager; //bug: 2 people reach origo at the same time
   vector<Bubble> bubbles;
   vector<int> projectiles; //ugly
   //(projectiles[3]==-1) means no projectile targets the 3. player
@@ -555,19 +550,7 @@ class Game
         if (projectiles[player] == 0) //reached
         {
           ships[player].isDestroyed = true;
-          //is the game over?
-          int cnt = 0;
-          for (int i=0; i<numOfShips; i++)
-          {
-            if (not ships[i].isDestroyed)
-            {
-              cnt++;
-            }
-          }
-          if (cnt <= 1)
-          {
-            gameOver = true;
-          }
+          winManager.lose(player);
         }
         projectiles[player]--;
       }
@@ -618,9 +601,17 @@ class Game
     {
       const Command& c = rounds[roundNumber].commands[player];
       Ship& s = ships[player];
-      pair<Point, Point> res = moveObject(s.place, s.velocity, c.accel, ROUND_TIME, s.maxVelocity);
-      s.place = res.first;
-      s.velocity = res.second;
+      if (not s.isDestroyed)
+      {
+        pair<Point, Point> res = moveObject(s.place, s.velocity, c.accel, ROUND_TIME, s.maxVelocity);
+        s.place = res.first;
+        //reaching origo == win
+        if (s.place.length() <= s.hullRadius) //can go over, if the ship is fast
+        {
+          winManager.win(player);
+        }
+        s.velocity = res.second;
+      }
     }
   }
   
@@ -731,15 +722,13 @@ class Game
   
   void giveWinScreen()
   {
-    for (int i=0; i<numOfShips; i++)
+    if (winManager.hasWinner())
     {
-      if (not ships[i].isDestroyed)
-      {
-        cout << "Az " << i << ". játékos nyert!" << endl;
-        return;
-      }
+      cout << "Az " << winManager.getWinner() << ". játékos nyert!" << endl;
+    } else
+    {
+      cout << "Mindenki elpusztult a csatában!" << endl;
     }
-    cout << "Mindenki elpusztult a csatában!" << endl;
   }
 
   void adminPhase()
@@ -771,13 +760,13 @@ class Game
       }
       playRound();
       roundNumber++;
-    } while (not gameOver);
+    } while (not winManager.isOver());
     giveWinScreen();
   }
 
 public:
 
-  Game(unsigned int numOfShips) : numOfShips(numOfShips)
+  Game(unsigned int numOfShips) : numOfShips(numOfShips), winManager(numOfShips)
   {
     for (int i=0; i<numOfShips; i++) 
     {
@@ -801,7 +790,7 @@ int main()
     unsigned int numOfShips;
     cout << "Hajók száma: ";
     cin >> numOfShips;
-    Game game{numOfShips};
+    Game game(numOfShips);
     cout << "Akarsz új játékot kezdeni? (y - igen, bármi más - nem)" << endl;
     cin >> inp;
   } while (inp == "y");
