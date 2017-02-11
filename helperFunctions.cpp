@@ -1,5 +1,6 @@
 #include "helperFunctions.h"
 #include <cmath>
+#include <cstdlib>
 
 using namespace std;
 
