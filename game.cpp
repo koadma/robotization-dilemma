@@ -152,9 +152,6 @@ class Game
       {
         if (projectiles[player] == 0) //reached
         {
-          string x;
-          cout << "LOOOL" << endl;
-          cin >> x;
           ships[player].destroy();
           winManager.lose(player);
         }
