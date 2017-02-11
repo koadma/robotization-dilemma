@@ -214,6 +214,12 @@ int Ship::getHullRadius() const
   return hullRadius;
 }
 
+
+unsigned int Ship::getOwner() const
+{
+  return owner;
+}
+
 ostream& operator<<(ostream& os, const Ship& s)
 {
   if (s.destroyed)

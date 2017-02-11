@@ -20,7 +20,7 @@ struct SensorDataElement
 {
   enum Type {Active, Passive};
   Type detectType;
-  int player;
+  unsigned int player;
   Point place;
   Point velocity;
   Point nextPlace;
@@ -44,7 +44,7 @@ public:
 class Ship : public Object
 {
 private:
-  int owner;
+  const unsigned int owner;
   int maxAcceleration = INITIAL_MAX_ACC;
   int maxSensorEnergy = INITIAL_MAX_SENSORENERGY;
   int hullRadius = INITIAL_HULL_RADIUS;
@@ -70,6 +70,7 @@ public:
   int getSensorRadiation() const;
   int getVisibility() const;
   bool didFire() const;
+  unsigned int getOwner() const;
   friend std::ostream& operator<<(std::ostream& os, const Ship& s);
 };
 
