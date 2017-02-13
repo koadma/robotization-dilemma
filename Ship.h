@@ -47,10 +47,12 @@ private:
   const unsigned int owner;
   int maxAcceleration = INITIAL_MAX_ACC;
   int maxSensorEnergy = INITIAL_MAX_SENSORENERGY;
+  int maxGeneratorEnergy = INITIAL_MAX_GENERATORENERGY;
   int hullRadius = INITIAL_HULL_RADIUS;
   bool destroyed = false;
   Command command;
   std::vector<SensorDataElement> sensorData;
+  int getSpentEnergy() const;
 
 public:
   Ship(Point place, int owner) : 

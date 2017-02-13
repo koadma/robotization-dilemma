@@ -8,6 +8,7 @@ const int G = 10; // m/s^2
 const int INITIAL_MAX_ACC = 25*G;
 const int INITIAL_HULL_RADIUS = 1000; // m
 const int INITIAL_MAX_SENSORENERGY = 10;
+const int INITIAL_MAX_GENERATORENERGY = 300;
 const float MAP_SIZE = 1e5; //m //Solar System has a diameter of 9.09 billion km (if it ends at Neptune), might be too big
 const float INITIAL_VELOCITY = 1e-6*SOL; //1e-2*SOL;
 const int ROUND_TIME = 20; // s

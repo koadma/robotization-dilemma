@@ -5,6 +5,11 @@
 
 using namespace std;
 
+int Ship::getSpentEnergy() const
+{
+  return command.accel.length()+(command.didFire?100:0)+command.sensorEnergy;
+}
+
 ostream& operator<<(ostream& os, const Command& c)
 {
   cout << "Gyorsulás: " << c.accel << endl;
@@ -77,9 +82,10 @@ void Ship::getCommand()
 //with Command class
 {
   cout << "Adj meg parancsokat!" << endl;
-  string input;
-  do
+  bool gettingInput = true;
+  while (gettingInput)
   {
+    string input;
     getline(cin, input);
     if (input == "" or input == "\n")
     {
@@ -152,11 +158,21 @@ void Ship::getCommand()
     } else if (cmd[0] == "data")
     {
       cout << command << endl;
+    } else if (input == "over")
+    {
+      if (getSpentEnergy() <= maxGeneratorEnergy)
+      {
+        gettingInput = false;
+      } else
+      {
+        cout << getSpentEnergy() << " energiát szeretnél felhasználni." << endl;
+        cout << "A hajód generátora maximum " << maxGeneratorEnergy << "-re képes." << endl;
+      }
     } else
     {
       cout << "Ismeretlen parancs!" << endl;
     }
-  } while (input != "over");
+  }
 }
 
 bool Ship::didFire() const
