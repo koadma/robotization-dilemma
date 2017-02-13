@@ -10,14 +10,14 @@ void BubbleManager::out() const
   }
 }
 
-//Did the ship detected the Bubble(active or passive)?
+//Did the ship detect the Bubble(active or passive)?
 bool BubbleManager::didDetectPassively(Bubble bubble) const
 {
   //todo: insert radar equation
   return bubble.visibility >= PASSIVE_SENSOR_MINVIS; //placeholder
 }
 
-//Did the ship detected the reflection bubble?
+//Did the ship detect the reflection bubble?
 bool BubbleManager::didDetectActively(Bubble bubble) const
 {
   //todo
