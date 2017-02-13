@@ -72,9 +72,12 @@ void Ship::flushSensorData()
 
 void Ship::giveSensorData() const
 {
-  for (auto sde : sensorData)
+  if (not destroyed)
   {
-    cout << sde << endl << endl;
+    for (auto sde : sensorData)
+    {
+      cout << sde << endl << endl;
+    }
   }
 }
 
