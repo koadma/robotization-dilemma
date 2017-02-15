@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);

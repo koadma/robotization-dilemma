@@ -45,7 +45,7 @@ void WinManager::win(unsigned int player)
   {
     throw NOT_EXISTING_PLAYER;
   }
-  if (not canWin[player])
+  if (!canWin[player])
   {
     throw ALREADY_LOST;
   }
@@ -61,7 +61,7 @@ bool WinManager::isOver() const
 
 bool WinManager::hasWinner() const
 {
-  if (not isGameOver)
+  if (!isGameOver)
   {
     throw GAME_NOT_OVER;
   }
@@ -70,11 +70,11 @@ bool WinManager::hasWinner() const
 
 unsigned int WinManager::getWinner() const
 {
-  if (not isGameOver)
+  if (!isGameOver)
   {
     throw GAME_NOT_OVER;
   }
-  if (not hasWin)
+  if (!hasWin)
   {
     throw NO_WINNER;
   }

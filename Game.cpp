@@ -17,15 +17,15 @@ using namespace std;
 void Game::askToContinue(int nextPlayer) const
 {
   terminalClear();
-  cout << nextPlayer << ". játékos köre következik!" << endl;
-  cout << "Nyomj entert, ha kezdődhet." << endl;
+  cout << nextPlayer << ". jatekos kore kovetkezik!" << endl;
+  cout << "Nyomj entert, ha kezdodhet." << endl;
   waitForEnter();
 }
 
 void Game::giveInformation(int currentPlayer) const
 {
-  cout << "Kör eleji információk:" << endl;
-  cout << roundNumber << ". kör" << endl << endl;
+  cout << "Kor eleji informaciok:" << endl;
+  cout << roundNumber << ". kor" << endl << endl;
   cout << ships[currentPlayer] << endl << endl;
   ships[currentPlayer].giveSensorData();
   cout << "----------------------" << endl;
@@ -37,7 +37,7 @@ void Game::manageBubbles()
   //create bubbles
   for (const Ship& ship : ships)
   {
-    if (not ship.isDestroyed())
+    if (!ship.isDestroyed())
     {
       //passive bubble
       int vis = ship.getVisibility(); 
@@ -111,7 +111,7 @@ void Game::moveShips()
 {
   for (Ship& ship : ships)
   {
-    if (not ship.isDestroyed())
+    if (!ship.isDestroyed())
     {
       ship.move(ROUND_TIME);
       //reaching origo == win
@@ -137,7 +137,7 @@ void Game::manageDetections()
 void Game::playRound()
 {
   terminalClear();
-  cout << "Kör lejátszása." << endl;
+  cout << "Kor lejatszasa." << endl;
   
   manageBubbles();
   manageProjectiles();
@@ -152,10 +152,10 @@ void Game::giveWinScreen()
 {
   if (winManager.hasWinner())
   {
-    cout << "Az " << winManager.getWinner() << ". játékos nyert!" << endl;
+    cout << "Az " << winManager.getWinner() << ". jatekos nyert!" << endl;
   } else
   {
-    cout << "Mindenki elpusztult a csatában!" << endl;
+    cout << "Mindenki elpusztult a csataban!" << endl;
   }
 }
 
@@ -179,7 +179,7 @@ void Game::mainGameLoop()
     }
     playRound();
     roundNumber++;
-  } while (not winManager.isOver());
+  } while (!winManager.isOver());
   giveWinScreen();
 }
 
@@ -200,10 +200,10 @@ int main()
   do
   {
     unsigned int numOfShips;
-    cout << "Hajók száma: ";
+    cout << "Hajok szama: ";
     cin >> numOfShips;
     Game game(numOfShips);
-    cout << "Akarsz új játékot kezdeni? (y - igen, bármi más - nem)" << endl;
+    cout << "Akarsz uj jatekot kezdeni? (y - igen, barmi mas - nem)" << endl;
     cin >> inp;
   } while (inp == "y");
   return 0;

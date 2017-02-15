@@ -114,24 +114,25 @@ ostream& operator<<(ostream& os, const Bubble& b) // only for test
   switch (b.btype)
   {
     case Bubble::Active:
-    cout << "Aktív buborék!" << endl;
+    cout << "Aktiv buborek!" << endl;
     break;
 
     case Bubble::Passive:
-    cout << "Passzív buborék!" << endl;
+    cout << "Passziv buborek!" << endl;
     break;
 
     case Bubble::Reflection:
-    cout << "Visszaverődő buborék!" << endl;
+    cout << "Visszaverodo buborek!" << endl;
     break;
   }
   if (b.btype == Bubble::Reflection)
   {
-    cout << "Tudja fogadni: " << b.receiver << ". játékos." << endl;
+    cout << "Tudja fogadni: " << b.receiver << ". jatekos." << endl;
   }
-  cout << "Középpont: " << b.origin << endl;
-  cout << "Keltő játékos: " << b.emitter << endl;
-  cout << "Keltő játékos sebssége keltéskor: " << b.emitterVelocity << endl;
-  cout << "Láthatóság: " << b.visibility << endl;
-  cout << "Kora: " << b.age << " kör."; // no endl
+  cout << "Kozeppont: " << b.origin << endl;
+  cout << "Kelto jatekos: " << b.emitter << endl;
+  cout << "Kelto jatekos sebssege kelteskor: " << b.emitterVelocity << endl;
+  cout << "Lathatosag: " << b.visibility << endl;
+  cout << "Kora: " << b.age << " kor."; // no endl
+  return os;
 }
