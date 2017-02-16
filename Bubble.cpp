@@ -46,7 +46,7 @@ void BubbleManager::add(Bubble bubble)
 
 void BubbleManager::interactWithShip(Ship& ship)
 {
-  for (Bubble bubble : bubbles)
+  for (Bubble& bubble : bubbles)
   {
     //I dont want self-detections.
     if (bubble.emitter == ship.getOwner())
