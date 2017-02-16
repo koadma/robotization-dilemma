@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <list>
 #include "Point.h"
 #include "Ship.h"
 #include "constants.h"

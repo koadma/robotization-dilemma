@@ -37,7 +37,7 @@ void Game::manageBubbles()
   //create bubbles
   for (const Ship& ship : ships)
   {
-    if (!ship.isDestroyed())
+    if (not ship.isDestroyed())
     {
       //passive bubble
       int vis = ship.getVisibility(); 
@@ -111,7 +111,7 @@ void Game::moveShips()
 {
   for (Ship& ship : ships)
   {
-    if (!ship.isDestroyed())
+    if (not ship.isDestroyed())
     {
       ship.move(ROUND_TIME);
       //reaching origo == win
@@ -179,7 +179,7 @@ void Game::mainGameLoop()
     }
     playRound();
     roundNumber++;
-  } while (!winManager.isOver());
+  } while (not winManager.isOver());
   giveWinScreen();
 }
 
@@ -195,6 +195,7 @@ numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
 
 int main()
 {
+  setlocale(LC_ALL,"");
   srand(time(NULL));
   string inp;
   do

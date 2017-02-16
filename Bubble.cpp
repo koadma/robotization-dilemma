@@ -62,13 +62,13 @@ void BubbleManager::interactWithShip(Ship& ship)
       {
         if (didDetectPassively(bubble))
         {
-          ship.sense(SensorDataElement
-          {
-            SensorDataElement::Passive, //detectType
-            bubble.emitter,         //player
-            bubble.origin,          //place
-            bubble.emitterVelocity, //velocity
-            Point(),//moveObject(bubble.origin, bubble.emitterVelocity, {0, 0, 0}, ROUND_TIME, 0).first, 
+		      ship.sense(SensorDataElement
+		      {
+			      SensorDataElement::Passive, //detectType
+			      bubble.emitter,         //player
+			      bubble.origin,          //place
+			      bubble.emitterVelocity, //velocity
+			      bubble.origin + bubble.emitterVelocity * ROUND_TIME * bubble.age, //nextPlace
             isSureFire(bubble) //sureFire?
           });
         }
@@ -85,7 +85,7 @@ void BubbleManager::interactWithShip(Ship& ship)
             bubble.emitter,
             bubble.origin,
             bubble.emitterVelocity,
-            Point(),//placeHolder
+            bubble.origin + bubble.emitterVelocity * ROUND_TIME * bubble.age, //nextPlace
             isSureFire(bubble)
           });
         }

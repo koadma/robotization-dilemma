@@ -39,16 +39,16 @@ void Object::move(Point accel, float time)
   int numOfSolut;
   float a = pow(accel.length(), 2);
   float b = 2*(velocity.x*accel.x + velocity.y*accel.y + velocity.z*accel.z);
-  float c = pow(velocity.length(), 2) - pow(maxVelocity, 2);
+  float c = pow(velocity.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
   if (a == 0)
   {
     velocity = velocity;
     place = place + velocity*time;
   } else
   {
-    solve2(a, b, c, solut, numOfSolut);
+    solve2(a, b, c, solut, numOfSolut); //calculate time of reacing maximum velocity
     float reachMaxT = max(solut[0], solut[1]);
-    if (reachMaxT < 0 || numOfSolut != 2)
+    if (reachMaxT < 0 || numOfSolut != 0) 
     {
       throw 1;
     }
@@ -72,7 +72,7 @@ void Ship::flushSensorData()
 
 void Ship::giveSensorData() const
 {
-  if (!destroyed)
+  if (not destroyed)
   {
     for (auto sde : sensorData)
     {
@@ -90,7 +90,7 @@ void Ship::getCommand()
   {
     string input;
     getline(cin, input);
-    if (input == "" || input == "\n")
+    if (input == "" or input == "\n")
     {
       continue;
     }

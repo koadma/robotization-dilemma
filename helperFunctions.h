@@ -1,10 +1,16 @@
 #ifndef __HELPERFUNCS_H__
 #define __HELPERFUNCS_H__
 
+#define and &&
+#define or ||
+#define not !
+
 #include <iostream>
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <list>
+#include <locale>
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);
