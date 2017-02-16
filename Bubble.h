@@ -24,7 +24,7 @@ public:
 class BubbleManager
 {
 private:
-  std::vector<Bubble> bubbles;
+  std::list<Bubble> bubbles;
   bool didDetectPassively(Bubble bubble) const;
   bool didDetectActively(Bubble bubble) const;
   bool isSureFire(Bubble bubble) const;

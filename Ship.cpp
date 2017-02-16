@@ -12,11 +12,11 @@ int Ship::getSpentEnergy() const
 
 ostream& operator<<(ostream& os, const Command& c)
 {
-  cout << "Gyorsulás: " << c.accel << endl;
-  cout << "Tüzel-e: " << (c.didFire?"igen":"nem") << endl;
+  cout << "Gyorsulas: " << c.accel << endl;
+  cout << "Tuzel-e: " << (c.didFire?"igen":"nem") << endl;
   if (c.didFire)
   {
-    cout << "Cél: " << c.aim << endl;
+    cout << "Cel: " << c.aim << endl;
   }
   cout << "Sensor energia: " <<c. sensorEnergy; //no endl
   return os;
@@ -24,12 +24,12 @@ ostream& operator<<(ostream& os, const Command& c)
 
 ostream& operator<<(ostream& os, const SensorDataElement& sde)
 {
-  cout << ((sde.detectType == SensorDataElement::Active)?"Aktív":"Passzív") << " szenzor jelzett!" << endl;
-  cout << "Játékos: " << sde.player << endl;
+  cout << ((sde.detectType == SensorDataElement::Active)?"Aktiv":"Passziv") << " szenzor jelzett!" << endl;
+  cout << "Jatekos: " << sde.player << endl;
   cout << "Hely: " << sde.place << endl;
-  cout << "Sebesség: " << sde.velocity << endl;
-  cout << "Jósolt hely: " << sde.nextPlace << endl;
-  cout << "Biztos-e a találat: " << (sde.sureFire?"igen":"nem"); // no endl
+  cout << "Sebesseg: " << sde.velocity << endl;
+  cout << "Josolt hely: " << sde.nextPlace << endl;
+  cout << "Biztos-e a talalat: " << (sde.sureFire?"igen":"nem"); // no endl
   return os;
 }
 
@@ -39,16 +39,16 @@ void Object::move(Point accel, float time)
   int numOfSolut;
   float a = pow(accel.length(), 2);
   float b = 2*(velocity.x*accel.x + velocity.y*accel.y + velocity.z*accel.z);
-  float c = pow(velocity.length(), 2) - pow(maxVelocity, 2);
+  float c = pow(velocity.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
   if (a == 0)
   {
     velocity = velocity;
     place = place + velocity*time;
   } else
   {
-    solve2(a, b, c, solut, numOfSolut);
+    solve2(a, b, c, solut, numOfSolut); //calculate time of reacing maximum velocity
     float reachMaxT = max(solut[0], solut[1]);
-    if (reachMaxT < 0 || numOfSolut != 2)
+    if (reachMaxT < 0 || numOfSolut != 0) 
     {
       throw 1;
     }
@@ -100,14 +100,14 @@ void Ship::getCommand()
     {
       if (cmd.size() != 4)
       {
-        cout << "Rossz számú szó!" << endl;
+        cout << "Rossz szamu szo!" << endl;
       } else
       {
         command.accel = {strTo<float>(cmd[1]), strTo<float>(cmd[2]), strTo<float>(cmd[3])};
         if (command.accel.length() > maxAcceleration)
         {
-          cout << "Túl nagy gyorsulást adtál meg!" << endl;
-          cout << "A hajód " << maxAcceleration << " gyorsulásra képes!" << endl;
+          cout << "Tul nagy gyorsulast adtal meg!" << endl;
+          cout << "A hajod " << maxAcceleration << " gyorsulasra kepes!" << endl;
           command.accel = {0, 0, 0};
         } 
       }
@@ -115,7 +115,7 @@ void Ship::getCommand()
     {
       if (cmd.size() != 2)
       {
-        cout << "Rossz számú szó!" << endl;
+        cout << "Rossz szamu szo!" << endl;
       } else
       {
         if (cmd[1] == "off")
@@ -139,7 +139,7 @@ void Ship::getCommand()
             command.aim = strTo<float>(cmd[1]);
           } else
           {
-            cout << "Nem biztos a lövés!" << endl;
+            cout << "Nem biztos a loves!" << endl;
           }
         }
       }
@@ -150,13 +150,13 @@ void Ship::getCommand()
         command.sensorEnergy = strTo<float>(cmd[1]);
         if (strTo<float>(cmd[1]) > maxSensorEnergy)
         {
-          cout << "Túl nagy szenzor energiát adtál meg!" << endl;
-          cout << "A hajód " << maxSensorEnergy << "-re képes!" << endl;
+          cout << "Tul nagy szenzor energiat adtal meg!" << endl;
+          cout << "A hajod " << maxSensorEnergy << "-re kepes!" << endl;
           command.sensorEnergy = 0;
         }
       } else
       {
-        cout << "Rossz számú szó!" << endl;
+        cout << "Rossz szamu szo!" << endl;
       }
     } else if (cmd[0] == "data")
     {
@@ -168,8 +168,8 @@ void Ship::getCommand()
         gettingInput = false;
       } else
       {
-        cout << getSpentEnergy() << " energiát szeretnél felhasználni." << endl;
-        cout << "A hajód generátora maximum " << maxGeneratorEnergy << "-re képes." << endl;
+        cout << getSpentEnergy() << " energiat szeretnel felhasznalni." << endl;
+        cout << "A hajod generatora maximum " << maxGeneratorEnergy << "-re kepes." << endl;
       }
     } else
     {
@@ -243,11 +243,11 @@ ostream& operator<<(ostream& os, const Ship& s)
 {
   if (s.destroyed)
   {
-    os << "A hajó megsemmisült!"; // no endl
+    os << "A hajo megsemmisult!"; // no endl
   } else
   {
     os << "Helyvektor: " << s.place << endl;
-    os << "Sebességvektor: " << s.velocity; // no endl
+    os << "Sebessegvektor: " << s.velocity; // no endl
   }
   return os;
 }
