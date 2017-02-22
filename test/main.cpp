@@ -1,0 +1,5 @@
+#define and &&
+
+int main()
+{
+}

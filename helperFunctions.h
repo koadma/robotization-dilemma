@@ -1,10 +1,6 @@
 #ifndef __HELPERFUNCS_H__
 #define __HELPERFUNCS_H__
 
-#define and &&
-#define or ||
-#define not !
-
 #include <iostream>
 #include <vector>
 #include <sstream>
