@@ -8,9 +8,7 @@
 #include "WinManager.h"
 #include "helperFunctions.h"
 #include "constants.h"
-#include "Point.h"
-#include "Ship.h"
-#include "Game.h"
+#include "Render.h"
 
 using namespace std;
 
@@ -193,19 +191,13 @@ numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
   mainGameLoop();
 }
 
+////////////////////////////////////////////
+
 int main()
 {
-  setlocale(LC_ALL,"");
+  setlocale(LC_ALL, "");
   srand(time(NULL));
-  string inp;
-  do
-  {
-    unsigned int numOfShips;
-    cout << "Hajok szama: ";
-    cin >> numOfShips;
-    Game game(numOfShips);
-    cout << "Akarsz uj jatekot kezdeni? (y - igen, barmi mas - nem)" << endl;
-    cin >> inp;
-  } while (inp == "y");
+  InitWindow();
+  glutMainLoop();  
   return 0;
 }

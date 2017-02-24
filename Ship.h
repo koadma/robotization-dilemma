@@ -2,6 +2,7 @@
 #define __SHIP_H__
 
 #include <iostream>
+#include <ciso646> //defines and, or, not for visual studio, does nothing elsewhere.
 #include <vector>
 #include "Point.h"
 #include "constants.h"

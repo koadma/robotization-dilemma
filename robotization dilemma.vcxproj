@@ -147,18 +147,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="helperFunctions.cpp" />
     <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Render.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="WinManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bubble.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Graphics.h" />
     <ClInclude Include="helperFunctions.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Render.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="WinManager.h" />
   </ItemGroup>

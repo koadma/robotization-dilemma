@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Bubble.h"
+#include "WinManager.h"
 
 class Game
 {
