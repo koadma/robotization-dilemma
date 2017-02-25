@@ -17,4 +17,9 @@ const float PI = 3.1415926535898;
 const int ACTIVE_SENSOR_MINVIS = 0;
 const int PASSIVE_SENSOR_MINVIS = 10;
 
+#define ElementBaseColor 0xff070918
+#define ElementActiveColor 0xff190077
+#define ElementTextColor 0xff838FA1
+#define ElementBackColor 0xff030014
+
 #endif

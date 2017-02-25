@@ -2,8 +2,12 @@
 
 #include "Graphics.h"
 
-void playButton();
+void newMenuPlayerCountInput(string inp);
 
-void runGame();
+void gameMenuNewButton();
+
+void mainMenuPlayButton();
+
+void createMainMenu();
 
 int InitWindow();

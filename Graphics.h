@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Button.h"
+#include "TextInput.h"
+#include "Label.h"
 
 using namespace std;
 
@@ -38,7 +40,7 @@ namespace Graphics {
     WindowManagers windowManagers;
     int parent;
     list<int> children;
-    map<int, Button*> buttons;
+    map<int, GUIElement*> elements;
     int maxbutton = 0;
   };
 
@@ -53,15 +55,27 @@ namespace Graphics {
 
   int DestroyWindow(int id);
 
-  bool buttonMouseEnterManager(int id, int mstate);
+  bool elementMouseEnterManager(int id, int mstate);
 
-  bool buttonMouseMoveManager(int id, int x, int y);
+  bool elementMouseMoveManager(int id, int x, int y);
 
-  void buttonMouseClickManager(int id, int x, int y);
+  bool elementMouseClickManager(int id, int x, int y);
 
-  void buttonRenderManager(int id);
+  bool elementMouseWheelManager(int id, int a, int b, int x, int y);
+
+  bool elementKeyPressManager(int id, unsigned char kay, int x, int y);
+
+  bool elementSpecialPressManager(int id, int key, int x, int y);
+
+  void elementRenderManager(int id);
 
   int createButton(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+
+  int createLabel(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+
+  int createTextInput(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   
-  void deleteButton(int id, int button);
+  void deleteElement(int winId, int elemId);
+
+  void deleteElements(int winId);
 }

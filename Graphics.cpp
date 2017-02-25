@@ -45,7 +45,7 @@ void Graphics::SetUpWindow(int id, int parent, WindowManagers manager) {
 
   glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
-  glClearColor(1, 1, 1, 1);
+  glClearColor(((ElementBackColor && 0xff) >> 0)/255.0, ((ElementBackColor && 0xff00) >> 8) / 255.0, ((ElementBackColor && 0xff0000) >> 16) / 255.0, 1);
 
   WindowData data;
   data.parent = -1;
@@ -82,7 +82,7 @@ void Graphics::defaultRenderManager() {
   glLoadIdentity();
   glColor3ub(0, 1, 0);
 
-  buttonRenderManager(glutGetWindow());
+  elementRenderManager(glutGetWindow());
   
   glutSwapBuffers();
 }
@@ -95,79 +95,166 @@ void Graphics::defaultResizeManager(int x, int y) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
-void Graphics::defaultKeyManager(unsigned char key, int x, int y) {}
-void Graphics::defaultSpecialKeyManager(int key, int x, int y) {}
+void Graphics::defaultKeyManager(unsigned char key, int x, int y) {
+  if (elementKeyPressManager(glutGetWindow(), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+    glutPostRedisplay();
+  }
+}
+void Graphics::defaultSpecialKeyManager(int key, int x, int y) {
+  if (elementSpecialPressManager(glutGetWindow(), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+    glutPostRedisplay();
+  }
+}
 void Graphics::defaultMouseEntryManager(int state) {
-  buttonMouseEnterManager(glutGetWindow(), state);
+  if (elementMouseEnterManager(glutGetWindow(), state)) {
+    glutPostRedisplay();
+  }
 }
 void Graphics::defaultMouseMoveManager(int x, int y) {
-  if (buttonMouseMoveManager(glutGetWindow(), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+  if (elementMouseMoveManager(glutGetWindow(), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultMouseClickManager(int idk, int key, int x, int y) {
-  buttonMouseClickManager(glutGetWindow(), x, glutGet(GLUT_WINDOW_HEIGHT) - y);
-  glutPostRedisplay();
+  if(elementMouseClickManager(glutGetWindow(), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+    glutPostRedisplay();
+  }
 }
-void Graphics::defaultMouseWheelManager(int idk, int key, int x, int y) {}
+void Graphics::defaultMouseWheelManager(int idk, int key, int x, int y) {
+  if (elementMouseWheelManager(glutGetWindow(), idk, key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+    glutPostRedisplay();
+  }
+}
 
 Graphics::WindowManagers Graphics::defaultWindowManagers;
 map<int, Graphics::WindowData> Graphics::windows;
 
-
-bool Graphics::buttonMouseEnterManager(int id, int mstate) {
+bool Graphics::elementMouseEnterManager(int id, int mstate) {
   auto itid = Graphics::windows.find(id);
-  auto it = itid->second.buttons.begin();
+  auto it = itid->second.elements.begin();
 
   bool state = false;
 
-  while (it != itid->second.buttons.end()) {
+  while (it != itid->second.elements.end() && !state) {
     state |= it->second->mouseEnter(mstate);
     ++it;
   }
   return state;
 }
 
-bool Graphics::buttonMouseMoveManager(int id, int x, int y) {
+bool Graphics::elementMouseMoveManager(int id, int x, int y) {
   auto itid = Graphics::windows.find(id);
-  auto it = itid->second.buttons.begin();
+  auto it = itid->second.elements.begin();
 
   bool state = false;
 
-  while (it != itid->second.buttons.end()) {
+  while (it != itid->second.elements.end() && !state) {
     state |= it->second->mouseMoved(x, y);
     ++it;
   }
   return state;
 }
 
-void Graphics::buttonMouseClickManager(int id, int x, int y) {
+bool Graphics::elementMouseClickManager(int id, int x, int y) {
   auto itid = Graphics::windows.find(id);
-  auto it = itid->second.buttons.begin();
+  auto it = itid->second.elements.begin();
 
-  while (it != itid->second.buttons.end()) {
-    it->second->mouseClicked(x, y);
+  bool state = false;
+
+  while (it != itid->second.elements.end() && !state) {
+    state |= it->second->mouseClicked(x, y);
     ++it;
   }
+  return state;
 }
 
-void Graphics::buttonRenderManager(int id) {
+bool Graphics::elementMouseWheelManager(int id, int a, int b, int x, int y) {
   auto itid = Graphics::windows.find(id);
-  auto it = itid->second.buttons.begin();
+  auto it = itid->second.elements.begin();
 
-  while (it != itid->second.buttons.end()) {
-    it->second->render();
+  bool state = false;
+
+  while (it != itid->second.elements.end() && !state) {
+    state |= it->second->mouseWheel(a,b,x,y);
     ++it;
+  }
+  return state;
+}
+
+bool Graphics::elementKeyPressManager(int id, unsigned char key, int x, int y) {
+  auto itid = Graphics::windows.find(id);
+  auto it = itid->second.elements.begin();
+
+  bool state = false;
+
+  while (it != itid->second.elements.end() && !state) {
+    state |= it->second->keyPressed(key, x, y);
+    ++it;
+  }
+  return state;
+}
+
+bool Graphics::elementSpecialPressManager(int id, int key, int x, int y) {
+  auto itid = Graphics::windows.find(id);
+  auto it = itid->second.elements.begin();
+
+  bool state = false;
+
+  while (it != itid->second.elements.end() && !state) {
+    state |= it->second->specialPressed(key, x, y);
+    ++it;
+  }
+  return state;
+}
+
+void Graphics::elementRenderManager(int id) {
+  auto itid = Graphics::windows.find(id);
+  auto it = itid->second.elements.begin();
+
+  while (it != itid->second.elements.end()) {
+    if (it->second->toDelete) {
+      auto itdel = it;
+      ++it;
+      delete itdel->second;
+      itid->second.elements.erase(itdel);
+    } else {
+      it->second->render();
+      ++it;
+    }
   }
 }
 
 int Graphics::createButton(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback) {
-  windows[id].buttons.insert({ windows[id].maxbutton,new Button(x, y, width, height, bg, active, textColor, text, clickCallback) });
+  windows[id].elements.insert({ windows[id].maxbutton,new Button(x, y, width, height, bg, active, textColor, text, clickCallback) });
   windows[id].maxbutton++;
   return windows[id].maxbutton - 1;
 }
 
-void Graphics::deleteButton(int id, int button) {
-  delete windows[id].buttons[button];
-  windows[id].buttons.erase(button);
+int Graphics::createLabel(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+  windows[id].elements.insert({ windows[id].maxbutton,new Label(x, y, width, height, bg, active, textColor, text, align) });
+  windows[id].maxbutton++;
+  return windows[id].maxbutton - 1;
+}
+
+int Graphics::createTextInput(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
+  windows[id].elements.insert({ windows[id].maxbutton,new TextInput(x, y, width, height, bg, active, textColor, text, inputCallback, validator) });
+  windows[id].maxbutton++;
+  return windows[id].maxbutton - 1;
+}
+
+void Graphics::deleteElement(int id, int elem) {
+  windows[id].elements[elem]->toDelete = true;
+}
+
+void Graphics::deleteElements(int id) {
+  auto it = windows[id].elements.begin();
+  while(it != windows[id].elements.end()) {
+    if(it->second != NULL) {
+      it->second->toDelete = true;
+    }
+    else {
+      throw 1;
+    }
+    ++it;
+  }
 }

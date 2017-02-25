@@ -7,6 +7,14 @@
 #include <algorithm>
 #include <list>
 #include <locale>
+#include <map>
+
+#include "GL\freeglut.h"
+#ifdef _MSC_VER
+/* DUMP MEMORY LEAKS */
+#include <crtdbg.h>
+#endif
+
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);
