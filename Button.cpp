@@ -20,12 +20,12 @@ bool Button::mouseEnter(int state) {
 }
 bool Button::mouseMoved(int mx, int my) {
   bool oactive = active;
-  active = (x <= mx) && (mx <= x + width) && (y <= my) && (my <= y + height);
+  active = (cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby);
   return oactive xor active; //if state changed
 }
 
 bool Button::mouseClicked(int mx, int my) {
-  if((x <= mx) && (mx <= x + width) && (y <= my) && (my <= y + height)) {
+  if((cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby)) {
     clickCallback();
     return true;
   }
@@ -40,13 +40,13 @@ void Button::render() {
   else {
     setColor(bgColor);
   }
-  glVertex2d(x, y);
-  glVertex2d(x + width, y);
-  glVertex2d(x + width, y + height);
-  glVertex2d(x, y + height);
+  glVertex2d(cax, cay);
+  glVertex2d(cbx, cay);
+  glVertex2d(cbx, cby);
+  glVertex2d(cax, cby);
   glEnd();
   
-  renderBitmapString(x + width / 2.0f, y + height / 2.0f, text, textColor, true);
+  renderBitmapString((cax + cbx) / 2.0f, (cay + cby) / 2.0f, text, textColor, true);
   //shapesPrintf(0, 0, text.c_str());
 }
 

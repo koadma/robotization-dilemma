@@ -94,6 +94,8 @@ void Graphics::defaultResizeManager(int x, int y) {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  elementResizeManager(glutGetWindow(), x, y);
 }
 void Graphics::defaultKeyManager(unsigned char key, int x, int y) {
   if (elementKeyPressManager(glutGetWindow(), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
@@ -207,6 +209,16 @@ bool Graphics::elementSpecialPressManager(int id, int key, int x, int y) {
   return state;
 }
 
+void Graphics::elementResizeManager(int id, int width, int height) {
+  auto itid = Graphics::windows.find(id);
+  auto it = itid->second.elements.begin();
+
+  while (it != itid->second.elements.end()) {
+    it->second->getRect(width, height);
+    ++it;
+  }
+}
+
 void Graphics::elementRenderManager(int id) {
   auto itid = Graphics::windows.find(id);
   auto it = itid->second.elements.begin();
@@ -224,21 +236,26 @@ void Graphics::elementRenderManager(int id) {
   }
 }
 
-int Graphics::createButton(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback) {
-  windows[id].elements.insert({ windows[id].maxbutton,new Button(x, y, width, height, bg, active, textColor, text, clickCallback) });
+
+
+int Graphics::createButton(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback) {
+  windows[id].elements.insert({ windows[id].maxbutton,new Button(mincorner, maxcorner, bg, active, textColor, text, clickCallback) });
   windows[id].maxbutton++;
+  Graphics::elementResizeManager(id, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
   return windows[id].maxbutton - 1;
 }
 
-int Graphics::createLabel(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
-  windows[id].elements.insert({ windows[id].maxbutton,new Label(x, y, width, height, bg, active, textColor, text, align) });
+int Graphics::createLabel(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+  windows[id].elements.insert({ windows[id].maxbutton,new Label(mincorner, maxcorner, bg, active, textColor, text, align) });
   windows[id].maxbutton++;
+  Graphics::elementResizeManager(id, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
   return windows[id].maxbutton - 1;
 }
 
-int Graphics::createTextInput(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
-  windows[id].elements.insert({ windows[id].maxbutton,new TextInput(x, y, width, height, bg, active, textColor, text, inputCallback, validator) });
+int Graphics::createTextInput(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
+  windows[id].elements.insert({ windows[id].maxbutton,new TextInput(mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator) });
   windows[id].maxbutton++;
+  Graphics::elementResizeManager(id, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
   return windows[id].maxbutton - 1;
 }
 

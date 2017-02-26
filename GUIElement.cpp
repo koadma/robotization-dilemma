@@ -1,15 +1,20 @@
 #include "GUIElement.h"
 
-GUIElement::GUIElement(int lx, int ly, int lwidth, int lheight, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext) {
-  x = lx;
-  y = ly;
-  width = lwidth;
-  height = lheight;
+GUIElement::GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext) {
+  mincorner = lmincorner;
+  maxcorner = lmaxcorner;
   bgColor = lbg;
   activeColor = lactive;
   textColor = ltextColor;
   text = ltext;
   active = false;
+}
+
+void GUIElement::getRect(int winWidth, int winHeight) {
+  cax = mincorner.GetX(winWidth);
+  cay = mincorner.GetY(winHeight);
+  cbx = maxcorner.GetX(winWidth);
+  cby = maxcorner.GetY(winHeight);
 }
 
 bool GUIElement::mouseEnter(int state) {

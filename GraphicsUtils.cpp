@@ -39,6 +39,31 @@ static void shapesPrintf(int row, int col, const char *fmt, ...)
   glPopMatrix();
 }
 
+Coordiante::Coordiante() {
+  x = 0;
+  y = 0;
+  relx = 0;
+  rely = 0;
+}
+Coordiante::Coordiante(float lrelx, float lrely) {
+  x = 0;
+  y = 0;
+  relx = lrelx;
+  rely = 1-lrely;
+}
+Coordiante::Coordiante(float lrelx, float lrely, float labsx, float labsy) {
+  x = labsx;
+  y = labsy;
+  relx = lrelx;
+  rely = 1-lrely;
+}
+float Coordiante::GetX(float WindowWidht) {
+  return WindowWidht*relx + x;
+}
+float Coordiante::GetY(float WindowHeight) {
+  return WindowHeight*rely + y;
+}
+
 void setColor(colorargb v) {
   //cout << ((v & 0x00FF0000) >> 16) / 255.0 << " " << ((v & 0x0000FF00) >> 8) / 255.0 << " " << ((v & 0x000000FF) >> 0) / 255.0 << " " << ((v & 0xFF000000) >> 24) / 255.0 << endl;
   glColor3f(((v & 0x00FF0000) >> 16) / 255.0f, ((v & 0x0000FF00) >> 8) / 255.0f, ((v & 0x000000FF) >> 0) / 255.0f);

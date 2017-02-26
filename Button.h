@@ -5,8 +5,8 @@
 class Button : public GUIElement{
 public:
   ClickCallback clickCallback;
-  Button(int lx, int ly, int lwidth, int lheight, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, ClickCallback lclickCallback) :
-  GUIElement(lx, ly, lwidth, lheight, lbg, lactive, ltextColor, ltext) {
+  Button(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, ClickCallback lclickCallback) :
+  GUIElement(lmincorner, lmaxcorner, lbg, lactive, ltextColor, ltext) {
     clickCallback = lclickCallback;
   }
   bool mouseEnter(int state);

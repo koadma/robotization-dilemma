@@ -67,13 +67,15 @@ namespace Graphics {
 
   bool elementSpecialPressManager(int id, int key, int x, int y);
 
+  void elementResizeManager(int id, int width, int height);
+
   void elementRenderManager(int id);
 
-  int createButton(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+  int createButton(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
 
-  int createLabel(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  int createLabel(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
 
-  int createTextInput(int id, int x, int y, int width, int height, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
+  int createTextInput(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   
   void deleteElement(int winId, int elemId);
 

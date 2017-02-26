@@ -6,8 +6,8 @@ class TextInput : public GUIElement {
 public:
   TextValidatorFunc validator;
   TextInputFunc input;
-  TextInput(int lx, int ly, int lwidth, int lheight, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, TextInputFunc linput, TextValidatorFunc lvalidator = *textValidator) :
-    GUIElement(lx, ly, lwidth, lheight, lbg, lactive, ltextColor, ltext) {
+  TextInput(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, TextInputFunc linput, TextValidatorFunc lvalidator = *textValidator) :
+    GUIElement(lmincorner, lmaxcorner, lbg, lactive, ltextColor, ltext) {
     input = linput;
     validator = lvalidator;
   }

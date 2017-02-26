@@ -24,7 +24,7 @@ bool TextInput::specialPressed(int key, int mx, int my) {
 
 bool TextInput::mouseClicked(int mx, int my) {
   bool oactive = active;
-  active = ((x <= mx) && (mx <= x + width) && (y <= my) && (my <= y + height));
+  active = ((cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby));
   return oactive xor active;
 }
 
@@ -36,13 +36,13 @@ void TextInput::render() {
   else {
     setColor(bgColor);
   }
-  glVertex2d(x, y);
-  glVertex2d(x + width, y);
-  glVertex2d(x + width, y + height);
-  glVertex2d(x, y + height);
+  glVertex2d(cax, cay);
+  glVertex2d(cbx, cay);
+  glVertex2d(cbx, cby);
+  glVertex2d(cax, cby);
   glEnd();
 
-  renderBitmapString(x + width / 2.0f, y + height / 2.0f, text, textColor, true);
+  renderBitmapString((cax+cbx) / 2.0f, (cay + cby) / 2.0f, text, textColor, true);
   //shapesPrintf(0, 0, text.c_str());
 }
 
