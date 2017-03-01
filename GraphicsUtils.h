@@ -11,6 +11,7 @@ typedef uint32_t colorargb;
 typedef void(*ClickCallback)();
 typedef void(*TextInputFunc)(string);
 typedef bool(*TextValidatorFunc)(unsigned char);
+
 //extern map<int, Graphics::WindowData> Graphics::windows;
 
 class Coordiante {

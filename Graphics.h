@@ -37,6 +37,7 @@ namespace Graphics {
   };
 
   struct WindowData {
+    int id;
     WindowManagers windowManagers;
     int parent;
     list<int> children;
@@ -45,39 +46,46 @@ namespace Graphics {
   };
 
   extern WindowManagers defaultWindowManagers;
-  extern map<int, WindowData> windows;
+  extern map<int, WindowData*> windows;
 
-  int CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
+  typedef GUIElement* ElemHwnd;
+  typedef Graphics::WindowData* WinHwnd;
 
-  int CreateSubWindow(int parent, int x = 0, int y = 0, int width = 100, int height = 100, WindowManagers managers = defaultWindowManagers);
+  WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
 
-  void SetUpWindow(int id, int parent, WindowManagers manager);
+  WinHwnd CreateSubWindow(WinHwnd parent, int x = 0, int y = 0, int width = 100, int height = 100, WindowManagers managers = defaultWindowManagers);
 
-  int DestroyWindow(int id);
+  WinHwnd SetUpWindow(int id, int parent, WindowManagers manager);
 
-  bool elementMouseEnterManager(int id, int mstate);
+  int DestroyWindow(WinHwnd id);
 
-  bool elementMouseMoveManager(int id, int x, int y);
+  WinHwnd GetWinHwnd(int id);
 
-  bool elementMouseClickManager(int id, int x, int y);
+  bool elementMouseEnterManager(WinHwnd id, int mstate);
 
-  bool elementMouseWheelManager(int id, int a, int b, int x, int y);
+  bool elementMouseMoveManager(WinHwnd id, int x, int y);
 
-  bool elementKeyPressManager(int id, unsigned char kay, int x, int y);
+  bool elementMouseClickManager(WinHwnd id, int x, int y);
 
-  bool elementSpecialPressManager(int id, int key, int x, int y);
+  bool elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y);
 
-  void elementResizeManager(int id, int width, int height);
+  bool elementKeyPressManager(WinHwnd id, unsigned char kay, int x, int y);
 
-  void elementRenderManager(int id);
+  bool elementSpecialPressManager(WinHwnd id, int key, int x, int y);
 
-  int createButton(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+  void elementResizeManager(WinHwnd id, int width, int height);
 
-  int createLabel(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  void elementRenderManager(WinHwnd id);
 
-  int createTextInput(int id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
+  ElemHwnd createButton(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+
+  ElemHwnd createLabel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+
+  ElemHwnd createTextInput(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   
-  void deleteElement(int winId, int elemId);
+  ElemHwnd createElement(WinHwnd id, ElemHwnd elem);
 
-  void deleteElements(int winId);
+  void deleteElement(ElemHwnd elemId);
+
+  void deleteElements(WinHwnd winId);
 }
