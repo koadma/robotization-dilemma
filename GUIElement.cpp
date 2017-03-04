@@ -24,28 +24,28 @@ bool GUIElement::isIn(int mx, int my) {
   return false;
 }
 
-bool GUIElement::mouseEnter(int state) {
-  return false;
+int GUIElement::mouseEnter(int state) {
+  return 0;
 }
 
-bool GUIElement::mouseMoved(int mx, int my) {
-  return false;
+int GUIElement::mouseMoved(int mx, int my) {
+  return 0;
 }
 
-bool GUIElement::mouseClicked(int mx, int my) {
-  return false;
+int GUIElement::mouseClicked(int mx, int my) {
+  return 0;
 }
 
-bool GUIElement::keyPressed(unsigned char key, int mx, int my) {
-  return false;
+int GUIElement::keyPressed(unsigned char key, int mx, int my) {
+  return 0;
 }
 
-bool GUIElement::specialPressed(int key, int mx, int my) {
-  return false;
+int GUIElement::specialPressed(int key, int mx, int my) {
+  return 0;
 }
 
-bool GUIElement::mouseWheel(int a, int b, int mx, int my) {
-  return false;
+int GUIElement::mouseWheel(int a, int b, int mx, int my) {
+  return 0;
 }
 
 void GUIElement::render() {

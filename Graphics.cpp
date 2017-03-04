@@ -71,6 +71,13 @@ Graphics::WinHwnd Graphics::GetWinHwnd(int id) {
   return windows[id];
 }
 
+void Graphics::GWindow::getWin(float pax, float pay, float pbx, float pby) {
+  ax = pax + minc.GetX(pbx - pax);
+  ay = pay + minc.GetY(pby - pay);
+  bx = pbx + minc.GetX(pbx - pax);
+  by = pby + minc.GetY(pby - pay);
+}
+
 void Graphics::defaultRenderManager() {
   glutSetWindow(glutGetWindow());
 
@@ -88,7 +95,7 @@ void Graphics::defaultRenderManager() {
   glColor3ub(0, 1, 0);
 
   elementRenderManager(GetWinHwnd(glutGetWindow()));
-  
+
   glutSwapBuffers();
 }
 void Graphics::defaultResizeManager(int x, int y) {
@@ -106,67 +113,70 @@ void Graphics::defaultResizeManager(int x, int y) {
   elementResizeManager(h, width, height);
 }
 void Graphics::defaultKeyManager(unsigned char key, int x, int y) {
-  if (elementKeyPressManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+  if (1 & elementKeyPressManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultSpecialKeyManager(int key, int x, int y) {
-  if (elementSpecialPressManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+  if (1 & elementSpecialPressManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultMouseEntryManager(int state) {
-  if (elementMouseEnterManager(GetWinHwnd(glutGetWindow()), state)) {
+  if (1 & elementMouseEnterManager(GetWinHwnd(glutGetWindow()), state)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultMouseMoveManager(int x, int y) {
-  if (elementMouseMoveManager(GetWinHwnd(glutGetWindow()), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+  if (1 & elementMouseMoveManager(GetWinHwnd(glutGetWindow()), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultMouseClickManager(int idk, int key, int x, int y) {
-  if(elementMouseClickManager(GetWinHwnd(glutGetWindow()), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+  if (1 & elementMouseClickManager(GetWinHwnd(glutGetWindow()), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultMouseWheelManager(int idk, int key, int x, int y) {
-  if (elementMouseWheelManager(GetWinHwnd(glutGetWindow()), idk, key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+  if (1 & elementMouseWheelManager(GetWinHwnd(glutGetWindow()), idk, key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
 
-void Graphics::GWindow::getWin(float pax, float pay, float pbx, float pby) {
-  ax = pax + minc.GetX(pbx - pax);
-  ay = pay + minc.GetY(pby - pay);
-  bx = pbx + minc.GetX(pbx - pax);
-  by = pby + minc.GetY(pby - pay);
-}
-
-Graphics::WindowManagers Graphics::defaultWindowManagers;
+WindowManagers Graphics::defaultWindowManagers =
+WindowManagers {
+  Graphics::defaultRenderManager,
+  Graphics::defaultResizeManager,
+  Graphics::defaultKeyManager,
+  Graphics::defaultSpecialKeyManager,
+  Graphics::defaultMouseEntryManager,
+  Graphics::defaultMouseMoveManager,
+  Graphics::defaultMouseClickManager,
+  Graphics::defaultMouseWheelManager,
+};
 map<int, Graphics::GWindow*> Graphics::windows;
 
-bool Graphics::elementMouseEnterManager(WinHwnd id, int mstate) {
+int Graphics::elementMouseEnterManager(WinHwnd id, int mstate) {
   return id->myPanel->mouseEnter(mstate);
 }
 
-bool Graphics::elementMouseMoveManager(WinHwnd id, int x, int y) {
+int Graphics::elementMouseMoveManager(WinHwnd id, int x, int y) {
   return id->myPanel->mouseMoved(x, y);
 }
 
-bool Graphics::elementMouseClickManager(WinHwnd id, int x, int y) {
+int Graphics::elementMouseClickManager(WinHwnd id, int x, int y) {
   return id->myPanel->mouseClicked(x, y);
 }
 
-bool Graphics::elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y) {
+int Graphics::elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y) {
   return id->myPanel->mouseWheel(a, b, x, y);
 }
 
-bool Graphics::elementKeyPressManager(WinHwnd id, unsigned char key, int x, int y) {
+int Graphics::elementKeyPressManager(WinHwnd id, unsigned char key, int x, int y) {
   return id->myPanel->keyPressed(key, x, y);
 }
 
-bool Graphics::elementSpecialPressManager(WinHwnd id, int key, int x, int y) {
+int Graphics::elementSpecialPressManager(WinHwnd id, int key, int x, int y) {
   return id->myPanel->specialPressed(key, x, y);
 }
 

@@ -13,23 +13,23 @@
   active = false;
 }*/
 
-bool Button::mouseEnter(int state) {
+int Button::mouseEnter(int state) {
   bool oactive = active;
   active &= state; //if mouse leaves, deactivate.
   return oactive xor active; //rerender if changed
 }
-bool Button::mouseMoved(int mx, int my) {
+int Button::mouseMoved(int mx, int my) {
   bool oactive = active;
   active = isIn(mx, my);
   return oactive xor active; //if state changed
 }
 
-bool Button::mouseClicked(int mx, int my) {
+int Button::mouseClicked(int mx, int my) {
   if(isIn(mx, my)) {
     clickCallback();
-    return true;
+    return 3;
   }
-  return false;
+  return 0;
 }
 void Button::render() {
 

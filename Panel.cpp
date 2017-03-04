@@ -4,64 +4,64 @@ void Panel::transformCoordiantes(int &mx, int &my) {
   mx -= cax;
   my -= cay;
 }
-bool Panel::mouseEnter(int state) {
+int Panel::mouseEnter(int state) {
   auto it = elements.begin();
 
-  bool bstate = false;
+  int bstate = 0;
 
-  while (it != elements.end()) {
+  while (it != elements.end() && !(state & 2)) {
     bstate |= (*it)->mouseEnter(state);
     ++it;
   }
   return bstate;
 }
-bool Panel::mouseMoved(int mx, int my) {
+int Panel::mouseMoved(int mx, int my) {
   transformCoordiantes(mx, my);
 
   auto it = elements.begin();
 
-  bool state = false;
+  int state = 0;
 
-  while (it != elements.end()) {
+  while (it != elements.end() && !(state & 2)) {
     state |= (*it)->mouseMoved(mx, my);
     ++it;
   }
   return state;
 }
-bool Panel::mouseClicked(int mx, int my) {
+int Panel::mouseClicked(int mx, int my) {
   transformCoordiantes(mx, my);
 
   auto it = elements.begin();
 
-  bool state = false;
+  int state = 0;
 
-  while (it != elements.end()) {
+  while (it != elements.end() && !(state & 2)) {
     state |= (*it)->mouseClicked(mx, my);
     ++it;
   }
   return state;
 }
-bool Panel::keyPressed(unsigned char key, int mx, int my) {
+int Panel::keyPressed(unsigned char key, int mx, int my) {
   transformCoordiantes(mx, my);
 
   auto it = elements.begin();
 
-  bool state = false;
+  int state = 0;
 
-  while (it != elements.end()) {
+  while (it != elements.end() && !(state & 2)) {
     state |= (*it)->keyPressed(key, mx, my);
     ++it;
   }
   return state;
 }
-bool Panel::specialPressed(int key, int mx, int my) {
+int Panel::specialPressed(int key, int mx, int my) {
   transformCoordiantes(mx, my);
 
   auto it = elements.begin();
 
-  bool state = false;
+  int state = 0;
 
-  while (it != elements.end()) {
+  while (it != elements.end() && !(state & 2)) {
     state |= (*it)->specialPressed(key, mx, my);
     ++it;
   }

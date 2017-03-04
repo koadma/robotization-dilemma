@@ -4,18 +4,11 @@
 #include "TextInput.h"
 #include "Label.h"
 #include "Panel.h"
+#include "Canvas.h"
 
 using namespace std;
 
 namespace Graphics {
-  typedef void(*RenderManager)();
-  typedef void(*ResizeManager)(int x, int y);
-  typedef void(*KeyManager)(unsigned char key, int x, int y);
-  typedef void(*SpecialKeyManager)(int key, int x, int y);
-  typedef void(*MouseEntryManager)(int state);
-  typedef void(*MouseMoveManager)(int x, int y);
-  typedef void(*MouseClickManager)(int idk, int key, int x, int y);
-  typedef void(*MouseWheelManager)(int idk, int key, int x, int y);
   
   void defaultRenderManager();
   void defaultResizeManager(int x, int y);
@@ -26,17 +19,17 @@ namespace Graphics {
   void defaultMouseClickManager(int idk, int key, int x, int y);
   void defaultMouseWheelManager(int idk, int key, int x, int y);
 
-  struct WindowManagers {
-    RenderManager renderManager             = defaultRenderManager;
-    ResizeManager resizeManager             = defaultResizeManager;
-    KeyManager keyManager                   = defaultKeyManager;
-    SpecialKeyManager specialKeyManager     = defaultSpecialKeyManager;
-    MouseEntryManager mouseEntryManager     = defaultMouseEntryManager;
-    MouseMoveManager mouseMoveManager       = defaultMouseMoveManager;
-    MouseClickManager mouseClickManager     = defaultMouseClickManager;
-    MouseWheelManager mouseWheelManager     = defaultMouseWheelManager;
-  };
-  
+  /*struct WindowManagers {
+    RenderManager renderManager = defaultRenderManager;
+    ResizeManager resizeManager = defaultResizeManager;
+    KeyManager keyManager = defaultKeyManager;
+    SpecialKeyManager specialKeyManager = defaultSpecialKeyManager;
+    MouseEntryManager mouseEntryManager = defaultMouseEntryManager;
+    MouseMoveManager mouseMoveManager = defaultMouseMoveManager;
+    MouseClickManager mouseClickManager = defaultMouseClickManager;
+    MouseWheelManager mouseWheelManager = defaultMouseWheelManager;
+  };*/
+
   class GWindow {
   public:
     Coordiante minc, maxc;
@@ -66,17 +59,17 @@ namespace Graphics {
 
   WinHwnd GetWinHwnd(int id);
 
-  bool elementMouseEnterManager(WinHwnd id, int mstate);
+  int elementMouseEnterManager(WinHwnd id, int mstate);
 
-  bool elementMouseMoveManager(WinHwnd id, int x, int y);
+  int elementMouseMoveManager(WinHwnd id, int x, int y);
 
-  bool elementMouseClickManager(WinHwnd id, int x, int y);
+  int elementMouseClickManager(WinHwnd id, int x, int y);
 
-  bool elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y);
+  int elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y);
 
-  bool elementKeyPressManager(WinHwnd id, unsigned char kay, int x, int y);
+  int elementKeyPressManager(WinHwnd id, unsigned char kay, int x, int y);
 
-  bool elementSpecialPressManager(WinHwnd id, int key, int x, int y);
+  int elementSpecialPressManager(WinHwnd id, int key, int x, int y);
 
   void elementResizeManager(WinHwnd id, int width, int height);
 

@@ -1,6 +1,5 @@
 #include "GraphicsUtils.h"
 
-
 static void shapesPrintf(int row, int col, const char *fmt, ...)
 {
   static char buf[256];

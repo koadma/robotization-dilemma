@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Bubble.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsUtils.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Bubble.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Canvas.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />

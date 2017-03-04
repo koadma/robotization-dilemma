@@ -1,28 +1,28 @@
 #include "TextInput.h"
 
-bool TextInput::keyPressed(unsigned char key, int mx, int my) {
+int TextInput::keyPressed(unsigned char key, int mx, int my) {
   if (active) {
     if(key == '\b' && text.length()) {
       text.pop_back();
-      return true;
+      return 1;
     }
     if (key == '\n' || key == '\r') {
       input(text);
-      return true;
+      return 3;
     }
     if (validator(key)) {
       text+=key;
-      return true;
+      return 1;
     }
   }
-  return false;
+  return 0;
 }
 
-bool TextInput::specialPressed(int key, int mx, int my) {
-  return false;
+int TextInput::specialPressed(int key, int mx, int my) {
+  return 0;
 }
 
-bool TextInput::mouseClicked(int mx, int my) {
+int TextInput::mouseClicked(int mx, int my) {
   bool oactive = active;
   active = isIn(mx, my);
   return oactive xor active;

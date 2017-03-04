@@ -11,8 +11,8 @@ public:
   text = ltext;
     clickCallback = lclickCallback;
   }
-  bool mouseEnter(int state);
-  bool mouseMoved(int mx, int my);
-  bool mouseClicked(int mx, int my);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int mouseClicked(int mx, int my);
   void render();
 };

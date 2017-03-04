@@ -13,8 +13,8 @@ public:
     input = linput;
     validator = lvalidator;
   }
-  bool keyPressed(unsigned char key, int mx, int my);
-  bool specialPressed(int key, int mx, int my);
-  bool mouseClicked(int mx, int my);
+  int keyPressed(unsigned char key, int mx, int my);
+  int specialPressed(int key, int mx, int my);
+  int mouseClicked(int mx, int my);
   void render();
 };
