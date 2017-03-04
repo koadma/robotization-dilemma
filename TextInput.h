@@ -4,10 +4,12 @@
 
 class TextInput : public GUIElement {
 public:
+  string text;
   TextValidatorFunc validator;
   TextInputFunc input;
   TextInput(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, TextInputFunc linput, TextValidatorFunc lvalidator = *textValidator) :
-    GUIElement(lmincorner, lmaxcorner, lbg, lactive, ltextColor, ltext) {
+    GUIElement(lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
+    text = ltext;
     input = linput;
     validator = lvalidator;
   }

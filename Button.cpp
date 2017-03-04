@@ -20,12 +20,12 @@ bool Button::mouseEnter(int state) {
 }
 bool Button::mouseMoved(int mx, int my) {
   bool oactive = active;
-  active = (cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby);
+  active = isIn(mx, my);
   return oactive xor active; //if state changed
 }
 
 bool Button::mouseClicked(int mx, int my) {
-  if((cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby)) {
+  if(isIn(mx, my)) {
     clickCallback();
     return true;
   }

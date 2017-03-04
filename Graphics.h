@@ -3,6 +3,7 @@
 #include "Button.h"
 #include "TextInput.h"
 #include "Label.h"
+#include "Panel.h"
 
 using namespace std;
 
@@ -35,27 +36,31 @@ namespace Graphics {
     MouseClickManager mouseClickManager     = defaultMouseClickManager;
     MouseWheelManager mouseWheelManager     = defaultMouseWheelManager;
   };
-
-  struct WindowData {
+  
+  class GWindow {
+  public:
+    Coordiante minc, maxc;
+    float ax, ay, bx, by;
     int id;
     WindowManagers windowManagers;
     int parent;
-    list<int> children;
-    map<int, GUIElement*> elements;
-    int maxbutton = 0;
+    Panel* myPanel;
+    void getWin(float pax, float pay, float pbx, float pby);
   };
 
   extern WindowManagers defaultWindowManagers;
-  extern map<int, WindowData*> windows;
+  extern map<int, GWindow*> windows;
 
   typedef GUIElement* ElemHwnd;
-  typedef Graphics::WindowData* WinHwnd;
+  typedef Panel* PanelHwnd;
+  typedef Button* ButtonHwnd;
+  typedef TextInput* TextInputHwnd;
+  typedef Label* LabelHwnd;
+  typedef Graphics::GWindow* WinHwnd;
 
   WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
 
-  WinHwnd CreateSubWindow(WinHwnd parent, int x = 0, int y = 0, int width = 100, int height = 100, WindowManagers managers = defaultWindowManagers);
-
-  WinHwnd SetUpWindow(int id, int parent, WindowManagers manager);
+  WinHwnd SetUpWindow(int id, int parent, Coordiante x, Coordiante y, WindowManagers manager);
 
   int DestroyWindow(WinHwnd id);
 
@@ -75,17 +80,24 @@ namespace Graphics {
 
   void elementResizeManager(WinHwnd id, int width, int height);
 
+  void elementResizeManager(PanelHwnd id, int width, int height);
+
   void elementRenderManager(WinHwnd id);
 
-  ElemHwnd createButton(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+  ButtonHwnd createButton(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+  ButtonHwnd createButton(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
 
-  ElemHwnd createLabel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  LabelHwnd createLabel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  LabelHwnd createLabel(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
 
-  ElemHwnd createTextInput(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
+  TextInputHwnd createTextInput(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
+  TextInputHwnd createTextInput(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   
-  ElemHwnd createElement(WinHwnd id, ElemHwnd elem);
+  ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
 
   void deleteElement(ElemHwnd elemId);
+
+  void deleteElements(PanelHwnd id);
 
   void deleteElements(WinHwnd winId);
 }

@@ -1,11 +1,11 @@
 #include "Render.h"
 
 Graphics::WinHwnd objectMainWindow;
-Graphics::WinHwnd objectMenuSubWindow;
-Graphics::ElemHwnd objectMainMenuPlayButton;
-Graphics::ElemHwnd objectPlayMenuNewButton;
-Graphics::ElemHwnd objectGameMenuPlayerCountInput;
-Graphics::WinHwnd object3DGameWindow;
+Graphics::PanelHwnd objectMenuSubWindow;
+Graphics::ButtonHwnd objectMainMenuPlayButton;
+Graphics::ButtonHwnd objectPlayMenuNewButton;
+Graphics::TextInputHwnd objectGameMenuPlayerCountInput;
+Graphics::PanelHwnd object3DGameWindow;
 
 void newMenuPlayerCountInput(string inp) {
     Graphics::deleteElements(objectMenuSubWindow);
@@ -48,7 +48,7 @@ void createMainMenu() {
 
 int InitWindow() {
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
-  objectMenuSubWindow = objectMainWindow;//Graphics::CreateSubWindow(objectMainWindow,0,0,800,800);
+  objectMenuSubWindow = objectMainWindow->myPanel;//Graphics::CreateSubWindow(objectMainWindow, Coordiante{ 0.0f, 1.0f, 5.0f, 5.0f }, Coordiante{ 1.0f, 0.0f, -5.0f, -5.0f });
   createMainMenu();
   return 0;
 }

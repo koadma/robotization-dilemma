@@ -9,15 +9,15 @@ public:
   float cax, cay, cbx, cby; //Not for long term storage.
   Coordiante mincorner;
   Coordiante maxcorner;
-  string text;
   colorargb bgColor; //#aarrggbb
   colorargb activeColor; //#aarrggbb
   colorargb textColor;
   bool active;
   bool toDelete;
 
-  GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext);
-  virtual void getRect(int winWidth, int winHeight);
+  GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
+  virtual bool isIn(int mx, int my);
+  virtual void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
   virtual bool mouseEnter(int state);
   virtual bool mouseMoved(int mx, int my);
   virtual bool mouseClicked(int mx, int my);

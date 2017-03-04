@@ -1,20 +1,27 @@
 #include "GUIElement.h"
 
-GUIElement::GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext) {
+GUIElement::GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) {
   mincorner = lmincorner;
   maxcorner = lmaxcorner;
   bgColor = lbg;
   activeColor = lactive;
   textColor = ltextColor;
-  text = ltext;
   active = false;
 }
 
-void GUIElement::getRect(int winWidth, int winHeight) {
-  cax = mincorner.GetX(winWidth);
-  cay = mincorner.GetY(winHeight);
-  cbx = maxcorner.GetX(winWidth);
-  cby = maxcorner.GetY(winHeight);
+void GUIElement::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
+  cax = offsetX + mincorner.GetX(winWidth);
+  cay = offsetY + mincorner.GetY(winHeight);
+  cbx = offsetX + maxcorner.GetX(winWidth);
+  cby = offsetY + maxcorner.GetY(winHeight);
+}
+
+bool GUIElement::isIn(int mx, int my) {
+  //getRect(winWidth, winHeight);
+  if ((cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby)) {
+    return true;
+  }
+  return false;
 }
 
 bool GUIElement::mouseEnter(int state) {

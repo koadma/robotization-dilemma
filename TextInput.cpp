@@ -24,7 +24,7 @@ bool TextInput::specialPressed(int key, int mx, int my) {
 
 bool TextInput::mouseClicked(int mx, int my) {
   bool oactive = active;
-  active = ((cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby));
+  active = isIn(mx, my);
   return oactive xor active;
 }
 
