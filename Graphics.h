@@ -49,6 +49,7 @@ namespace Graphics {
   typedef Button* ButtonHwnd;
   typedef TextInput* TextInputHwnd;
   typedef Label* LabelHwnd;
+  typedef Canvas* CanvasHwnd;
   typedef Graphics::GWindow* WinHwnd;
 
   WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
@@ -63,7 +64,7 @@ namespace Graphics {
 
   int elementMouseMoveManager(WinHwnd id, int x, int y);
 
-  int elementMouseClickManager(WinHwnd id, int x, int y);
+  int elementMouseClickManager(WinHwnd id, int button, int state, int x, int y);
 
   int elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y);
 
@@ -85,7 +86,13 @@ namespace Graphics {
 
   TextInputHwnd createTextInput(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   TextInputHwnd createTextInput(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
-  
+
+  CanvasHwnd createCanvas(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
+  CanvasHwnd createCanvas(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
+
+  PanelHwnd createPanel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  PanelHwnd createPanel(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+
   ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
 
   void deleteElement(ElemHwnd elemId);

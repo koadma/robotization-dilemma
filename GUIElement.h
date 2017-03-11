@@ -20,7 +20,7 @@ public:
   virtual void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
   virtual int mouseEnter(int state);
   virtual int mouseMoved(int mx, int my);
-  virtual int mouseClicked(int mx, int my);
+  virtual int mouseClicked(int button, int state, int mx, int my);
   virtual int keyPressed(unsigned char key, int mx, int my);
   virtual int specialPressed(int key, int mx, int my);
   virtual int mouseWheel(int a, int b, int mx, int my);

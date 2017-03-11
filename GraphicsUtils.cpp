@@ -38,6 +38,32 @@ static void shapesPrintf(int row, int col, const char *fmt, ...)
   glPopMatrix();
 }
 
+int defaultIRenderManager(int ax, int ay, int bx, int by) {
+  return 0;
+}
+int defaultIResizeManager(int x, int y) {
+  return 0;
+}
+int defaultIKeyManager(unsigned char key, int x, int y) {
+  return 0;
+}
+int defaultISpecialKeyManager(int key, int x, int y) {
+  return 0;
+}
+int defaultIMouseEntryManager(int state) {
+  return 0;
+}
+int defaultIMouseMoveManager(int x, int y) {
+  return 0;
+}
+int defaultIMouseClickManager(int idk, int key, int x, int y) {
+  return 0;
+}
+int defaultIMouseWheelManager(int idk, int key, int x, int y) {
+  return 0;
+}
+
+
 Coordiante::Coordiante() {
   x = 0;
   y = 0;

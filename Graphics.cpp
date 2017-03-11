@@ -80,9 +80,12 @@ void Graphics::GWindow::getWin(float pax, float pay, float pbx, float pby) {
 
 void Graphics::defaultRenderManager() {
   glutSetWindow(glutGetWindow());
+  //int arr[4];
+  //glGetIntegerv(GL_VIEWPORT, arr);
 
+  glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
   glClear(GL_COLOR_BUFFER_BIT);
-
+  //glGetIntegerv(GL_VIEWPORT, arr);
   glDisable(GL_DEPTH_TEST);
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -92,10 +95,29 @@ void Graphics::defaultRenderManager() {
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
+  glColor3ub(0, 255, 0);
+
+  elementRenderManager(GetWinHwnd(glutGetWindow()));
+  
+  /*
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  glDisable(GL_DEPTH_TEST);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+
+
+
+  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),
+    0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
   glColor3ub(0, 1, 0);
 
   elementRenderManager(GetWinHwnd(glutGetWindow()));
-
+  */
   glutSwapBuffers();
 }
 void Graphics::defaultResizeManager(int x, int y) {
@@ -132,8 +154,8 @@ void Graphics::defaultMouseMoveManager(int x, int y) {
     glutPostRedisplay();
   }
 }
-void Graphics::defaultMouseClickManager(int idk, int key, int x, int y) {
-  if (1 & elementMouseClickManager(GetWinHwnd(glutGetWindow()), x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+void Graphics::defaultMouseClickManager(int button, int state, int x, int y) {
+  if (1 & elementMouseClickManager(GetWinHwnd(glutGetWindow()), button, state, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
     glutPostRedisplay();
   }
 }
@@ -164,8 +186,9 @@ int Graphics::elementMouseMoveManager(WinHwnd id, int x, int y) {
   return id->myPanel->mouseMoved(x, y);
 }
 
-int Graphics::elementMouseClickManager(WinHwnd id, int x, int y) {
-  return id->myPanel->mouseClicked(x, y);
+int Graphics::elementMouseClickManager(WinHwnd id, int button, int state, int x, int y) {
+  //cout << button << " " << state << " " << x << " " << y << endl;
+  return id->myPanel->mouseClicked(button, state, x, y);
 }
 
 int Graphics::elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y) {
@@ -214,6 +237,22 @@ Graphics::TextInputHwnd Graphics::createTextInput(WinHwnd id, Coordiante mincorn
 Graphics::TextInputHwnd Graphics::createTextInput(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
   ElemHwnd elem = new TextInput(mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
   return reinterpret_cast<TextInputHwnd>(createElement(id, elem));
+}
+
+Graphics::CanvasHwnd Graphics::createCanvas(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
+  return createCanvas(id->myPanel, mincorner, maxcorner, managers);
+}
+Graphics::CanvasHwnd Graphics::createCanvas(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
+  ElemHwnd elem = new Canvas(mincorner, maxcorner, managers);
+  return reinterpret_cast<CanvasHwnd>(createElement(id, elem));
+}
+
+Graphics::PanelHwnd Graphics::createPanel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
+  return createPanel(id->myPanel, mincorner, maxcorner, bg);
+}
+Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
+  ElemHwnd elem = new Panel(mincorner, maxcorner, bg);
+  return reinterpret_cast<PanelHwnd>(createElement(id, elem));
 }
 
 Graphics::ElemHwnd Graphics::createElement(PanelHwnd id, ElemHwnd elem) {

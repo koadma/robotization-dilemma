@@ -7,6 +7,7 @@ GUIElement::GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb l
   activeColor = lactive;
   textColor = ltextColor;
   active = false;
+  toDelete = false;
 }
 
 void GUIElement::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
@@ -18,7 +19,7 @@ void GUIElement::getRect(int winWidth, int winHeight, int offsetX, int offsetY) 
 
 bool GUIElement::isIn(int mx, int my) {
   //getRect(winWidth, winHeight);
-  if ((cax <= mx) && (mx <= cbx) && (cay <= my) && (my <= cby)) {
+  if ((cax  <= mx) && (mx <= cbx ) && (cay <= my) && (my <= cby)) {
     return true;
   }
   return false;
@@ -32,7 +33,7 @@ int GUIElement::mouseMoved(int mx, int my) {
   return 0;
 }
 
-int GUIElement::mouseClicked(int mx, int my) {
+int GUIElement::mouseClicked(int button, int state, int mx, int my) {
   return 0;
 }
 

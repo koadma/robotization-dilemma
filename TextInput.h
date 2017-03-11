@@ -15,6 +15,6 @@ public:
   }
   int keyPressed(unsigned char key, int mx, int my);
   int specialPressed(int key, int mx, int my);
-  int mouseClicked(int mx, int my);
+  int mouseClicked(int button, int state, int mx, int my);
   void render();
 };

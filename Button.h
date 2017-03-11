@@ -13,6 +13,6 @@ public:
   }
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
-  int mouseClicked(int mx, int my);
+  int mouseClicked(int button, int state, int mx, int my);
   void render();
 };

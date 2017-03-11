@@ -26,6 +26,7 @@ private:
   void giveWinScreen();
 public:
   Game(unsigned int numOfShips);
+  Game();
 };
 
 #endif

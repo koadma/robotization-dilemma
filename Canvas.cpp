@@ -8,8 +8,8 @@ int Canvas::mouseMoved(int mx, int my) {
   return managers.mouseMoveManager(mx, my);
 }
 
-int Canvas::mouseClicked(int mx, int my) {
-  return managers.mouseClickManager(0, 0, mx, my);
+int Canvas::mouseClicked(int button, int state, int mx, int my) {
+  return managers.mouseClickManager(button, state, mx, my);
 }
 
 int Canvas::keyPressed(unsigned char key, int mx, int my) {

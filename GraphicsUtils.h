@@ -21,7 +21,6 @@ typedef void(*MouseMoveManager)(int x, int y);
 typedef void(*MouseClickManager)(int idk, int key, int x, int y);
 typedef void(*MouseWheelManager)(int idk, int key, int x, int y);
 
-
 typedef int(*IRenderManager)(int ax, int ay, int bx, int by);
 typedef int(*IResizeManager)(int x, int y);
 typedef int(*IKeyManager)(unsigned char key, int x, int y);
@@ -30,6 +29,15 @@ typedef int(*IMouseEntryManager)(int state);
 typedef int(*IMouseMoveManager)(int x, int y);
 typedef int(*IMouseClickManager)(int idk, int key, int x, int y);
 typedef int(*IMouseWheelManager)(int idk, int key, int x, int y);
+
+int defaultIRenderManager(int ax, int ay, int bx, int by);
+int defaultIResizeManager(int x, int y);
+int defaultIKeyManager(unsigned char key, int x, int y);
+int defaultISpecialKeyManager(int key, int x, int y);
+int defaultIMouseEntryManager(int state);
+int defaultIMouseMoveManager(int x, int y);
+int defaultIMouseClickManager(int idk, int key, int x, int y);
+int defaultIMouseWheelManager(int idk, int key, int x, int y);
 
 struct WindowManagers {
   RenderManager renderManager;
@@ -43,14 +51,14 @@ struct WindowManagers {
 };
 
 struct IWindowManagers {
-  IRenderManager renderManager;
-  IResizeManager resizeManager;
-  IKeyManager keyManager;
-  ISpecialKeyManager specialKeyManager;
-  IMouseEntryManager mouseEntryManager;
-  IMouseMoveManager mouseMoveManager;
-  IMouseClickManager mouseClickManager;
-  IMouseWheelManager mouseWheelManager;
+  IRenderManager renderManager         ;//= defaultIRenderManager;
+  IResizeManager resizeManager;//= defaultIResizeManager;
+  IKeyManager keyManager;// = defaultIKeyManager;
+  ISpecialKeyManager specialKeyManager;//= defaultISpecialKeyManager;
+  IMouseEntryManager mouseEntryManager;//= defaultIMouseEntryManager;
+  IMouseMoveManager mouseMoveManager;//= defaultIMouseMoveManager;
+  IMouseClickManager mouseClickManager;//= defaultIMouseClickManager;
+  IMouseWheelManager mouseWheelManager;//= defaultIMouseWheelManager;
 };
 
 //extern map<int, Graphics::WindowData> Graphics::windows;

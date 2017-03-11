@@ -24,8 +24,8 @@ int Button::mouseMoved(int mx, int my) {
   return oactive xor active; //if state changed
 }
 
-int Button::mouseClicked(int mx, int my) {
-  if(isIn(mx, my)) {
+int Button::mouseClicked(int button, int state, int mx, int my) {
+  if (isIn(mx, my) && state == 0 && button == 0) { //click, left
     clickCallback();
     return 3;
   }

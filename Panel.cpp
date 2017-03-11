@@ -1,8 +1,8 @@
 #include "Panel.h"
 
 void Panel::transformCoordiantes(int &mx, int &my) {
-  mx -= cax;
-  my -= cay;
+  /*mx -= cax;
+  my -= cay;*/
 }
 int Panel::mouseEnter(int state) {
   auto it = elements.begin();
@@ -28,18 +28,18 @@ int Panel::mouseMoved(int mx, int my) {
   }
   return state;
 }
-int Panel::mouseClicked(int mx, int my) {
+int Panel::mouseClicked(int button, int state, int mx, int my) {
   transformCoordiantes(mx, my);
 
   auto it = elements.begin();
 
-  int state = 0;
+  int bstate = 0;
 
-  while (it != elements.end() && !(state & 2)) {
-    state |= (*it)->mouseClicked(mx, my);
+  while (it != elements.end() && !(bstate & 2)) {
+    bstate |= (*it)->mouseClicked(button, state, mx, my);
     ++it;
   }
-  return state;
+  return bstate;
 }
 int Panel::keyPressed(unsigned char key, int mx, int my) {
   transformCoordiantes(mx, my);
@@ -77,7 +77,11 @@ void Panel::render() {
       ++it;
       elements.erase(it2);
     } else {
+      //glPushMatrix();
+      //glViewport(cax, cay, cbx - cax, cby - cay);
+      glScissor((*it)->cax, (*it)->cay, (*it)->cbx - (*it)->cax, (*it)->cby - (*it)->cay);
       (*it)->render();
+      //glPopMatrix();
       ++it;
     }
     
