@@ -41,6 +41,19 @@ int Panel::mouseClicked(int button, int state, int mx, int my) {
   }
   return bstate;
 }
+int Panel::mouseWheel(int delta, int state, int mx, int my) {
+  transformCoordiantes(mx, my);
+
+  auto it = elements.begin();
+
+  int bstate = 0;
+
+  while (it != elements.end() && !(bstate & 2)) {
+    bstate |= (*it)->mouseWheel(delta, state, mx, my);
+    ++it;
+  }
+  return bstate;
+}
 int Panel::keyPressed(unsigned char key, int mx, int my) {
   transformCoordiantes(mx, my);
 

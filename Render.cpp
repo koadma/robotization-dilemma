@@ -199,11 +199,13 @@ namespace MainGameCanvas{
   int mouseClickManager(int button, int state, int x, int y) {
     mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
     mousebuttons ^= (state ^ 1) << button;
-    cout << mousebuttons << endl;
+    //cout << mousebuttons << endl;
     return 0;
   }
   int mouseWheelManager(int idk, int key, int x, int y) {
-    return 0;
+    d *= 1.0f - (float(key)/15.0f);
+    d = max(d, 1.0f);
+    return 1;
   }
 }
 
