@@ -13,7 +13,12 @@ const float MAP_SIZE = 1e5; //m //Solar System has a diameter of 9.09 billion km
 const float INITIAL_VELOCITY = 1e-6*SOL; //1e-2*SOL;
 const int ROUND_TIME = 20; // s
 //const int MAP_SCALE = 10; // 1 coord = MAP_SCALE real meters 
-const float PI = 3.1415926535898;
+const float THREE_PI    = 9.4247779607694;
+const float TWO_PI      = 6.2831853071796;
+const float PI          = 3.1415926535898;
+const float HALF_PI     = 1.5707963267949;
+const float THIRD_PI    = 1.0471975511966;
+const float QUARTER_PI  = 0.7853981633974;
 const int ACTIVE_SENSOR_MINVIS = 0;
 const int PASSIVE_SENSOR_MINVIS = 10;
 

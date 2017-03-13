@@ -11,10 +11,32 @@ Graphics::WinHwnd objectMainWindow;
 
 Game* game;
 
+
+
 namespace MainGameCanvas{
   float camcx = 0, camcy = 0, camcz = 0;
   float camphi = 0, camtheta = 0; //phi: x-z, from x, positive to z. theta: from xz to y.
+
+  inline float wrapAngle(float angle)
+  {
+    return angle - TWO_PI * floor(angle / TWO_PI);
+  }
+
+  void normalizeAngles() {
+
+    if(camtheta > HALF_PI) {
+      camtheta = HALF_PI;
+    }
+    if (camtheta < -HALF_PI) {
+      camtheta = -HALF_PI;
+    }
+    camphi = wrapAngle(camphi + PI) - PI; //between -180 and 180
+    //cout << camphi << " " << camtheta << endl;
+  }
   float d = 10;
+  int mousebuttons = 0; //left, center, right
+  int mxold;
+  int myold;
   int renderManager(int ax, int ay, int bx, int by) {
 
     glViewport(ax, ay, bx-ax, by-ay);
@@ -23,7 +45,7 @@ namespace MainGameCanvas{
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    gluPerspective(60.0, 1.0, 1, 20000000);
+    gluPerspective(60.0, (bx - ax) / float(by - ay), 1, 20000000);
     gluLookAt(
       camcx + d * cos(camphi) * cos(camtheta), camcz + d * sin(camtheta), camcy + d * sin(camphi) * cos(camtheta),
       camcx, camcy, camcz,
@@ -144,19 +166,40 @@ namespace MainGameCanvas{
     if (key == 'd') {
       camphi -= 0.2;
     }
-    glutPostRedisplay();
-    return 0;
+    //glutPostRedisplay();
+    return 3;
   }
   int specialKeyManager(int key, int x, int y) {
     return 0;
   }
   int mouseEntryManager(int state) {
+    mousebuttons = 0;
     return 0;
   }
   int mouseMoveManager(int x, int y) {
-    return 0;
+    int dx = x - mxold;
+    int dy = y - myold;
+
+    int res = 0;
+
+    if (mousebuttons & 1) { //left, drag
+      res = 0;
+    }
+    if (mousebuttons & 4) { //right, rotate
+      camphi += dx / 100.0f;
+      camtheta -= dy / 100.0f;
+      normalizeAngles();
+      res = 1;
+    }
+
+    mxold = x;
+    myold = y;
+    return res;
   }
-  int mouseClickManager(int idk, int key, int x, int y) {
+  int mouseClickManager(int button, int state, int x, int y) {
+    mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
+    mousebuttons ^= (state ^ 1) << button;
+    cout << mousebuttons << endl;
     return 0;
   }
   int mouseWheelManager(int idk, int key, int x, int y) {

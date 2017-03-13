@@ -28,6 +28,7 @@ Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordiante minc, Coo
     glutKeyboardFunc(manager.keyManager);
     glutSpecialFunc(manager.specialKeyManager);
     glutEntryFunc(manager.mouseEntryManager);
+    glutMotionFunc(manager.mouseMoveManager);
     glutPassiveMotionFunc(manager.mouseMoveManager);
     glutMouseFunc(manager.mouseClickManager);
     glutMouseWheelFunc(manager.mouseWheelManager);
