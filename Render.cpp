@@ -37,17 +37,116 @@ namespace MainGameCanvas{
   int mousebuttons = 0; //left, center, right
   int mxold;
   int myold;
+  void drawPointingVector(float x, float y, float z, int l) {
+    glLineWidth((1 + (l & 1)));
+
+    glTranslatef(camcx, camcy, camcz);
+    x -= camcx;
+    y -= camcy;
+    z -= camcz;
+
+    glBegin(GL_LINES);
+
+    float m = (1 + (l & 1))/2.0f;
+    if(l & 16) { //16: Draw vector
+      glLineWidth(2.0f);
+      glBegin(GL_LINES);
+      glColor3f(1.0f*m, 1.0f*m, 1.0f*m);
+      glVertex3f(0.0f, 0.0f, 0.0f);
+      glVertex3f(x, y, z);
+      glEnd();
+    }
+    if (l & 10) { //2,8: Draw components from origin
+      glLineWidth(2.0f);
+      glBegin(GL_LINES);
+      glColor3f(1.0f*m, 0.0f, 0.0f);
+      glVertex3f(0.0f, 0.0f, 0.0f);
+      glVertex3f(x, 0.0f, 0.0f);
+      glColor3f(0.0f, 1.0f*m, 0.0f);
+      glVertex3f(0.0f, 0.0f, 0.0f);
+      glVertex3f(0.0f, y, 0.0f);
+      glColor3f(0.0f, 0.0f, 1.0f*m);
+      glVertex3f(0.0f, 0.0f, 0.0f);
+      glVertex3f(0.0f, 0.0f, z);
+      glEnd();
+    }
+    if (l & 12) { //4,8: Draw components from point
+      glLineWidth(2.0f);
+      glBegin(GL_LINES);
+      glColor3f(1.0f*m, 0.0f, 0.0f);
+      glVertex3f(0.0f, y, z);
+      glVertex3f(x, y, z);
+      glColor3f(0.0f, 1.0f*m, 0.0f);
+      glVertex3f(x, 0.0f, z);
+      glVertex3f(x, y, z);
+      glColor3f(0.0f, 0.0f, 1.0f*m);
+      glVertex3f(x, y, 0.0f);
+      glVertex3f(x, y, z);
+      glEnd();
+    }
+    if (l & 8) { //8: Finish cube
+      glLineWidth(2.0f);
+      glBegin(GL_LINES);
+      glColor3f(1.0f*m, 0.0f, 0.0f);
+      glVertex3f(0.0f, y, 0.0f);
+      glVertex3f(x, y, 0.0f);
+      glVertex3f(0.0f, 0.0f, z);
+      glVertex3f(x, 0.0f, z);
+      glColor3f(0.0f, 1.0f*m, 0.0f);
+      glVertex3f(x, 0.0f, 0.0f);
+      glVertex3f(x, y, 0.0f);
+      glVertex3f(0.0f, 0.0f, z);
+      glVertex3f(0.0f, y, z);
+      glColor3f(0.0f, 0.0f, 1.0f*m);
+      glVertex3f(x, 0.0f, 0.0f);
+      glVertex3f(x, 0.0f, z);
+      glVertex3f(0.0f, y, 0.0f);
+      glVertex3f(0.0f, y, z);
+      glEnd();
+    }
+
+    glTranslatef(-camcx, -camcy, -camcz);
+  }
+  void drawCoordinatingSystem() {
+    glTranslatef(camcx, camcy, camcz);
+
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(d/2, 0.0f, 0.0f);
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, d/2, 0.0f);
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, d/2);
+
+    glColor3f(0.3f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(-d / 2, 0.0f, 0.0f);
+    glColor3f(0.0f, 0.3f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, -d / 2, 0.0f);
+    glColor3f(0.0f, 0.0f, 0.3f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, -d / 2);
+    glEnd();
+
+    glTranslatef(-camcx, -camcy, -camcz);
+  }
   int renderManager(int ax, int ay, int bx, int by) {
 
     glViewport(ax, ay, bx-ax, by-ay);
     glClear(GL_DEPTH_BUFFER_BIT);
-    
+       
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
     gluPerspective(60.0, (bx - ax) / float(by - ay), 1, 20000000);
     gluLookAt(
-      camcx + d * cos(camphi) * cos(camtheta), camcz + d * sin(camtheta), camcy + d * sin(camphi) * cos(camtheta),
+      camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta),
       camcx, camcy, camcz,
       -cos(camphi) * sin(camtheta), cos(camtheta), -sin(camphi) * sin(camtheta)
     );
@@ -62,6 +161,15 @@ namespace MainGameCanvas{
 
                                     // Render a color-cube consisting of 6 quads with different colors
     glLoadIdentity();                 // Reset the model-view matrix
+
+    drawCoordinatingSystem();
+
+    drawPointingVector(2, 3.4, 5, 4);
+
+    drawPointingVector(5, 2, 1.1, 5);
+
+    drawPointingVector(4.2, 2.4, 4.2, 4);
+
     glTranslatef(1.5f, 0.0f, 0.0f);  // Move right and into the screen
 
     glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
@@ -183,7 +291,10 @@ namespace MainGameCanvas{
     int res = 0;
 
     if (mousebuttons & 1) { //left, drag
-      res = 0;
+      camcx -= 0.001f * d * (dx * sin(camphi) - dy * sin(camtheta) * cos(camphi));
+      camcy -= 0.001f * d * (dy * cos(camtheta));
+      camcz -= 0.001f * d * (- dx * cos(camphi) - dy * sin(camtheta) * sin(camphi));
+      res = 1;
     }
     if (mousebuttons & 4) { //right, rotate
       camphi += dx / 100.0f;
