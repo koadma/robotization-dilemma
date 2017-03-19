@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Point.h"
-#include "Ship.h"
-#include "Game.h"
+#include "GL\freeglut.h"
+#include "..\Core\Point.h"
+#include "..\Core\helperFunctions.h"
+#include "..\Core\constants.h"
 
 using namespace std;
 

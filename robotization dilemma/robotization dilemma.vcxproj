@@ -146,39 +146,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="..\Core\helperFunctions.cpp" />
+    <ClCompile Include="..\Core\Network.cpp" />
+    <ClCompile Include="..\Core\Point.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Canvas.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsUtils.cpp" />
     <ClCompile Include="GUIElement.cpp" />
-    <ClCompile Include="helperFunctions.cpp" />
     <ClCompile Include="Label.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Panel.cpp" />
-    <ClCompile Include="Point.cpp" />
     <ClCompile Include="Render.cpp" />
-    <ClCompile Include="Ship.cpp" />
     <ClCompile Include="TextInput.cpp" />
-    <ClCompile Include="WinManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bubble.h" />
+    <ClInclude Include="..\Core\constants.h" />
+    <ClInclude Include="..\Core\helperFunctions.h" />
+    <ClInclude Include="..\Core\Network.h" />
+    <ClInclude Include="..\Core\Point.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Canvas.h" />
-    <ClInclude Include="constants.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsUtils.h" />
     <ClInclude Include="GUIElement.h" />
-    <ClInclude Include="helperFunctions.h" />
     <ClInclude Include="Label.h" />
+    <ClInclude Include="Main.h" />
     <ClInclude Include="Panel.h" />
-    <ClInclude Include="Point.h" />
     <ClInclude Include="Render.h" />
-    <ClInclude Include="Ship.h" />
     <ClInclude Include="TextInput.h" />
-    <ClInclude Include="WinManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

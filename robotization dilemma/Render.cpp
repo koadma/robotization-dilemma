@@ -9,10 +9,6 @@ Graphics::WinHwnd objectMainWindow;
     Graphics::CanvasHwnd objectMainGameCanvas;
 //
 
-Game* game;
-
-
-
 namespace MainGameCanvas{
   float camcx = 0, camcy = 0, camcz = 0;
   float camphi = 0, camtheta = 0; //phi: x-z, from x, positive to z. theta: from xz to y.
@@ -322,7 +318,7 @@ namespace MainGameCanvas{
 
 void newMenuPlayerCountInput(string inp) {
     Graphics::deleteElements(objectMenuSubWindow);
-    game = new Game(atoi(inp.c_str()));
+    //game = new Game(atoi(inp.c_str()));
     createMainMenu();
 }
 

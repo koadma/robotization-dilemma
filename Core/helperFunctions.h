@@ -9,12 +9,24 @@
 #include <locale>
 #include <map>
 
-#include "GL\freeglut.h"
 #ifdef _MSC_VER
 /* DUMP MEMORY LEAKS */
 #include <crtdbg.h>
 #endif
 
+#if !defined(__cplusplus) || defined(_MSC_EXTENSIONS)
+#define and	&&
+#define and_eq	&=
+#define bitand	&
+#define bitor	|
+#define compl	~
+#define not	!
+#define not_eq	!=
+#define or		||
+#define or_eq	|=
+#define xor	^
+#define xor_eq	^=
+#endif /* !defined(__cplusplus) || defined(_MSC_EXTENSIONS) */
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);

@@ -5,10 +5,9 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
-#include "WinManager.h"
-#include "helperFunctions.h"
-#include "constants.h"
-#include "Render.h"
+#include "Game.h"
+#include "..\Core\helperFunctions.h"
+#include "..\Core\constants.h"
 
 using namespace std;
 
@@ -193,11 +192,3 @@ numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
 
 ////////////////////////////////////////////
 
-int main()
-{
-  setlocale(LC_ALL, "");
-  srand(time(NULL));
-  InitWindow();
-  glutMainLoop();  
-  return 0;
-}

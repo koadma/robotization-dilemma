@@ -7,6 +7,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "robotization dilemma", "rob
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{74475862-5789-4265-A647-096AC8B5A65C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B9ED662C-07E6-4FCD-9AEB-C074185A0355}"
+	ProjectSection(SolutionItems) = preProject
+		Core\constants.h = Core\constants.h
+		Core\helperFunctions.cpp = Core\helperFunctions.cpp
+		Core\helperFunctions.h = Core\helperFunctions.h
+		Core\Network.cpp = Core\Network.cpp
+		Core\Network.h = Core\Network.h
+		Core\Point.cpp = Core\Point.cpp
+		Core\Point.h = Core\Point.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

@@ -1,7 +1,7 @@
 #ifndef __WINMANAGER_H__
 #define __WINMANAGER_H__
 
-#include <vector>
+#include "..\Core\helperFunctions.h"
 
 /*
 Class for managing win conditions for the game.

@@ -3,9 +3,9 @@
 
 #include <iostream>
 #include <vector>
-#include "Point.h"
+#include "..\Core\Point.h"
 #include "Ship.h"
-#include "constants.h"
+#include "..\Core\constants.h"
 
 class Bubble
 {
