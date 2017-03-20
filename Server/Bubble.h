@@ -11,10 +11,22 @@ class Bubble
 {
 public:
   enum Type {Active, Passive, Reflection};
-  Point origin;
+  fVec3 origin;
   unsigned int emitter;
-  Point emitterVelocity;
+  fVec3 emitterVelocity;
   int visibility;
+  /*  float energy = 6000000000.0f;
+  float visibility(float t) {
+    if (t < 0.1f) {
+      if (t < 0) {
+        return 0;
+      }
+      else {
+        return energy;
+      }
+    }
+    return energy / ((SOL * t) * (SOL * t));
+  }*/
   int age; //radius = age * ROUND_TIME * SOL
   Type btype;
   unsigned int receiver; //only for reflection, would be cleaner with virtual methods

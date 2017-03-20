@@ -33,7 +33,7 @@ ostream& operator<<(ostream& os, const SensorDataElement& sde)
   return os;
 }
 
-void Object::move(Point accel, float time)
+void Object::move(fVec3 accel, float time)
 {
   float solut[2];
   int numOfSolut;
@@ -58,7 +58,7 @@ void Object::move(Point accel, float time)
       velocity = velocity + accel*time;
     } else
     {
-      Point startVelocity = velocity;
+      fVec3 startVelocity = velocity;
       velocity = velocity + accel*reachMaxT;
       place = place + startVelocity*time + velocity*(time-reachMaxT) + accel*(pow(reachMaxT, 2)/2);
     }
@@ -218,12 +218,12 @@ void Ship::destroy()
   destroyed = true;
 }
 
-Point Ship::getPlace() const
+fVec3 Ship::getPlace() const
 {
   return place;
 }
 
-Point Ship::getVelocity() const
+fVec3 Ship::getVelocity() const
 {
   return velocity;
 }

@@ -10,7 +10,8 @@
 
 struct Command
 {
-  Point accel = {0, 0, 0};
+  public:
+  fVec3 accel = fVec3(0);
   bool didFire = false;
   unsigned int aim;
   int sensorEnergy = 0;
@@ -22,9 +23,9 @@ struct SensorDataElement
   enum Type {Active, Passive};
   Type detectType;
   unsigned int player;
-  Point place;
-  Point velocity;
-  Point nextPlace;
+  fVec3 place;
+  fVec3 velocity;
+  fVec3 nextPlace;
   bool sureFire;
   friend std::ostream& operator<<(std::ostream& os, const SensorDataElement& sde);
 };
@@ -32,14 +33,14 @@ struct SensorDataElement
 class Object
 {
 protected:
-  Point place;
-  Point velocity;
+  fVec3 place;
+  fVec3 velocity;
   int maxVelocity;
 
 public:
-  Object(Point place, Point velocity, int maxVelocity) : 
+  Object(fVec3 place, fVec3 velocity, int maxVelocity) : 
     place(place), velocity(velocity), maxVelocity(maxVelocity) {}
-  void move(Point accel, float time);
+  void move(fVec3 accel, float time);
 };
 
 class Ship : public Object
@@ -56,8 +57,8 @@ private:
   int getSpentEnergy() const;
 
 public:
-  Ship(Point place, int owner) : 
-    Object(place, ((-1)*INITIAL_VELOCITY/place.length())*place, INITIAL_MAX_VELOCITY), 
+  Ship(fVec3 place, int owner) : 
+    Object(place, place * ((-1)*INITIAL_VELOCITY/place.length()), INITIAL_MAX_VELOCITY),
     owner(owner) {}
   void getCommand();
   void flushSensorData();
@@ -66,8 +67,8 @@ public:
   void move(float time);
   void destroy();
   int getAim() const;
-  Point getPlace() const;
-  Point getVelocity() const;
+  fVec3 getPlace() const;
+  fVec3 getVelocity() const;
   int getHullRadius() const;
   bool isDestroyed() const;
   int getSensorRadiation() const;

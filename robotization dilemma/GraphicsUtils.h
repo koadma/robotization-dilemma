@@ -1,9 +1,7 @@
 #pragma once
 
 #include "GL\freeglut.h"
-#include "..\Core\Point.h"
-#include "..\Core\helperFunctions.h"
-#include "..\Core\constants.h"
+#include "ClientCore.h"
 
 using namespace std;
 

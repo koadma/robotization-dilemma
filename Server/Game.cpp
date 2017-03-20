@@ -185,7 +185,7 @@ numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
 {
   for (unsigned int playerID=0; playerID<numOfShips; playerID++) 
   {
-    ships.push_back(Ship(Point().randomize(), playerID));
+    ships.push_back(Ship(fVec3().randomize(MAP_SIZE), playerID));
   }
   mainGameLoop();
 }

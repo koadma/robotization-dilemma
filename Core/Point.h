@@ -3,26 +3,192 @@
 
 #include <iostream>
 
-struct Point
-{
-  float x, y, z;
+template<typename T> struct vec3;
+typedef vec3<float> fVec3;
+typedef vec3<int>   iVec3;
+typedef vec3<bool>  bVec3;
 
-  Point() {}
-  Point(float x, float y, float z) : x(x), y(y), z(z) {}
-  Point& randomize();
-  float length() const;
-  float& operator[](int n);
-  float operator[](int n) const;
-  Point operator+(const Point& other) const;
-  Point operator*(float scalar) const;
-  Point operator*(const Point& other) const;
-  Point operator/(const Point& other) const;
-  Point operator-(const Point& other) const;
-  friend float distance(const Point& p1, const Point& p2);
-  friend std::ostream& operator<<(std::ostream& os, const Point& p);
-  friend Point operator*(float scalar, Point p);
+template<typename T>
+class vec3 {
+public:
+  enum Exception { WRONG_INDEX };
 
-  enum Exception {WRONG_INDEX};
+  T x;
+  T y;
+  T z;
+
+  vec3() : x(0), y(0), z(0) {}
+  vec3(T value) : x(value), y(value), z(value) {};
+  vec3(T ax, T ay, T az) : x(ax), y(ay), z(az) {};
+  /*vec3(proxy p) : x(*p.px), y(*p.py), z(*p.pz) {};*/
+  template<typename U> vec3(vec3<U> c)
+    : x((T)c.x), y((T)c.y), z((T)c.z) {};
+
+  vec3<T> & operator+=(vec3<T> rhs) {
+    x += rhs.x; y += rhs.y; z += rhs.z;
+    return *this;
+  }
+  vec3<T> & operator-=(vec3<T> rhs) {
+    x -= rhs.x; y -= rhs.y; z -= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator*=(vec3<T> rhs) {
+    x *= rhs.x; y *= rhs.y; z *= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator/=(vec3<T> rhs) {
+    x /= rhs.x; y /= rhs.y; z /= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator%=(vec3<T> rhs) {
+    x %= rhs.x; y %= rhs.y; z %= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator&=(vec3<T> rhs) {
+    x &= rhs.x; y &= rhs.y; z &= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator|=(vec3<T> rhs) {
+    x |= rhs.x; y |= rhs.y; z |= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator^=(vec3<T> rhs) {
+    x ^= rhs.x; y ^= rhs.y; z ^= rhs.z;
+    return *this;
+  }
+  /*vec3<T> & operator<<=(vec3<T> rhs) {
+    x ^= rhs.x; y ^= rhs.y; z ^= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator>>=(vec3<T> rhs) {
+    x ^= rhs.x; y ^= rhs.y; z ^= rhs.z;
+    return *this;
+  }*/
+
+  vec3<T> operator+ (vec3<T> rhs) const { return vec3<T>(*this) += rhs; }
+  vec3<T> operator- (vec3<T> rhs) const { return vec3<T>(*this) -= rhs; }
+  vec3<T> operator* (vec3<T> rhs) const { return vec3<T>(*this) *= rhs; }
+  vec3<T> operator/ (vec3<T> rhs) const { return vec3<T>(*this) /= rhs; }
+  vec3<T> operator% (vec3<T> rhs) const { return vec3<T>(*this) %= rhs; }
+  vec3<T> operator& (vec3<T> rhs) const { return vec3<T>(*this) &= rhs; }
+  vec3<T> operator| (vec3<T> rhs) const { return vec3<T>(*this) |= rhs; }
+  vec3<T> operator^ (vec3<T> rhs) const { return vec3<T>(*this) ^= rhs; }
+  /*vec3<T> operator<<(vec3<T> rhs) const { return vec3<T>(*this) <<= rhs; }
+  vec3<T> operator >> (vec3<T> rhs) const { return vec3<T>(*this) >>= rhs; }*/
+
+  vec3<T> operator+() const { return vec3<T>(+x, +y, +z); }
+  vec3<T> operator-() const { return vec3<T>(-x, -y, -z); }
+  vec3<T> operator~() const { return vec3<T>(~x, ~y, ~z); }
+  vec3<T> operator!() const { return vec3<T>(!x, !y, !z); }
+
+  vec3<T> & operator++() { ++x, ++y, ++z; return *this; }
+  vec3<T> & operator--() { --x, --y, --z; return *this; }
+  vec3<T> operator++(int) { vec3<T> cp(*this); ++x, ++y, ++z; return cp; }
+  vec3<T> operator--(int) { vec3<T> cp(*this); --x, --y, --z; return cp; }
+
+  T& operator[](int n)
+  {
+    switch (n)
+    {
+    case 0:
+      return x;
+      break;
+
+    case 1:
+      return y;
+      break;
+
+    case 2:
+      return z;
+      break;
+
+    default:
+      throw WRONG_INDEX;
+    }
+  }
+  /*const T & operator[](int ix) const {
+    return ix == 0 ? x : ix == 1 ? y : ix == 2 ? z : 0;
+  }*/
+  T sqrlen() const {
+    return x*x + y*y + z*z;
+  }
+  double length() const {
+    return sqrt(double(this->sqrlen()));
+  }
+  void norm() {
+    *this /= length();
+  }
+
+  bVec3 operator==(vec3<T> rhs) const {
+    return bvec3(x == rhs.x, y == rhs.y, z == rhs.z);
+  }
+  bVec3 operator!=(vec3<T> rhs) const {
+    return bvec3(x != rhs.x, y != rhs.y, z != rhs.z);
+  }
+  bVec3 operator<(vec3<T> rhs) const {
+    return bvec3(x < rhs.x, y < rhs.y, z < rhs.z);
+  }
+  bVec3 operator<=(vec3<T> rhs) const {
+    return bvec3(x <= rhs.x, y <= rhs.y, z <= rhs.z);
+  }
+  bVec3 operator>=(vec3<T> rhs) const {
+    return bvec3(x >= rhs.x, y >= rhs.y, z >= rhs.z);
+  }
+  bVec3 operator>(vec3<T> rhs) const {
+    return bvec3(x > rhs.x, y > rhs.y, z > rhs.z);
+  }
+
+  vec3<T> randomize(T r)
+  {
+    //I am not sure if this is random
+    /*int distFromO = ((float) rand() / RAND_MAX  - 0.5) * MAP_SIZE;
+    this->x = (float) rand() / RAND_MAX - 0.5;
+    float angle = (float) rand() / (RAND_MAX/(2*PI));
+    this->y = cos(angle);
+    this->z = sin(angle);
+    (*this) = (*this)*distFromO;*/
+
+    //this certainly is random, but slow
+    bool notEnd;
+    do
+    {
+      for (int i = 0; i <= 2; i++)
+      {
+        (*this)[i] = ((float)rand() / RAND_MAX - 0.5) * r;
+      }
+      notEnd = this->length() > r / 2;
+    } while (notEnd);
+    return *this;
+  }
 };
+
+inline bool band(bVec3 v) { return v.x && v.y && v.z; }
+inline bool bor(bVec3 v) { return v.x || v.y || v.z; }
+inline bool bxor(bVec3 v) { return v.x != v.y != v.z; }
+
+
+template<typename T> std::ostream& operator<<(std::ostream& os, const vec3<T>& v)
+{
+  os << v.x << " " << v.y << " " << v.z;
+  return os;
+}
+/*template<typename T> std::istream& operator>> <>(std::istream& is, vec3<T>& v)
+{
+  is >> v.x >> v.y >> v.z;
+  return is;
+}*/
+
+template<typename T> inline T dot(vec3<T> lhs, vec3<T> rhs) {
+  return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+}
+template<typename T> inline vec3<T> crs(vec3<T> lhs, vec3<T> rhs) {
+  return vec3<T>(lhs.y*rhs.z - lhs.z*rhs.y,
+    lhs.z*rhs.x - lhs.x*rhs.z,
+    lhs.x*rhs.y - lhs.y*rhs.z);
+}
+
+template<typename T> inline float distance(vec3<T> lhs, vec3<T> rhs) {
+  return (lhs-rhs).length();
+}
 
 #endif
