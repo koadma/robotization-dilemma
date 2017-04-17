@@ -1,7 +1,7 @@
 #ifndef __WINMANAGER_H__
 #define __WINMANAGER_H__
 
-#include "..\Core\helperFunctions.h"
+#include "Bubble.h"
 
 /*
 Class for managing win conditions for the game.
@@ -10,7 +10,7 @@ you should call hasWinner() first.
 Of course, before you call hasWinner(), you should call isOver() to know
 whether the game has ended.
 */
-
+/*
 class WinManager
 {
 public:
@@ -30,5 +30,5 @@ private:
 
   enum Exception {GAME_ALREADY_OVER, GAME_NOT_OVER, TOO_FEW_PLAYERS, NOT_EXISTING_PLAYER, NO_WINNER, ALREADY_LOST};
 };
-
+*/
 #endif

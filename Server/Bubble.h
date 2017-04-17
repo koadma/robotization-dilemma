@@ -1,38 +1,43 @@
 #ifndef __BUBBLE_H__
 #define __BUBBLE_H__
 
-#include <iostream>
-#include <vector>
-#include "..\Core\Point.h"
-#include "Ship.h"
-#include "..\Core\constants.h"
+#include "..\Core\Network.h"
 
 class Bubble
 {
 public:
-  enum Type {Active, Passive, Reflection};
+  static enum Type {
+    Ping = 1,
+    Thermal = 2,
+    Chat = 3
+  };
   fVec3 origin;
-  unsigned int emitter;
+  float gEmissionTime;
+  //unsigned int emitter;
   fVec3 emitterVelocity;
-  int visibility;
-  /*  float energy = 6000000000.0f;
+  //int visibility;
+  float energy = 1.0f;
   float visibility(float t) {
-    if (t < 0.1f) {
-      if (t < 0) {
-        return 0;
-      }
-      else {
-        return energy;
-      }
+    if (t <= 0) {
+      return 0;
     }
     return energy / ((SOL * t) * (SOL * t));
-  }*/
-  int age; //radius = age * ROUND_TIME * SOL
+  }
+  //int age; //radius = age * ROUND_TIME * SOL
   Type btype;
-  unsigned int receiver; //only for reflection, would be cleaner with virtual methods
+  //unsigned int receiver; //only for reflection, would be cleaner with virtual methods
   friend std::ostream& operator<<(std::ostream& os, const Bubble& b); // only for test
+ 
 };
 
+class ShotLine {
+public:
+  fVec3 origin;
+  float time;
+  fVec3 vel;
+  float energy;
+};
+/*
 class BubbleManager
 {
 private:
@@ -45,6 +50,6 @@ public:
   void add(Bubble bubble);
   void move();
   void out() const; //for test
-};
+};*/
 
 #endif

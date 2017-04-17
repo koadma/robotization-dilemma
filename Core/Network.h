@@ -1,5 +1,7 @@
 #pragma once
 
+#include "..\Core\Point.h"
+
 #ifdef WIN32
 #include <winsock2.h>
 #include <Windows.h>
@@ -16,6 +18,7 @@
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #endif
+
 
 using namespace std;
 

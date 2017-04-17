@@ -1,12 +1,13 @@
 #ifndef __POINT_H__
 #define __POINT_H__
 
-#include <iostream>
+#include "..\Core\Polynomial.h"
 
 template<typename T> struct vec3;
-typedef vec3<float> fVec3;
-typedef vec3<int>   iVec3;
-typedef vec3<bool>  bVec3;
+typedef vec3<float>          fVec3;
+typedef vec3<int>            iVec3;
+typedef vec3<bool>           bVec3;
+typedef vec3<PolynomialF>    fpVec3;
 
 template<typename T>
 class vec3 {
@@ -34,6 +35,10 @@ public:
   }
   vec3<T> & operator*=(vec3<T> rhs) {
     x *= rhs.x; y *= rhs.y; z *= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator*=(T rhs) {
+    x *= rhs; y *= rhs; z *= rhs;
     return *this;
   }
   vec3<T> & operator/=(vec3<T> rhs) {
@@ -68,6 +73,7 @@ public:
   vec3<T> operator+ (vec3<T> rhs) const { return vec3<T>(*this) += rhs; }
   vec3<T> operator- (vec3<T> rhs) const { return vec3<T>(*this) -= rhs; }
   vec3<T> operator* (vec3<T> rhs) const { return vec3<T>(*this) *= rhs; }
+  vec3<T> operator* (T rhs) const { return vec3<T>(*this) *= rhs; }
   vec3<T> operator/ (vec3<T> rhs) const { return vec3<T>(*this) /= rhs; }
   vec3<T> operator% (vec3<T> rhs) const { return vec3<T>(*this) %= rhs; }
   vec3<T> operator& (vec3<T> rhs) const { return vec3<T>(*this) &= rhs; }
@@ -136,6 +142,10 @@ public:
   }
   bVec3 operator>(vec3<T> rhs) const {
     return bvec3(x > rhs.x, y > rhs.y, z > rhs.z);
+  }
+
+  fVec3 at(float t) { //Only for polynomial vectors
+    return {x.at(t), y.at(t), z.at(t)};
   }
 
   vec3<T> randomize(T r)

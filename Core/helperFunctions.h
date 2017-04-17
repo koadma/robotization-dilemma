@@ -1,20 +1,29 @@
 #ifndef __HELPERFUNCS_H__
 #define __HELPERFUNCS_H__
 
-#include <iostream>
-#include <vector>
-#include <sstream>
+#include "..\Core\constants.h"
+
 #include <algorithm>
+#include <cmath>
+#include <ciso646> //defines and, or, not for visual studio, does nothing elsewhere.
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
 #include <list>
 #include <locale>
 #include <map>
+#include <sstream>
+#include <utility>
+#include <vector>
 
 #ifdef _MSC_VER
 /* DUMP MEMORY LEAKS */
 #include <crtdbg.h>
 #endif
 
-#if !defined(__cplusplus) || defined(_MSC_EXTENSIONS)
+using namespace std;
+
+/*#if !defined(__cplusplus) || defined(_MSC_EXTENSIONS)
 #define and	&&
 #define and_eq	&=
 #define bitand	&

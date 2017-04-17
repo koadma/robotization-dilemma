@@ -87,7 +87,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>M_CLIENT;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -101,7 +101,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>M_CLIENT;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -146,9 +146,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Core\Fraction.cpp" />
     <ClCompile Include="..\Core\helperFunctions.cpp" />
     <ClCompile Include="..\Core\Network.cpp" />
     <ClCompile Include="..\Core\Point.cpp" />
+    <ClCompile Include="..\Core\Polynomial.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ClientCore.cpp" />
@@ -163,9 +165,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Core\constants.h" />
+    <ClInclude Include="..\Core\Fraction.h" />
     <ClInclude Include="..\Core\helperFunctions.h" />
     <ClInclude Include="..\Core\Network.h" />
     <ClInclude Include="..\Core\Point.h" />
+    <ClInclude Include="..\Core\Polynomial.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="ClientCore.h" />

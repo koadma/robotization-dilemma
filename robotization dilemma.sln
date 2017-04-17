@@ -10,12 +10,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B9ED662C-07E6-4FCD-9AEB-C074185A0355}"
 	ProjectSection(SolutionItems) = preProject
 		Core\constants.h = Core\constants.h
+		Core\Fraction.cpp = Core\Fraction.cpp
+		Core\Fraction.h = Core\Fraction.h
 		Core\helperFunctions.cpp = Core\helperFunctions.cpp
 		Core\helperFunctions.h = Core\helperFunctions.h
 		Core\Network.cpp = Core\Network.cpp
 		Core\Network.h = Core\Network.h
 		Core\Point.cpp = Core\Point.cpp
 		Core\Point.h = Core\Point.h
+		Core\Polynomial.cpp = Core\Polynomial.cpp
+		Core\Polynomial.h = Core\Polynomial.h
 	EndProjectSection
 EndProject
 Global

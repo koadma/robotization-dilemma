@@ -1,10 +1,14 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include <vector>
-#include "Bubble.h"
 #include "WinManager.h"
 
+class Game {
+public:
+  bool running;
+};
+
+/*
 class Game
 {
 private:
@@ -28,5 +32,5 @@ public:
   Game(unsigned int numOfShips);
   Game();
 };
-
+*/
 #endif

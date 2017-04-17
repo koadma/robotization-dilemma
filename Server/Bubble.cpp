@@ -1,7 +1,7 @@
 #include "Bubble.h"
 
 using namespace std;
-
+/*
 void BubbleManager::out() const
 {
   for (auto bubble : bubbles)
@@ -136,3 +136,4 @@ ostream& operator<<(ostream& os, const Bubble& b) // only for test
   cout << "Kora: " << b.age << " kor."; // no endl
   return os;
 }
+*/

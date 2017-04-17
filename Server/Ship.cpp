@@ -1,10 +1,8 @@
 #include "Ship.h"
-#include <iostream>
-#include <cmath>
-#include <vector>
 
 using namespace std;
 
+/*
 int Ship::getSpentEnergy() const
 {
   return command.accel.length()+(command.didFire?100:0)+command.sensorEnergy;
@@ -251,3 +249,4 @@ ostream& operator<<(ostream& os, const Ship& s)
   }
   return os;
 }
+*/

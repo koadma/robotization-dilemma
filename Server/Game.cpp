@@ -1,16 +1,9 @@
-#include <iostream>
-#include <cstdlib>
-#include <vector>
-#include <ctime>
-#include <cmath>
-#include <algorithm>
-#include <utility>
+
 #include "Game.h"
-#include "..\Core\helperFunctions.h"
-#include "..\Core\constants.h"
+
 
 using namespace std;
-
+/*
 void Game::askToContinue(int nextPlayer) const
 {
   terminalClear();
@@ -188,7 +181,7 @@ numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
     ships.push_back(Ship(fVec3().randomize(MAP_SIZE), playerID));
   }
   mainGameLoop();
-}
+}*/
 
 ////////////////////////////////////////////
 
