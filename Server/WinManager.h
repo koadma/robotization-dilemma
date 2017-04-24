@@ -1,7 +1,7 @@
 #ifndef __WINMANAGER_H__
 #define __WINMANAGER_H__
 
-#include "Bubble.h"
+#include "Ship.h"
 
 /*
 Class for managing win conditions for the game.

@@ -1,13 +1,18 @@
 #include "Render.h"
 
 Graphics::WinHwnd objectMainWindow;
+  Graphics::PanelHwnd objectGameSubWindow;
+    Graphics::CanvasHwnd objectMainGameCanvas;
+    Graphics::PanelHwnd objectMainGameMenu;
   Graphics::PanelHwnd objectMenuSubWindow;
     Graphics::ButtonHwnd objectMainMenuPlayButton;
-    Graphics::ButtonHwnd objectPlayMenuNewButton;
-    Graphics::TextInputHwnd objectGameMenuPlayerCountInput;
-  Graphics::PanelHwnd object3DGameWindow;
-    Graphics::CanvasHwnd objectMainGameCanvas;
+      Graphics::ButtonHwnd objectPlayMenuJoinButton;
+        Graphics::TextInputHwnd objectJoinMenuIpInput;
+        Graphics::TextInputHwnd objectJoinMenuPortInput;
+
 //
+
+NetworkC *Connection;
 
 namespace MainGameCanvas{
   float camcx = 0, camcy = 0, camcz = 0;
@@ -316,28 +321,46 @@ namespace MainGameCanvas{
   }
 }
 
-void newMenuPlayerCountInput(string inp) {
-    Graphics::deleteElements(objectMenuSubWindow);
-    //game = new Game(atoi(inp.c_str()));
-    createMainMenu();
+void recivePacket(unsigned char* data, int id, int dataLan) {
+
 }
 
-void newMenuPlayerCountInputButton() {
-  newMenuPlayerCountInput(objectGameMenuPlayerCountInput->text);
+void joinMenuInput(string inp) {
+
 }
 
-void gameMenuNewButton() {
+void ingameMenuExitButton() {
+  Graphics::deleteElements(objectGameSubWindow);
+  Graphics::deleteElements(objectMenuSubWindow);
+
+  createMainMenu();
+}
+
+void joinMenuInputButton() {
+  Graphics::deleteElements(objectMenuSubWindow);
+  Connection = new NetworkC(objectJoinMenuIpInput->text, objectJoinMenuPortInput->text, recivePacket);
+
+  objectGameSubWindow = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
+  objectMainGameCanvas = Graphics::createCanvas(objectGameSubWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, IWindowManagers{ MainGameCanvas::renderManager, MainGameCanvas::resizeManager, MainGameCanvas::keyManager, MainGameCanvas::specialKeyManager, MainGameCanvas::mouseEntryManager, MainGameCanvas::mouseMoveManager, MainGameCanvas::mouseClickManager, MainGameCanvas::mouseWheelManager });
+  objectMainGameMenu = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
+
+  Graphics::createButton(objectMainGameMenu, Coordiante{ 0.9f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.9f, 0.0f, 0.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Exit", *ingameMenuExitButton);
+}
+
+void gameMenuJoinButton() {
   Graphics::deleteElements(objectMenuSubWindow);
   //objectPlayMenuNewButton = Graphics::createButton(objectMainWindow, 10, 10, 100, 50, 0xffff0000, 0xff00ff00, 0xff0000ff, "New Game", *mainMenuPlayButton);
-  Graphics::createLabel(objectMenuSubWindow, Coordiante{ 0.3f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Player Count", 1);
-  objectGameMenuPlayerCountInput = Graphics::createTextInput(objectMenuSubWindow, Coordiante{ 0.3f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.6f, 0.5f, 0.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "0", *newMenuPlayerCountInput, *numericalValidator);
-  Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.6f, 0.6f, 0, 5.0f }, Coordiante{ 0.7f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Ok", *newMenuPlayerCountInputButton);
+  Graphics::createLabel(objectMenuSubWindow, Coordiante{ 0.2f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.5f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Ip", 1);
+  objectJoinMenuIpInput = Graphics::createTextInput(objectMenuSubWindow, Coordiante{ 0.2f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.5f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "127.0.0.1", *joinMenuInput, *textValidator);
+  Graphics::createLabel(objectMenuSubWindow, Coordiante{ 0.5f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Port", 1);
+  objectJoinMenuPortInput = Graphics::createTextInput(objectMenuSubWindow, Coordiante{ 0.5f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "1111", *joinMenuInput, *textValidator);
+  Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.7f, 0.6f, 5.0, 5.0f }, Coordiante{ 0.8f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Ok", *joinMenuInputButton);
   //runGame();
 }
 
 void mainMenuPlayButton() {
   Graphics::deleteElements(objectMenuSubWindow);
-  objectPlayMenuNewButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.55f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.45f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "New Game", *gameMenuNewButton);
+  objectPlayMenuJoinButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.55f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.45f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Join Game", *gameMenuJoinButton);
   //Graphics::createTextInput(objectMainWindow, 10, 70, 100, 50, 0xff00ffff, 0xffff00ff, 0xffffff00, "DemoText", *numericalValidator);
   //runGame();
 }
@@ -353,13 +376,11 @@ void mainMenuExitButton() {
 void createMainMenu() {
   objectMainMenuPlayButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Play", *mainMenuPlayButton);
   objectMainMenuPlayButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Exit", *mainMenuExitButton);
-  objectMainGameCanvas = Graphics::createCanvas(object3DGameWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, IWindowManagers{MainGameCanvas::renderManager, MainGameCanvas::resizeManager, MainGameCanvas::keyManager, MainGameCanvas::specialKeyManager, MainGameCanvas::mouseEntryManager, MainGameCanvas::mouseMoveManager, MainGameCanvas::mouseClickManager, MainGameCanvas::mouseWheelManager});
 }
 
 int InitWindow() {
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
-  objectMenuSubWindow = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 0.5f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
-  object3DGameWindow = Graphics::createPanel(objectMainWindow, Coordiante{ 0.5f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
+  objectMenuSubWindow = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
   createMainMenu();
   return 0;
 }

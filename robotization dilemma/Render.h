@@ -2,9 +2,11 @@
 
 #include "Graphics.h"
 
-void newMenuPlayerCountInput(string inp);
+void joinMenuInput(string inp);
 
-void gameMenuNewButton();
+void joinMenuInputButton();
+
+void gameMenuJoinButton();
 
 void mainMenuPlayButton();
 

@@ -30,7 +30,7 @@ public:
  
 };
 
-class ShotLine {
+class Shot {
 public:
   fVec3 origin;
   float time;

@@ -9,12 +9,20 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <iterator>
 #include <list>
 #include <locale>
 #include <map>
+#include <mutex>
+#include <set>
 #include <sstream>
+#include <string>
+#include <thread>
 #include <utility>
 #include <vector>
+
+
+
 
 #ifdef _MSC_VER
 /* DUMP MEMORY LEAKS */
@@ -47,7 +55,7 @@ void terminalClear();
 void waitForEnter();
 
 //Function for tokenizing a string to vector of string.
-std::vector<std::string> tokenize(std::string str);
+std::vector<std::string> tokenize(std::string str, char split = ' ');
 
 //Function for getting the signum of a type.
 template <typename T>

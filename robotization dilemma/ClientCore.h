@@ -1,8 +1,6 @@
 #pragma once
 
-#include "..\Core\Point.h"
-#include "..\Core\helperFunctions.h"
-#include "..\Core\constants.h"
+#include "../Core/Network.h"
 
 class Player {
 

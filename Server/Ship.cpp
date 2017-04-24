@@ -2,6 +2,10 @@
 
 using namespace std;
 
+void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
+  ship->packetRecv(Data, Id, DataLen, thisptr);
+}
+
 /*
 int Ship::getSpentEnergy() const
 {

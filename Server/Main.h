@@ -1,8 +1,11 @@
 #pragma once
 
-#include <iostream>
 #include "Game.h"
-#include "..\Core\Network.h"
 
 using namespace std;
 
+void createClientBind();
+
+void bindRecv(unsigned char* data, int id, int dataLen, NetworkS* thisptr, Ship* ship);
+
+int main(int argc, char** argv);

@@ -11,10 +11,6 @@
 #include <sys/socket.h>
 #endif
 
-#include <iostream>
-#include <thread>
-#include <string>
-
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -38,41 +34,74 @@ typedef union {
 } Packet_Header_Convertor;
 //Breaks PACKET_HEADER_TYPE into PACKET_HEADER_LEN chars
 
-typedef void(*RecivePacketFunc)(unsigned char *Data, int Id, int DataLen);
+class NetworkC;
+class NetworkS;
+class Ship;
 
-void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen);
+typedef void(*RecivePacketFuncS)(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
+typedef void(*RecivePacketFuncC)(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr, Ship* ship);
+
+
+//void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen);
 
 class NetworkS {
 public:
   NetworkS();
-  NetworkS(string port, RecivePacketFunc recivePacketFunc);
+  NetworkS(string port, RecivePacketFuncS recivePacketFunc);
   ~NetworkS();
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
+  template<typename T> int SendData(T& data, int Id) {
+    stringstream ss;
+    ss << data;
+    std::string datas = ss.str();
+
+    char* id_c = new char[datas.size() + 1];
+    strcpy_s(id_c, datas.size(), datas.c_str());
+    int val = SendData(id_c, Id, datas.length());
+
+    delete[] id_c;
+    return val;
+  }
   int ReciveData();
   thread ReciveLoopThread;
   bool Running = true;
+  RecivePacketFuncS RecivePacket;
+  Ship* ConnectedShip;
 private:
   WSADATA wsaData;
   SOCKET ListenSocket = INVALID_SOCKET;
   SOCKET ClientSocket = INVALID_SOCKET;
   struct addrinfo hints;
-  RecivePacketFunc RecivePacket;
 };
 
 class NetworkC {
 public:
   NetworkC();
-  NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc);
+  NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc);
   ~NetworkC();
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
+  template<typename T> int SendData(T& data, int Id) {
+    stringstream ss;
+    ss << data;
+    std::string datas = ss.str();
+
+    char* id_c = new char[datas.size() + 1];
+    strcpy_s(id_c, datas.size(), datas.c_str());
+
+    int val = SendData(id_c, Id, datas.length());
+
+    delete[] id_c;
+    return val;
+  }
   int ReciveData();
-  thread ReciveLoopThread;
   bool Running = true;
+  thread ReciveLoopThread;
+  Ship* ConnectedShip;
 private:
   WSADATA wsaData;
   SOCKET ConnectSocket = INVALID_SOCKET;
   struct addrinfo hints;
-  RecivePacketFunc RecivePacket;
+  RecivePacketFuncC RecivePacket;
 };

@@ -119,7 +119,7 @@ public:
       return max(sol[0], sol[1]);
     }
   }
-  float intersect(ShotLine &l, float radius) {
+  float intersect(Shot &l, float radius) {
   //CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
     PolynomialF p =
       vel.x * PolynomialF{ vector<float> { vel.x, vel.x*gTimeStamp + pos.x }} +
@@ -223,19 +223,67 @@ class Drone : public Object {
 };
 
 class Ship : public Drone {
+public:
+  fVec3 accel = fVec3(0);
+
   list<Object*> objects;
   list<Sighting*> sightings;
 #ifdef M_SERVER
-  NetworkC connectedClient;
-#endif
-  void packetRecv(unsigned char *Data, int Id, int DataLen) {
+
+  NetworkS* connectedClient;
+  bool canMove = false; //is the player open to moving / are we waiting for a move.
+
+  int makeMove(vector<string> & data) {
+    if (!data.size()) {
+      return 1;
+    }
+    switch (strTo<int>(data[0])) {
+      case CommandAccel:
+        if(data.size() < 4) {
+          return 1;
+        }
+        accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
+        return 0;
+      break;
+    }
+  }
+  void newTurn(int id) {
+    canMove = true;
+
+    connectedClient->SendData<int>(id, PacketNewRound);
+  }
+  void packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
     switch (Id) {
-      case 1:
+      case PacketCommand:
+        if (canMove) {
+          vector<string> args = tokenize(string(reinterpret_cast<char*>(Data)), ';');
+          int res = makeMove(args);
+          connectedClient->SendData<int>(res, PacketCommand);
+        }
+      break;
+      case PacketCommit:
+        if(canMove) {
+          canMove = false;
+        }
+        else {
+
+        }
+      break;
+      case PacketSensor:
+
+      break;
+      case PacketCommandHistory: //
+
+      break;
+      case PacketShipData:
 
       break;
     }
   }
+#endif
 };
+
+void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
 
 /*
 struct Command

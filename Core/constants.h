@@ -27,4 +27,34 @@ const int PASSIVE_SENSOR_MINVIS = 10;
 #define ElementTextColor 0xff838FA1
 #define ElementBackColor 0xff030014
 
+#define VersionA 0
+#define VersionB 1
+#define VersionC 0
+//0.1.0
+
+enum LoginError {
+  LoginErrorOk = 0,
+  LoginErrorInvalidCredentials = 1,
+  LoginErrorGameFull = 2,
+  LoginErrorVersionError = 3,
+  LoginErrorProtocolError = 4
+};
+
+enum CommandIds {
+  CommandAccel = 1,
+  CommandShoot = 2,
+};
+
+enum PacketIds {
+  PacketDisconnect = 0,
+  PacketLogin = 1,
+  PacketGameOver = 2,
+  PacketNewRound = 3,
+  PacketCommand = 4,
+  PacketCommit = 5,
+  PacketSensor = 6,
+  PacketCommandHistory = 7,
+  PacketShipData = 8,
+};
+
 #endif

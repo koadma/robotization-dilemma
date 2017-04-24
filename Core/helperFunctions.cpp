@@ -54,15 +54,20 @@ void waitForEnter()
   #endif
 }
 
-
-vector<string> tokenize(string str)
+vector<string> tokenize(string str, char split)
 {
-  stringstream ss(str);
   vector<string> tokens;
-  string temp;
-  while (ss >> temp)
-  {
-    tokens.push_back(temp);
+  string::iterator begin = str.begin();
+  string::iterator it = str.begin();
+
+  while (it != str.end()) {
+    if (*it == split) {
+      tokens.push_back(string(begin, it));
+      begin = it;
+    }
+    ++it;
   }
+  tokens.push_back(string(begin, it));
+
   return tokens;
 }

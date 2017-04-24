@@ -18,17 +18,17 @@ enum NetworkErrorCodes {
   NetworkErrorCodeServerAccept,
 };
 
-void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen) {
+/*void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen) {
   cout << Id << " " << Data << endl;
 }
-
+*/
 void NetworkError(int ID, int WSAError = 0) {
   cout << "Error code: " << to_string(ID) << endl;
 }
 
 NetworkS::NetworkS() {
 }
-NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
+NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   RecivePacket = recivePacketFunc;
   struct addrinfo *result = NULL;
   int iResult;
@@ -201,14 +201,14 @@ int NetworkS::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen);
+  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
   delete data;
   return dlen;
 }
 
 NetworkC::NetworkC() {
 }
-NetworkC::NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc) {
+NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   RecivePacket = recivePacketFunc;
   struct addrinfo *result, *ptr;
   result = NULL;
@@ -375,7 +375,7 @@ int NetworkC::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen);
+  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
   delete data;
   return dlen;
 }
