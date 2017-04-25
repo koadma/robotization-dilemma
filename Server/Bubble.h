@@ -3,7 +3,11 @@
 
 #include "..\Core\Network.h"
 
-class Bubble
+class Projectile {
+
+};
+
+class Bubble : public Projectile
 {
 public:
   static enum Type {
@@ -30,7 +34,7 @@ public:
  
 };
 
-class Shot {
+class Shot : public Projectile {
 public:
   fVec3 origin;
   float time;

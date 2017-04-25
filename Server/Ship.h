@@ -3,6 +3,8 @@
 
 #include "../Server/Bubble.h"
 
+class Collision;
+
 class Movement {
 public:
   float gTimeStamp = 0;
@@ -162,8 +164,11 @@ class Sighting {
   
 };
 
+class Drone;
+
 class Object {
-  Object* parentShip;
+public:
+  Drone* parentShip;
   fVec3 relativePos;
   static enum Type {
     Ship = 1,
@@ -178,47 +183,13 @@ class Object {
   int health;
   float radius;
 
-  float intersect(Bubble &b) {
+  float intersect(Bubble &b);
 
-  }
-
-  /*void goTo(float time, float maxVelocity) {
-    float dt = time - timestamp;
-    float solut[2];
-    int numOfSolut;
-    float a = pow(k->acc.length(), 2);
-    float b = 2 * (k->vel.x*k->acc.x + k->vel.y*k->acc.y + k->vel.z*k->acc.z);
-    float c = pow(k->vel.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
-    if (a == 0)
-    {
-      k->vel = k->vel;
-      k->pos = k->pos + k->vel*dt;
-    }
-    else
-    {
-      solve2(a, b, c, solut, numOfSolut); //calculate time of reacing maximum velocity
-      float reachMaxT = max(solut[0], solut[1]);
-      if (reachMaxT < 0 || numOfSolut != 0)
-      {
-        throw 1;
-      }
-      if (reachMaxT > dt)
-      {
-        k->pos = k->pos + k->vel * dt + k->acc*(pow(dt, 2) / 2);
-        k->vel = 4 k->vel + k->acc*dt;
-      }
-      else
-      {
-        fVec3 startVelocity = k->vel;
-        k->vel = k->vel + k->acc*reachMaxT;
-        k->pos = k->pos + startVelocity*dt + k->vel*(dt - reachMaxT) + k->acc*(pow(reachMaxT, 2) / 2);
-      }
-    }
-    timestamp = time;
-  }*/
+  float intersect(Shot &b);
 };
 
 class Drone : public Object {
+public:
   Movement mov;
 };
 
@@ -270,13 +241,13 @@ public:
         }
       break;
       case PacketSensor:
-
+        //connectedClient->SendData<list<Sighting*>>(sightings, PacketSensor);
       break;
       case PacketCommandHistory: //
 
       break;
       case PacketShipData:
-
+        //connectedClient->SendData<Ship*>(this, PacketShipData);
       break;
     }
   }
@@ -356,5 +327,10 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const Ship& s);
 };*/
 
+class Collision {
+public:
+  Drone* drone;
+  Projectile* proj;
+};
 
 #endif

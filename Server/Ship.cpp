@@ -6,6 +6,18 @@ void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr,
   ship->packetRecv(Data, Id, DataLen, thisptr);
 }
 
+float Object::intersect(Bubble &b) {
+  Movement corrected = parentShip->mov;
+  corrected.pos += relativePos;
+  return corrected.intersect(b, radius);
+}
+
+float Object::intersect(Shot &b) {
+  Movement corrected = parentShip->mov;
+  corrected.pos += relativePos;
+  return corrected.intersect(b, radius);
+}
+
 /*
 int Ship::getSpentEnergy() const
 {

@@ -16,7 +16,7 @@ public:
   list<Bubble*> bubbles;
   list<Shot*> shots;
 
-  set<pair<float, pair<Drone*, Bubble*> > > intersects; 
+  set<pair<float, pair<Ship*, Bubble*> > > intersects; 
 
   enum State {
     Joining,
@@ -72,12 +72,24 @@ public:
     }
   }
   void calcIntersect() {
-
-  }
-  void simulate() {
     intersects.clear(); //reset intersections
-
-
+    auto itb = bubbles.begin();
+    while (itb != bubbles.end()) {
+      auto its = ships.begin();
+      while (its != ships.end()) {
+        intersects.insert({(*its)->mov.intersect(**itb, SOL) ,{*its, *itb}});
+        ++its;
+      }
+      ++itb;
+    }
+  }
+  void simulate(float till) {
+    calcIntersect();
+    auto it = intersects.begin();
+    while (it != intersects.end() && it->first < till) {
+      //it->second.first->shot();
+      ++it;
+    }
   }
 };
 
