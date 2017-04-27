@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Fraction.h"
 
 Fraction::Fraction() {

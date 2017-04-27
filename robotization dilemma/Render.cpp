@@ -321,7 +321,7 @@ namespace MainGameCanvas{
   }
 }
 
-void recivePacket(unsigned char* data, int id, int dataLan) {
+void recivePacket(unsigned char* data, int id, int dataLan, NetworkC* client, Ship* ship) {
 
 }
 

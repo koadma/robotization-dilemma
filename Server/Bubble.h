@@ -1,7 +1,7 @@
 #ifndef __BUBBLE_H__
 #define __BUBBLE_H__
 
-#include "..\Core\Network.h"
+#include "../Core/Network.h"
 
 class Projectile {
 

@@ -1,13 +1,13 @@
 #ifndef __POINT_H__
 #define __POINT_H__
 
-#include "..\Core\Polynomial.h"
+#include "Fraction.h"
+
 
 template<typename T> struct vec3;
 typedef vec3<float>          fVec3;
 typedef vec3<int>            iVec3;
 typedef vec3<bool>           bVec3;
-typedef vec3<PolynomialF>    fpVec3;
 
 template<typename T>
 class vec3 {
