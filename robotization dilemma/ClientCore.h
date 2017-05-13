@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/Network.h"
+#include "../Server/Ship.h"
 
 class Player {
 

@@ -5,7 +5,7 @@ Graphics::WinHwnd objectMainWindow;
     Graphics::CanvasHwnd objectMainGameCanvas;
     Graphics::PanelHwnd objectMainGameMenu;
   Graphics::PanelHwnd objectMenuSubWindow;
-    Graphics::ButtonHwnd objectMainMenuPlayButton;
+    //Graphics::ButtonHwnd objectMainMenuPlayButton;
       Graphics::ButtonHwnd objectPlayMenuJoinButton;
         Graphics::TextInputHwnd objectJoinMenuIpInput;
         Graphics::TextInputHwnd objectJoinMenuPortInput;
@@ -257,6 +257,9 @@ namespace MainGameCanvas{
     glEnd();   // Done drawing the pyramid
 
     glFlush();
+
+    Graphics::resetViewport();
+
     return 0;
   }
   int resizeManager(int x, int y) {
@@ -366,7 +369,6 @@ void mainMenuPlayButton() {
 }
 
 void mainMenuExitButton() {
-  Graphics::deleteElement(objectMainMenuPlayButton);
   glutExit();
   //objectPlayMenuNewButton = Graphics::createButton(objectMainWindow, 10, 10, 100, 50, 0xffff0000, 0xff00ff00, 0xff0000ff, "New Game", *mainMenuPlayButton);
   //Graphics::createTextInput(objectMainWindow, 10, 70, 100, 50, 0xff00ffff, 0xffff00ff, 0xffffff00, "DemoText", *numericalValidator);
@@ -374,8 +376,7 @@ void mainMenuExitButton() {
 }
 
 void createMainMenu() {
-  objectMainMenuPlayButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Play", *mainMenuPlayButton);
-  objectMainMenuPlayButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Exit", *mainMenuExitButton);
+  Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
 }
 
 int InitWindow() {

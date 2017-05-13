@@ -3,10 +3,60 @@
 
 #include "../Server/Bubble.h"
 
-class Collision;
+//class Collision;
 
-class Movement {
+vector<double> intersectPaths(Path &lhs, Path &rhs) {
+  Eqnsys impleq; //
+  Eqnsys expleq; //
+  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeExplicit) {
+    throw 1;
+  }
+  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeApproxable) {
+    impleq = rhs.getEquations(false);
+    expleq = lhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeImplicit) {
+    impleq = rhs.getEquations(false);
+    expleq = lhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeExplicit) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeApproxable) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(true);
+  }
+  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeImplicit) {
+    impleq = rhs.getEquations(false);
+    expleq = lhs.getEquations(true);
+  }
+  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeExplicit) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeApproxable) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(true);
+  }
+  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeImplicit) {
+    throw 1;
+  }
+
+  if (impleq.eqns.size() == 1) {
+    auto it = expleq.eqns.begin();
+    while(it != expleq.eqns.end()) {
+      impleq.eqns.begin()->second.substitute(it->second, it->first);
+      ++it;
+    }
+  }
+
+  return impleq.eqns.begin()->second.getPolynomial('t').solve();
+}
+
+class Movement : public Path {
 public:
+  static const EqnType etype = EqnType::EqnTypeApproxable;
   float gTimeStamp = 0;
   fVec3 pos = fVec3(0);
   //float posUncertainty = 0;
@@ -16,7 +66,33 @@ public:
   //float accUncertainty = 0;
   int type;
   string data;
-  fpVec3 getPosPolynomial();
+  double radius;
+  Eqnsys getEquations(bool b) {//approximate
+    Eqnsys res;
+    if (!b) { //Parametric curve
+      Eqnsys resh;
+
+      resh.eqns['a'] = Equation<double>({ { acc.x / 2.0f, "tt" },{ vel.x, "t" } ,{ pos.x, "" },{ -1, "a" } });
+      resh.eqns['b'] = Equation<double>({ { acc.y / 2.0f, "tt" },{ vel.y, "t" } ,{ pos.y, "" },{ -1, "b" } });
+      resh.eqns['c'] = Equation<double>({ { acc.z / 2.0f, "tt" },{ vel.z, "t" } ,{ pos.z, "" },{ -1, "c" } });
+     
+
+      res.eqns['t'] =
+        Equation<double>({ { 1, "x" },{ -1, "a" } }) * Equation<double>({ { 1, "x" },{ -1, "a" } }) +
+        Equation<double>({ { 1, "y" },{ -1, "b" } }) * Equation<double>({ { 1, "y" },{ -1, "b" } }) +
+        Equation<double>({ { 1, "z" },{ -1, "c" } }) * Equation<double>({ { 1, "z" },{ -1, "c" } }) +
+        Equation<double>({ { -radius*radius, "" } });
+      res.eqns['t'].substitute(resh.eqns['a'], 'a');
+      res.eqns['t'].substitute(resh.eqns['b'], 'b');
+      res.eqns['t'].substitute(resh.eqns['c'], 'c');
+    }
+    else { //Moving sphere
+      res.eqns['x'] = Equation<double>({ { acc.x / 2.0f, "tt" },{ vel.x, "t" } ,{ pos.x, "" },{ -1, "x" } });
+      res.eqns['y'] = Equation<double>({ { acc.y / 2.0f, "tt" },{ vel.y, "t" } ,{ pos.y, "" },{ -1, "y" } });
+      res.eqns['z'] = Equation<double>({ { acc.z / 2.0f, "tt" },{ vel.z, "t" } ,{ pos.z, "" },{ -1, "z" } });
+    }
+    return res;
+  }
   /*float reachMaxVelIn(float maxVelocity, bool& will) {
     //-1: No acceleration, cant be solved.
     //0 .. 2: number of solutions
@@ -86,12 +162,11 @@ public:
   }*/
 
   //CHANGE!!!!!!!!!!!!!!!!
-  float intersect(Bubble &b, float maxVelocity);
-  float intersect(Shot &l, float radius);
+
 };
 
 class Sighting {
-  vector<pair<float, Movement*> > keyframes; //time - keyframe. Sorted.
+  vector<pair<double, Movement*> > keyframes; //time - keyframe. Sorted.
   int getLastSmaller(float t);
   Movement estimatePos(float t, float maxVelocity);
   
@@ -116,9 +191,16 @@ public:
   int health;
   float radius;
 
-  float intersect(Bubble &b);
+  Movement getMovement();
 
-  float intersect(Shot &b);
+  list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
+    list< pair<double, pair<Object*, Path*>>> res;
+    vector<double> times = intersectPaths(getMovement(), *p);
+    for (int i = 0; i < times.size(); i++) {
+      res.push_back({ times[i],{ this, p } });
+    }
+    return res;
+  }
 };
 
 class Drone : public Object {
@@ -126,9 +208,21 @@ public:
   Movement mov;
 };
 
+
+
+
 class Ship : public Drone {
 public:
   fVec3 accel = fVec3(0);
+
+  list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
+    list< pair<double, pair<Object*, Path*>>> res;
+    auto it = objects.begin();
+    while (it != objects.end()) {
+      res.splice(res.end(), (*it)->intersect(p));
+      ++it;
+    }
+  }
 
   list<Object*> objects;
   list<Sighting*> sightings;
@@ -215,11 +309,5 @@ public:
   unsigned int getOwner() const;
   friend std::ostream& operator<<(std::ostream& os, const Ship& s);
 };*/
-
-class Collision {
-public:
-  Drone* drone;
-  Projectile* proj;
-};
 
 #endif

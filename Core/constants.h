@@ -2,7 +2,7 @@
 #define __CONSTANTS_H__
 
 const int INITIAL_VISIBILITY = 5;
-const float SOL = 3e8; // m/s
+const double SOL = 3e8; // m/s
 const int INITIAL_MAX_VELOCITY = 0.1*SOL;
 const int G = 10; // m/s^2
 const int INITIAL_MAX_ACC = 25*G;

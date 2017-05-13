@@ -3,11 +3,30 @@
 
 #include "../Core/Network.h"
 
-class Projectile {
 
+class Eqnsys {
+public:
+  map<char, Equation<double> > eqns;
 };
 
-class Bubble : public Projectile
+
+class Path {
+public:
+  static const enum EqnType {
+    EqnTypeExplicit = 0,
+    EqnTypeApproxable = 1,
+    EqnTypeImplicit = 2,
+    EqnTypeUndefined = 3,
+  };
+  static const int etype = EqnType::EqnTypeUndefined;
+  Eqnsys getEquations(bool b) {//approximate
+    throw 1;
+    return Eqnsys();
+  }
+};
+
+
+class Bubble : public Path
 {
 public:
   static enum Type {
@@ -29,17 +48,45 @@ public:
   }
   //int age; //radius = age * ROUND_TIME * SOL
   Type btype;
+  static const int etype = Path::EqnTypeImplicit;
+  Eqnsys getEquations(bool b) {//approximate
+    Eqnsys res;
+    if (b) {
+      throw 1; //Cant approxiamte bubble
+    }
+    else {
+      res.eqns['t'] =
+        Equation<double>(vector<pair<double, string> >{{ 1, "x" }, { -origin.x, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "x" }, { -origin.x, "" }}) +
+        Equation<double>(vector<pair<double, string> >{{ 1, "y" }, { -origin.y, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "y" }, { -origin.y, "" }}) +
+        Equation<double>(vector<pair<double, string> >{{ 1, "z" }, { -origin.z, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "z" }, { -origin.z, "" }}) +
+        Equation<double>(vector<pair<double, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * SOL * SOL * (-1.0);
+    }
+    return res;
+  }
   //unsigned int receiver; //only for reflection, would be cleaner with virtual methods
-  friend std::ostream& operator<<(std::ostream& os, const Bubble& b); // only for test
+  //friend std::ostream& operator<<(std::ostream& os, const Bubble& b); // only for test
  
 };
 
-class Shot : public Projectile {
+class Shot : public Path {
 public:
   fVec3 origin;
-  float time;
+  float origintime;
   fVec3 vel;
   float energy;
+  static const int etype = Path::EqnTypeExplicit;
+  Eqnsys getEquations(bool b) {//approximate
+    Eqnsys res;
+    if (b) {
+      throw 1; //Cant approxiamte bubble
+    }
+    else {
+      res.eqns['x'] = Equation<double>({ { vel.x, "t" }, { -vel.x * origintime, "" } ,{ origin.x, "" },{ -1, "x" } });
+      res.eqns['y'] = Equation<double>({ { vel.y, "t" }, { -vel.y * origintime, "" } ,{ origin.y, "" },{ -1, "y" } });
+      res.eqns['z'] = Equation<double>({ { vel.z, "t" }, { -vel.z * origintime, "" } ,{ origin.z, "" },{ -1, "z" } });
+    }
+    return res;
+  }
 };
 /*
 class BubbleManager

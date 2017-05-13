@@ -6,26 +6,14 @@ void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr,
   ship->packetRecv(Data, Id, DataLen, thisptr);
 }
 
-float Object::intersect(Bubble &b) {
-  Movement corrected = parentShip->mov;
-  corrected.pos += relativePos;
-  return corrected.intersect(b, radius);
-}
-
-float Object::intersect(Shot &b) {
-  Movement corrected = parentShip->mov;
-  corrected.pos += relativePos;
-  return corrected.intersect(b, radius);
-}
-
-fpVec3 Movement::getPosPolynomial() {
+/*fpVec3 Movement::getPosPolynomial() {
   return
     (acc * 0.5f) * PolynomialF(
     vector<float>(1, -gTimeStamp)
   ) *PolynomialF( vector<float>(1, -gTimeStamp ) ) +
     vel * PolynomialF( vector<float>( 1, -gTimeStamp ) ) +
     pos * PolynomialF( vector<float>(1) );
-}
+}*/
 /*float reachMaxVelIn(float maxVelocity, bool& will) {
 //-1: No acceleration, cant be solved.
 //0 .. 2: number of solutions
@@ -105,7 +93,7 @@ res.vel = vel + acc*dt;
 res.acc = acc;
 }*/
 
-//CHANGE!!!!!!!!!!!!!!!!
+/*//CHANGE!!!!!!!!!!!!!!!!
 float Movement::intersect(Bubble &b, float maxVelocity) {
   //CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
   //solve c^2 (t-t_e)^2 = (px + vx t - ex)^2 + ...
@@ -136,7 +124,7 @@ float Movement::intersect(Shot &l, float radius) {
     PolynomialF{ vector<float> { l.vel.z, l.vel.z*l.time + l.origin.z } };
   return -p.Coefficient[0] / p.Coefficient[1];
 }
-
+*/
 int Sighting::getLastSmaller(float t)
 {
   int first = 0, last = int(keyframes.size()) - 1;
@@ -162,6 +150,12 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
     throw 1;
     return Movement();
   }
+}
+
+Movement Object::getMovement() {
+  Movement m = parentShip->mov;
+  m.pos = m.pos + relativePos;
+  return m;
 }
 
 #ifdef M_SERVER

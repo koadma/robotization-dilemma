@@ -2,8 +2,12 @@
 
 #include "GL\freeglut.h"
 #include "ClientCore.h"
+#include "..\rapidxml\rapidxml.hpp"
+
 
 using namespace std;
+
+using namespace rapidxml;
 
 typedef uint32_t colorargb;
 

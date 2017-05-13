@@ -1,7 +1,6 @@
 #include "Graphics.h"
 
 
-
 Graphics::WinHwnd Graphics::CreateMainWindow(int x, int y, int width, int height, string caption, WindowManagers managers) {
   glutInitWindowSize(width, height);
   glutInitWindowPosition(x, y);
@@ -84,19 +83,8 @@ void Graphics::defaultRenderManager() {
   //int arr[4];
   //glGetIntegerv(GL_VIEWPORT, arr);
 
-  glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
   glClear(GL_COLOR_BUFFER_BIT);
-  //glGetIntegerv(GL_VIEWPORT, arr);
-  glDisable(GL_DEPTH_TEST);
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glLoadIdentity();
-  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),
-    0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-  glColor3ub(0, 255, 0);
+  resetViewport();
 
   elementRenderManager(GetWinHwnd(glutGetWindow()));
   
@@ -178,6 +166,7 @@ WindowManagers {
   Graphics::defaultMouseWheelManager,
 };
 map<int, Graphics::GWindow*> Graphics::windows;
+map<string, void(*)()> funcs;
 
 int Graphics::elementMouseEnterManager(WinHwnd id, int mstate) {
   return id->myPanel->mouseEnter(mstate);
@@ -223,6 +212,26 @@ Graphics::ButtonHwnd Graphics::createButton(PanelHwnd id, Coordiante mincorner, 
   ElemHwnd elem = new Button(mincorner, maxcorner, bg, active, textColor, text, clickCallback);
   return reinterpret_cast<ButtonHwnd>(createElement(id, elem));
 }
+Graphics::ButtonHwnd Graphics::createButton(PanelHwnd id, xml_node<> *me) {
+  return createButton(
+    id,
+    Coordiante {
+      strTo<float>(me->first_attribute("minrelx")->value()),
+      strTo<float>(me->first_attribute("minrely")->value()),
+      strTo<float>(me->first_attribute("minabsx")->value()),
+      strTo<float>(me->first_attribute("minabsy")->value()),
+    }, Coordiante {
+      strTo<float>(me->first_attribute("maxrelx")->value()),
+      strTo<float>(me->first_attribute("maxrely")->value()),
+      strTo<float>(me->first_attribute("maxabsx")->value()),
+      strTo<float>(me->first_attribute("maxabsy")->value()),
+    },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    me->value(),
+    reinterpret_cast<ClickCallback>(funcs[me->first_attribute("callback")->value()]));
+}
 
 Graphics::LabelHwnd Graphics::createLabel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
   return createLabel(id->myPanel, mincorner, maxcorner, bg, active, textColor, text, align);
@@ -231,6 +240,26 @@ Graphics::LabelHwnd Graphics::createLabel(PanelHwnd id, Coordiante mincorner, Co
   ElemHwnd elem = new Label(mincorner, maxcorner, bg, active, textColor, text, align);
   return reinterpret_cast<LabelHwnd>(createElement(id, elem));
 }
+Graphics::LabelHwnd Graphics::createLabel(PanelHwnd id, xml_node<> *me) {
+  return createLabel(
+    id,
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    me->value(),
+    strTo<int>(me->first_attribute("align")->value()));
+}
 
 Graphics::TextInputHwnd Graphics::createTextInput(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
   return createTextInput(id->myPanel, mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
@@ -238,6 +267,27 @@ Graphics::TextInputHwnd Graphics::createTextInput(WinHwnd id, Coordiante mincorn
 Graphics::TextInputHwnd Graphics::createTextInput(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
   ElemHwnd elem = new TextInput(mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
   return reinterpret_cast<TextInputHwnd>(createElement(id, elem));
+}
+Graphics::TextInputHwnd Graphics::createTextInput(PanelHwnd id, xml_node<> *me) {
+  return createTextInput(
+    id,
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    me->value(),
+    reinterpret_cast<TextInputFunc>(funcs[me->first_attribute("inputfunc")->value()]),
+    reinterpret_cast<TextValidatorFunc>(funcs[me->first_attribute("validatorfunc")->value()]));
 }
 
 Graphics::CanvasHwnd Graphics::createCanvas(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
@@ -254,6 +304,26 @@ Graphics::PanelHwnd Graphics::createPanel(WinHwnd id, Coordiante mincorner, Coor
 Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
   ElemHwnd elem = new Panel(mincorner, maxcorner, bg);
   return reinterpret_cast<PanelHwnd>(createElement(id, elem));
+}
+Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, xml_node<> *me) {
+  PanelHwnd p = createPanel(
+    id,
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()));
+
+  setElements(p, me);
+
+  return p;
 }
 
 Graphics::ElemHwnd Graphics::createElement(PanelHwnd id, ElemHwnd elem) {
@@ -273,3 +343,96 @@ void Graphics::deleteElements(PanelHwnd id) {
 void Graphics::deleteElements(WinHwnd id) {
   deleteElements(id->myPanel);
 }
+
+void Graphics::setElements(PanelHwnd id, xml_node<> *data) {
+  for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling())//Mod/Blocks/Block/*
+  {
+    string name = pElem->name();
+    if (name == "button") {
+      createButton(id, pElem);
+      return;
+    }
+    if (name == "label" || name == "text") {
+      createLabel(id, pElem);
+      return;
+    }
+    if (name == "textinput" || name == "input") {
+      createTextInput(id, pElem);
+      return;
+    }
+    if (name == "panel" || name == "div") {
+      createPanel(id, pElem);
+      return;
+    }
+    throw 1;
+    return;
+  }
+  return;
+}
+
+void Graphics::setElements(PanelHwnd id, string filename) {
+  xml_document<> doc;
+
+  std::ifstream file(filename);
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  file.close();
+  std::string content(buffer.str());
+  doc.parse<0>(&content[0]);
+
+  deleteElements(id);
+
+  setElements(id, doc.first_node("body"));
+}
+
+void Graphics::resetViewport() {
+  glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+  //glGetIntegerv(GL_VIEWPORT, arr);
+  glDisable(GL_DEPTH_TEST);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),
+    0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glColor3ub(0, 255, 0);
+}
+
+/*cout << "XmlLoad" << endl;
+	for (int mod = 0; mod < Mods.size(); mod++) {
+		xml_document<> doc;
+
+		std::ifstream file(Mods[mod].second.first + ".xml");
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		file.close();
+		std::string content(buffer.str());
+		doc.parse<0>(&content[0]);
+
+		xml_node<> *pRoot = doc.first_node("mod");//Mod
+		
+		xml_node<> *pData = pRoot->first_node("data");//Mod/Data
+
+		xml_node<> *pDll = pData->first_node("dll");//Mod/Data/Dll
+
+		xml_node<> *pInit = pDll->first_node("initfunc");//Mod/Data/Dll/Initfunc
+
+		if (pInit->first_attribute("exists") && pInit->first_attribute("exists")->value() == "true") {//Mod/Data/Dll/Initfunc(exists)
+			Mods[mod].second.second = pInit->value();//Mod/Data/Dll/Initfunc/val
+		}
+
+		xml_node<> *pBlocks = pRoot->first_node("blocks");//Mod/Block
+
+		for (xml_node<> *pBlock = pBlocks->first_node("block"); pBlock; pBlock = pBlock->next_sibling())//Mod/Blocks/*
+		{
+			for (xml_node<> *pTag = pBlock->first_node(); pTag; pTag = pTag->next_sibling())//Mod/Blocks/Block/*
+			{
+				cout << pTag->name() << " " << pTag->value() << endl;
+			}
+		}
+
+	}
+	return 0;*/

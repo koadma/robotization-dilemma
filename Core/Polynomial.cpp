@@ -188,7 +188,7 @@ template<typename T> T Polynomial<T>::at(T value) {
   }
   return val
 }*/
-
+/*
 template<typename T> Term<T>::Term() {
 
 }
@@ -318,6 +318,11 @@ template<typename T> void Equation<T>::substitute(Equation<T> eq, char t) {
   }
 }
 
+template<typename T> Equation<T> operator+(Equation<T>& lhs, Equation<T>& rhs) {
+  Equation<T> res = lhs;
+  res.addTerms(rhs);
+  return res;
+}
 template<typename T> Equation<T> operator*(Equation<T>& lhs, Term<T>& rhs) {
   Equation<T> res;
   for (auto itl : lhs.terms) {
@@ -325,29 +330,12 @@ template<typename T> Equation<T> operator*(Equation<T>& lhs, Term<T>& rhs) {
   }
   return res;
 }
-
 template<typename T> Equation<T> operator*(Equation<T>& lhs, Equation<T>& rhs) {
   Equation<T> res;
   for (auto it : rhs.terms) {
     res += lhs * *it;
   }
   return res;
-}
-
-template<typename T> Equation<T> operator+(Equation<T>& lhs, Equation<T>& rhs) {
-  Equation<T> res = lhs;
-  res.addTerms(rhs);
-  return res;
-}
-
-template<typename T> Equation<T> operator/(Equation<T>& lhs, T& rhs) {
-  Equation<T> eq = lhs;
-  auto it = eq.terms.begin();
-
-  while (it != eq.terms.end()) {
-    it->coefficient /= rhs;
-    ++it;
-  }
 }
 template<typename T> Equation<T> operator*(Equation<T>& lhs, T& rhs) {
   Equation<T> eq = lhs;
@@ -358,3 +346,13 @@ template<typename T> Equation<T> operator*(Equation<T>& lhs, T& rhs) {
     ++it;
   }
 }
+template<typename T> Equation<T> operator/(Equation<T>& lhs, T& rhs) {
+  Equation<T> eq = lhs;
+  auto it = eq.terms.begin();
+
+  while (it != eq.terms.end()) {
+    it->coefficient /= rhs;
+    ++it;
+  }
+}
+*/

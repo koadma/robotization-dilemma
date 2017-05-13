@@ -77,7 +77,7 @@ public:
     while (itb != bubbles.end()) {
       auto its = ships.begin();
       while (its != ships.end()) {
-        intersects.insert({(*its)->mov.intersect(**itb, SOL) ,{*its, *itb}});
+        list< pair<float, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
         ++its;
       }
       ++itb;

@@ -20,7 +20,7 @@ public:
 
 	Polynomial() {
     this->degree = 0;
-    this->Coefficient = vector<Fraction>(0);
+    this->Coefficient = vector<T>(0);
   }
 	Polynomial(int d) {
     this->Coefficient.resize(d + 1);
@@ -54,6 +54,30 @@ public:
       val += this->Coefficient[i] * pow(value, i);
     }
     return val
+  }
+  Polynomial<T> derivative() {
+    Polynomial<T> d(degree-1);;
+    for (int i = 1; i <= d; ++i) {
+      d.Coefficient[i-1] = i * Coefficient[i];
+    }
+  }
+
+  vector<T> solve() {
+    if (degree > 4) {
+      throw 1;
+    }
+    if (degree == 4) {
+      return solveQuartic(Coefficient[4], Coefficient[3], Coefficient[2], Coefficient[1], Coefficient[0]);
+    }
+    if (degree == 3) {
+      return solveCubic(Coefficient[3], Coefficient[2], Coefficient[1], Coefficient[0]);
+    }
+    if (degree == 2) {
+      return solveQuadratic(Coefficient[2], Coefficient[1], Coefficient[0]);
+    }
+    if (degree == 1) {
+      return {- Coefficient[0] / Coefficient[1]};
+    }
   }
 
   template<typename T> Polynomial<T>& operator*= (Polynomial<T>& rhs) {
@@ -223,9 +247,13 @@ public:
   T coefficient;
   map<char, int> terms;
   Term();
-  Term(string s);
+  Term(T t, string s);
   int getPower(char c) {
     return terms[c];
+  }
+  Polynomial<T> toPolynomial(char t) {
+    Polynomial<T> res(coefficient, getPower(t));
+    return res;
   }
 };
 
@@ -235,7 +263,7 @@ template<typename T> class Equation {
 public:
   list<Term<T>> terms;
   Equation();
-  Equation(vector<pair<T,string> > newterms);
+  Equation(vector<pair<T, string> > newterms);
   void addTerm(Term<T>& t);
   void addTerm(T coefficient, string terms);
   void addTerms(vector<pair<T, string> > newterms);
@@ -246,11 +274,257 @@ public:
   typename list<Term<T>>::iterator getFirstTerm(char t);
 
   void substitute(Equation<T> eq, char t);
+
+  Polynomial<T> getPolynomial(char c);
+
+  template<typename T> Equation<T>& operator+=(Equation<T>& rhs) {
+    addTerms(rhs);
+    return *this;
+  }
+  template<typename T> Equation<T>& operator*=(Equation<T>& rhs) {
+    Equation<T> lhs = *this;
+    terms.clear();
+    auto it = lhs.terms.begin();
+    while (it != lhs.terms.end()) {
+      addTerms(operator*(rhs, *it));
+      ++it;
+    }
+    return *this;
+  }
+  template<typename T> Equation<T>& operator*=(T& rhs) {
+    auto it = terms.begin();
+
+    while (it != terms.end()) {
+      it->coefficient *= rhs;
+      ++it;
+    }
+    return *this;
+  }
+  template<typename T> Equation<T>& operator*=(Term<T>& rhs) {
+    auto itl = terms.begin();
+    while (itl != terms.end()) {
+      (*itl) = (*itl) * rhs;
+      ++itl;
+    }
+    return *this;
+  }
+  template<typename T> Equation<T>& operator/=(T& rhs) {
+    auto it = terms.begin();
+
+    while (it != terms.end()) {
+      it->coefficient /= rhs;
+      ++it;
+    }
+    return *this;
+  }
+
+  template<typename T> Polynomial<T> getPolynomial(char x) {
+    Polynomial<T> poly;
+    auto it = terms.begin();
+
+    while (it != terms.end()) {
+
+      auto it2 = it->terms.begin();
+      while (it2 != it->terms.end()) {
+        if (it2->first != x && it2->second != 0) { //Unknown term
+          throw 1;
+        }
+        else {
+          poly += Polynomial<T>(it->coefficient, it2->second); //it->coefficient * x^it2->second
+        }
+        ++it2;
+      }
+      
+      ++it;
+    }
+    return poly;
+  }
 };
 
-template<typename T> Equation<T> operator*(Equation<T>& lhs, Term<T>& rhs);
 template<typename T> Equation<T> operator+(Equation<T>& lhs, Equation<T>& rhs);
 template<typename T> Equation<T> operator*(Equation<T>& lhs, Equation<T>& rhs);
+template<typename T> Equation<T> operator*(Equation<T>& lhs, Term<T>& rhs);
 template<typename T> Term<T> operator*(Term<T>& lhs, Term<T>& rhs);
-template<typename T> Equation<T> operator/(Equation<T>& lhs, T& rhs);
-template<typename T> Equation<T> operator*(Equation<T>& lhs, T& rhs);
+//template<typename T> Equation<T> operator/(Equation<T>& lhs, T& rhs);
+//template<typename T> Equation<T> operator*(Equation<T>& lhs, T& rhs);
+
+
+template<typename T> Term<T>::Term() {
+
+}
+template<typename T> Term<T>::Term(T t, string s) {
+  coefficient = t;
+  for (int i = 0; i < s.length(); i++) {
+    terms[s[i]]++;
+  }
+}
+
+template<typename T> bool operator== (Term<T>& lhs, Term<T>& rhs) {
+  auto it = lhs.terms.begin();
+  while (it != lhs.terms.end()) {
+    if (rhs.terms[it->first] != it->second) {
+      return false;
+    }
+    ++it;
+  }
+  it = rhs.terms.begin();
+  while (it != rhs.terms.end()) {
+    if (lhs.terms[it->first] != it->second) {
+      return false;
+    }
+    ++it;
+  }
+  return true;
+}
+template<typename T> bool operator!= (Term<T>& lhs, Term<T>& rhs) {
+  return !(lhs == rhs);
+}
+
+template<typename T> Term<T> operator* (Term<T>& lhs, Term<T>& rhs) {
+  Term<T> res;
+  res.coefficient = lhs.coefficient * rhs.coefficient;
+
+  auto it = lhs.terms.begin();
+  while (it != lhs.terms.end()) {
+    res.terms[it->first] += it->second;
+    ++it;
+  }
+  it = rhs.terms.begin();
+  while (it != rhs.terms.end()) {
+    res.terms[it->first] += it->second;
+    ++it;
+  }
+  return res;
+}
+
+
+template<typename T> Equation<T>::Equation() {
+
+}
+template<typename T> Equation<T>::Equation(vector<pair<T, string> > newterms) {
+  addTerms(newterms);
+}
+template<typename T> void Equation<T>::addTerm(Term<T>& t) {
+  auto it = terms.begin();
+  bool b = true;
+  while (b && it != terms.end()) {
+    if (*it == t) {
+      it->coefficient += t.coefficient;
+      b = false;
+    }
+    ++it;
+  }
+  if (b) {
+    terms.push_back(t);
+  }
+}
+template<typename T> void Equation<T>::addTerm(T coefficient, string sterms) {
+  Term<T> t(coefficient, sterms);
+
+  addTerm(t);
+}
+template<typename T> void Equation<T>::addTerms(vector<pair<T, string> > newterms) {
+  for (int i = 0; i < newterms.size(); i++) {
+    addTerm(newterms[i].first, newterms[i].second);
+  }
+}
+template<typename T> void Equation<T>::addTerms(Equation& newterms) {
+  auto it = newterms.terms.begin();
+  while (it != newterms.terms.end()) {
+    addTerm(*it);
+    ++it;
+  }
+}
+
+
+template<typename T> int Equation<T>::countTerms(char t) {
+  int res = 0;
+  auto it = terms.begin();
+  while (it != terms.end()) {
+    res += it->terms[t];
+    ++it;
+  }
+  return res;
+}
+
+template<typename T> typename list<Term<T>>::iterator Equation<T>::getFirstTerm(char t) {
+  int res = 0;
+  auto it = terms.begin();
+  while (it != terms.end()) {
+    if (it->terms[t] != 0) {
+      return it;
+    }
+    ++it;
+  }
+  return it;
+}
+
+template<typename T> void Equation<T>::substitute(Equation<T> eq, char t) {
+  Equation<T> oldeq = *this;
+  terms.clear();
+  if (eq.countTerms(t) != 1) {
+    throw 1; //Cant substitute non-linear.
+  }
+  auto it = eq.getFirstTerm(t);
+  Term<T> test(1, string(1, t));
+  if (*it != test) {
+    throw 1; //Cant substitute with other side terms
+  }
+  eq /= (it->coefficient);
+  eq *= Term<T>{-1, ""};
+  eq.terms.erase(it);
+
+  auto it2 = oldeq.terms.begin();
+
+  while (it2 != oldeq.terms.end()) {
+    Equation<T> eq2({ { 1, "" } });
+    for (int i = 0; i < it2->getPower(t); i++) {
+      eq2 = eq2 * eq;
+    }
+    it2->terms[t] = 0;
+    eq2 *= (*it2);
+    addTerms(eq2);
+    ++it2;
+  }
+}
+
+template<typename T> Polynomial<T> Equation<T>::getPolynomial(char t) {
+
+  Polynomial<T> res;
+
+  auto it = terms.begin();
+
+  while (it != terms.end()) {
+    res += it->toPolynomial(t);
+    ++it;
+  }
+
+  return res;
+}
+
+
+template<typename T> Equation<T> operator+(Equation<T>& lhs, Equation<T>& rhs) {
+  Equation<T> res = lhs;
+  res += rhs;
+  return res;
+}
+template<typename T> Equation<T> operator*(Equation<T>& lhs, Term<T>& rhs) {
+  Equation<T> res = lhs;
+  res *= rhs;
+  return res;
+}
+template<typename T> Equation<T> operator*(Equation<T>& lhs, Equation<T>& rhs) {
+  Equation<T> res = lhs;
+  res *= rhs;
+  return res;
+}
+template<typename T> Equation<T> operator*(Equation<T>& lhs, T rhs) {
+  Equation<T> res = lhs;
+  res *= rhs;
+  return res;
+}
+template<typename T> Equation<T> operator/(Equation<T>& lhs, T rhs) {
+  Equation<T> res = lhs;
+  res /= rhs;
+  return res;
+}

@@ -44,6 +44,9 @@ namespace Graphics {
   extern WindowManagers defaultWindowManagers;
   extern map<int, GWindow*> windows;
 
+  extern map<string, void(*)()> funcs;
+
+
   typedef GUIElement* ElemHwnd;
   typedef Panel* PanelHwnd;
   typedef Button* ButtonHwnd;
@@ -78,20 +81,29 @@ namespace Graphics {
 
   void elementRenderManager(WinHwnd id);
 
+  template <typename T> void setName(string name, T func) {
+    funcs[name] = reinterpret_cast<void(*)()>(func);
+  }
+
   ButtonHwnd createButton(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
   ButtonHwnd createButton(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
-
+  ButtonHwnd createButton(PanelHwnd id, xml_node<> *me);
+  
   LabelHwnd createLabel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
   LabelHwnd createLabel(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  LabelHwnd createLabel(PanelHwnd id, xml_node<> *me);
 
   TextInputHwnd createTextInput(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   TextInputHwnd createTextInput(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
+  TextInputHwnd createTextInput(PanelHwnd id, xml_node<> *me);
 
   CanvasHwnd createCanvas(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
   CanvasHwnd createCanvas(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
+  //CanvasHwnd createCanvas(PanelHwnd id, xml_node<> *me);
 
   PanelHwnd createPanel(WinHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  PanelHwnd createPanel(PanelHwnd id, xml_node<> *me);
 
   ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
 
@@ -100,4 +112,10 @@ namespace Graphics {
   void deleteElements(PanelHwnd id);
 
   void deleteElements(WinHwnd winId);
+
+  void setElements(PanelHwnd id, xml_node<> *data);
+
+  void setElements(PanelHwnd id, string filename);
+
+  void resetViewport();
 }
