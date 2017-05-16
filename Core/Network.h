@@ -50,6 +50,7 @@ public:
   ~NetworkS();
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
+  int SendData(unsigned char *Data, int Id, int DataLen);
   template<typename T> int SendData(T& data, int Id) {
     stringstream ss;
     ss << data;
@@ -81,6 +82,7 @@ public:
   ~NetworkC();
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
+  int SendData(unsigned char *Data, int Id, int DataLen);
   template<typename T> int SendData(T& data, int Id) {
     stringstream ss;
     ss << data;
@@ -104,3 +106,8 @@ private:
   struct addrinfo hints;
   RecivePacketFuncC RecivePacket;
 };
+
+
+void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC);
+
+void split(unsigned char* data, int dataLen, vector<pair<unsigned char**, int> > &split);

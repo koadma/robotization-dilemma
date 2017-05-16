@@ -148,6 +148,9 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
   }
 
   int iSendResult = send(ClientSocket, SendRaw, DataLen + 2 * PACKET_HEADER_LEN, 0);
+
+  delete SendRaw;
+
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
     NetworkError(NetworkErrorCodeServerSendData  );
     closesocket(ClientSocket);
@@ -156,6 +159,10 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
   }
   //NetLog.LogString("Bytes sent: " + to_string(iSendResult));
   return iSendResult;
+}
+
+int NetworkS::SendData(unsigned char *Data, int Id, int DataLen) {
+  SendData(reinterpret_cast<char*>(Data), Id, DataLen);
 }
 
 int NetworkS::ReciveData() {
@@ -319,6 +326,9 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
   }
 
   int iSendResult = send(ConnectSocket, SendRaw, DataLen + 2 * PACKET_HEADER_LEN, 0);
+
+  delete SendRaw;
+
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
     NetworkError(NetworkErrorCodeClientSendData  );
     closesocket(ConnectSocket);
@@ -327,6 +337,11 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
   }
   return iSendResult;
 }
+
+int NetworkC::SendData(unsigned char *Data, int Id, int DataLen) {
+  SendData(reinterpret_cast<char*>(Data), Id, DataLen);
+}
+
 
 int NetworkC::ReciveData() {
   char len[PACKET_HEADER_LEN];
@@ -378,4 +393,71 @@ int NetworkC::ReciveData() {
   RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
   delete data;
   return dlen;
+}
+
+
+
+void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC, bool destroy) {
+
+  Packet_Header_Convertor conv;
+
+  lenC = 0;
+
+  for (int i = 0; i<in.size(); i++) {
+
+    lenC += PACKET_HEADER_LEN + in[i].second;
+  }
+
+  *C = new unsigned char[lenC];
+
+  int prevSector = 0;
+
+  for (int i = 0; i<in.size(); i++) {
+    conv.i = in[i].second;
+
+    for (int i = 0; i < PACKET_HEADER_LEN; i++) {
+      (*C)[prevSector + i] = conv.chararr.chars[i];
+    }
+
+    prevSector += PACKET_HEADER_LEN;
+
+    for (int i = 0; i < in[i].second; i++) {
+      (*C)[prevSector + i] = in[i].first[i];
+    }
+
+    prevSector += in[i].second;
+
+    if (destroy) {
+      delete in[i].first;
+    }
+  }
+
+
+}
+
+void split(unsigned char* data, int dataLen, vector<pair<unsigned char**, int> > &split, bool destroy) {
+  Packet_Header_Convertor conv;
+
+  int till = 0;
+  while (till < dataLen) {
+    for (int i = 0; i < PACKET_HEADER_LEN; i++) {
+      conv.chararr.chars[i] = data[till + i];
+    }
+
+    till += PACKET_HEADER_LEN;
+
+    unsigned char * text = new unsigned char[conv.i];
+
+    for (int i = 0; i < conv.i; i++) {
+      text[i] = data[till + i];
+    }
+
+    till += conv.i;
+
+    split.push_back({ &text, conv.i });
+  }
+
+  if(destroy) {
+    delete data;
+  }
 }

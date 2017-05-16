@@ -3,16 +3,10 @@
 Graphics::WinHwnd objectMainWindow;
   Graphics::PanelHwnd objectGameSubWindow;
     Graphics::CanvasHwnd objectMainGameCanvas;
-    Graphics::PanelHwnd objectMainGameMenu;
   Graphics::PanelHwnd objectMenuSubWindow;
-    //Graphics::ButtonHwnd objectMainMenuPlayButton;
-      Graphics::ButtonHwnd objectPlayMenuJoinButton;
-        Graphics::TextInputHwnd objectJoinMenuIpInput;
-        Graphics::TextInputHwnd objectJoinMenuPortInput;
-
-//
 
 NetworkC *Connection;
+Ship* ship;
 
 namespace MainGameCanvas{
   float camcx = 0, camcy = 0, camcz = 0;
@@ -164,7 +158,7 @@ namespace MainGameCanvas{
     glLoadIdentity();                 // Reset the model-view matrix
 
     drawCoordinatingSystem();
-
+    
     drawPointingVector(2, 3.4, 5, 4);
 
     drawPointingVector(5, 2, 1.1, 5);
@@ -255,7 +249,7 @@ namespace MainGameCanvas{
     glColor3f(0.0f, 1.0f, 0.0f);       // Green
     glVertex3f(-1.0f, -1.0f, 1.0f);
     glEnd();   // Done drawing the pyramid
-
+    
     glFlush();
 
     Graphics::resetViewport();
@@ -324,12 +318,51 @@ namespace MainGameCanvas{
   }
 }
 
-void recivePacket(unsigned char* data, int id, int dataLan, NetworkC* client, Ship* ship) {
+void newRound(int id) {
 
 }
 
-void joinMenuInput(string inp) {
-
+void recivePacket(unsigned char* data, int id, int dataLan, NetworkC* client, Ship* ship) {
+  switch (id) {
+    case PacketLogin:
+      if (strTo<int>(string(reinterpret_cast<char*>(data))) == LoginErrorOk) {
+        Connection->ConnectedShip = ship = new Ship();
+        objectMainGameCanvas = Graphics::createCanvas(
+          objectGameSubWindow,
+          "objectMainGameCanvas",
+          Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f },
+          Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f },
+          IWindowManagers{
+            MainGameCanvas::renderManager,
+            MainGameCanvas::resizeManager,
+            MainGameCanvas::keyManager,
+            MainGameCanvas::specialKeyManager,
+            MainGameCanvas::mouseEntryManager,
+            MainGameCanvas::mouseMoveManager, 
+            MainGameCanvas::mouseClickManager,
+            MainGameCanvas::mouseWheelManager
+          }
+        );
+      }
+      else {
+        createMainMenu();
+      }
+    break;
+    case PacketNewRound:
+      newRound(strTo<int>(string(reinterpret_cast<char*>(data))));
+    case PacketGameOver:
+      createMainMenu();
+    break;
+    case PacketCommand:
+      //createMainMenu();
+    break;
+    case PacketSensor:
+      //createMainMenu();
+    break;
+    case PacketShipData:
+      //createMainMenu();
+    break;
+  }
 }
 
 void ingameMenuExitButton() {
@@ -339,49 +372,53 @@ void ingameMenuExitButton() {
   createMainMenu();
 }
 
+void joinMenuInput(string inp) {
+
+}
+
 void joinMenuInputButton() {
   Graphics::deleteElements(objectMenuSubWindow);
-  Connection = new NetworkC(objectJoinMenuIpInput->text, objectJoinMenuPortInput->text, recivePacket);
 
-  objectGameSubWindow = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
-  objectMainGameCanvas = Graphics::createCanvas(objectGameSubWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, IWindowManagers{ MainGameCanvas::renderManager, MainGameCanvas::resizeManager, MainGameCanvas::keyManager, MainGameCanvas::specialKeyManager, MainGameCanvas::mouseEntryManager, MainGameCanvas::mouseMoveManager, MainGameCanvas::mouseClickManager, MainGameCanvas::mouseWheelManager });
-  objectMainGameMenu = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
+  Connection = new NetworkC(
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuIpInput"))->text,
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuPortInput"))->text,
+    recivePacket
+  );
 
-  Graphics::createButton(objectMainGameMenu, Coordiante{ 0.9f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.9f, 0.0f, 0.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Exit", *ingameMenuExitButton);
+
 }
 
 void gameMenuJoinButton() {
-  Graphics::deleteElements(objectMenuSubWindow);
-  //objectPlayMenuNewButton = Graphics::createButton(objectMainWindow, 10, 10, 100, 50, 0xffff0000, 0xff00ff00, 0xff0000ff, "New Game", *mainMenuPlayButton);
-  Graphics::createLabel(objectMenuSubWindow, Coordiante{ 0.2f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.5f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Ip", 1);
-  objectJoinMenuIpInput = Graphics::createTextInput(objectMenuSubWindow, Coordiante{ 0.2f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.5f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "127.0.0.1", *joinMenuInput, *textValidator);
-  Graphics::createLabel(objectMenuSubWindow, Coordiante{ 0.5f, 0.5f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.4f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Port", 1);
-  objectJoinMenuPortInput = Graphics::createTextInput(objectMenuSubWindow, Coordiante{ 0.5f, 0.6f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "1111", *joinMenuInput, *textValidator);
-  Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.7f, 0.6f, 5.0, 5.0f }, Coordiante{ 0.8f, 0.5f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Ok", *joinMenuInputButton);
-  //runGame();
+  Graphics::setElements(objectMenuSubWindow, "html/join_menu.html");
 }
 
 void mainMenuPlayButton() {
-  Graphics::deleteElements(objectMenuSubWindow);
-  objectPlayMenuJoinButton = Graphics::createButton(objectMenuSubWindow, Coordiante{ 0.3f, 0.55f, 5.0f, 5.0f }, Coordiante{ 0.7f, 0.45f, -5.0f, -5.0f }, ElementBaseColor, ElementActiveColor, ElementTextColor, "Join Game", *gameMenuJoinButton);
-  //Graphics::createTextInput(objectMainWindow, 10, 70, 100, 50, 0xff00ffff, 0xffff00ff, 0xffffff00, "DemoText", *numericalValidator);
-  //runGame();
+  Graphics::setElements(objectMenuSubWindow, "html/game_menu.html");
 }
 
 void mainMenuExitButton() {
   glutExit();
-  //objectPlayMenuNewButton = Graphics::createButton(objectMainWindow, 10, 10, 100, 50, 0xffff0000, 0xff00ff00, 0xff0000ff, "New Game", *mainMenuPlayButton);
-  //Graphics::createTextInput(objectMainWindow, 10, 70, 100, 50, 0xff00ffff, 0xffff00ff, 0xffffff00, "DemoText", *numericalValidator);
-  //runGame();
 }
 
 void createMainMenu() {
   Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+  Graphics::deleteElements(objectGameSubWindow);
 }
 
 int InitWindow() {
+  Graphics::setName("mainMenuPlayButton", mainMenuPlayButton);
+  Graphics::setName("mainMenuExitButton", mainMenuExitButton);
+  Graphics::setName("gameMenuJoinButton", gameMenuJoinButton);
+  Graphics::setName("joinMenuInputButton", joinMenuInputButton);
+  Graphics::setName("ingameMenuExitButton", ingameMenuExitButton);
+  Graphics::setName("joinMenuInput", joinMenuInput);
+
+  Graphics::setName("textValidator", textValidator);
+  Graphics::setName("numericalValidator", numericalValidator);
+
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
-  objectMenuSubWindow = Graphics::createPanel(objectMainWindow, Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
+  objectMenuSubWindow = Graphics::createPanel(objectMainWindow, "objectMenuSubWindow", Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
+  objectGameSubWindow = Graphics::createPanel(objectMainWindow, "objectGameSubWindow", Coordiante{ 0.0f, 1.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 0.0f, 0.0f, 0.0f }, ElementBackColor);
   createMainMenu();
   return 0;
 }

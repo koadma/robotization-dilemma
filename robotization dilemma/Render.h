@@ -2,6 +2,8 @@
 
 #include "Graphics.h"
 
+void ingameMenuExitButton();
+
 void joinMenuInput(string inp);
 
 void joinMenuInputButton();

@@ -3,56 +3,7 @@
 
 #include "../Server/Bubble.h"
 
-//class Collision;
-
-vector<double> intersectPaths(Path &lhs, Path &rhs) {
-  Eqnsys impleq; //
-  Eqnsys expleq; //
-  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeExplicit) {
-    throw 1;
-  }
-  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeApproxable) {
-    impleq = rhs.getEquations(false);
-    expleq = lhs.getEquations(false);
-  }
-  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeImplicit) {
-    impleq = rhs.getEquations(false);
-    expleq = lhs.getEquations(false);
-  }
-  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeExplicit) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(false);
-  }
-  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeApproxable) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(true);
-  }
-  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeImplicit) {
-    impleq = rhs.getEquations(false);
-    expleq = lhs.getEquations(true);
-  }
-  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeExplicit) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(false);
-  }
-  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeApproxable) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(true);
-  }
-  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeImplicit) {
-    throw 1;
-  }
-
-  if (impleq.eqns.size() == 1) {
-    auto it = expleq.eqns.begin();
-    while(it != expleq.eqns.end()) {
-      impleq.eqns.begin()->second.substitute(it->second, it->first);
-      ++it;
-    }
-  }
-
-  return impleq.eqns.begin()->second.getPolynomial('t').solve();
-}
+vector<double> intersectPaths(Path &lhs, Path &rhs);
 
 class Movement : public Path {
 public:
@@ -193,6 +144,9 @@ public:
 
   Movement getMovement();
 
+  void getStatus(unsigned char** data, int &DataLen);
+  void setStatus(unsigned char* data, int DataLen);
+
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
     list< pair<double, pair<Object*, Path*>>> res;
     vector<double> times = intersectPaths(getMovement(), *p);
@@ -207,9 +161,6 @@ class Drone : public Object {
 public:
   Movement mov;
 };
-
-
-
 
 class Ship : public Drone {
 public:
@@ -227,7 +178,6 @@ public:
   list<Object*> objects;
   list<Sighting*> sightings;
 #ifdef M_SERVER
-
   NetworkS* connectedClient;
   bool canMove = false; //is the player open to moving / are we waiting for a move.
 
@@ -235,6 +185,13 @@ public:
   void newTurn(int id);
   void packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
 #endif
+
+  void getStatus(unsigned char** data, int &DataLen);
+  void setStatus(unsigned char* data, int DataLen);
+
+  void getSightings(unsigned char** data, int &DataLen);
+  void setSightings(unsigned char* data, int DataLen);
+
 };
 
 void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);

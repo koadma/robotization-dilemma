@@ -133,3 +133,24 @@ void Panel::deleteElements(bool hard) {
   }
 }
 
+GUIElement* Panel::getElementById(string id) {
+  if (name == id) {
+    return this;
+  }
+  else {
+    GUIElement* res = NULL;
+
+    auto it = elements.begin();
+
+    while (it != elements.end() && res == NULL) {
+      GUIElement* e = (*it)->getElementById(id);
+
+      if (e != NULL) {
+        res = e;
+      }
+
+      ++it;
+    }
+    return res;
+  }
+}

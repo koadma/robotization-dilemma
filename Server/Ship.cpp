@@ -2,43 +2,55 @@
 
 using namespace std;
 
-void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
-  ship->packetRecv(Data, Id, DataLen, thisptr);
+vector<double> intersectPaths(Path &lhs, Path &rhs) {
+  Eqnsys impleq; //
+  Eqnsys expleq; //
+  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeExplicit) {
+    throw 1;
+  }
+  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeApproxable) {
+    impleq = rhs.getEquations(false);
+    expleq = lhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeImplicit) {
+    impleq = rhs.getEquations(false);
+    expleq = lhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeExplicit) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeApproxable) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(true);
+  }
+  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeImplicit) {
+    impleq = rhs.getEquations(false);
+    expleq = lhs.getEquations(true);
+  }
+  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeExplicit) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(false);
+  }
+  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeApproxable) {
+    impleq = lhs.getEquations(false);
+    expleq = rhs.getEquations(true);
+  }
+  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeImplicit) {
+    throw 1;
+  }
+
+  if (impleq.eqns.size() == 1) {
+    auto it = expleq.eqns.begin();
+    while (it != expleq.eqns.end()) {
+      impleq.eqns.begin()->second.substitute(it->second, it->first);
+      ++it;
+    }
+  }
+
+  return impleq.eqns.begin()->second.getPolynomial('t').solve();
 }
 
-/*fpVec3 Movement::getPosPolynomial() {
-  return
-    (acc * 0.5f) * PolynomialF(
-    vector<float>(1, -gTimeStamp)
-  ) *PolynomialF( vector<float>(1, -gTimeStamp ) ) +
-    vel * PolynomialF( vector<float>( 1, -gTimeStamp ) ) +
-    pos * PolynomialF( vector<float>(1) );
-}*/
-/*float reachMaxVelIn(float maxVelocity, bool& will) {
-//-1: No acceleration, cant be solved.
-//0 .. 2: number of solutions
-int numOfSolut;
-float sol[2];
-float a = pow(acc.length(), 2);
-float b = 2 * (vel.x*acc.x + vel.y*acc.y + vel.z*acc.z);
-float c = pow(vel.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
-if (a == 0)
-{
-will = false;
-return 0;
-} else {
-will = true;
-solve2(a, b, c, sol, numOfSolut); //calculate time of reacing maximum velocity
-if(numOfSolut < 2) {
-throw 1;
-return 0;
-} else {
-return max(sol[0], sol[1]);
-}
-}
-throw 1;
-return 0;
-}*/
 Movement Movement::goTo(float gTime, float maxVelocity) {
   /*if (time < timestamp) {
   return goBackTo(time, maxVelocity);
@@ -51,80 +63,7 @@ Movement Movement::goTo(float gTime, float maxVelocity) {
   m.vel = vel + acc*gTime;
   return m;
 }
-/*Movement goForwardTo(float time, float maxVelocity) {
-Movement res;
-res.timestamp = time;
-float dt = time - timestamp;
-bool will = false;
-float reachMaxT = reachMaxVelIn(maxVelocity, will);
-if (!will) {
-res.pos = pos + vel * dt;
-res.vel = vel;
-res.acc = 0;
-}
-else
-{
-if (reachMaxT < 0)
-{
-throw 1;
-}
-if (reachMaxT > dt)
-{
-res.pos = pos + vel * dt + acc*(pow(dt, 2) / 2);
-res.vel = vel + acc*dt;
-res.acc = acc;
-}
-else
-{
-fVec3 startVelocity = vel;
-res.vel = vel + acc*reachMaxT;
-res.pos = pos + startVelocity*dt + vel*(dt - reachMaxT) + acc*(pow(reachMaxT, 2) / 2);
-res.acc = 0;
-}
-}
-//timestamp = time;
-}
-Movement goBackTo(float time, float maxVelocity) {
-Movement res;
-res.timestamp = time;
-float dt = time - timestamp;
-res.pos = pos + vel * dt + acc*(pow(dt, 2) / 2);
-res.vel = vel + acc*dt;
-res.acc = acc;
-}*/
 
-/*//CHANGE!!!!!!!!!!!!!!!!
-float Movement::intersect(Bubble &b, float maxVelocity) {
-  //CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
-  //solve c^2 (t-t_e)^2 = (px + vx t - ex)^2 + ...
-  PolynomialF p =
-    SOL*SOL*PolynomialF{ vector<float> {1, -b.gEmissionTime } }*PolynomialF{ vector<float> {1, -b.gEmissionTime } }-
-    PolynomialF{ vector<float> { vel.x, pos.x - b.origin.x - vel.x*gTimeStamp } } *PolynomialF{ vector<float> { vel.x, pos.x - b.origin.x - vel.x*gTimeStamp } }-
-    PolynomialF{ vector<float> { vel.y, pos.y - b.origin.y - vel.y*gTimeStamp } } *PolynomialF{ vector<float> { vel.y, pos.y - b.origin.y - vel.y*gTimeStamp } }-
-    PolynomialF{ vector<float> { vel.z, pos.z - b.origin.z - vel.z*gTimeStamp } } *PolynomialF{ vector<float> { vel.z, pos.z - b.origin.z - vel.z*gTimeStamp } };
-  float sol[2];
-  int numOfSols;
-  solve2(p.Coefficient[2], p.Coefficient[1], p.Coefficient[0], sol, numOfSols);
-  if (numOfSols != 2) {
-    throw 1;
-    return 0;
-  }
-  else {
-    return max(sol[0], sol[1]);
-  }
-}
-float Movement::intersect(Shot &l, float radius) {
-  //CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
-  PolynomialF p =
-    vel.x * PolynomialF{ vector<float> { vel.x, vel.x*gTimeStamp + pos.x } } +
-    vel.y * PolynomialF{ vector<float> { vel.y, vel.y*gTimeStamp + pos.y } } +
-    vel.z * PolynomialF{ vector<float> { vel.z, vel.z*gTimeStamp + pos.z } } -
-    PolynomialF{ vector<float> { l.vel.x, l.vel.x*l.time + l.origin.x } } -
-    PolynomialF{ vector<float> { l.vel.y, l.vel.y*l.time + l.origin.y } } -
-    PolynomialF{ vector<float> { l.vel.z, l.vel.z*l.time + l.origin.z } };
-  return -p.Coefficient[0] / p.Coefficient[1];
-}
-*/
 int Sighting::getLastSmaller(float t)
 {
   int first = 0, last = int(keyframes.size()) - 1;
@@ -152,67 +91,115 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
   }
 }
 
+void Sighting::getSighting(unsigned char** data, int &DataLen) {
+///TODO
+}
+void Sighting::setSighting(unsigned char* data, int DataLen) {
+  ///TODO
+}
+
 Movement Object::getMovement() {
   Movement m = parentShip->mov;
   m.pos = m.pos + relativePos;
   return m;
 }
 
+
+void Object::getStatus(unsigned char** data, int &DataLen) {
+  ///TODO
+}
+void Object::setStatus(unsigned char* data, int DataLen) {
+  ///TODO
+}
+
 #ifdef M_SERVER
-
-  NetworkS* connectedClient;
-  bool canMove = false; //is the player open to moving / are we waiting for a move.
-
-  int Ship::makeMove(vector<string> & data) {
-    if (!data.size()) {
+int Ship::makeMove(vector<string> & data) {
+  if (!data.size()) {
+    return 1;
+  }
+  switch (strTo<int>(data[0])) {
+  case CommandAccel:
+    if (data.size() < 4) {
       return 1;
     }
-    switch (strTo<int>(data[0])) {
-    case CommandAccel:
-      if (data.size() < 4) {
-        return 1;
-      }
-      accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
-      return 0;
-      break;
+    accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
+    return 0;
+    break;
+  }
+}
+void Ship::newTurn(int id) {
+  canMove = true;
+
+  connectedClient->SendData<int>(id, PacketNewRound);
+}
+void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
+  switch (Id) {
+  case PacketCommand:
+    if (canMove) {
+      vector<string> args = tokenize(string(reinterpret_cast<char*>(Data)), ';');
+      int res = makeMove(args);
+      connectedClient->SendData<int>(res, PacketCommand);
     }
-  }
-  void Ship::newTurn(int id) {
-    canMove = true;
-
-    connectedClient->SendData<int>(id, PacketNewRound);
-  }
-  void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
-    switch (Id) {
-    case PacketCommand:
-      if (canMove) {
-        vector<string> args = tokenize(string(reinterpret_cast<char*>(Data)), ';');
-        int res = makeMove(args);
-        connectedClient->SendData<int>(res, PacketCommand);
-      }
-      break;
-    case PacketCommit:
-      if (canMove) {
-        canMove = false;
-      }
-      else {
-
-      }
-      break;
-    case PacketSensor:
-      //connectedClient->SendData<list<Sighting*>>(sightings, PacketSensor);
-      break;
-    case PacketCommandHistory: //
-
-      break;
-    case PacketShipData:
-      //connectedClient->SendData<Ship*>(this, PacketShipData);
-      break;
+    break;
+  case PacketCommit:
+    if (canMove) {
+      canMove = false;
     }
+    else {
+
+    }
+    break;
+  case PacketSensor:
+    connectedClient->SendData<list<Sighting*>>(sightings, PacketSensor);
+    break;
+  case PacketCommandHistory: //
+
+    break;
+  case PacketShipData:
+    connectedClient->SendData<Ship* const>(this, PacketShipData);
+    break;
   }
+}
 #endif
 
-void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
+void Ship::getStatus(unsigned char** data, int &DataLen) {
+  vector<pair<unsigned char* , int> > status;
+  auto it = objects.begin();
+
+  while (it != objects.end()) {
+    unsigned char** d;
+    int i;
+    (*it)->getStatus(d, i);
+    status.push_back({*d,i});
+    ++it;
+  }
+  concat(status, data, DataLen);
+}
+void Ship::setStatus(unsigned char* data, int DataLen) {
+  vector<pair<unsigned char**, int> > status;
+  ///TODO
+}
+
+void Ship::getSightings(unsigned char** data, int &DataLen) {
+  vector<pair<unsigned char*, int> > status;
+  auto it = sightings.begin();
+
+  while (it != sightings.end()) {
+    unsigned char** d;
+    int i;
+    (*it)->getSighting(d, i);
+    status.push_back({ *d,i });
+    ++it;
+  }
+  concat(status, data, DataLen);
+}
+void Ship::setSightings(unsigned char* data, int DataLen) {
+  ///TODO
+}
+
+  void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
+    ship->packetRecv(Data, Id, DataLen, thisptr);
+  }
 
 /*
 int Ship::getSpentEnergy() const
@@ -460,5 +447,108 @@ ostream& operator<<(ostream& os, const Ship& s)
     os << "Sebessegvektor: " << s.velocity; // no endl
   }
   return os;
+}
+fpVec3 Movement::getPosPolynomial() {
+return
+(acc * 0.5f) * PolynomialF(
+vector<float>(1, -gTimeStamp)
+) *PolynomialF( vector<float>(1, -gTimeStamp ) ) +
+vel * PolynomialF( vector<float>( 1, -gTimeStamp ) ) +
+pos * PolynomialF( vector<float>(1) );
+}
+float reachMaxVelIn(float maxVelocity, bool& will) {
+//-1: No acceleration, cant be solved.
+//0 .. 2: number of solutions
+int numOfSolut;
+float sol[2];
+float a = pow(acc.length(), 2);
+float b = 2 * (vel.x*acc.x + vel.y*acc.y + vel.z*acc.z);
+float c = pow(vel.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
+if (a == 0)
+{
+will = false;
+return 0;
+} else {
+will = true;
+solve2(a, b, c, sol, numOfSolut); //calculate time of reacing maximum velocity
+if(numOfSolut < 2) {
+throw 1;
+return 0;
+} else {
+return max(sol[0], sol[1]);
+}
+}
+throw 1;
+return 0;
+}Movement goForwardTo(float time, float maxVelocity) {
+Movement res;
+res.timestamp = time;
+float dt = time - timestamp;
+bool will = false;
+float reachMaxT = reachMaxVelIn(maxVelocity, will);
+if (!will) {
+res.pos = pos + vel * dt;
+res.vel = vel;
+res.acc = 0;
+}
+else
+{
+if (reachMaxT < 0)
+{
+throw 1;
+}
+if (reachMaxT > dt)
+{
+res.pos = pos + vel * dt + acc*(pow(dt, 2) / 2);
+res.vel = vel + acc*dt;
+res.acc = acc;
+}
+else
+{
+fVec3 startVelocity = vel;
+res.vel = vel + acc*reachMaxT;
+res.pos = pos + startVelocity*dt + vel*(dt - reachMaxT) + acc*(pow(reachMaxT, 2) / 2);
+res.acc = 0;
+}
+}
+//timestamp = time;
+}
+Movement goBackTo(float time, float maxVelocity) {
+Movement res;
+res.timestamp = time;
+float dt = time - timestamp;
+res.pos = pos + vel * dt + acc*(pow(dt, 2) / 2);
+res.vel = vel + acc*dt;
+res.acc = acc;
+}//CHANGE!!!!!!!!!!!!!!!!
+float Movement::intersect(Bubble &b, float maxVelocity) {
+//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
+//solve c^2 (t-t_e)^2 = (px + vx t - ex)^2 + ...
+PolynomialF p =
+SOL*SOL*PolynomialF{ vector<float> {1, -b.gEmissionTime } }*PolynomialF{ vector<float> {1, -b.gEmissionTime } }-
+PolynomialF{ vector<float> { vel.x, pos.x - b.origin.x - vel.x*gTimeStamp } } *PolynomialF{ vector<float> { vel.x, pos.x - b.origin.x - vel.x*gTimeStamp } }-
+PolynomialF{ vector<float> { vel.y, pos.y - b.origin.y - vel.y*gTimeStamp } } *PolynomialF{ vector<float> { vel.y, pos.y - b.origin.y - vel.y*gTimeStamp } }-
+PolynomialF{ vector<float> { vel.z, pos.z - b.origin.z - vel.z*gTimeStamp } } *PolynomialF{ vector<float> { vel.z, pos.z - b.origin.z - vel.z*gTimeStamp } };
+float sol[2];
+int numOfSols;
+solve2(p.Coefficient[2], p.Coefficient[1], p.Coefficient[0], sol, numOfSols);
+if (numOfSols != 2) {
+throw 1;
+return 0;
+}
+else {
+return max(sol[0], sol[1]);
+}
+}
+float Movement::intersect(Shot &l, float radius) {
+//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
+PolynomialF p =
+vel.x * PolynomialF{ vector<float> { vel.x, vel.x*gTimeStamp + pos.x } } +
+vel.y * PolynomialF{ vector<float> { vel.y, vel.y*gTimeStamp + pos.y } } +
+vel.z * PolynomialF{ vector<float> { vel.z, vel.z*gTimeStamp + pos.z } } -
+PolynomialF{ vector<float> { l.vel.x, l.vel.x*l.time + l.origin.x } } -
+PolynomialF{ vector<float> { l.vel.y, l.vel.y*l.time + l.origin.y } } -
+PolynomialF{ vector<float> { l.vel.z, l.vel.z*l.time + l.origin.z } };
+return -p.Coefficient[0] / p.Coefficient[1];
 }
 */

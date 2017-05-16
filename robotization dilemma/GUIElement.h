@@ -6,6 +6,7 @@ using namespace std;
 
 class GUIElement {
 public:
+  string name;
   float cax, cay, cbx, cby; //Not for long term storage.
   Coordiante mincorner;
   Coordiante maxcorner;
@@ -15,7 +16,7 @@ public:
   bool active;
   bool toDelete;
 
-  GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
+  GUIElement(string name, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
   virtual bool isIn(int mx, int my);
   virtual void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
   virtual int mouseEnter(int state);
@@ -25,4 +26,5 @@ public:
   virtual int specialPressed(int key, int mx, int my);
   virtual int mouseWheel(int a, int b, int mx, int my);
   virtual void render();
+  virtual GUIElement* getElementById(string id);
 };

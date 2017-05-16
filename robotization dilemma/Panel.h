@@ -5,8 +5,8 @@
 class Panel : public GUIElement {
 public:
   list<GUIElement*> elements; 
-  Panel(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg) :
-    GUIElement(lmincorner, lmaxcorner, lbg, 0, 0) {
+  Panel(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg) :
+    GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
   }
   void transformCoordiantes(int &mx, int &my);
   int mouseEnter(int state);
@@ -20,6 +20,8 @@ public:
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
 
   void deleteElements(bool hard);
+
+  GUIElement* getElementById(string id);
   /*bool keyPressed(unsigned char key, int mx, int my);
   bool specialPressed(int key, int mx, int my);
   bool mouseClicked(int mx, int my);

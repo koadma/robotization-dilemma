@@ -69,9 +69,9 @@ int sgn(T val)
 template<class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec)
 {
-  for(int i=0; i<vec.size(); i++)
+  for (int i = 0; i<vec.size(); i++)
   {
-    os << vec[i] << ((i==vec.size()-1)?"":" ");
+    os << vec[i] << ((i == vec.size() - 1) ? "" : " ");
   }
   return os;
 }
@@ -86,28 +86,9 @@ T strTo(std::string str)
   return n;
 }
 
-int hexToInt(string& str, int s) {
-  if (s >= str.size()) {
-    return 0;
-  }
-  else {
-    int cval = 0;
-    if ('0' <= str[str.size() - s - 1] && str[str.size() - s - 1] <= '9') {
-      cval = str[str.size() - s - 1] - '0';
-    }
-    if ('A' <= str[str.size() - s - 1] && str[str.size() - s - 1] <= 'F') {
-      cval = str[str.size() - s - 1] - 'A' + 10;
-    }
-    if ('a' <= str[str.size() - s - 1] && str[str.size() - s - 1] <= 'f') {
-      cval = str[str.size() - s - 1] - 'a' + 10;
-    }
-    return 16 * hexToInt(str, s + 1) + cval;
-  }
-}
+int hexToInt(string& str, int s);
 
-int hexToInt(string str) {
-  return hexToInt(str, 0);
-}
+int hexToInt(string str);
 
 vector<double> solveQuadratic(double &a, double &b, double &c);
 //----------------------------------------------------------------------------
