@@ -162,7 +162,7 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
 }
 
 int NetworkS::SendData(unsigned char *Data, int Id, int DataLen) {
-  SendData(reinterpret_cast<char*>(Data), Id, DataLen);
+  return SendData(reinterpret_cast<char*>(Data), Id, DataLen);
 }
 
 int NetworkS::ReciveData() {
@@ -339,7 +339,7 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
 }
 
 int NetworkC::SendData(unsigned char *Data, int Id, int DataLen) {
-  SendData(reinterpret_cast<char*>(Data), Id, DataLen);
+  return SendData(reinterpret_cast<char*>(Data), Id, DataLen);
 }
 
 
@@ -395,8 +395,6 @@ int NetworkC::ReciveData() {
   return dlen;
 }
 
-
-
 void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC, bool destroy) {
 
   Packet_Header_Convertor conv;
@@ -435,7 +433,7 @@ void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC,
 
 }
 
-void split(unsigned char* data, int dataLen, vector<pair<unsigned char**, int> > &split, bool destroy) {
+void split(unsigned char* data, int dataLen, vector<pair<unsigned char*, int> > &split, bool destroy) {
   Packet_Header_Convertor conv;
 
   int till = 0;
@@ -446,7 +444,7 @@ void split(unsigned char* data, int dataLen, vector<pair<unsigned char**, int> >
 
     till += PACKET_HEADER_LEN;
 
-    unsigned char * text = new unsigned char[conv.i];
+    unsigned char *text = new unsigned char[conv.i];
 
     for (int i = 0; i < conv.i; i++) {
       text[i] = data[till + i];
@@ -454,7 +452,7 @@ void split(unsigned char* data, int dataLen, vector<pair<unsigned char**, int> >
 
     till += conv.i;
 
-    split.push_back({ &text, conv.i });
+    split.push_back({ text, conv.i });
   }
 
   if(destroy) {

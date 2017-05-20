@@ -16,7 +16,7 @@ public:
   list<Bubble*> bubbles;
   list<Shot*> shots;
 
-  set<pair<float, pair<Ship*, Bubble*> > > intersects; 
+  set<pair<double, pair<Object*, Path*> > > intersects;
 
   enum State {
     Joining,
@@ -77,7 +77,8 @@ public:
     while (itb != bubbles.end()) {
       auto its = ships.begin();
       while (its != ships.end()) {
-        list< pair<float, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
+        list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
+        intersects.insert(inters.begin(), inters.end());
         ++its;
       }
       ++itb;

@@ -96,4 +96,18 @@ vector<double> solveCubic(double &a, double &b, double &c, double &d);
 //----------------------------------------------------------------------------
 vector<double> solveQuartic(double &a, double &b, double &c, double &d, double &e);
 
+void serialize(string s, unsigned char** data, int& dataLen);
+void serialize(int i, unsigned char** data, int& dataLen);
+void serialize(float i, unsigned char** data, int& dataLen);
+void serialize(double i, unsigned char** data, int& dataLen);
+
+string deserializes(unsigned char* data, int dataLen);
+int    deserializei(unsigned char* data, int dataLen);
+float  deserializef(unsigned char* data, int dataLen);
+double deserialized(unsigned char* data, int dataLen);
+template <typename T>
+T deserializeT(unsigned char* data, int dataLen) {
+  return strTo<T>(deserializes(data, dataLen));
+}
+
 #endif

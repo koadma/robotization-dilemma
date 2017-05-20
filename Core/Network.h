@@ -108,6 +108,6 @@ private:
 };
 
 
-void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC);
+void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC, bool destroy = true);
 
-void split(unsigned char* data, int dataLen, vector<pair<unsigned char**, int> > &split);
+void split(unsigned char* data, int dataLen, vector<pair<unsigned char*, int> > &split, bool destroy = true);

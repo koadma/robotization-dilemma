@@ -170,6 +170,31 @@ public:
     } while (notEnd);
     return *this;
   }
+
+  void get(unsigned char **data, int& dataLen) {
+    vector<pair<unsigned char*, int> > d;
+    unsigned char* c;
+    int l;
+
+    serialize(x, &c, l);
+    d.push_back({c, l});
+
+    serialize(y, &c, l);
+    d.push_back({ c, l });
+
+    serialize(z, &c, l);
+    d.push_back({ c, l });
+
+    concat(d, data, dataLen);
+  }
+  void set(unsigned char *data, int& dataLen) {
+    vector<pair<unsigned char*, int> > d;
+    split(data, dataLen, d);
+
+    x = deserializeT<T>(d[0].first, d[0].second);
+    y = deserializeT<T>(d[1].first, d[1].second);
+    z = deserializeT<T>(d[2].first, d[2].second);
+  }
 };
 
 inline bool band(bVec3 v) { return v.x && v.y && v.z; }

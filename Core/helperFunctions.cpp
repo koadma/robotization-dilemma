@@ -264,3 +264,38 @@ vector<double> solveQuartic(double &a, double &b, double &c, double &d, double &
     return corres;
   }
 }
+
+void serialize(string s, unsigned char** data, int& dataLen) {
+  *data = new unsigned char[s.size()];
+  for (int i = 0; i < s.size(); i++) {
+    (*data)[i] = s[i];
+  }
+  dataLen = s.size();
+}
+void serialize(int i, unsigned char** data, int& dataLen) {
+  serialize(to_string(i), data, dataLen);
+}
+void serialize(float i, unsigned char** data, int& dataLen) {
+  serialize(to_string(i), data, dataLen);
+}
+void serialize(double i, unsigned char** data, int& dataLen) {
+  serialize(to_string(i), data, dataLen);
+}
+
+string deserializes(unsigned char* data, int dataLen) {
+  string s(dataLen, ' ');
+  for (int i = 0; i < s.size(); i++) {
+    s[i] = data[i];
+  }
+  delete data;
+  return s;
+}
+int    deserializei(unsigned char* data, int dataLen) {
+  return strTo<int>(deserializes(data, dataLen));
+}
+float  deserializef(unsigned char* data, int dataLen) {
+  return strTo<float>(deserializes(data, dataLen));
+}
+double deserialized(unsigned char* data, int dataLen) {
+  return strTo<double>(deserializes(data, dataLen));
+}

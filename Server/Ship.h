@@ -5,19 +5,19 @@
 
 vector<double> intersectPaths(Path &lhs, Path &rhs);
 
-class Movement : public Path {
+class Movement : public Path { //Order of serialisation
 public:
   static const EqnType etype = EqnType::EqnTypeApproxable;
-  float gTimeStamp = 0;
-  fVec3 pos = fVec3(0);
+  float gTimeStamp = 0;        //0
+  fVec3 pos = fVec3(0);        //1
   //float posUncertainty = 0;
-  fVec3 vel = fVec3(0);
+  fVec3 vel = fVec3(0);        //2
   //float velUncertainty = 0;
-  fVec3 acc = fVec3(0);
+  fVec3 acc = fVec3(0);        //3
   //float accUncertainty = 0;
-  int type;
-  string data;
-  double radius;
+  int type;                    //4
+  string pathData;             //5
+  double radius;               //6
   Eqnsys getEquations(bool b) {//approximate
     Eqnsys res;
     if (!b) { //Parametric curve
@@ -112,23 +112,32 @@ public:
     res.acc = acc;
   }*/
 
-  //CHANGE!!!!!!!!!!!!!!!!
+  void get(unsigned char** data, int &DataLen);
+  void set(unsigned char* data, int DataLen);
 
+  ~Movement();
 };
 
 class Sighting {
-  vector<pair<double, Movement*> > keyframes; //time - keyframe. Sorted.
+public:
+  vector<Movement*> keyframes; //time - keyframe. Sorted.
   int getLastSmaller(float t);
   Movement estimatePos(float t, float maxVelocity);
   
+
+  void getSighting(unsigned char** data, int &DataLen);
+  void setSighting(unsigned char* data, int DataLen);
+
+  void clearKeyframes();
+  ~Sighting();
 };
 
 class Drone;
 
-class Object {
+class Object {       //Order of serialisation
 public:
   Drone* parentShip;
-  fVec3 relativePos;
+  fVec3 relativePos; //0
   static enum Type {
     Ship = 1,
     Shield = 2,
@@ -137,10 +146,10 @@ public:
     Generator = 5,
     Storage = 6
   };
-  int type;
-  int maxHealth;
-  int health;
-  float radius;
+  int type;         //1
+  int maxHealth;    //2
+  int health;       //3
+  float radius;     //4
 
   Movement getMovement();
 
@@ -155,6 +164,8 @@ public:
     }
     return res;
   }
+
+  ~Object();
 };
 
 class Drone : public Object {
@@ -185,6 +196,11 @@ public:
   void newTurn(int id);
   void packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
 #endif
+#ifdef M_CLIENT
+  NetworkC* connectedServer;
+
+  void packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
+#endif
 
   void getStatus(unsigned char** data, int &DataLen);
   void setStatus(unsigned char* data, int DataLen);
@@ -192,6 +208,10 @@ public:
   void getSightings(unsigned char** data, int &DataLen);
   void setSightings(unsigned char* data, int DataLen);
 
+  void clearObjects();
+  void clearSightings();
+
+  ~Ship();
 };
 
 void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);

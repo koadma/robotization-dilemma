@@ -63,6 +63,69 @@ Movement Movement::goTo(float gTime, float maxVelocity) {
   m.vel = vel + acc*gTime;
   return m;
 }
+void Movement::get(unsigned char** data, int &DataLen) {
+  vector<pair<unsigned char*, int> > status;
+  unsigned char* c;
+  int l;
+
+  //gTimeStamp
+  serialize(gTimeStamp, &c, l);
+  status.push_back({ c, l });
+
+  //pos
+  pos.get(&c, l);
+  status.push_back({ c, l });
+
+  //vel
+  vel.get(&c, l);
+  status.push_back({ c, l });
+
+  //acc
+  acc.get(&c, l);
+  status.push_back({ c, l });
+
+  //type
+  serialize(type, &c, l);
+  status.push_back({ c, l });
+
+  //pathData
+  serialize(pathData, &c, l);
+  status.push_back({ c, l });
+
+  //radius
+  serialize(radius, &c, l);
+  status.push_back({ c, l });
+
+  concat(status, data, DataLen);
+}
+void Movement::set(unsigned char* data, int DataLen) {
+  vector<pair<unsigned char*, int> > status;
+  split(data, DataLen, status);
+
+  //gTimeStamp
+  gTimeStamp = deserializef(status[0].first, status[0].second);
+
+  //pos
+  pos.set(status[4].first, status[4].second);
+
+  //vel
+  vel.set(status[2].first, status[2].second);
+
+  //acc
+  acc.set(status[3].first, status[3].second);
+
+  //type
+  type = deserializei(status[4].first, status[4].second);
+
+  //pathData
+  pathData = deserializes(status[5].first, status[5].second);
+
+  //radius
+  radius = deserialized(status[6].first, status[6].second);
+}
+Movement::~Movement() {
+
+}
 
 int Sighting::getLastSmaller(float t)
 {
@@ -70,7 +133,7 @@ int Sighting::getLastSmaller(float t)
   while (first <= last)
   {
     int mid = (first + last) / 2;
-    if (keyframes[mid].first >= t)
+    if (keyframes[mid]->gTimeStamp >= t)
       last = mid - 1;
     else
       first = mid + 1;
@@ -83,19 +146,50 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
     id = 0;
   }
   if (id < keyframes.size()) {
-    return keyframes[id].second->goTo(t, maxVelocity);
+    return keyframes[id]->goTo(t, maxVelocity);
   }
   else {
     throw 1;
     return Movement();
   }
 }
-
 void Sighting::getSighting(unsigned char** data, int &DataLen) {
-///TODO
+  vector<pair<unsigned char*, int> > status;
+  auto it = keyframes.begin();
+
+  while (it != keyframes.end()) {
+    unsigned char* d;
+    int i;
+    (*it)->get(&d, i);
+    status.push_back({ d,i });
+    ++it;
+  }
+  concat(status, data, DataLen);
 }
 void Sighting::setSighting(unsigned char* data, int DataLen) {
-  ///TODO
+  vector<pair<unsigned char*, int> > status;
+  split(data, DataLen, status);
+
+  clearKeyframes();
+
+  for (int i = 0; i < status.size(); i++) {
+    Movement* nMov = new Movement();
+    nMov->set(status[i].first, status[i].second);
+    keyframes.push_back(nMov);
+  }
+}
+void Sighting::clearKeyframes() {
+  auto it = keyframes.begin();
+
+  while (it != keyframes.end()) {
+    (*it)->~Movement();
+    delete *it;
+  }
+
+  keyframes.clear();
+}
+Sighting::~Sighting() {
+
 }
 
 Movement Object::getMovement() {
@@ -103,13 +197,54 @@ Movement Object::getMovement() {
   m.pos = m.pos + relativePos;
   return m;
 }
-
-
 void Object::getStatus(unsigned char** data, int &DataLen) {
-  ///TODO
+  vector<pair<unsigned char*, int> > status;
+  unsigned char* c;
+  int l;
+
+  //relativePos
+  relativePos.get(&c, l);
+  status.push_back({c, l});
+
+  //type
+  serialize(type, &c, l);
+  status.push_back({ c, l });
+
+  //maxHealth
+  serialize(maxHealth, &c, l);
+  status.push_back({ c, l });
+
+  //health
+  serialize(health, &c, l);
+  status.push_back({ c, l });
+
+  //radius
+  serialize(radius, &c, l);
+  status.push_back({ c, l });
+
+  concat(status, data, DataLen);
 }
 void Object::setStatus(unsigned char* data, int DataLen) {
-  ///TODO
+  vector<pair<unsigned char*, int> > status;
+  split(data, DataLen, status);
+
+  //relativePos
+  relativePos.set(status[0].first, status[0].second);
+
+  //type
+  type = deserializei(status[1].first, status[1].second);
+
+  //maxHealth
+  maxHealth = deserializei(status[2].first, status[2].second);
+
+  //health
+  health = deserializei(status[3].first, status[3].second);
+
+  //radius
+  radius = deserializef(status[4].first, status[4].second);
+}
+Object::~Object() {
+
 }
 
 #ifdef M_SERVER
@@ -133,6 +268,9 @@ void Ship::newTurn(int id) {
   connectedClient->SendData<int>(id, PacketNewRound);
 }
 void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
+  int l;
+  unsigned char* c;
+
   switch (Id) {
   case PacketCommand:
     if (canMove) {
@@ -150,54 +288,122 @@ void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thispt
     }
     break;
   case PacketSensor:
-    connectedClient->SendData<list<Sighting*>>(sightings, PacketSensor);
+    getSightings(&c, l);
+    connectedClient->SendData(c, PacketSensor, l);
     break;
   case PacketCommandHistory: //
 
     break;
   case PacketShipData:
-    connectedClient->SendData<Ship* const>(this, PacketShipData);
+    getStatus(&c, l);
+    connectedClient->SendData(c, PacketShipData, l);
     break;
   }
 }
 #endif
+#ifdef M_CLIENT
+void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
+  switch (Id) {
+  case PacketCommand:
+    ///TODO
+  case PacketSensor:
+    setSightings(Data, DataLen);
+    break;
+  case PacketCommandHistory: ///TODO
 
+    break;
+  case PacketShipData:
+    setStatus(Data, DataLen);
+    break;
+  }
+}
+#endif
 void Ship::getStatus(unsigned char** data, int &DataLen) {
   vector<pair<unsigned char* , int> > status;
   auto it = objects.begin();
 
   while (it != objects.end()) {
-    unsigned char** d;
+    unsigned char* d;
     int i;
-    (*it)->getStatus(d, i);
-    status.push_back({*d,i});
+    (*it)->getStatus(&d, i);
+    status.push_back({d,i});
     ++it;
   }
   concat(status, data, DataLen);
 }
 void Ship::setStatus(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char**, int> > status;
-  ///TODO
-}
+  vector<pair<unsigned char*, int> > status;
+  split(data, DataLen, status);
 
+  clearObjects();
+
+  for (int i = 0; i < status.size(); i++) {
+    Object* nObj = new Object();
+    nObj->setStatus(status[i].first, status[i].second);
+    nObj->parentShip = this;
+    objects.push_back(nObj);
+  }
+}
 void Ship::getSightings(unsigned char** data, int &DataLen) {
   vector<pair<unsigned char*, int> > status;
   auto it = sightings.begin();
 
   while (it != sightings.end()) {
-    unsigned char** d;
+    unsigned char* d;
     int i;
-    (*it)->getSighting(d, i);
-    status.push_back({ *d,i });
+    (*it)->getSighting(&d, i);
+    status.push_back({ d,i });
     ++it;
   }
   concat(status, data, DataLen);
 }
 void Ship::setSightings(unsigned char* data, int DataLen) {
-  ///TODO
+  vector<pair<unsigned char*, int> > sigh;
+  split(data, DataLen, sigh);
+
+  clearSightings();
+
+  for (int i = 0; i < sigh.size(); i++) {
+    Sighting* nObj = new Sighting();
+    nObj->setSighting(sigh[i].first, sigh[i].second);
+    sightings.push_back(nObj);
+  }
+}
+void Ship::clearObjects() {
+  auto it = objects.begin();
+
+  while (it != objects.end()) {
+    (*it)->~Object();
+    delete *it;
+  }
+
+  objects.clear();
+}
+void Ship::clearSightings() {
+  auto it = sightings.begin();
+
+  while (it != sightings.end()) {
+    (*it)->~Sighting();
+    delete *it;
+  }
+
+  sightings.clear();
+}
+Ship::~Ship() {
+  clearObjects();
+  clearSightings();
+#ifdef M_SERVER
+  connectedClient->~NetworkS();
+  delete connectedClient;
+#endif
+#ifdef M_CLIENT
+  connectedServer->~NetworkC();
+  delete connectedServer;
+#endif
+
 }
 
-  void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
+void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
     ship->packetRecv(Data, Id, DataLen, thisptr);
   }
 
