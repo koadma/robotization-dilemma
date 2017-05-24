@@ -44,10 +44,10 @@ int defaultIRenderManager(int ax, int ay, int bx, int by) {
 int defaultIResizeManager(int x, int y) {
   return 0;
 }
-int defaultIKeyManager(unsigned char key, int x, int y) {
+int defaultIKeyManager(unsigned char key, int x, int y, bool in) {
   return 0;
 }
-int defaultISpecialKeyManager(int key, int x, int y) {
+int defaultISpecialKeyManager(int key, int x, int y, bool in) {
   return 0;
 }
 int defaultIMouseEntryManager(int state) {
@@ -56,10 +56,10 @@ int defaultIMouseEntryManager(int state) {
 int defaultIMouseMoveManager(int x, int y) {
   return 0;
 }
-int defaultIMouseClickManager(int idk, int key, int x, int y) {
+int defaultIMouseClickManager(int idk, int key, int x, int y, bool in) {
   return 0;
 }
-int defaultIMouseWheelManager(int idk, int key, int x, int y) {
+int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in) {
   return 0;
 }
 
@@ -74,13 +74,13 @@ Coordiante::Coordiante(float lrelx, float lrely) {
   x = 0;
   y = 0;
   relx = lrelx;
-  rely = 1-lrely;
+  rely = lrely;
 }
 Coordiante::Coordiante(float lrelx, float lrely, float labsx, float labsy) {
   x = labsx;
   y = labsy;
   relx = lrelx;
-  rely = 1-lrely;
+  rely = lrely;
 }
 float Coordiante::GetX(float WindowWidht) {
   return WindowWidht*relx + x;

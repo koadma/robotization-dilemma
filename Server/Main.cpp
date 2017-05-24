@@ -1,10 +1,14 @@
 #include "Main.h"
 
-NetworkS* newClientBind;
-Game* game;
+NetworkS** newClientBind;
+
+void detachCreateClientBind() {
+  thread* s = new thread(createClientBind); //Set up new listener
+}
 
 void createClientBind() {
-  newClientBind = new NetworkS("1111", bindRecv);
+  newClientBind = new NetworkS*;
+  *newClientBind = new NetworkS("1111", loginRecv);
 }
 
 bool isCompatible(int va, int vb, int vc) {
@@ -15,12 +19,13 @@ int checkLogin(unsigned char* data, int id, int dataLen) {
   if (id != PacketLogin) {
     return LoginErrorProtocolError;
   }
-  string s(reinterpret_cast<char*>(data), dataLen);
-  vector<string> args = tokenize(s,';');
+  
+  vector<pair<unsigned char*, int> > args;
+  split(data, dataLen, args);
   if (args.size() < 3) {
     return LoginErrorProtocolError;
   }
-  if (!isCompatible(strTo<int>(args[0]), strTo<int>(args[1]), strTo<int>(args[2]))) {
+  if (!isCompatible(deserializeT<int>(args[0].first, args[0].second), deserializeT<int>(args[1].first, args[1].second), deserializeT<int>(args[2].first, args[2].second))) {
     return LoginErrorVersionError;
   }
   if (game->state != Game::Joining) {
@@ -29,37 +34,48 @@ int checkLogin(unsigned char* data, int id, int dataLen) {
   return LoginErrorOk;
 }
 
-void loginRecv(unsigned char* data, int id, int dataLen, NetworkS* thisptr, Ship* ship) {
-  int loginState = checkLogin(data, id, dataLen);
-  if (loginState == LoginErrorOk) { //If can join
-    Ship* newShip = new Ship();
-    newShip->connectedClient = thisptr;
+bool loginRecv(unsigned char* data, int id, int dataLen, NetworkS* thisptr, Ship* ship) {
+  if(ship == NULL) {
+    int loginState = checkLogin(data, id, dataLen);
+    if (loginState == LoginErrorOk) { //If can join
+      Ship* newShip = new Ship();
+      newShip->connectedClient = thisptr;
 
-    game->addShip(newShip);
+      game->addShip(newShip);
 
-    thisptr->ConnectedShip = ship;
-    thisptr->RecivePacket = shipPacketRecv; //Hand over processing to ship
-    thisptr->SendData(loginState, PacketLogin);
+      thisptr->ConnectedShip = newShip;
+      thisptr->SendData(loginState, PacketLogin);
 
-    createClientBind(); //Set up new listener;
+      cout << "Client accepted" << endl;
+
+      detachCreateClientBind();
+      //Thread will self terminate when connection is established.
+
+      return 0;
+    }
+    else {
+      thisptr->SendData(loginState, PacketLogin);
+
+      //this_thread::sleep_for(10s);
+
+      cout << "Client rejected " << loginState << endl;
+
+      return 1;
+    }
   }
   else {
-    thisptr->SendData(loginState, PacketLogin);
-    thisptr->SendData("", 0, 0);
-
-    delete thisptr; //Remove binding.
+    return ship->packetRecv(data, id, dataLen, thisptr);
   }
-}
-
-void bindRecv(unsigned char* data, int id, int dataLen, NetworkS* thisptr, Ship* ship) {
-  newClientBind->RecivePacket = loginRecv; //Hand over handling to login
-  //OBJECT LOSES POINTER
-  createClientBind(); //Set up new listener;
 }
 
 int main(int argc, char** argv)
 {
   game = new Game(2);
-  createClientBind(); //Begin accepting clients
+  detachCreateClientBind(); //Begin accepting clients
+
+  int n;
+  cout << "Press any key to exit" << endl;
+  cin >> n;
+
   return 0;
 }

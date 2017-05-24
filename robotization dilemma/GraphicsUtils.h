@@ -26,21 +26,21 @@ typedef void(*MouseWheelManager)(int idk, int key, int x, int y);
 
 typedef int(*IRenderManager)(int ax, int ay, int bx, int by);
 typedef int(*IResizeManager)(int x, int y);
-typedef int(*IKeyManager)(unsigned char key, int x, int y);
-typedef int(*ISpecialKeyManager)(int key, int x, int y);
+typedef int(*IKeyManager)(unsigned char key, int x, int y, bool in);
+typedef int(*ISpecialKeyManager)(int key, int x, int y, bool in);
 typedef int(*IMouseEntryManager)(int state);
 typedef int(*IMouseMoveManager)(int x, int y);
-typedef int(*IMouseClickManager)(int idk, int key, int x, int y);
-typedef int(*IMouseWheelManager)(int idk, int key, int x, int y);
+typedef int(*IMouseClickManager)(int idk, int key, int x, int y, bool in);
+typedef int(*IMouseWheelManager)(int idk, int key, int x, int y, bool in);
 
 int defaultIRenderManager(int ax, int ay, int bx, int by);
 int defaultIResizeManager(int x, int y);
-int defaultIKeyManager(unsigned char key, int x, int y);
-int defaultISpecialKeyManager(int key, int x, int y);
+int defaultIKeyManager(unsigned char key, int x, int y, bool in);
+int defaultISpecialKeyManager(int key, int x, int y, bool in);
 int defaultIMouseEntryManager(int state);
 int defaultIMouseMoveManager(int x, int y);
-int defaultIMouseClickManager(int idk, int key, int x, int y);
-int defaultIMouseWheelManager(int idk, int key, int x, int y);
+int defaultIMouseClickManager(int idk, int key, int x, int y, bool in);
+int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in);
 
 struct WindowManagers {
   RenderManager renderManager;

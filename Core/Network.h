@@ -37,8 +37,8 @@ class NetworkC;
 class NetworkS;
 class Ship;
 
-typedef void(*RecivePacketFuncS)(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
-typedef void(*RecivePacketFuncC)(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr, Ship* ship);
+typedef bool(*RecivePacketFuncS)(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
+typedef bool(*RecivePacketFuncC)(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr, Ship* ship);
 
 
 //void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen);
@@ -48,20 +48,15 @@ public:
   NetworkS();
   NetworkS(string port, RecivePacketFuncS recivePacketFunc);
   ~NetworkS();
+  int error = 0;
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
   int SendData(unsigned char *Data, int Id, int DataLen);
   template<typename T> int SendData(T& data, int Id) {
-    stringstream ss;
-    ss << data;
-    std::string datas = ss.str();
-
-    char* id_c = new char[datas.size() + 1];
-    strcpy_s(id_c, datas.size(), datas.c_str());
-    int val = SendData(id_c, Id, datas.length());
-
-    delete[] id_c;
-    return val;
+    unsigned char* c;
+    int l;
+    serialize(data, &c, l);
+    return SendData(c, Id, l);
   }
   int ReciveData();
   thread ReciveLoopThread;
@@ -80,6 +75,7 @@ public:
   NetworkC();
   NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc);
   ~NetworkC();
+  int error = 0;
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
   int SendData(unsigned char *Data, int Id, int DataLen);

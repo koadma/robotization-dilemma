@@ -1,4 +1,5 @@
 #include "Ship.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -153,6 +154,29 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
     return Movement();
   }
 }
+#ifdef M_CLIENT
+  void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, float maxVel) {
+    auto it = keyframes.begin();
+
+    int id = 0;
+
+    glBegin(GL_LINE_STRIP);
+
+    if(keyframes.size()) {
+      float t = keyframes[0]->gTimeStamp;
+
+      while (t < keyframes[keyframes.size() - 1]->gTimeStamp + ROUND_TIME) {
+        Movement estpos = estimatePos(t, maxVel);
+        glVertex3f(estpos.pos.x, estpos.pos.x, estpos.pos.x);
+        t += ROUND_TIME * 0.1f;
+      }
+    }
+
+    glEnd();
+
+    //drawPointingVector(camcx, camcy, camcz, d);
+  }
+#endif
 void Sighting::getSighting(unsigned char** data, int &DataLen) {
   vector<pair<unsigned char*, int> > status;
   auto it = keyframes.begin();
@@ -243,6 +267,14 @@ void Object::setStatus(unsigned char* data, int DataLen) {
   //radius
   radius = deserializef(status[4].first, status[4].second);
 }
+#ifdef M_CLIENT
+void Object::drawObject(float camcx, float camcy, float camcz, float d) {
+  glTranslatef(relativePos.x, relativePos.y, relativePos.z);
+  setColor(0xffff0000 + ((0x00ffff * health) / maxHealth));
+  glutSolidSphere(radius, 20, 20);
+  glTranslatef(- relativePos.x, - relativePos.y, - relativePos.z);
+}
+#endif
 Object::~Object() {
 
 }
@@ -261,13 +293,14 @@ int Ship::makeMove(vector<string> & data) {
     return 0;
     break;
   }
+  
 }
 void Ship::newTurn(int id) {
   canMove = true;
 
   connectedClient->SendData<int>(id, PacketNewRound);
 }
-void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
+bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
   int l;
   unsigned char* c;
 
@@ -282,6 +315,7 @@ void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thispt
   case PacketCommit:
     if (canMove) {
       canMove = false;
+      game->moveMade();
     }
     else {
 
@@ -299,25 +333,93 @@ void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thispt
     connectedClient->SendData(c, PacketShipData, l);
     break;
   }
+  return 0;
 }
 #endif
 #ifdef M_CLIENT
-void Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
+void Ship::commit() {
+  if(canMove) {
+    canMove = false;
+    connectedServer->SendData("a", PacketCommit, 1);
+  }
+}
+void Ship::newTurn(int id) {
+  canMove = true;
+  renderNewRound(id);
+}
+void Ship::drawSightings(float camcx, float camcy, float camcz, float d) {
+  auto it = sightings.begin();
+
+  while (it != sightings.end()) {
+    (*it)->drawSighting(camcx, camcy, camcz, d, SOL);
+    ++it;
+  }
+}
+void Ship::drawObjects(float camcx, float camcy, float camcz, float d) {
+  auto it = objects.begin();
+
+  while (it != objects.end()) {
+    (*it)->drawObject(camcx, camcy, camcz, d);
+    ++it;
+  }
+}
+bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr) {
   switch (Id) {
+  case PacketNewRound:
+    newTurn(strTo<int>(string(reinterpret_cast<char*>(Data))));
+  case PacketGameOver:
+    createMainMenu();
+    break;
   case PacketCommand:
-    ///TODO
+    //createMainMenu();
+    break;
   case PacketSensor:
     setSightings(Data, DataLen);
+    glutPostRedisplay();
+    break;
+  case PacketShipData:
+    setStatus(Data, DataLen);
+    glutPostRedisplay();
     break;
   case PacketCommandHistory: ///TODO
 
     break;
-  case PacketShipData:
-    setStatus(Data, DataLen);
-    break;
+
   }
+  return 0;
 }
 #endif
+Object* Ship::getObject(int type) {
+  auto it = objects.begin();
+  while (it != objects.end()) {
+    if ((*it)->type == type) {
+      return *it;
+    }
+    ++it;
+  }
+  return NULL;
+}
+Object* Ship::getSensor() {
+  return getObject(Type::Sensor);
+}
+Object* Ship::getGenerator() {
+  return getObject(Type::Generator);
+}
+void  Ship::setSensorEnergy(float energy) {
+  getSensor()->energy = energy;
+}
+float Ship::getSensorEnergy() {
+  return getSensor()->energy;
+}
+float Ship::getMaximumSensorEnergy() {
+  return getSensor()->maxEnergy;
+}
+float Ship::getTotalShipEnergy() {
+  return getGenerator()->maxEnergy;
+}
+float Ship::getRemainingShipEnergy() {
+  return 0;
+}
 void Ship::getStatus(unsigned char** data, int &DataLen) {
   vector<pair<unsigned char* , int> > status;
   auto it = objects.begin();
@@ -403,9 +505,9 @@ Ship::~Ship() {
 
 }
 
-void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
+/*void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
     ship->packetRecv(Data, Id, DataLen, thisptr);
-  }
+  }*/
 
 /*
 int Ship::getSpentEnergy() const
@@ -758,3 +860,5 @@ PolynomialF{ vector<float> { l.vel.z, l.vel.z*l.time + l.origin.z } };
 return -p.Coefficient[0] / p.Coefficient[1];
 }
 */
+
+Ship* ship;

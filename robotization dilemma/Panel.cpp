@@ -92,7 +92,7 @@ void Panel::render() {
     } else {
       //glPushMatrix();
       //glViewport(cax, cay, cbx - cax, cby - cay);
-      glScissor((*it)->cax, (*it)->cay, (*it)->cbx - (*it)->cax, (*it)->cby - (*it)->cay);
+      //glScissor((*it)->cax, (*it)->cay, (*it)->cbx - (*it)->cax, (*it)->cby - (*it)->cay);
       (*it)->render();
       //glPopMatrix();
       ++it;

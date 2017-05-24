@@ -155,13 +155,15 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ClientCore.cpp" />
+    <ClCompile Include="GameCanvas.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsUtils.cpp" />
     <ClCompile Include="GUIElement.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Panel.cpp" />
-    <ClCompile Include="Render.cpp" />
+    <ClCompile Include="RenderIn.cpp" />
+    <ClCompile Include="RenderOut.cpp" />
     <ClCompile Include="TextInput.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,13 +177,15 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="ClientCore.h" />
+    <ClInclude Include="GameCanvas.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsUtils.h" />
     <ClInclude Include="GUIElement.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Panel.h" />
-    <ClInclude Include="Render.h" />
+    <ClInclude Include="RenderIn.h" />
+    <ClInclude Include="RenderOut.h" />
     <ClInclude Include="TextInput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

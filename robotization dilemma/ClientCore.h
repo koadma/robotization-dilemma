@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Server/Ship.h"
+#include "../Server/Bubble.h"
 
-class Player {
-
-};
+extern bool recivePacket(unsigned char* data, int id, int dataLen, NetworkC* client, Ship* ship);

@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Graphics.h"
+#include "../Server/Ship.h"
+
+void ingameMenuSensorInput(string s);
+
+void ingameMenuCommitButton();
 
 void ingameMenuExitButton();
 
@@ -12,6 +16,6 @@ void gameMenuJoinButton();
 
 void mainMenuPlayButton();
 
-void createMainMenu();
+void mainMenuExitButton();
 
 int InitWindow();

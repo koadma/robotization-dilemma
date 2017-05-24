@@ -22,7 +22,8 @@ enum NetworkErrorCodes {
   cout << Id << " " << Data << endl;
 }
 */
-void NetworkError(int ID, int WSAError = 0) {
+void NetworkError(int ID, int& set, int WSAError) {
+  set = ID;
   cout << "Error code: " << to_string(ID) << endl;
 }
 
@@ -35,7 +36,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   // Initialize Winsock
   iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeInitalize, iResult);
+    NetworkError(NetworkErrorCodeInitalize, error, iResult);
     return;
   }
 
@@ -48,7 +49,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   // Resolve the server address and port
   iResult = getaddrinfo(NULL, port.c_str(), &hints, &result);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeResolveServerAddress, iResult);
+    NetworkError(NetworkErrorCodeResolveServerAddress, error, iResult);
     WSACleanup();
     return;
   }
@@ -56,7 +57,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   // Create a SOCKET for connecting to server
   ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
   if (ListenSocket == INVALID_SOCKET) {
-    NetworkError(NetworkErrorCodeCreateListenSocket);
+    NetworkError(NetworkErrorCodeCreateListenSocket, error, 0);
     freeaddrinfo(result);
     WSACleanup();
     return;
@@ -65,7 +66,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   // Setup the TCP listening socket
   iResult = ::bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
   if (iResult == SOCKET_ERROR) {
-    NetworkError(NetworkErrorCodeBindListenSocket);
+    NetworkError(NetworkErrorCodeBindListenSocket, error, 0);
     freeaddrinfo(result);
     closesocket(ListenSocket);
     WSACleanup();
@@ -78,7 +79,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
 
   iResult = listen(ListenSocket, SOMAXCONN);
   if (iResult == SOCKET_ERROR) {
-    NetworkError(NetworkErrorCodeServerListen);
+    NetworkError(NetworkErrorCodeServerListen, error, 0);
     closesocket(ListenSocket);
     WSACleanup();
     return;
@@ -87,7 +88,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   // Accept a client socket
   ClientSocket = accept(ListenSocket, NULL, NULL);
   if (ClientSocket == INVALID_SOCKET) {
-    NetworkError(NetworkErrorCodeServerAccept);
+    NetworkError(NetworkErrorCodeServerAccept, error, 0);
     closesocket(ListenSocket);
     WSACleanup();
     return;
@@ -119,7 +120,7 @@ void NetworkS::Loop()
       if (iResult == 0) {
       }
       else {
-        NetworkError(NetworkErrorCodeServerReciveData  );
+        NetworkError(NetworkErrorCodeServerReciveData, error, 0);
         closesocket(ClientSocket);
         WSACleanup();
         return;
@@ -152,7 +153,7 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
   delete SendRaw;
 
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
-    NetworkError(NetworkErrorCodeServerSendData  );
+    NetworkError(NetworkErrorCodeServerSendData, error, 0);
     closesocket(ClientSocket);
     WSACleanup();
     return -1;
@@ -208,8 +209,14 @@ int NetworkS::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
-  delete data;
+  bool t = RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
+
+  //delete data;
+
+  if (t) {
+    return 0;
+  }
+
   return dlen;
 }
 
@@ -224,7 +231,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   // Initialize Winsock
   iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeInitalize);
+    NetworkError(NetworkErrorCodeInitalize, error, 0);
     return;
   }
 
@@ -236,7 +243,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   // Resolve the server address and port
   iResult = getaddrinfo(IP.c_str(), port.c_str(), &hints, &result);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeResolveServerAddress);
+    NetworkError(NetworkErrorCodeResolveServerAddress, error, 0);
     WSACleanup();
     return;
   }
@@ -248,7 +255,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
     ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
       ptr->ai_protocol);
     if (ConnectSocket == INVALID_SOCKET) {
-      NetworkError(NetworkErrorCodeCreateClientSocket  );
+      NetworkError(NetworkErrorCodeCreateClientSocket, error, 0);
       WSACleanup();
       return;
     }
@@ -266,7 +273,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   freeaddrinfo(result);
 
   if (ConnectSocket == INVALID_SOCKET) {
-    NetworkError(NetworkErrorCodeConnectServer);
+    NetworkError(NetworkErrorCodeConnectServer, error, 0);
     WSACleanup();
     return;
   }
@@ -297,7 +304,7 @@ void NetworkC::Loop()
 
       }
       else {
-        NetworkError(NetworkErrorCodeClientReciveData, WSAGetLastError());
+        NetworkError(NetworkErrorCodeClientReciveData, error, WSAGetLastError());
         closesocket(ConnectSocket);
         //WSACleanup();
         return;
@@ -327,10 +334,13 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
 
   int iSendResult = send(ConnectSocket, SendRaw, DataLen + 2 * PACKET_HEADER_LEN, 0);
 
-  delete SendRaw;
+  //delete Data;
+  //delete SendRaw;
+  
+  //TODO: Free memory properly
 
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
-    NetworkError(NetworkErrorCodeClientSendData  );
+    NetworkError(NetworkErrorCodeClientSendData, error, 0);
     closesocket(ConnectSocket);
     WSACleanup();
     return -1;
@@ -341,7 +351,6 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
 int NetworkC::SendData(unsigned char *Data, int Id, int DataLen) {
   return SendData(reinterpret_cast<char*>(Data), Id, DataLen);
 }
-
 
 int NetworkC::ReciveData() {
   char len[PACKET_HEADER_LEN];
@@ -390,8 +399,14 @@ int NetworkC::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
+  bool t = RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
+
   delete data;
+
+  if (t) {
+    return 0;
+  }
+
   return dlen;
 }
 
@@ -410,8 +425,8 @@ void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC,
 
   int prevSector = 0;
 
-  for (int i = 0; i<in.size(); i++) {
-    conv.i = in[i].second;
+  for (int k = 0; k<in.size(); k++) {
+    conv.i = in[k].second;
 
     for (int i = 0; i < PACKET_HEADER_LEN; i++) {
       (*C)[prevSector + i] = conv.chararr.chars[i];
@@ -419,14 +434,14 @@ void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC,
 
     prevSector += PACKET_HEADER_LEN;
 
-    for (int i = 0; i < in[i].second; i++) {
-      (*C)[prevSector + i] = in[i].first[i];
+    for (int i = 0; i < in[k].second; i++) {
+      (*C)[prevSector + i] = in[k].first[i];
     }
 
-    prevSector += in[i].second;
+    prevSector += in[k].second;
 
     if (destroy) {
-      delete in[i].first;
+      delete in[k].first;
     }
   }
 

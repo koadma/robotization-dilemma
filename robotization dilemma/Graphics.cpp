@@ -39,7 +39,7 @@ Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordiante minc, Coo
 
   GWindow* data = new GWindow;
   
-  PanelHwnd panel = new Panel("", Coordiante{ 0,1,0,0 }, Coordiante{ 1,0,0,0 }, ElementBackColor);
+  PanelHwnd panel = new Panel("", Coordiante{ 0,0,0,0 }, Coordiante{ 1,1,0,0 }, ElementBackColor);
 
   data->id = id;
   data->parent = parent;

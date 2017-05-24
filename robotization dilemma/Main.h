@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "Render.h"
+#include "GameCanvas.h"
 
 using namespace std;
 

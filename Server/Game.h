@@ -3,6 +3,7 @@
 
 #include "WinManager.h"
 
+
 class Game {
 public:
   Game(int count) {
@@ -25,74 +26,17 @@ public:
     Finished
   };
   int state = Joining;
-  void newTurn() {
-    turnId++;
-    auto it = ships.begin();
-    while(it != ships.end()) {
-      (*it)->newTurn(turnId);
-      ++it;
-    }
-  }
-  void startGame() {
-    state = Waiting;
-    turnId = 0;
-  }
-  void addShip(Ship* ship) {
-    ships.push_back(ship);
-    if (targetPlayerCount == ships.size()) { //reached target number of players
-      startGame();
-    }
-  }
-  void removeIntersect(Drone* drone) {
-    auto it = intersects.begin();
-
-    while (it != intersects.end()) {
-      if (it->second.first == drone) {
-        auto it2 = it;
-        ++it;
-        intersects.erase(it2);
-      }
-      else {
-        ++it;
-      }
-    }
-  }
-  void removeIntersect(Bubble* bubble) {
-    auto it = intersects.begin();
-
-    while (it != intersects.end()) {
-      if (it->second.second == bubble) {
-        auto it2 = it;
-        ++it;
-        intersects.erase(it2);
-      }
-      else {
-        ++it;
-      }
-    }
-  }
-  void calcIntersect() {
-    intersects.clear(); //reset intersections
-    auto itb = bubbles.begin();
-    while (itb != bubbles.end()) {
-      auto its = ships.begin();
-      while (its != ships.end()) {
-        list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
-        intersects.insert(inters.begin(), inters.end());
-        ++its;
-      }
-      ++itb;
-    }
-  }
-  void simulate(float till) {
-    calcIntersect();
-    auto it = intersects.begin();
-    while (it != intersects.end() && it->first < till) {
-      //it->second.first->shot();
-      ++it;
-    }
-  }
+  void moveMade();
+  void newTurn();
+  void startGame();
+  void addShip(Ship* ship);
+  void removeIntersect(Drone* drone);
+  void removeIntersect(Bubble* bubble);
+  void calcIntersect();
+  void simulate(float till);
 };
+
+extern Game* game;
 
 /*
 class Game

@@ -1,7 +1,12 @@
 #ifndef __SHIP_H__
 #define __SHIP_H__
 
+#ifdef M_SERVER
 #include "../Server/Bubble.h"
+#endif
+#ifdef M_CLIENT
+#include "../robotization dilemma/RenderOut.h"
+#endif
 
 vector<double> intersectPaths(Path &lhs, Path &rhs);
 
@@ -124,6 +129,9 @@ public:
   int getLastSmaller(float t);
   Movement estimatePos(float t, float maxVelocity);
   
+#ifdef M_CLIENT
+  void drawSighting(float camcx, float camcy, float camcz, float d, float maxVel);
+#endif
 
   void getSighting(unsigned char** data, int &DataLen);
   void setSighting(unsigned char* data, int DataLen);
@@ -150,8 +158,14 @@ public:
   int maxHealth;    //2
   int health;       //3
   float radius;     //4
+  float energy;     //5
+  float maxEnergy;  //6
 
   Movement getMovement();
+
+#ifdef M_CLIENT
+  void drawObject(float camcx, float camcy, float camcz, float d);
+#endif
 
   void getStatus(unsigned char** data, int &DataLen);
   void setStatus(unsigned char* data, int DataLen);
@@ -177,6 +191,33 @@ class Ship : public Drone {
 public:
   fVec3 accel = fVec3(0);
 
+  bool canMove = false; //is the player open to moving / are we waiting for a move.
+
+  Ship() {
+    Object* no = new Object();
+    no->parentShip = this;
+    no->relativePos = {100,0,0};
+    no->type = Generator;
+    no->maxHealth = 1000;
+    no->health = 800;
+    no->radius = 100;
+    no->maxEnergy = 100000;
+
+    objects.push_back(no);
+
+    no = new Object();
+    no->parentShip = this;
+    no->relativePos = { -100,0,0 };
+    no->type = Sensor;
+    no->maxHealth = 1000;
+    no->health = 600;
+    no->radius = 100;
+    no->maxEnergy = 100000;
+    no->energy = 0;
+
+    objects.push_back(no);
+  }
+
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
     list< pair<double, pair<Object*, Path*>>> res;
     auto it = objects.begin();
@@ -184,23 +225,39 @@ public:
       res.splice(res.end(), (*it)->intersect(p));
       ++it;
     }
+    return res;
   }
 
   list<Object*> objects;
   list<Sighting*> sightings;
 #ifdef M_SERVER
   NetworkS* connectedClient;
-  bool canMove = false; //is the player open to moving / are we waiting for a move.
 
   int makeMove(vector<string> & data);
   void newTurn(int id);
-  void packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
+  bool packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
 #endif
 #ifdef M_CLIENT
   NetworkC* connectedServer;
 
-  void packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
+  void commit();
+
+  void newTurn(int id);
+
+  void drawSightings(float camcx, float camcy, float camcz, float d);
+  void drawObjects(float camcx, float camcy, float camcz, float d);
+
+  bool packetRecv(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr);
 #endif
+  Object* getObject(int type);
+  Object* getGenerator();
+  Object* getSensor();
+  void  setSensorEnergy(float energy);
+  float getSensorEnergy();
+  float getMaximumSensorEnergy();
+
+  float getTotalShipEnergy();
+  float getRemainingShipEnergy();
 
   void getStatus(unsigned char** data, int &DataLen);
   void setStatus(unsigned char* data, int DataLen);
@@ -214,7 +271,9 @@ public:
   ~Ship();
 };
 
-void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
+//void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
+
+extern Ship* ship;
 
 /*
 struct Command
