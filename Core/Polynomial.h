@@ -80,12 +80,6 @@ public:
     }
   }
 
-  template<typename T> Polynomial<T>& operator*= (Polynomial<T>& rhs) {
-    return *this * rhs;
-  }
-  template<typename T> Polynomial<T>& operator+= (Polynomial<T>& rhs) {
-    return *this + rhs;
-  }
 };
 
 template<typename T> Polynomial<T> operator+ (Polynomial<T> lhs, Polynomial<T> rhs) {
@@ -495,7 +489,7 @@ template<typename T> Polynomial<T> Equation<T>::getPolynomial(char t) {
   auto it = terms.begin();
 
   while (it != terms.end()) {
-    res += it->toPolynomial(t);
+    res = res + it->toPolynomial(t);
     ++it;
   }
 

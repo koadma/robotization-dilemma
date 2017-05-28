@@ -3,41 +3,41 @@
 
 using namespace std;
 
-vector<double> intersectPaths(Path &lhs, Path &rhs) {
+vector<double> intersectPaths(Path* lhs, Path* rhs) {
   Eqnsys impleq; //
   Eqnsys expleq; //
-  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeExplicit) {
+  if (lhs->etype() == Path::EqnTypeExplicit && rhs->etype()== Path::EqnTypeExplicit) {
     throw 1;
   }
-  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeApproxable) {
-    impleq = rhs.getEquations(false);
-    expleq = lhs.getEquations(false);
+  if (lhs->etype()== Path::EqnTypeExplicit && rhs->etype()== Path::EqnTypeApproxable) {
+    impleq = rhs->getEquations(false);
+    expleq = lhs->getEquations(false);
   }
-  if (lhs.etype == Path::EqnTypeExplicit && rhs.etype == Path::EqnTypeImplicit) {
-    impleq = rhs.getEquations(false);
-    expleq = lhs.getEquations(false);
+  if (lhs->etype()== Path::EqnTypeExplicit && rhs->etype()== Path::EqnTypeImplicit) {
+    impleq = rhs->getEquations(false);
+    expleq = lhs->getEquations(false);
   }
-  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeExplicit) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(false);
+  if (lhs->etype()== Path::EqnTypeApproxable && rhs->etype()== Path::EqnTypeExplicit) {
+    impleq = lhs->getEquations(false);
+    expleq = rhs->getEquations(false);
   }
-  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeApproxable) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(true);
+  if (lhs->etype()== Path::EqnTypeApproxable && rhs->etype()== Path::EqnTypeApproxable) {
+    impleq = lhs->getEquations(false);
+    expleq = rhs->getEquations(true);
   }
-  if (lhs.etype == Path::EqnTypeApproxable && rhs.etype == Path::EqnTypeImplicit) {
-    impleq = rhs.getEquations(false);
-    expleq = lhs.getEquations(true);
+  if (lhs->etype()== Path::EqnTypeApproxable && rhs->etype()== Path::EqnTypeImplicit) {
+    impleq = rhs->getEquations(false);
+    expleq = lhs->getEquations(true);
   }
-  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeExplicit) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(false);
+  if (lhs->etype()== Path::EqnTypeImplicit && rhs->etype()== Path::EqnTypeExplicit) {
+    impleq = lhs->getEquations(false);
+    expleq = rhs->getEquations(false);
   }
-  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeApproxable) {
-    impleq = lhs.getEquations(false);
-    expleq = rhs.getEquations(true);
+  if (lhs->etype()== Path::EqnTypeImplicit && rhs->etype()== Path::EqnTypeApproxable) {
+    impleq = lhs->getEquations(false);
+    expleq = rhs->getEquations(true);
   }
-  if (lhs.etype == Path::EqnTypeImplicit && rhs.etype == Path::EqnTypeImplicit) {
+  if (lhs->etype()== Path::EqnTypeImplicit && rhs->etype()== Path::EqnTypeImplicit) {
     throw 1;
   }
 
@@ -268,6 +268,24 @@ void Object::setStatus(unsigned char* data, int DataLen) {
   radius = deserializef(status[4].first, status[4].second);
 }
 #ifdef M_CLIENT
+list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori, vec3<double> dir) {
+  Shot p;
+  p.origin = ori;
+  p.origintime = 0;
+  p.vel = dir;
+  Movement m;
+  m.pos = relativePos + parentShip->mov.pos;
+  m.vel = 0;
+  m.acc = 0;
+  m.gTimeStamp = 0;
+  m.radius = radius;
+  list< pair<double, pair<Object*, Path*>>> res;
+  vector<double> times = intersectPaths(&m, &p);
+  for (int i = 0; i < times.size(); i++) {
+    res.push_back({ times[i],{ this, &p } });
+  }
+  return res;
+}
 void Object::drawObject(float camcx, float camcy, float camcz, float d) {
   glTranslatef(relativePos.x, relativePos.y, relativePos.z);
   setColor(0xffff0000 + ((0x00ffff * health) / maxHealth));

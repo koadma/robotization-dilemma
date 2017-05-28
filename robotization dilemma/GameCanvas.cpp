@@ -230,6 +230,11 @@ int MainGameShipCanvas::mxold;
 int MainGameShipCanvas::myold;
 int MainGameShipCanvas::mousebuttons = 0; //left, center, right
 
+GLdouble MainGameShipCanvas::model_view[16];
+GLdouble MainGameShipCanvas::projection[16];
+GLint MainGameShipCanvas::viewport[4];
+vec3<double> MainGameShipCanvas::cameraEye;
+
 void MainGameShipCanvas::normalizeAngles() {
 
   if (camtheta > HALF_PI) {
@@ -250,9 +255,11 @@ int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
+  cameraEye = { camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta) };
+
   gluPerspective(60.0, (bx - ax) / float(by - ay), 1, 20000000);
   gluLookAt(
-    camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta),
+    cameraEye.x, cameraEye.y, cameraEye.z,
     camcx, camcy, camcz,
     -cos(camphi) * sin(camtheta), cos(camtheta), -sin(camphi) * sin(camtheta)
     );
@@ -264,6 +271,10 @@ int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
   glLoadIdentity();
 
   glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+
+  glGetDoublev(GL_MODELVIEW_MATRIX, model_view);
+  glGetDoublev(GL_PROJECTION_MATRIX, projection);
+  glGetIntegerv(GL_VIEWPORT, viewport);
 
                                   // Render a color-cube consisting of 6 quads with different colors
   glLoadIdentity();                 // Reset the model-view matrix
@@ -427,6 +438,20 @@ int MainGameShipCanvas::mouseClickManager(int button, int state, int x, int y, b
   if (in) {
     mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
     mousebuttons ^= (state ^ 1) << button;
+    if (button == 0 && state == 0) { //left down
+      GLdouble pos3D_ax, pos3D_ay, pos3D_az;
+
+      // get 3D coordinates based on window coordinates
+
+      gluUnProject(x, y, 0.01,
+        model_view, projection, viewport,
+        &pos3D_ax, &pos3D_ay, &pos3D_az);
+
+      vec3<double> rayori = {pos3D_ax, pos3D_ay, pos3D_az};
+      vec3<double> raydir = rayori - cameraEye;
+
+      ship->setSidebar(rayori, raydir);
+    }
   }
   else {
     mousebuttons = 0;

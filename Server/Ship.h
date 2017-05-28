@@ -8,11 +8,13 @@
 #include "../robotization dilemma/RenderOut.h"
 #endif
 
-vector<double> intersectPaths(Path &lhs, Path &rhs);
+vector<double> intersectPaths(Path* lhs, Path* rhs);
 
 class Movement : public Path { //Order of serialisation
 public:
-  static const EqnType etype = EqnType::EqnTypeApproxable;
+  int etype() {
+    return EqnType::EqnTypeApproxable;
+  }
   float gTimeStamp = 0;        //0
   fVec3 pos = fVec3(0);        //1
   //float posUncertainty = 0;
@@ -164,6 +166,23 @@ public:
   Movement getMovement();
 
 #ifdef M_CLIENT
+  list< pair<double, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
+  void setSidebar() {
+    //cout << type << " clicked " << health/float(maxHealth) << endl;
+    if(type == Sensor) {
+      Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/sensor_settings.html");
+      reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarHealth"))->text = "Health: " + to_string(health) + " / " + to_string(maxHealth);
+      reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(maxEnergy);
+      return;
+    }
+    if (type == Generator) {
+      Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/generator_settings.html");
+      reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarHealth"))->text = "Health: " + to_string(health) + " / " + to_string(maxHealth);
+      reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(maxEnergy);
+      return;
+    }
+    cout << "Unimplemented type " << type << endl;
+  }
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
 
@@ -172,7 +191,7 @@ public:
 
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
     list< pair<double, pair<Object*, Path*>>> res;
-    vector<double> times = intersectPaths(getMovement(), *p);
+    vector<double> times = intersectPaths(&getMovement(), p);
     for (int i = 0; i < times.size(); i++) {
       res.push_back({ times[i],{ this, p } });
     }
@@ -243,6 +262,24 @@ public:
   void commit();
 
   void newTurn(int id);
+
+  void setSidebar(vec3<double> ori, vec3<double> dir) {
+    list< pair<double, pair<Object*, Path*>>> inters;
+
+    auto it = objects.begin();
+
+    while (it != objects.end()) {
+      list< pair<double, pair<Object*, Path*>>> temp = (*it)->getIntersect(ori, dir);
+      inters.splice(inters.end(), temp);
+      ++it;
+     }
+
+     inters.sort();
+
+     if(inters.size()) {
+       inters.begin()->second.first->setSidebar();
+     }
+  }
 
   void drawSightings(float camcx, float camcy, float camcz, float d);
   void drawObjects(float camcx, float camcy, float camcz, float d);

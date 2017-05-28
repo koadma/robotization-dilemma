@@ -385,6 +385,8 @@ void Graphics::setElements(PanelHwnd id, string filename) {
   deleteElements(id);
 
   setElements(id, doc.first_node("body"));
+
+  defaultResizeManager(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 }
 
 void Graphics::resetViewport() {

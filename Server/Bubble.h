@@ -18,8 +18,10 @@ public:
     EqnTypeImplicit = 2,
     EqnTypeUndefined = 3,
   };
-  static const int etype = EqnType::EqnTypeUndefined;
-  Eqnsys getEquations(bool b) {//approximate
+  virtual int etype() {
+    return EqnTypeUndefined;
+  }
+  virtual Eqnsys getEquations(bool b) {//approximate
     throw 1;
     return Eqnsys();
   }
@@ -48,7 +50,9 @@ public:
   }
   //int age; //radius = age * ROUND_TIME * SOL
   Type btype;
-  static const int etype = Path::EqnTypeImplicit;
+  int etype() {
+    return EqnTypeImplicit;
+  }
   Eqnsys getEquations(bool b) {//approximate
     Eqnsys res;
     if (b) {
@@ -74,7 +78,9 @@ public:
   float origintime;
   fVec3 vel;
   float energy;
-  static const int etype = Path::EqnTypeExplicit;
+  int etype() {
+    return EqnTypeExplicit;
+  }
   Eqnsys getEquations(bool b) {//approximate
     Eqnsys res;
     if (b) {
