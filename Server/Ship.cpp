@@ -3,222 +3,9 @@
 
 using namespace std;
 
-vector<double> intersectPaths(Path* lhs, Path* rhs) {
-  Eqnsys impleq; //
-  Eqnsys expleq; //
-  if (lhs->etype() == Path::EqnTypeExplicit && rhs->etype()== Path::EqnTypeExplicit) {
-    throw 1;
-  }
-  if (lhs->etype()== Path::EqnTypeExplicit && rhs->etype()== Path::EqnTypeApproxable) {
-    impleq = rhs->getEquations(false);
-    expleq = lhs->getEquations(false);
-  }
-  if (lhs->etype()== Path::EqnTypeExplicit && rhs->etype()== Path::EqnTypeImplicit) {
-    impleq = rhs->getEquations(false);
-    expleq = lhs->getEquations(false);
-  }
-  if (lhs->etype()== Path::EqnTypeApproxable && rhs->etype()== Path::EqnTypeExplicit) {
-    impleq = lhs->getEquations(false);
-    expleq = rhs->getEquations(false);
-  }
-  if (lhs->etype()== Path::EqnTypeApproxable && rhs->etype()== Path::EqnTypeApproxable) {
-    impleq = lhs->getEquations(false);
-    expleq = rhs->getEquations(true);
-  }
-  if (lhs->etype()== Path::EqnTypeApproxable && rhs->etype()== Path::EqnTypeImplicit) {
-    impleq = rhs->getEquations(false);
-    expleq = lhs->getEquations(true);
-  }
-  if (lhs->etype()== Path::EqnTypeImplicit && rhs->etype()== Path::EqnTypeExplicit) {
-    impleq = lhs->getEquations(false);
-    expleq = rhs->getEquations(false);
-  }
-  if (lhs->etype()== Path::EqnTypeImplicit && rhs->etype()== Path::EqnTypeApproxable) {
-    impleq = lhs->getEquations(false);
-    expleq = rhs->getEquations(true);
-  }
-  if (lhs->etype()== Path::EqnTypeImplicit && rhs->etype()== Path::EqnTypeImplicit) {
-    throw 1;
-  }
-
-  if (impleq.eqns.size() == 1) {
-    auto it = expleq.eqns.begin();
-    while (it != expleq.eqns.end()) {
-      impleq.eqns.begin()->second.substitute(it->second, it->first);
-      ++it;
-    }
-  }
-
-  return impleq.eqns.begin()->second.getPolynomial('t').solve();
-}
-
-Movement Movement::goTo(float gTime, float maxVelocity) {
-  /*if (time < timestamp) {
-  return goBackTo(time, maxVelocity);
-  }
-  else {
-  return goForwardTo(time, maxVelocity);
-  }*/
-  Movement m = *this;
-  m.pos = pos + vel*gTime + acc*pow(gTime, 2) / 2.0f;
-  m.vel = vel + acc*gTime;
-  return m;
-}
-void Movement::get(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  unsigned char* c;
-  int l;
-
-  //gTimeStamp
-  serialize(gTimeStamp, &c, l);
-  status.push_back({ c, l });
-
-  //pos
-  pos.get(&c, l);
-  status.push_back({ c, l });
-
-  //vel
-  vel.get(&c, l);
-  status.push_back({ c, l });
-
-  //acc
-  acc.get(&c, l);
-  status.push_back({ c, l });
-
-  //type
-  serialize(type, &c, l);
-  status.push_back({ c, l });
-
-  //pathData
-  serialize(pathData, &c, l);
-  status.push_back({ c, l });
-
-  //radius
-  serialize(radius, &c, l);
-  status.push_back({ c, l });
-
-  concat(status, data, DataLen);
-}
-void Movement::set(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  split(data, DataLen, status);
-
-  //gTimeStamp
-  gTimeStamp = deserializef(status[0].first, status[0].second);
-
-  //pos
-  pos.set(status[4].first, status[4].second);
-
-  //vel
-  vel.set(status[2].first, status[2].second);
-
-  //acc
-  acc.set(status[3].first, status[3].second);
-
-  //type
-  type = deserializei(status[4].first, status[4].second);
-
-  //pathData
-  pathData = deserializes(status[5].first, status[5].second);
-
-  //radius
-  radius = deserialized(status[6].first, status[6].second);
-}
-Movement::~Movement() {
-
-}
-
-int Sighting::getLastSmaller(float t)
-{
-  int first = 0, last = int(keyframes.size()) - 1;
-  while (first <= last)
-  {
-    int mid = (first + last) / 2;
-    if (keyframes[mid]->gTimeStamp >= t)
-      last = mid - 1;
-    else
-      first = mid + 1;
-  }
-  return first - 1 < 0 ? -1 : first - 1;
-}
-Movement Sighting::estimatePos(float t, float maxVelocity) {
-  int id = getLastSmaller(t);
-  if (id == -1) {
-    id = 0;
-  }
-  if (id < keyframes.size()) {
-    return keyframes[id]->goTo(t, maxVelocity);
-  }
-  else {
-    throw 1;
-    return Movement();
-  }
-}
-#ifdef M_CLIENT
-  void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, float maxVel) {
-    auto it = keyframes.begin();
-
-    int id = 0;
-
-    glBegin(GL_LINE_STRIP);
-
-    if(keyframes.size()) {
-      float t = keyframes[0]->gTimeStamp;
-
-      while (t < keyframes[keyframes.size() - 1]->gTimeStamp + ROUND_TIME) {
-        Movement estpos = estimatePos(t, maxVel);
-        glVertex3f(estpos.pos.x, estpos.pos.x, estpos.pos.x);
-        t += ROUND_TIME * 0.1f;
-      }
-    }
-
-    glEnd();
-
-    //drawPointingVector(camcx, camcy, camcz, d);
-  }
-#endif
-void Sighting::getSighting(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  auto it = keyframes.begin();
-
-  while (it != keyframes.end()) {
-    unsigned char* d;
-    int i;
-    (*it)->get(&d, i);
-    status.push_back({ d,i });
-    ++it;
-  }
-  concat(status, data, DataLen);
-}
-void Sighting::setSighting(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  split(data, DataLen, status);
-
-  clearKeyframes();
-
-  for (int i = 0; i < status.size(); i++) {
-    Movement* nMov = new Movement();
-    nMov->set(status[i].first, status[i].second);
-    keyframes.push_back(nMov);
-  }
-}
-void Sighting::clearKeyframes() {
-  auto it = keyframes.begin();
-
-  while (it != keyframes.end()) {
-    (*it)->~Movement();
-    delete *it;
-  }
-
-  keyframes.clear();
-}
-Sighting::~Sighting() {
-
-}
-
 Movement Object::getMovement() {
   Movement m = parentShip->mov;
-  m.pos = m.pos + relativePos;
+  m.pos = m.pos + _relativePos;
   return m;
 }
 void Object::getStatus(unsigned char** data, int &DataLen) {
@@ -226,24 +13,24 @@ void Object::getStatus(unsigned char** data, int &DataLen) {
   unsigned char* c;
   int l;
 
-  //relativePos
-  relativePos.get(&c, l);
+  //_relativePos
+  _relativePos.get(&c, l);
   status.push_back({c, l});
 
   //type
-  serialize(type, &c, l);
+  serialize(type(), &c, l);
   status.push_back({ c, l });
 
   //maxHealth
-  serialize(maxHealth, &c, l);
+  serialize(_maxHealth, &c, l);
   status.push_back({ c, l });
 
   //health
-  serialize(health, &c, l);
+  serialize(_health, &c, l);
   status.push_back({ c, l });
 
   //radius
-  serialize(radius, &c, l);
+  serialize(_radius, &c, l);
   status.push_back({ c, l });
 
   concat(status, data, DataLen);
@@ -252,33 +39,39 @@ void Object::setStatus(unsigned char* data, int DataLen) {
   vector<pair<unsigned char*, int> > status;
   split(data, DataLen, status);
 
-  //relativePos
-  relativePos.set(status[0].first, status[0].second);
+  //_relativePos
+  _relativePos.set(status[0].first, status[0].second);
 
   //type
-  type = deserializei(status[1].first, status[1].second);
+  //type = deserializei(status[1].first, status[1].second);
 
   //maxHealth
-  maxHealth = deserializei(status[2].first, status[2].second);
+  _maxHealth = deserializei(status[2].first, status[2].second);
 
   //health
-  health = deserializei(status[3].first, status[3].second);
+  _health = deserializei(status[3].first, status[3].second);
 
   //radius
-  radius = deserializef(status[4].first, status[4].second);
+  _radius = deserializef(status[4].first, status[4].second);
 }
 #ifdef M_CLIENT
+void Object::setSidebarElement() {
+  cout << "Unimplemented type " << type() << endl;
+}
+void Object::setSidebar() {
+  cout << "Unimplemented type " << type() << endl;
+}
 list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori, vec3<double> dir) {
   Shot p;
   p.origin = ori;
   p.origintime = 0;
   p.vel = dir;
   Movement m;
-  m.pos = relativePos + parentShip->mov.pos;
+  m.pos = _relativePos + parentShip->mov.pos;
   m.vel = 0;
   m.acc = 0;
   m.gTimeStamp = 0;
-  m.radius = radius;
+  m.radius = _radius;
   list< pair<double, pair<Object*, Path*>>> res;
   vector<double> times = intersectPaths(&m, &p);
   for (int i = 0; i < times.size(); i++) {
@@ -287,15 +80,85 @@ list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori,
   return res;
 }
 void Object::drawObject(float camcx, float camcy, float camcz, float d) {
-  glTranslatef(relativePos.x, relativePos.y, relativePos.z);
-  setColor(0xffff0000 + ((0x00ffff * health) / maxHealth));
-  glutSolidSphere(radius, 20, 20);
-  glTranslatef(- relativePos.x, - relativePos.y, - relativePos.z);
+  glTranslatef(_relativePos.x, _relativePos.y, _relativePos.z);
+  setColor(0xffff0000 + int(0xff * _health / float(_maxHealth)) + 0x100 * int(0xff * _health / float(_maxHealth)));
+  glutSolidSphere(_radius, 20, 20);
+  glTranslatef(- _relativePos.x, - _relativePos.y, - _relativePos.z);
 }
 #endif
 Object::~Object() {
 
 }
+
+#ifdef M_CLIENT
+void Sensor::setSidebar() {
+  //cout << type << " clicked " << health/float(maxHealth) << endl;
+  bool reset = false;
+  if (selected == NULL || selected->type() != type()) {
+    reset = true;
+  }
+  selected = this;
+  if (reset) {
+    setSidebarElement();
+  }
+
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxEnergy);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_energy);
+}
+void Sensor::setSidebarElement() {
+  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/sensor_settings.html");
+}
+void Generator::setSidebar() {
+  //cout << type << " clicked " << health/float(maxHealth) << endl;
+  bool reset = false;
+  if (selected == NULL || selected->type() != type()) {
+    reset = true;
+  }
+  selected = this;
+  if (reset) {
+    setSidebarElement();
+  }
+
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxEnergy);
+  
+}
+void Generator::setSidebarElement() {
+  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/generator_settings.html");
+}
+void Engine::setSidebar() {
+  //cout << type << " clicked " << health/float(maxHealth) << endl;
+  bool reset = false;
+  if (selected == NULL || selected->type() != type()) {
+    reset = true;
+  }
+  selected = this;
+  if (reset) {
+    setSidebarElement();
+  }
+
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(usedEnergy()) + " / " + to_string(_maxEnergy);
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.x);
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.y);
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.z);
+   
+}
+void Engine::setSidebarElement() {
+  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/engine_settings.html");
+}
+void Ship::setSidebar() {
+  //cout << type << " clicked " << health/float(maxHealth) << endl;
+  setSidebarElement();
+
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text = to_string(reinterpret_cast<::Ship*>(this)->getSpentShipEnergy()) + " / " + to_string(reinterpret_cast<::Ship*>(this)->getTotalShipEnergy());
+
+}
+void Ship::setSidebarElement() {
+  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.html");
+}
+#endif
 
 #ifdef M_SERVER
 int Ship::makeMove(vector<string> & data) {
@@ -307,7 +170,7 @@ int Ship::makeMove(vector<string> & data) {
     if (data.size() < 4) {
       return 1;
     }
-    accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
+    //_accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
     return 0;
     break;
   }
@@ -407,7 +270,7 @@ bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkC* thispt
   return 0;
 }
 #endif
-Object* Ship::getObject(int type) {
+/*Object* Ship::getObject(int type) {
   auto it = objects.begin();
   while (it != objects.end()) {
     if ((*it)->type == type) {
@@ -425,18 +288,27 @@ Object* Ship::getGenerator() {
 }
 void  Ship::setSensorEnergy(float energy) {
   getSensor()->energy = energy;
-}
-float Ship::getSensorEnergy() {
-  return getSensor()->energy;
-}
-float Ship::getMaximumSensorEnergy() {
-  return getSensor()->maxEnergy;
-}
+}*/
 float Ship::getTotalShipEnergy() {
-  return getGenerator()->maxEnergy;
+  float res = 0;
+  auto it = objects.begin();
+  while (it != objects.end()) {
+    res += (*it)->prodEnergy();
+    ++it;
+  }
+  return res;
+}
+float Ship::getSpentShipEnergy() {
+  float res = 0;
+  auto it = objects.begin();
+  while (it != objects.end()) {
+    res += (*it)->usedEnergy();
+    ++it;
+  }
+  return res;
 }
 float Ship::getRemainingShipEnergy() {
-  return 0;
+  return getTotalShipEnergy()-getSpentShipEnergy();
 }
 void Ship::getStatus(unsigned char** data, int &DataLen) {
   vector<pair<unsigned char* , int> > status;
@@ -457,12 +329,14 @@ void Ship::setStatus(unsigned char* data, int DataLen) {
 
   clearObjects();
 
-  for (int i = 0; i < status.size(); i++) {
+  /*for (int i = 0; i < status.size(); i++) {
     Object* nObj = new Object();
     nObj->setStatus(status[i].first, status[i].second);
     nObj->parentShip = this;
     objects.push_back(nObj);
-  }
+  }*/
+  throw 1;
+  ///TODO REDO
 }
 void Ship::getSightings(unsigned char** data, int &DataLen) {
   vector<pair<unsigned char*, int> > status;
@@ -525,9 +399,8 @@ Ship::~Ship() {
 
 /*void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
     ship->packetRecv(Data, Id, DataLen, thisptr);
-  }*/
+  }
 
-/*
 int Ship::getSpentEnergy() const
 {
   return command.accel.length()+(command.didFire?100:0)+command.sensorEnergy;
@@ -879,4 +752,7 @@ return -p.Coefficient[0] / p.Coefficient[1];
 }
 */
 
+#ifdef M_CLIENT
 Ship* ship;
+#endif
+Object* selected;

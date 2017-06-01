@@ -1,7 +1,19 @@
 #include "RenderIn.h"
 
-void ingameMenuSensorInput(string s) {
-  ship->setSensorEnergy(strTo<int>(s));
+void ingameEngineSidebarAccInputX(string s) {
+  reinterpret_cast<Engine*>(selected)->setComponent(0,strTo<float>(s));
+}
+
+void ingameEngineSidebarAccInputY(string s) {
+  reinterpret_cast<Engine*>(selected)->setComponent(1, strTo<float>(s));
+}
+
+void ingameEngineSidebarAccInputZ(string s) {
+  reinterpret_cast<Engine*>(selected)->setComponent(2, strTo<float>(s));
+}
+
+void ingameSensorSidebarEnergyInput(string s) {
+  reinterpret_cast<Sensor*>(selected)->setEnergy(strTo<float>(s));
 }
 
 void ingameMenuCommitButton() {
@@ -21,11 +33,15 @@ void joinMenuInput(string inp) {
 }
 
 void joinMenuInputButton() {
+
+  string ip = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuIpInput"))->text;
+  string port = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuPortInput"))->text;
+
   Graphics::deleteElements(objectMenuSubWindow);
 
   Connection = new NetworkC(
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuIpInput"))->text,
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuPortInput"))->text,
+    ip,
+    port,
     recivePacket
   );
 
@@ -69,10 +85,15 @@ int InitWindow() {
   Graphics::setName("ingameMenuExitButton", ingameMenuExitButton);
   Graphics::setName("joinMenuInput", joinMenuInput);
   Graphics::setName("ingameMenuCommitButton", ingameMenuCommitButton);
-  Graphics::setName("ingameMenuSensorInput", ingameMenuSensorInput);
+  Graphics::setName("ingameSensorSidebarEnergyInput", ingameSensorSidebarEnergyInput);
+  Graphics::setName("ingameEngineSidebarAccInputX", ingameEngineSidebarAccInputX);
+  Graphics::setName("ingameEngineSidebarAccInputY", ingameEngineSidebarAccInputY);
+  Graphics::setName("ingameEngineSidebarAccInputZ", ingameEngineSidebarAccInputZ);
+
 
   Graphics::setName("textValidator", textValidator);
   Graphics::setName("numericalValidator", numericalValidator);
+  Graphics::setName("floatValidator", floatValidator);
 
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
   objectMenuSubWindow = Graphics::createPanel(objectMainWindow, "objectMenuSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, ElementBackColor);

@@ -212,7 +212,7 @@ void Game::removeIntersect(Drone* drone) {
   auto it = intersects.begin();
 
   while (it != intersects.end()) {
-    if (it->second.first == drone) {
+    if (it->second.first->parentShip == drone) {
       auto it2 = it;
       ++it;
       intersects.erase(it2);

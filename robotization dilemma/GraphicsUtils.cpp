@@ -110,6 +110,10 @@ bool numericalValidator(unsigned char c) {
   return ('0' <= c && c <= '9');
 }
 
+bool floatValidator(unsigned char c) {
+  return ('0' <= c && c <= '9') || c == '.';
+}
+
 bool textValidator(unsigned char c) {
   return (32 <= c);
 }

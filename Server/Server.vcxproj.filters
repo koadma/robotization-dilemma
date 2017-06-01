@@ -45,6 +45,9 @@
     <ClCompile Include="..\Core\Polynomial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Core\Polynomial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -86,4 +86,5 @@ void setColor(colorargb v);
 void renderBitmapString(float x, float y, string text, colorargb color, bool center);
 
 bool numericalValidator(unsigned char c);
+bool floatValidator(unsigned char c);
 bool textValidator(unsigned char c);

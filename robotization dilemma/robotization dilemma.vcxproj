@@ -152,6 +152,7 @@
     <ClCompile Include="..\Core\Point.cpp" />
     <ClCompile Include="..\Core\Polynomial.cpp" />
     <ClCompile Include="..\Server\Ship.cpp" />
+    <ClCompile Include="..\Server\Sighting.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ClientCore.cpp" />

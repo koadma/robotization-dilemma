@@ -27,6 +27,9 @@ int TextInput::mouseClicked(int button, int state, int mx, int my) {
   if(state == 0 && button == 0) { //click, left
     active = isIn(mx, my);
   }
+  if (!active) {
+    input(text);
+  }
   return oactive xor active;
 }
 
