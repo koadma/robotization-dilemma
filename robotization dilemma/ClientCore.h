@@ -2,4 +2,4 @@
 
 #include "../Server/Bubble.h"
 
-extern bool recivePacket(unsigned char* data, int id, int dataLen, NetworkC* client, Ship* ship);
+extern bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* ship);

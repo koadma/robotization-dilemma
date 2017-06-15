@@ -28,7 +28,7 @@ const int PASSIVE_SENSOR_MINVIS = 10;
 #define ElementBackColor 0xff030014
 
 #define VersionA 0
-#define VersionB 1
+#define VersionB 2
 #define VersionC 0
 //0.1.0
 

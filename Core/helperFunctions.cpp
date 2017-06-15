@@ -287,7 +287,7 @@ string deserializes(unsigned char* data, int dataLen) {
   for (int i = 0; i < s.size(); i++) {
     s[i] = data[i];
   }
-  delete data;
+  //delete data;
   return s;
 }
 int    deserializei(unsigned char* data, int dataLen) {

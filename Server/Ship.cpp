@@ -8,51 +8,35 @@ Movement Object::getMovement() {
   m.pos = m.pos + _relativePos;
   return m;
 }
-void Object::getStatus(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  unsigned char* c;
-  int l;
+void Object::getStatus(DataElement* data) {
+  DataElement* rele = new DataElement();
+  _relativePos.set(rele);
+  data->addChild(rele);
 
-  //_relativePos
-  _relativePos.get(&c, l);
-  status.push_back({c, l});
+  DataElement* typee = new DataElement();
+  typee->_core->fromType<int>(type());
+  data->addChild(typee);
 
-  //type
-  serialize(type(), &c, l);
-  status.push_back({ c, l });
+  DataElement* maxe = new DataElement();
+  maxe->_core->fromType<int>(_maxHealth);
+  data->addChild(maxe);
 
-  //maxHealth
-  serialize(_maxHealth, &c, l);
-  status.push_back({ c, l });
+  DataElement* hele = new DataElement();
+  hele->_core->fromType<int>(_health);
+  data->addChild(hele);
 
-  //health
-  serialize(_health, &c, l);
-  status.push_back({ c, l });
-
-  //radius
-  serialize(_radius, &c, l);
-  status.push_back({ c, l });
-
-  concat(status, data, DataLen);
+  DataElement* rade = new DataElement();
+  rade->_core->fromType<int>(_radius);
+  data->addChild(rade);
 }
-void Object::setStatus(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  split(data, DataLen, status);
+void Object::setStatus(DataElement* data) {
+  _relativePos.set(data->_children[0]);
 
-  //_relativePos
-  _relativePos.set(status[0].first, status[0].second);
+  _maxHealth = data->_children[2]->_core->toType<int>();
 
-  //type
-  //type = deserializei(status[1].first, status[1].second);
+  _health = data->_children[3]->_core->toType<int>();
 
-  //maxHealth
-  _maxHealth = deserializei(status[2].first, status[2].second);
-
-  //health
-  _health = deserializei(status[3].first, status[3].second);
-
-  //radius
-  _radius = deserializef(status[4].first, status[4].second);
+  _radius = data->_children[4]->_core->toType<float>();
 }
 #ifdef M_CLIENT
 void Object::setSidebarElement() {
@@ -161,13 +145,13 @@ void Ship::setSidebarElement() {
 #endif
 
 #ifdef M_SERVER
-int Ship::makeMove(vector<string> & data) {
-  if (!data.size()) {
+int Ship::makeMove(DataElement *Data) {
+  if (!Data->_children.size()) {
     return 1;
   }
-  switch (strTo<int>(data[0])) {
+  switch (Data->_children[0]->_core->toType<int>()) {
   case CommandAccel:
-    if (data.size() < 4) {
+    if (Data->_children.size() < 4) {
       return 1;
     }
     //_accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
@@ -179,23 +163,28 @@ int Ship::makeMove(vector<string> & data) {
 void Ship::newTurn(int id) {
   canMove = true;
 
-  connectedClient->SendData<int>(id, PacketNewRound);
+  DataElement* de = new DataElement();
+  de->_core->fromType<int>(id);
+  connectedClient->SendData(de, PacketNewRound);
 }
-bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr) {
-  int l;
-  unsigned char* c;
-
+bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
+  DataElement* rese;
   switch (Id) {
   case PacketCommand:
     if (canMove) {
-      vector<string> args = tokenize(string(reinterpret_cast<char*>(Data)), ';');
-      int res = makeMove(args);
-      connectedClient->SendData<int>(res, PacketCommand);
+
+      int res = makeMove(Data);
+
+      DataElement* de = new DataElement();
+      de->_core->fromType<int>(res);
+      connectedClient->SendData(de, PacketCommand);
     }
     break;
   case PacketCommit:
     if (canMove) {
       canMove = false;
+      setSightings(Data->_children[0]);
+      setStatus(Data->_children[1]);
       game->moveMade();
     }
     else {
@@ -203,15 +192,25 @@ bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thispt
     }
     break;
   case PacketSensor:
-    getSightings(&c, l);
-    connectedClient->SendData(c, PacketSensor, l);
+    rese = new DataElement();
+    for (Sighting* s : sightings) {
+      DataElement* ne = new DataElement();
+      s->getSighting(ne);
+      rese->addChild(ne);
+    }
+    connectedClient->SendData(rese, PacketSensor);
     break;
-  case PacketCommandHistory: //
+  case PacketCommandHistory:
 
     break;
   case PacketShipData:
-    getStatus(&c, l);
-    connectedClient->SendData(c, PacketShipData, l);
+    rese = new DataElement();
+    for (Object* o : objects) {
+      DataElement* ne = new DataElement();
+      o->getStatus(ne);
+      rese->addChild(ne);
+    }
+    connectedClient->SendData(rese, PacketSensor);
     break;
   }
   return 0;
@@ -221,7 +220,15 @@ bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thispt
 void Ship::commit() {
   if(canMove) {
     canMove = false;
-    connectedServer->SendData("a", PacketCommit, 1);
+
+    DataElement* de = new DataElement();
+    DataElement* se = new DataElement();
+    DataElement* oe = new DataElement();
+    getSightings(se);
+    getStatus(oe);
+    de->addChild(se);
+    de->addChild(oe);
+    connectedServer->SendData(de, PacketCommit);
   }
 }
 void Ship::newTurn(int id) {
@@ -244,10 +251,16 @@ void Ship::drawObjects(float camcx, float camcy, float camcz, float d) {
     ++it;
   }
 }
-bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr) {
+bool Ship::packetRecv(DataElement *Data, int Id, NetworkC* thisptr) {
   switch (Id) {
   case PacketNewRound:
-    newTurn(strTo<int>(string(reinterpret_cast<char*>(Data))));
+    int nturn;
+    nturn  = Data->_core->toType<int>();
+    newTurn(nturn);
+    reinterpret_cast<Graphics::ButtonHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Commit (" + to_string(nturn) + ")";
+    thisptr->SendData(new DataElement(), PacketSensor);
+    thisptr->SendData(new DataElement(), PacketShipData);
+    break;
   case PacketGameOver:
     createMainMenu();
     break;
@@ -255,11 +268,11 @@ bool Ship::packetRecv(unsigned char *Data, int Id, int DataLen, NetworkC* thispt
     //createMainMenu();
     break;
   case PacketSensor:
-    setSightings(Data, DataLen);
+    setSightings(Data);
     glutPostRedisplay();
     break;
   case PacketShipData:
-    setStatus(Data, DataLen);
+    setStatus(Data);
     glutPostRedisplay();
     break;
   case PacketCommandHistory: ///TODO
@@ -310,57 +323,36 @@ float Ship::getSpentShipEnergy() {
 float Ship::getRemainingShipEnergy() {
   return getTotalShipEnergy()-getSpentShipEnergy();
 }
-void Ship::getStatus(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char* , int> > status;
-  auto it = objects.begin();
-
-  while (it != objects.end()) {
-    unsigned char* d;
-    int i;
-    (*it)->getStatus(&d, i);
-    status.push_back({d,i});
-    ++it;
+void Ship::getStatus(DataElement* data) {
+  for (auto it : objects) {
+    DataElement* ne = new DataElement();
+    it->getStatus(ne);
+    data->_children.push_back(ne);
   }
-  concat(status, data, DataLen);
 }
-void Ship::setStatus(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  split(data, DataLen, status);
+void Ship::setStatus(DataElement* data) {
+  objects.clear();
 
-  clearObjects();
-
-  /*for (int i = 0; i < status.size(); i++) {
-    Object* nObj = new Object();
-    nObj->setStatus(status[i].first, status[i].second);
-    nObj->parentShip = this;
+  for (DataElement* it : data->_children) {
+    Object* nObj = new Object(0,0,0,0);
+    nObj->setStatus(it);
     objects.push_back(nObj);
-  }*/
-  throw 1;
-  ///TODO REDO
-}
-void Ship::getSightings(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  auto it = sightings.begin();
-
-  while (it != sightings.end()) {
-    unsigned char* d;
-    int i;
-    (*it)->getSighting(&d, i);
-    status.push_back({ d,i });
-    ++it;
   }
-  concat(status, data, DataLen);
 }
-void Ship::setSightings(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > sigh;
-  split(data, DataLen, sigh);
+void Ship::getSightings(DataElement* data) {
+  for (auto it : sightings) {
+    DataElement* ne = new DataElement();
+    it->getSighting(ne);
+    data->_children.push_back(ne);
+  }
+}
+void Ship::setSightings(DataElement* data) {
+  sightings.clear();
 
-  clearSightings();
-
-  for (int i = 0; i < sigh.size(); i++) {
-    Sighting* nObj = new Sighting();
-    nObj->setSighting(sigh[i].first, sigh[i].second);
-    sightings.push_back(nObj);
+  for (DataElement* it : data->_children) {
+    Sighting* nSig = new Sighting;
+    nSig->setSighting(it);
+    sightings.push_back(nSig);
   }
 }
 void Ship::clearObjects() {

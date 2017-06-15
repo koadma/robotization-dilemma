@@ -1,11 +1,11 @@
 #include "Main.h"
 
 
-bool recivePacket(unsigned char* data, int id, int dataLen, NetworkC* client, Ship* lship) {
+bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
   if (ship == NULL) {
     switch (id) {
     case PacketLogin:
-      if (strTo<int>(string(reinterpret_cast<char*>(data))) == LoginErrorOk) {
+      if (data->_core->toType<int>() == LoginErrorOk) {
         Connection->ConnectedShip = ship = new Ship();
 
         ship->connectedServer = Connection;
@@ -52,7 +52,7 @@ bool recivePacket(unsigned char* data, int id, int dataLen, NetworkC* client, Sh
     }
   }
   else {
-    ship->packetRecv(data, id, dataLen, client);
+    ship->packetRecv(data, id, client);
   }
 
   return 0;

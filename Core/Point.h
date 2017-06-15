@@ -171,29 +171,15 @@ public:
     return *this;
   }
 
-  void get(unsigned char **data, int& dataLen) {
-    vector<pair<unsigned char*, int> > d;
-    unsigned char* c;
-    int l;
-
-    serialize(x, &c, l);
-    d.push_back({c, l});
-
-    serialize(y, &c, l);
-    d.push_back({ c, l });
-
-    serialize(z, &c, l);
-    d.push_back({ c, l });
-
-    concat(d, data, dataLen);
+  void get(DataElement* data) {
+    data->addChild(new DataElement()->_core->fromType<T>(x));
+    data->addChild(new DataElement()->_core->fromType<T>(y));
+    data->addChild(new DataElement()->_core->fromType<T>(z));
   }
-  void set(unsigned char *data, int& dataLen) {
-    vector<pair<unsigned char*, int> > d;
-    split(data, dataLen, d);
-
-    x = deserializeT<T>(d[0].first, d[0].second);
-    y = deserializeT<T>(d[1].first, d[1].second);
-    z = deserializeT<T>(d[2].first, d[2].second);
+  void set(DataElement* data) {
+    x = data->_children[0]->_core->toType<T>();
+    y = data->_children[1]->_core->toType<T>();
+    z = data->_children[2]->_core->toType<T>();
   }
 };
 

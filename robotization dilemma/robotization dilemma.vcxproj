@@ -162,6 +162,7 @@
     <ClCompile Include="GUIElement.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="NetworkData.cpp" />
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="RenderIn.cpp" />
     <ClCompile Include="RenderOut.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="GUIElement.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="NetworkData.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="RenderIn.h" />
     <ClInclude Include="RenderOut.h" />

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\Core\helperFunctions.h"
+#include "../robotization dilemma/NetworkData.h"
 
 class Fraction {
 public:

@@ -150,7 +150,8 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
 
   int iSendResult = send(ClientSocket, SendRaw, DataLen + 2 * PACKET_HEADER_LEN, 0);
 
-  delete SendRaw;
+  delete[] SendRaw;
+  delete[] Data;
 
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
     NetworkError(NetworkErrorCodeServerSendData, error, 0);
@@ -160,6 +161,19 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
   }
   //NetLog.LogString("Bytes sent: " + to_string(iSendResult));
   return iSendResult;
+}
+
+int NetworkS::SendData(DataElement* Data, int Id) {
+  int len = Data->getLen();
+  unsigned char* datac = new unsigned char[len];
+  int start = 0;
+  Data->fill(datac, start);
+  if (start != len) {
+    throw 1;
+  }
+  //Data->~DataElement();
+  delete Data;
+  return SendData(datac, Id, len);
 }
 
 int NetworkS::SendData(unsigned char *Data, int Id, int DataLen) {
@@ -209,7 +223,15 @@ int NetworkS::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  bool t = RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
+  DataElement* datae = new DataElement();
+  int start = 0;
+  datae->empty(reinterpret_cast<unsigned char*>(data), start);
+  if (start != dlen) {
+    throw 1;
+  }
+  bool t = RecivePacket(datae, pid, this, ConnectedShip);
+  //datae->~DataElement();
+  delete datae;
 
   //delete data;
 
@@ -337,6 +359,10 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
   //delete Data;
   //delete SendRaw;
   
+  delete[] Data;
+  delete[] SendRaw;
+
+
   //TODO: Free memory properly
 
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
@@ -350,6 +376,19 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
 
 int NetworkC::SendData(unsigned char *Data, int Id, int DataLen) {
   return SendData(reinterpret_cast<char*>(Data), Id, DataLen);
+}
+
+int NetworkC::SendData(DataElement* Data, int Id) {
+  int len = Data->getLen();
+  unsigned char* datac = new unsigned char[len];
+  int start = 0;
+  Data->fill(datac, start);
+  if (start != len) {
+    throw 1;
+  }
+  //Data->~DataElement();
+  delete Data;
+  return SendData(datac, Id, len);
 }
 
 int NetworkC::ReciveData() {
@@ -399,9 +438,15 @@ int NetworkC::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  bool t = RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen, this, ConnectedShip);
-
-  delete data;
+  DataElement* datae = new DataElement();
+  int start = 0;
+  datae->empty(reinterpret_cast<unsigned char*>(data), start);
+  if (start != dlen) {
+    throw 1;
+  }
+  bool t = RecivePacket(datae, pid, this, ConnectedShip);
+  //datae->~DataElement();
+  delete datae;
 
   if (t) {
     return 0;

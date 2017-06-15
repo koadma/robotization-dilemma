@@ -17,7 +17,7 @@ void ingameSensorSidebarEnergyInput(string s) {
 }
 
 void ingameMenuCommitButton() {
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectMainGameTurnLabel"))->text = "Not your turn";
+  reinterpret_cast<Graphics::ButtonHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Not your turn";
   ship->commit();
 }
 
@@ -50,18 +50,21 @@ void joinMenuInputButton() {
     createMainMenu();
   }
   else {
-    unsigned char* c;
-    int l;
-    vector<pair<unsigned char*,int>> d;
+    DataElement* data = new DataElement();
     
-    serialize(VersionA, &c, l);
-    d.push_back({c, l});
-    serialize(VersionB, &c, l);
-    d.push_back({ c, l });
-    serialize(VersionC, &c, l);
-    d.push_back({ c, l });
-    concat(d, &c, l);
-    Connection->SendData(c, PacketLogin, l);
+    DataElement* ae = new DataElement();
+    ae->_core->fromType<int>(VersionA);
+    data->addChild(ae);
+
+    DataElement* be = new DataElement();
+    be->_core->fromType<int>(VersionB);
+    data->addChild(be);
+
+    DataElement* ce = new DataElement();
+    ce->_core->fromType<int>(VersionC);
+    data->addChild(ce);
+
+    Connection->SendData(data, PacketLogin);
   }
 }
 

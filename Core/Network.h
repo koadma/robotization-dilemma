@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <ws2tcpip.h>
 #else
+//If these lines fail, set complile mode to 32 bit (x86), windows. If it still fails, define WIN32 on compiler level.
 #include <sys/types.h>
 #include <sys/socket.h>
 #endif
@@ -22,23 +23,12 @@ using namespace std;
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
-#define PACKET_HEADER_LEN 4 //Used to store packet ID and data length;
-#define PACKET_HEADER_TYPE int
-
-typedef union {
-  struct {
-    char chars[PACKET_HEADER_LEN];
-  } chararr;
-  PACKET_HEADER_TYPE i;
-} Packet_Header_Convertor;
-//Breaks PACKET_HEADER_TYPE into PACKET_HEADER_LEN chars
-
 class NetworkC;
 class NetworkS;
 class Ship;
 
-typedef bool(*RecivePacketFuncS)(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship);
-typedef bool(*RecivePacketFuncC)(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr, Ship* ship);
+typedef bool(*RecivePacketFuncS)(DataElement *Data, int Id, NetworkS* thisptr, Ship* ship);
+typedef bool(*RecivePacketFuncC)(DataElement *Data, int Id, NetworkC* thisptr, Ship* ship);
 
 
 //void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen);
@@ -58,6 +48,7 @@ public:
     serialize(data, &c, l);
     return SendData(c, Id, l);
   }
+  int SendData(DataElement* data, int Id);
   int ReciveData();
   thread ReciveLoopThread;
   bool Running = true;
@@ -92,6 +83,7 @@ public:
     delete[] id_c;
     return val;
   }
+  int SendData(DataElement* data, int Id);
   int ReciveData();
   bool Running = true;
   thread ReciveLoopThread;

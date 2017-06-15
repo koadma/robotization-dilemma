@@ -61,65 +61,56 @@ Movement Movement::goTo(float gTime, float maxVelocity) {
   m.vel = vel + acc*gTime;
   return m;
 }
-void Movement::get(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  unsigned char* c;
-  int l;
+void Movement::get(DataElement* data) {
+  DataElement* timee = new DataElement();
+  timee->_core->fromType<float>(gTimeStamp);
+  data->addChild(timee);
 
-  //gTimeStamp
-  serialize(gTimeStamp, &c, l);
-  status.push_back({ c, l });
+  DataElement* pose = new DataElement();
+  pos.set(pose);
+  data->addChild(pose);
+  
+  DataElement* vele = new DataElement();
+  vel.set(vele);
+  data->addChild(vele);
 
-  //pos
-  pos.get(&c, l);
-  status.push_back({ c, l });
+  DataElement* acce = new DataElement();
+  acc.set(acce);
+  data->addChild(acce);
 
-  //vel
-  vel.get(&c, l);
-  status.push_back({ c, l });
+  DataElement* typee = new DataElement();
+  typee->_core->fromType<int>(type);
+  data->addChild(typee);
 
-  //acc
-  acc.get(&c, l);
-  status.push_back({ c, l });
+  DataElement* pathe = new DataElement();
+  pathe->_core->fromType<string>(pathData);
+  data->addChild(pathe);
 
-  //type
-  serialize(type, &c, l);
-  status.push_back({ c, l });
-
-  //pathData
-  serialize(pathData, &c, l);
-  status.push_back({ c, l });
-
-  //radius
-  serialize(radius, &c, l);
-  status.push_back({ c, l });
-
-  concat(status, data, DataLen);
+  DataElement* rade = new DataElement();
+  rade->_core->fromType<double>(radius);
+  data->addChild(rade);
 }
-void Movement::set(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  split(data, DataLen, status);
-
+void Movement::set(DataElement* data) {
   //gTimeStamp
-  gTimeStamp = deserializef(status[0].first, status[0].second);
+  gTimeStamp = data->_children[0]->_core->toType<float>();
 
   //pos
-  pos.set(status[4].first, status[4].second);
+  pos.set(data->_children[1]);
 
   //vel
-  vel.set(status[2].first, status[2].second);
+  vel.set(data->_children[2]);
 
   //acc
-  acc.set(status[3].first, status[3].second);
+  acc.set(data->_children[3]);
 
   //type
-  type = deserializei(status[4].first, status[4].second);
+  type = data->_children[0]->_core->toType<int>();
 
   //pathData
-  pathData = deserializes(status[5].first, status[5].second);
+  pathData = data->_children[0]->_core->toType<string>();
 
   //radius
-  radius = deserialized(status[6].first, status[6].second);
+  radius = data->_children[0]->_core->toType<double>();
 }
 Movement::~Movement() {
 
@@ -174,28 +165,19 @@ void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, floa
   //drawPointingVector(camcx, camcy, camcz, d);
 }
 #endif
-void Sighting::getSighting(unsigned char** data, int &DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  auto it = keyframes.begin();
-
-  while (it != keyframes.end()) {
-    unsigned char* d;
-    int i;
-    (*it)->get(&d, i);
-    status.push_back({ d,i });
-    ++it;
+void Sighting::getSighting(DataElement* data) {
+  for (auto it : keyframes) {
+    DataElement* ne = new DataElement();
+    it->set(ne);
+    data->_children.push_back(ne);
   }
-  concat(status, data, DataLen);
 }
-void Sighting::setSighting(unsigned char* data, int DataLen) {
-  vector<pair<unsigned char*, int> > status;
-  split(data, DataLen, status);
-
+void Sighting::setSighting(DataElement* data) {
   clearKeyframes();
 
-  for (int i = 0; i < status.size(); i++) {
+  for (DataElement* it : data->_children) {
     Movement* nMov = new Movement();
-    nMov->set(status[i].first, status[i].second);
+    nMov->set(it);
     keyframes.push_back(nMov);
   }
 }

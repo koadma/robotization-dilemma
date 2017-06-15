@@ -47,8 +47,8 @@ public:
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
 
-  void getStatus(unsigned char** data, int &DataLen);
-  void setStatus(unsigned char* data, int DataLen);
+  void getStatus(DataElement* data);
+  void setStatus(DataElement* data);
 
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
     list< pair<double, pair<Object*, Path*>>> res;
@@ -85,8 +85,8 @@ public:
   void setSidebar();
 #endif
 
-  void getStatus(unsigned char** data, int &DataLen);
-  void setStatus(unsigned char* data, int DataLen);
+  void getStatus(DataElement* data);
+  void setStatus(DataElement* data);
 };
 
 class Engine : public Object {       //Order of serialisation
@@ -111,8 +111,8 @@ public:
   void setSidebar();
 #endif
 
-  void getStatus(unsigned char** data, int &DataLen);
-  void setStatus(unsigned char* data, int DataLen);
+  void getStatus(DataElement* data);
+  void setStatus(DataElement* data);
 };
 
 class Generator : public Object {       //Order of serialisation
@@ -131,8 +131,8 @@ public:
   void setSidebar();
 #endif
 
-  void getStatus(unsigned char** data, int &DataLen);
-  void setStatus(unsigned char* data, int DataLen);
+  void getStatus(DataElement* data);
+  void setStatus(DataElement* data);
 };
 
 class Drone {
@@ -176,9 +176,9 @@ public:
 #ifdef M_SERVER
   NetworkS* connectedClient;
 
-  int makeMove(vector<string> & data);
+  int makeMove(DataElement* data);
   void newTurn(int id);
-  bool packetRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr);
+  bool packetRecv(DataElement *Data, int Id, NetworkS* thisptr);
 #endif
 #ifdef M_CLIENT
   NetworkC* connectedServer;
@@ -213,7 +213,7 @@ public:
   void drawSightings(float camcx, float camcy, float camcz, float d);
   void drawObjects(float camcx, float camcy, float camcz, float d);
 
-  bool packetRecv(unsigned char *Data, int Id, int DataLen, NetworkC* thisptr);
+  bool packetRecv(DataElement *Data, int Id, NetworkC* thisptr);
 #endif
   /*Object* getObject(int type);
   Object* getGenerator();
@@ -226,11 +226,11 @@ public:
   float getRemainingShipEnergy();
   float getSpentShipEnergy();
 
-  void getStatus(unsigned char** data, int &DataLen);
-  void setStatus(unsigned char* data, int DataLen);
+  void getStatus(DataElement* data);
+  void setStatus(DataElement* data);
 
-  void getSightings(unsigned char** data, int &DataLen);
-  void setSightings(unsigned char* data, int DataLen);
+  void getSightings(DataElement* data);
+  void setSightings(DataElement* data);
 
   void clearObjects();
   void clearSightings();

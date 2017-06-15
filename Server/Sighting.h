@@ -119,8 +119,8 @@ public:
   res.acc = acc;
   }*/
 
-  void get(unsigned char** data, int &DataLen);
-  void set(unsigned char* data, int DataLen);
+  void get(DataElement* data);
+  void set(DataElement* data);
 
   ~Movement();
 };
@@ -135,8 +135,8 @@ public:
   void drawSighting(float camcx, float camcy, float camcz, float d, float maxVel);
 #endif
 
-  void getSighting(unsigned char** data, int &DataLen);
-  void setSighting(unsigned char* data, int DataLen);
+  void getSighting(DataElement* data);
+  void setSighting(DataElement* data);
 
   void clearKeyframes();
   ~Sighting();
