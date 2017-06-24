@@ -112,7 +112,7 @@ void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d) {
 }
 
 void renderNewRound(int id) {
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectMainGameTurnLabel"))->text = "Turn " + to_string(id);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Turn " + to_string(id);
 }
 
 void createMainMenu() {

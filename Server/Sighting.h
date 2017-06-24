@@ -12,6 +12,9 @@ vector<double> intersectPaths(Path* lhs, Path* rhs);
 
 class Movement : public Path { //Order of serialisation
 public:
+  virtual int type() {
+    return PathTypeMovement;
+  }
   int etype() {
     return EqnType::EqnTypeApproxable;
   }
@@ -22,7 +25,7 @@ public:
                                //float velUncertainty = 0;
   fVec3 acc = fVec3(0);        //3
                                //float accUncertainty = 0;
-  int type;                    //4
+  //int type;                    //4
   string pathData;             //5
   double radius;               //6
   Eqnsys getEquations(bool b) {//approximate

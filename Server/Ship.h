@@ -10,7 +10,8 @@ class Drone;
 
 class Object {       //Order of serialisation
 protected:
-  fVec3 _relativePos; //0
+
+  fVec3 _relativePos; //1
   int _maxHealth;     //2
   int _health;        //3
   float _radius;      //4
@@ -32,9 +33,10 @@ public:
     Computer = 4,
     Generator = 5,
     Storage = 6,
-    Engine = 7
+    Engine = 7,
+    Laser = 8
   };
-  virtual int type() {throw 1; return 0;}         //1
+  virtual int type() { throw 1; return 0; }         //0
   virtual float usedEnergy() {throw 1; return 0;}
   virtual float prodEnergy() {return 0;}
 
@@ -46,9 +48,22 @@ public:
   virtual void setSidebar();
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
+  virtual void getPathVirt(Path* p) {
+
+  }
+  void getPath(Path* p) {
+    if(p->type() == Path::PathTypeShot) {
+      _health -= 100; //TODO BETTER
+      _health = max(_health, 0);
+    }
+    getPathVirt(p);
+  }
 
   void getStatus(DataElement* data);
   void setStatus(DataElement* data);
+
+  virtual void getVStatus(DataElement* data);
+  virtual void setVStatus(DataElement* data);
 
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
     list< pair<double, pair<Object*, Path*>>> res;
@@ -80,13 +95,23 @@ public:
     _energy = max(min(val, _maxEnergy), 0.0f);
   }
 
+  void getPathVirt(Path* p) {
+    if (p->type() == Path::PathTypeBubble) {
+      if (ran1() < _health / float(_maxHealth)) { //
+        if (ran1() < 1 / (1 + pow(E, -(reinterpret_cast<Bubble*>(p)->energy / _energy)))) { //detect
+          cout << "Detected" << endl;
+        }
+      }
+    }
+  }
+
 #ifdef M_CLIENT
   void setSidebarElement();
   void setSidebar();
 #endif
 
-  void getStatus(DataElement* data);
-  void setStatus(DataElement* data);
+  void getVStatus(DataElement* data);
+  void setVStatus(DataElement* data);
 };
 
 class Engine : public Object {       //Order of serialisation
@@ -111,8 +136,36 @@ public:
   void setSidebar();
 #endif
 
-  void getStatus(DataElement* data);
-  void setStatus(DataElement* data);
+  void getVStatus(DataElement* data);
+  void setVStatus(DataElement* data);
+};
+
+class Laser : public Object {       //Order of serialisation
+private:
+  //vector<pair<float, fVec3> > _shots; //energy, directipn
+  pair<float, fVec3> _shot;
+public:
+  Laser(fVec3 relativePos, int maxHealth, float radius, int health) : Object(relativePos, maxHealth, radius, health) {
+
+  }
+
+  int type() { return Type::Laser; }
+  float usedEnergy() { return _shot.second.sqrlen(); }
+
+  void setComponent(int c, float val) {
+    _shot.second[c] = val;
+  }
+  void setEnergy(float val) {
+    _shot.first = val;
+  }
+
+#ifdef M_CLIENT
+  void setSidebarElement();
+  void setSidebar();
+#endif
+
+  void getVStatus(DataElement* data);
+  void setVStatus(DataElement* data);
 };
 
 class Generator : public Object {       //Order of serialisation
@@ -131,8 +184,8 @@ public:
   void setSidebar();
 #endif
 
-  void getStatus(DataElement* data);
-  void setStatus(DataElement* data);
+  void getVStatus(DataElement* data);
+  void setVStatus(DataElement* data);
 };
 
 class Drone {
@@ -211,7 +264,7 @@ public:
   }
 
   void drawSightings(float camcx, float camcy, float camcz, float d);
-  void drawObjects(float camcx, float camcy, float camcz, float d);
+  void drawObjects(float camcx, float camcy, float camcz, float d, bool b = false);
 
   bool packetRecv(DataElement *Data, int Id, NetworkC* thisptr);
 #endif

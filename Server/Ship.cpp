@@ -9,13 +9,13 @@ Movement Object::getMovement() {
   return m;
 }
 void Object::getStatus(DataElement* data) {
-  DataElement* rele = new DataElement();
-  _relativePos.set(rele);
-  data->addChild(rele);
-
   DataElement* typee = new DataElement();
   typee->_core->fromType<int>(type());
   data->addChild(typee);
+
+  DataElement* rele = new DataElement();
+  _relativePos.get(rele);
+  data->addChild(rele);
 
   DataElement* maxe = new DataElement();
   maxe->_core->fromType<int>(_maxHealth);
@@ -28,16 +28,30 @@ void Object::getStatus(DataElement* data) {
   DataElement* rade = new DataElement();
   rade->_core->fromType<int>(_radius);
   data->addChild(rade);
+
+  DataElement* vire = new DataElement();
+  getVStatus(vire);
+  data->addChild(vire);
 }
 void Object::setStatus(DataElement* data) {
-  _relativePos.set(data->_children[0]);
+  _relativePos.set(data->_children[1]);
 
   _maxHealth = data->_children[2]->_core->toType<int>();
 
   _health = data->_children[3]->_core->toType<int>();
 
   _radius = data->_children[4]->_core->toType<float>();
+
+  setVStatus(data->_children[5]);
 }
+
+void Object::getVStatus(DataElement* data) {
+
+}
+void Object::setVStatus(DataElement* data) {
+
+}
+
 #ifdef M_CLIENT
 void Object::setSidebarElement() {
   cout << "Unimplemented type " << type() << endl;
@@ -87,8 +101,8 @@ void Sensor::setSidebar() {
   }
 
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxEnergy);
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_energy);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxEnergy, 0);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_energy, 2);
 }
 void Sensor::setSidebarElement() {
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/sensor_settings.html");
@@ -105,7 +119,7 @@ void Generator::setSidebar() {
   }
 
     reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxEnergy);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxEnergy, 0);
   
 }
 void Generator::setSidebarElement() {
@@ -122,15 +136,34 @@ void Engine::setSidebar() {
     setSidebarElement();
   }
 
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(usedEnergy()) + " / " + to_string(_maxEnergy);
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.x);
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.y);
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.z);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth, 0);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(usedEnergy(), 3) + " / " + to_string(_maxEnergy, 0);
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.x, 2);
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.y, 2);
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.z, 2);
    
 }
 void Engine::setSidebarElement() {
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/engine_settings.html");
+}
+void Laser::setSidebar() {
+  bool reset = false;
+  if (selected == NULL || selected->type() != type()) {
+    reset = true;
+  }
+  selected = this;
+  if (reset) {
+    setSidebarElement();
+  }
+
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectLaserSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth, 0);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarEnergyInput"))->text = to_string(_shot.first, 3);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(_shot.second.x, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputY"))->text = to_string(_shot.second.y, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputZ"))->text = to_string(_shot.second.z, 2);
+}
+void Laser::setSidebarElement() {
+  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/laser_settings.html");
 }
 void Ship::setSidebar() {
   //cout << type << " clicked " << health/float(maxHealth) << endl;
@@ -142,7 +175,56 @@ void Ship::setSidebar() {
 void Ship::setSidebarElement() {
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.html");
 }
+
 #endif
+
+void Sensor::getVStatus(DataElement* data) {
+  DataElement* enee = new DataElement();
+  enee->_core->fromType<int>(_energy);
+  data->addChild(enee);
+
+  DataElement* maxe = new DataElement();
+  maxe->_core->fromType<int>(_maxEnergy);
+  data->addChild(maxe);
+}
+void Sensor::setVStatus(DataElement* data) {
+  _energy = data->_children[0]->_core->toType<float>();
+  _maxEnergy = data->_children[1]->_core->toType<float>();
+}
+void Engine::getVStatus(DataElement* data) {
+  DataElement* maxe = new DataElement();
+  maxe->_core->fromType<int>(_maxEnergy);
+  data->addChild(maxe);
+
+  DataElement* acce = new DataElement();
+  _accel.get(acce);
+  data->addChild(acce);
+}
+void Engine::setVStatus(DataElement* data) {
+  _maxEnergy = data->_children[0]->_core->toType<float>();
+  _accel.set(data->_children[1]);
+}
+void Generator::getVStatus(DataElement* data) {
+  DataElement* maxe = new DataElement();
+  maxe->_core->fromType<int>(_maxEnergy);
+  data->addChild(maxe);
+}
+void Generator::setVStatus(DataElement* data) {
+  _maxEnergy = data->_children[0]->_core->toType<float>();
+}
+void Laser::getVStatus(DataElement* data) {
+  DataElement* enee = new DataElement();
+  enee->_core->fromType<float>(_shot.first);
+  data->addChild(enee);
+
+  DataElement* dire = new DataElement();
+  _shot.second.get(dire);
+  data->addChild(dire);
+}
+void Laser::setVStatus(DataElement* data) {
+  _shot.first = data->_children[0]->_core->toType<float>();
+  _shot.second.set(data->_children[1]);
+}
 
 #ifdef M_SERVER
 int Ship::makeMove(DataElement *Data) {
@@ -210,7 +292,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
       o->getStatus(ne);
       rese->addChild(ne);
     }
-    connectedClient->SendData(rese, PacketSensor);
+    connectedClient->SendData(rese, PacketShipData);
     break;
   }
   return 0;
@@ -243,12 +325,18 @@ void Ship::drawSightings(float camcx, float camcy, float camcz, float d) {
     ++it;
   }
 }
-void Ship::drawObjects(float camcx, float camcy, float camcz, float d) {
+void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool b) {
   auto it = objects.begin();
 
+  if(b) {
+    glTranslatef(mov.pos.x, mov.pos.y, mov.pos.z);
+  }
   while (it != objects.end()) {
     (*it)->drawObject(camcx, camcy, camcz, d);
     ++it;
+  }
+  if (b) {
+    glTranslatef(-mov.pos.x, -mov.pos.y, -mov.pos.z);
   }
 }
 bool Ship::packetRecv(DataElement *Data, int Id, NetworkC* thisptr) {
@@ -334,9 +422,39 @@ void Ship::setStatus(DataElement* data) {
   objects.clear();
 
   for (DataElement* it : data->_children) {
-    Object* nObj = new Object(0,0,0,0);
-    nObj->setStatus(it);
-    objects.push_back(nObj);
+    int typ = it->_children[0]->_core->toType<int>();
+
+    Object* nObj = NULL;
+    switch(typ) {
+    case Object::Type::Ship:
+      //nObj = new Ship(fVec3(), 0, 0, 0, 0);
+      break;
+    case Object::Type::Shield: 
+      //nObj = new Shield(fVec3(), 0, 0, 0, 0);
+      break;
+    case Object::Type::Sensor:
+      nObj = new Sensor(fVec3(), 0, 0, 0, 0);
+      break;
+    case Object::Type::Computer:
+      //nObj = new Shield(fVec3(), 0, 0, 0, 0);
+      break;
+    case Object::Type::Generator:
+      nObj = new Generator(fVec3(), 0, 0, 0, 0);
+      break;
+    case Object::Type::Storage:
+      //nObj = new Shield(fVec3(), 0, 0, 0, 0);
+      break;
+    case Object::Type::Engine:
+      nObj = new Engine(fVec3(), 0, 0, 0, 0, fVec3());
+      break;
+    }
+    if(nObj != NULL) {
+      nObj->parentShip = this;
+      nObj->setStatus(it);
+      objects.push_back(nObj);
+    } else {
+      cout << __FILE__ << " " << __LINE__ << ": Wrong type " << typ << endl;
+    }
   }
 }
 void Ship::getSightings(DataElement* data) {

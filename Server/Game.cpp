@@ -192,6 +192,7 @@ void Game::moveMade() {
 }
 void Game::newTurn() {
   turnId++;
+  waitingFor = ships.size();
   auto it = ships.begin();
   while (it != ships.end()) {
     (*it)->newTurn(turnId);
@@ -200,7 +201,7 @@ void Game::newTurn() {
 }
 void Game::startGame() {
   state = Waiting;
-  turnId = 0;
+  newTurn();
 }
 void Game::addShip(Ship* ship) {
   ships.push_back(ship);
@@ -253,10 +254,10 @@ void Game::simulate(float till) {
   calcIntersect();
   auto it = intersects.begin();
   while (it != intersects.end() && it->first < till) {
-    //it->second.first->shot();
+    it->second.first->getPath(it->second.second);
     ++it;
   }
-  turnId++;
+  newTurn();
 }
 
 ////////////////////////////////////////////

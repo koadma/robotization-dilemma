@@ -40,16 +40,16 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
   if(ship == NULL) {
     int loginState = checkLogin(data, id);
     if (loginState == LoginErrorOk) { //If can join
+
       Ship* newShip = new Ship();
       newShip->connectedClient = thisptr;
-
-      game->addShip(newShip);
-
       thisptr->ConnectedShip = newShip;
 
       DataElement* de = new DataElement();
       de->_core->fromType<int>(loginState);
       thisptr->SendData(de, PacketLogin);
+
+      game->addShip(newShip);
 
       cout << "Client accepted" << endl;
 
@@ -77,6 +77,14 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
 
 int main(int argc, char** argv)
 {
+  cout << sizeof(NetworkC) << endl;
+  cout << sizeof(NetworkS) << endl;
+  cout << sizeof(Ship) << endl;
+  cout << sizeof(Sighting) << endl;
+  cout << sizeof(Object) << endl;
+  cout << sizeof(Movement) << endl;
+  cout << sizeof(Path) << endl;
+
   game = new Game(2);
   detachCreateClientBind(); //Begin accepting clients
 

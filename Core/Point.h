@@ -172,9 +172,17 @@ public:
   }
 
   void get(DataElement* data) {
-    data->addChild(new DataElement()->_core->fromType<T>(x));
-    data->addChild(new DataElement()->_core->fromType<T>(y));
-    data->addChild(new DataElement()->_core->fromType<T>(z));
+    DataElement* xx = new DataElement();
+    xx->_core->fromType<T>(x);
+    data->addChild(xx);
+
+    DataElement* yy = new DataElement();
+    yy->_core->fromType<T>(y);
+    data->addChild(yy);
+
+    DataElement* zz = new DataElement();
+    zz->_core->fromType<T>(z);
+    data->addChild(zz);
   }
   void set(DataElement* data) {
     x = data->_children[0]->_core->toType<T>();

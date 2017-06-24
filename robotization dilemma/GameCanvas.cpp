@@ -3,7 +3,7 @@
 
 float MainGameCanvas::camcx = 0, MainGameCanvas::camcy = 0, MainGameCanvas::camcz = 0;
 float MainGameCanvas::camphi = 0, MainGameCanvas::camtheta = 0; //phi: x-z, from x, positive to z. theta: from xz to y.
-float MainGameCanvas::d = 10;
+float MainGameCanvas::d = 1000;
 int MainGameCanvas::mxold;
 int MainGameCanvas::myold;
 int MainGameCanvas::mousebuttons = 0; //left, center, right
@@ -141,6 +141,8 @@ int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
 
   ship->drawSightings(camcx, camcy, camcz, d);
 
+  ship->drawObjects(camcx, camcy, camcz, d, true);
+
   glFlush();
 
   Graphics::resetViewport();
@@ -225,7 +227,7 @@ int MainGameCanvas::mouseWheelManager(int idk, int key, int x, int y, bool in) {
 
 float MainGameShipCanvas::camcx = 0, MainGameShipCanvas::camcy = 0, MainGameShipCanvas::camcz = 0;
 float MainGameShipCanvas::camphi = HALF_PI, MainGameShipCanvas::camtheta = QUARTER_PI; //phi: x-z, from x, positive to z. theta: from xz to y.
-float MainGameShipCanvas::d = 300;
+float MainGameShipCanvas::d = 1000;
 int MainGameShipCanvas::mxold;
 int MainGameShipCanvas::myold;
 int MainGameShipCanvas::mousebuttons = 0; //left, center, right

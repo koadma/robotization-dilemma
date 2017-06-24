@@ -12,12 +12,21 @@ public:
 
 class Path {
 public:
+  static const enum PathType {
+    PathTypePath = 0,
+    PathTypeShot = 1,
+    PathTypeBubble = 2,
+    PathTypeMovement = 3
+  };
   static const enum EqnType {
     EqnTypeExplicit = 0,
     EqnTypeApproxable = 1,
     EqnTypeImplicit = 2,
-    EqnTypeUndefined = 3,
+    EqnTypeUndefined = 3
   };
+  virtual int type() {
+    return PathTypePath;
+  }
   virtual int etype() {
     return EqnTypeUndefined;
   }
@@ -53,6 +62,9 @@ public:
   int etype() {
     return EqnTypeImplicit;
   }
+  virtual int type() {
+    return PathTypeBubble;
+  }
   Eqnsys getEquations(bool b) {//approximate
     Eqnsys res;
     if (b) {
@@ -78,6 +90,9 @@ public:
   float origintime;
   fVec3 vel;
   float energy;
+  virtual int type() {
+    return PathTypeShot;
+  }
   int etype() {
     return EqnTypeExplicit;
   }

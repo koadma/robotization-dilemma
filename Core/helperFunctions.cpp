@@ -59,6 +59,12 @@ void waitForEnter()
   #endif
 }
 
+string to_string(double _Val, int _Dig) {
+  stringstream ss;
+  ss << fixed << std::setprecision(_Dig) << _Val << scientific;
+  return ss.str();
+}
+
 vector<string> tokenize(string str, char split)
 {
   vector<string> tokens;
@@ -272,13 +278,13 @@ void serialize(string s, unsigned char** data, int& dataLen) {
   }
   dataLen = s.size();
 }
-void serialize(int i, unsigned char** data, int& dataLen) {
+void serialize(int i, unsigned char** data, int& dataLen, int prec) {
   serialize(to_string(i), data, dataLen);
 }
-void serialize(float i, unsigned char** data, int& dataLen) {
+void serialize(float i, unsigned char** data, int& dataLen, int prec) {
   serialize(to_string(i), data, dataLen);
 }
-void serialize(double i, unsigned char** data, int& dataLen) {
+void serialize(double i, unsigned char** data, int& dataLen, int prec) {
   serialize(to_string(i), data, dataLen);
 }
 
@@ -299,3 +305,51 @@ float  deserializef(unsigned char* data, int dataLen) {
 double deserialized(unsigned char* data, int dataLen) {
   return strTo<double>(deserializes(data, dataLen));
 }
+
+double ran1(long int nseed) {
+  //random -seed expected
+  int j;
+  long k;
+  static long iy = 0;
+  static long iv[NTAB];
+  static long int idum = 0;
+  /*long iy = 0;
+  long iv[NTAB];*/
+  double temp;
+  if (nseed != 0) {
+    idum = nseed;
+  }
+  if (idum <= 0 || !iy) {
+    if (-idum < 1) {
+      idum = 1;
+    }
+    else {
+      idum = -idum;
+    }
+    for (j = NTAB + 7; j >= 0; j--) {
+      k = idum / IQ;
+      idum = IA * (idum - k * IQ) - IR * k;
+      if (idum < 0) {
+        idum += IM;
+      }
+      if (j < NTAB) {
+        iv[j] = idum;
+      }
+    }
+    iy = iv[0];
+  }
+  k = idum / IQ;
+  idum = IA * (idum - k * IQ) - IR * k;
+  if (idum < 0) {
+    idum += IM;
+  }
+  j = iy / NDIV;
+  iy = iv[j];
+  iv[j] = idum;
+  if ((temp = AM * iy) > RNMX) {
+    return RNMX;
+  }
+  else {
+    return temp;
+  }
+};

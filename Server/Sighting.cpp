@@ -79,7 +79,7 @@ void Movement::get(DataElement* data) {
   data->addChild(acce);
 
   DataElement* typee = new DataElement();
-  typee->_core->fromType<int>(type);
+  typee->_core->fromType<int>(type());
   data->addChild(typee);
 
   DataElement* pathe = new DataElement();
@@ -104,7 +104,7 @@ void Movement::set(DataElement* data) {
   acc.set(data->_children[3]);
 
   //type
-  type = data->_children[0]->_core->toType<int>();
+  //type = data->_children[0]->_core->toType<int>();
 
   //pathData
   pathData = data->_children[0]->_core->toType<string>();
@@ -168,7 +168,7 @@ void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, floa
 void Sighting::getSighting(DataElement* data) {
   for (auto it : keyframes) {
     DataElement* ne = new DataElement();
-    it->set(ne);
+    it->get(ne);
     data->_children.push_back(ne);
   }
 }

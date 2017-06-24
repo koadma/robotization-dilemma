@@ -20,7 +20,7 @@ public:
   int _len;
   DataPair(int len = 0) {
     _len = len;
-    _data = new unsigned char(_len);
+    _data = new unsigned char[_len];
   }
   template<typename T> void fromType(T val) {
     delete[] _data;
@@ -41,7 +41,7 @@ public:
   vector<DataElement*> _children;
 
   DataElement() {
-    _core = new DataPair();
+    _core = new DataPair(0);
   }
   int getLen() {
     int len = 4;
@@ -103,7 +103,7 @@ public:
 
         int nlen = conv.i;
 
-        _core->~DataPair();
+        delete _core;
         _core = new DataPair(nlen);
 
         for (int i = 0; i < _core->_len; i++) {
