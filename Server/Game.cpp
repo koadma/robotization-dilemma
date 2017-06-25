@@ -252,6 +252,9 @@ void Game::calcIntersect() {
   }
 }
 void Game::simulate(float from, float till) {
+  for (auto it : ships) {
+    it->setAccel();
+  }
   collectPath(paths, from);
   calcIntersect();
   auto it = intersects.begin();

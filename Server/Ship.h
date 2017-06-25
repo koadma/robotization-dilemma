@@ -226,7 +226,7 @@ public:
 
     objects.push_back(no);
 
-    no = new ::Sensor({ -100,0,0 }, 1000, 100, 600, 100000);
+    no = new ::Sensor({ -100,0,0 }, 1000, 100, 1000, 100000);
     no->parentShip = this;
 
     objects.push_back(no);
@@ -314,8 +314,10 @@ public:
     }
     return sum;
   }
-  void moveShip(float to) {
+  void setAccel() {
     mov.acc = getAccel();
+  }
+  void moveShip(float to) {
     mov = mov.goTo(to, SOL);
   }
 

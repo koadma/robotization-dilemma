@@ -77,19 +77,16 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
 }
 #ifdef M_CLIENT
 void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, float maxVel) {
-  auto it = keyframes.begin();
+  glLineWidth(2.0f);
 
-  int id = 0;
-
-  glColor3b(255,255,255);
-  glBegin(GL_LINE_STRIP);
-
+  glBegin(GL_LINES);
+  glColor3f(1.0f, 1.0f, 1.0f);
   if (keyframes.size()) {
     float t = keyframes[0]->gTimeStamp;
 
     while (t < keyframes[keyframes.size() - 1]->gTimeStamp + ROUND_TIME) {
       Movement estpos = estimatePos(t, maxVel);
-      glVertex3f(estpos.pos.x, estpos.pos.x, estpos.pos.x);
+      glVertex3f(estpos.pos.x, estpos.pos.y, estpos.pos.z);
       t += ROUND_TIME * 0.1f;
     }
   }

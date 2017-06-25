@@ -102,7 +102,7 @@ void Laser::setVStatus(DataElement* data) {
 void Sensor::getPathVirt(Path* p) {
   if (p->type() == Path::PathTypeBubble) {
     if (ran1() < _health / float(_maxHealth)) { //
-      if (ran1() < 1 / (1 + pow(E, -(reinterpret_cast<Bubble*>(p)->energy / _energy)))) { //detect
+      if (ran1() < 1 / (1 + pow(E, -(reinterpret_cast<Bubble*>(p)->energy * _energy)))) { //detect
         cout << "Detected" << endl;
         Sighting* s = new Sighting();
         Movement* m = new Movement();

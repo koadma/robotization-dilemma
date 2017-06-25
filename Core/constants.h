@@ -11,7 +11,7 @@ const int INITIAL_MAX_SENSORENERGY = 10;
 const int INITIAL_MAX_GENERATORENERGY = 300;
 const float MAP_SIZE = 1e5; //m //Solar System has a diameter of 9.09 billion km (if it ends at Neptune), might be too big
 const float INITIAL_VELOCITY = 1e-6*SOL; //1e-2*SOL;
-const int ROUND_TIME = 20; // s
+const int ROUND_TIME = 2; // s
 //const int MAP_SCALE = 10; // 1 coord = MAP_SCALE real meters 
 const double THREE_PI    = 9.4247779607694;
 const double TWO_PI      = 6.2831853071796;
