@@ -12,6 +12,22 @@ void ingameEngineSidebarAccInputZ(string s) {
   reinterpret_cast<Engine*>(selected)->setComponent(2, strTo<float>(s));
 }
 
+void ingameLaserSidebarAccInputX(string s) {
+  reinterpret_cast<Laser*>(selected)->setComponent(0, strTo<float>(s));
+}
+
+void ingameLaserSidebarAccInputY(string s) {
+  reinterpret_cast<Laser*>(selected)->setComponent(1, strTo<float>(s));
+}
+
+void ingameLaserSidebarAccInputZ(string s) {
+  reinterpret_cast<Laser*>(selected)->setComponent(2, strTo<float>(s));
+}
+
+void ingameLaserSidebarEnergyInput(string s) {
+  reinterpret_cast<Laser*>(selected)->setEnergy(strTo<float>(s));
+}
+
 void ingameSensorSidebarEnergyInput(string s) {
   reinterpret_cast<Sensor*>(selected)->setEnergy(strTo<float>(s));
 }
@@ -92,7 +108,10 @@ int InitWindow() {
   Graphics::setName("ingameEngineSidebarAccInputX", ingameEngineSidebarAccInputX);
   Graphics::setName("ingameEngineSidebarAccInputY", ingameEngineSidebarAccInputY);
   Graphics::setName("ingameEngineSidebarAccInputZ", ingameEngineSidebarAccInputZ);
-
+  Graphics::setName("ingameLaserSidebarEnergyInput", ingameLaserSidebarEnergyInput);
+  Graphics::setName("ingameLaserSidebarAccInputX", ingameLaserSidebarAccInputX);
+  Graphics::setName("ingameLaserSidebarAccInputY", ingameLaserSidebarAccInputY);
+  Graphics::setName("ingameLaserSidebarAccInputZ", ingameLaserSidebarAccInputZ);
 
   Graphics::setName("textValidator", textValidator);
   Graphics::setName("numericalValidator", numericalValidator);

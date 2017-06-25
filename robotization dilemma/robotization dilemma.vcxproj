@@ -151,6 +151,7 @@
     <ClCompile Include="..\Core\Network.cpp" />
     <ClCompile Include="..\Core\Point.cpp" />
     <ClCompile Include="..\Core\Polynomial.cpp" />
+    <ClCompile Include="..\Server\Bubble.cpp" />
     <ClCompile Include="..\Server\Ship.cpp" />
     <ClCompile Include="..\Server\Sighting.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="..\Core\Network.h" />
     <ClInclude Include="..\Core\Point.h" />
     <ClInclude Include="..\Core\Polynomial.h" />
+    <ClInclude Include="..\Server\Bubble.h" />
     <ClInclude Include="..\Server\Ship.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Canvas.h" />

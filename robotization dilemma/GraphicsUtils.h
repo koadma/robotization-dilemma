@@ -13,7 +13,7 @@ typedef uint32_t colorargb;
 
 typedef void(*ClickCallback)();
 typedef void(*TextInputFunc)(string);
-typedef bool(*TextValidatorFunc)(unsigned char);
+typedef bool(*TextValidatorFunc)(string, int, unsigned char);
 
 typedef void(*RenderManager)();
 typedef void(*ResizeManager)(int x, int y);
@@ -83,8 +83,8 @@ static void shapesPrintf(int row, int col, const char *fmt, ...);
 
 void setColor(colorargb v);
 
-void renderBitmapString(float x, float y, string text, colorargb color, bool center);
+void renderBitmapString(float x, float y, string text, colorargb color, bool center, int cursor = -1);
 
-bool numericalValidator(unsigned char c);
-bool floatValidator(unsigned char c);
-bool textValidator(unsigned char c);
+bool numericalValidator(string s, int cursor, unsigned char c);
+bool floatValidator(string s, int cursor, unsigned char c);
+bool textValidator(string s, int cursor, unsigned char c);

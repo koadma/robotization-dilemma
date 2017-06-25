@@ -49,73 +49,6 @@ vector<double> intersectPaths(Path* lhs, Path* rhs) {
   return impleq.eqns.begin()->second.getPolynomial('t').solve();
 }
 
-Movement Movement::goTo(float gTime, float maxVelocity) {
-  /*if (time < timestamp) {
-  return goBackTo(time, maxVelocity);
-  }
-  else {
-  return goForwardTo(time, maxVelocity);
-  }*/
-  Movement m = *this;
-  m.pos = pos + vel*gTime + acc*pow(gTime, 2) / 2.0f;
-  m.vel = vel + acc*gTime;
-  return m;
-}
-void Movement::get(DataElement* data) {
-  DataElement* timee = new DataElement();
-  timee->_core->fromType<float>(gTimeStamp);
-  data->addChild(timee);
-
-  DataElement* pose = new DataElement();
-  pos.set(pose);
-  data->addChild(pose);
-  
-  DataElement* vele = new DataElement();
-  vel.set(vele);
-  data->addChild(vele);
-
-  DataElement* acce = new DataElement();
-  acc.set(acce);
-  data->addChild(acce);
-
-  DataElement* typee = new DataElement();
-  typee->_core->fromType<int>(type());
-  data->addChild(typee);
-
-  DataElement* pathe = new DataElement();
-  pathe->_core->fromType<string>(pathData);
-  data->addChild(pathe);
-
-  DataElement* rade = new DataElement();
-  rade->_core->fromType<double>(radius);
-  data->addChild(rade);
-}
-void Movement::set(DataElement* data) {
-  //gTimeStamp
-  gTimeStamp = data->_children[0]->_core->toType<float>();
-
-  //pos
-  pos.set(data->_children[1]);
-
-  //vel
-  vel.set(data->_children[2]);
-
-  //acc
-  acc.set(data->_children[3]);
-
-  //type
-  //type = data->_children[0]->_core->toType<int>();
-
-  //pathData
-  pathData = data->_children[0]->_core->toType<string>();
-
-  //radius
-  radius = data->_children[0]->_core->toType<double>();
-}
-Movement::~Movement() {
-
-}
-
 int Sighting::getLastSmaller(float t)
 {
   int first = 0, last = int(keyframes.size()) - 1;
@@ -148,6 +81,7 @@ void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, floa
 
   int id = 0;
 
+  glColor3b(255,255,255);
   glBegin(GL_LINE_STRIP);
 
   if (keyframes.size()) {

@@ -40,6 +40,10 @@ public:
   virtual float usedEnergy() {throw 1; return 0;}
   virtual float prodEnergy() {return 0;}
 
+  virtual fVec3 getAccel() {
+    return {0,0,0};
+  }
+
   Movement getMovement();
 
 #ifdef M_CLIENT
@@ -48,6 +52,11 @@ public:
   virtual void setSidebar();
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
+
+#ifdef M_SERVER
+  virtual void collectPath(list<Path*> &addTo, float time);
+#endif
+
   virtual void getPathVirt(Path* p) {
 
   }
@@ -95,19 +104,15 @@ public:
     _energy = max(min(val, _maxEnergy), 0.0f);
   }
 
-  void getPathVirt(Path* p) {
-    if (p->type() == Path::PathTypeBubble) {
-      if (ran1() < _health / float(_maxHealth)) { //
-        if (ran1() < 1 / (1 + pow(E, -(reinterpret_cast<Bubble*>(p)->energy / _energy)))) { //detect
-          cout << "Detected" << endl;
-        }
-      }
-    }
-  }
+  void getPathVirt(Path* p);
 
 #ifdef M_CLIENT
   void setSidebarElement();
   void setSidebar();
+#endif
+
+#ifdef M_SERVER
+  void collectPath(list<Path*> &addTo, float time);
 #endif
 
   void getVStatus(DataElement* data);
@@ -127,6 +132,10 @@ public:
   int type() { return Type::Engine; }
   float usedEnergy() { return _accel.sqrlen(); }
 
+  fVec3 getAccel() {
+    return _accel;
+  }
+
   void setComponent(int c, float val) {
     _accel[c] = val;
   }
@@ -134,6 +143,10 @@ public:
 #ifdef M_CLIENT
   void setSidebarElement();
   void setSidebar();
+#endif
+
+#ifdef M_SERVER
+  void collectPath(list<Path*> &addTo, float time);
 #endif
 
   void getVStatus(DataElement* data);
@@ -163,6 +176,9 @@ public:
   void setSidebarElement();
   void setSidebar();
 #endif
+#ifdef M_SERVER
+  void collectPath(list<Path*> &addTo, float time);
+#endif
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
@@ -184,6 +200,10 @@ public:
   void setSidebar();
 #endif
 
+#ifdef M_SERVER
+  void collectPath(list<Path*> &addTo, float time);
+#endif
+
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
 };
@@ -191,6 +211,9 @@ public:
 class Drone {
 public:
   Movement mov;
+
+  list<Object*> objects;
+  list<Sighting*> sightings;
 };
 
 class Ship : public Drone {
@@ -212,6 +235,11 @@ public:
     no->parentShip = this;
 
     objects.push_back(no);
+
+    no = new ::Laser({ 0,-173.2f ,0 }, 1000, 100, 900);
+    no->parentShip = this;
+
+    objects.push_back(no);
   }
 
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
@@ -224,14 +252,15 @@ public:
     return res;
   }
 
-  list<Object*> objects;
-  list<Sighting*> sightings;
+
 #ifdef M_SERVER
   NetworkS* connectedClient;
 
   int makeMove(DataElement* data);
   void newTurn(int id);
   bool packetRecv(DataElement *Data, int Id, NetworkS* thisptr);
+
+  void collectPath(list<Path*> &addTo, float time);
 #endif
 #ifdef M_CLIENT
   NetworkC* connectedServer;
@@ -278,6 +307,17 @@ public:
   float getTotalShipEnergy();
   float getRemainingShipEnergy();
   float getSpentShipEnergy();
+  fVec3 getAccel() {
+    fVec3 sum = {0,0,0};
+    for (auto it : objects) {
+      sum += it->getAccel();
+    }
+    return sum;
+  }
+  void moveShip(float to) {
+    mov.acc = getAccel();
+    mov = mov.goTo(to, SOL);
+  }
 
   void getStatus(DataElement* data);
   void setStatus(DataElement* data);

@@ -14,8 +14,7 @@ public:
   int targetPlayerCount;
   int waitingFor;
   list<Ship*> ships;
-  list<Bubble*> bubbles;
-  list<Shot*> shots;
+  list<Path*> paths;
 
   set<pair<double, pair<Object*, Path*> > > intersects;
 
@@ -32,8 +31,15 @@ public:
   void addShip(Ship* ship);
   void removeIntersect(Drone* drone);
   void removeIntersect(Bubble* bubble);
+  void collectPath(list<Path*> &addTo, float time) {
+    for (auto it : ships) {
+#ifdef M_SERVER
+      it->collectPath(paths, time);
+#endif
+    }
+  }
   void calcIntersect();
-  void simulate(float till);
+  void simulate(float from, float till);
 };
 
 extern Game* game;

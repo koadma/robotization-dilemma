@@ -187,7 +187,7 @@ numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
 void Game::moveMade() {
   waitingFor--;
   if (waitingFor == 0) {
-    simulate(turnId * ROUND_TIME);
+    simulate((turnId-1) * ROUND_TIME, turnId * ROUND_TIME);
   }
 }
 void Game::newTurn() {
@@ -238,9 +238,10 @@ void Game::removeIntersect(Bubble* bubble) {
   }
 }
 void Game::calcIntersect() {
+  
   intersects.clear(); //reset intersections
-  auto itb = bubbles.begin();
-  while (itb != bubbles.end()) {
+  auto itb = paths.begin();
+  while (itb != paths.end()) {
     auto its = ships.begin();
     while (its != ships.end()) {
       list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
@@ -250,12 +251,18 @@ void Game::calcIntersect() {
     ++itb;
   }
 }
-void Game::simulate(float till) {
+void Game::simulate(float from, float till) {
+  collectPath(paths, from);
   calcIntersect();
   auto it = intersects.begin();
   while (it != intersects.end() && it->first < till) {
-    it->second.first->getPath(it->second.second);
+    if(from <= it->first) {
+      it->second.first->getPath(it->second.second);
+    }
     ++it;
+  }
+  for (auto it : ships) {
+    it->moveShip(till);
   }
   newTurn();
 }

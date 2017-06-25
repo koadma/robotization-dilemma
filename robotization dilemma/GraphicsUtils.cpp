@@ -94,7 +94,11 @@ void setColor(colorargb v) {
   glColor3f(((v & 0x00FF0000) >> 16) / 255.0f, ((v & 0x0000FF00) >> 8) / 255.0f, ((v & 0x000000FF) >> 0) / 255.0f);
 }
 
-void renderBitmapString(float x, float y, string text, colorargb color, bool center) {
+void renderBitmapString(float x, float y, string text, colorargb color, bool center, int cursor) {
+  if (0 <= cursor && cursor <= text.size()) {
+    text.insert(cursor, 1, '|');
+  }
+  
   setColor(color);
   int length = text.length();
   if (center) {
@@ -106,14 +110,17 @@ void renderBitmapString(float x, float y, string text, colorargb color, bool cen
   glutBitmapString(GLUT_BITMAP_9_BY_15, reinterpret_cast<const unsigned char*>(text.c_str()));
 }
 
-bool numericalValidator(unsigned char c) {
-  return ('0' <= c && c <= '9');
+bool numericalValidator(string s, int cursor, unsigned char c) {
+  size_t Fminus = s.find('-');
+  return ('0' <= c && c <= '9' && (Fminus == string::npos || Fminus < cursor)) || (cursor == 0 && c == '-');
 }
 
-bool floatValidator(unsigned char c) {
-  return ('0' <= c && c <= '9') || c == '.';
+bool floatValidator(string s, int cursor, unsigned char c) {
+  size_t Fminus = s.find('-');
+  size_t Fdot = s.find('.');
+  return ('0' <= c && c <= '9' && (Fminus == string::npos || Fminus < cursor)) || (Fdot == string::npos && c == '.' && (Fminus == string::npos || Fminus < cursor)) || (cursor == 0 && c == '-');
 }
 
-bool textValidator(unsigned char c) {
-  return (32 <= c);
+bool textValidator(string s, int cursor, unsigned char c) {
+  return (32 <= c && c < 127);
 }
