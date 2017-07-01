@@ -318,7 +318,7 @@ public:
     mov.acc = getAccel();
   }
   void moveShip(float to) {
-    mov = mov.goTo(to, SOL);
+    mov = mov.getAt(to, SOL);
   }
 
   void getStatus(DataElement* data);

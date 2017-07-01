@@ -223,9 +223,8 @@ void Laser::setSidebarElement() {
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/laser_settings.html");
 }
 void Ship::setSidebar() {
-  //cout << type << " clicked " << health/float(maxHealth) << endl;
+  selected = NULL;
   setSidebarElement();
-
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text = to_string(reinterpret_cast<::Ship*>(this)->getSpentShipEnergy()) + " / " + to_string(reinterpret_cast<::Ship*>(this)->getTotalShipEnergy());
 
 }
@@ -262,6 +261,7 @@ void Laser::collectPath(list<Path*> &addTo, float time) {
   p->origin = parentShip->mov.pos + _relativePos;
   p->origintime = time;
   p->vel = _shot.second;
+  addTo.push_back(p);
 }
 void Generator::collectPath(list<Path*> &addTo, float time) {
 
@@ -462,7 +462,7 @@ void Ship::getStatus(DataElement* data) {
   }
 }
 void Ship::setStatus(DataElement* data) {
-  objects.clear();
+  clearObjects();
 
   mov.set(data->_children[0]);
 
@@ -509,6 +509,12 @@ void Ship::setStatus(DataElement* data) {
 
     ++it;
   }
+
+#ifdef M_CLIENT
+  setSidebar();
+#endif // M_CLIENT
+
+
 }
 void Ship::getSightings(DataElement* data) {
   for (auto it : sightings) {
@@ -518,7 +524,7 @@ void Ship::getSightings(DataElement* data) {
   }
 }
 void Ship::setSightings(DataElement* data) {
-  sightings.clear();
+  clearSightings();
 
   for (DataElement* it : data->_children) {
     Sighting* nSig = new Sighting;
@@ -530,18 +536,26 @@ void Ship::clearObjects() {
   auto it = objects.begin();
 
   while (it != objects.end()) {
-    (*it)->~Object();
+    //(*it)->~Object();
     delete *it;
+    ++it;
   }
 
   objects.clear();
+
+#ifdef M_CLIENT
+  Graphics::deleteElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")));
+#endif // M_CLIENT
+
+
 }
 void Ship::clearSightings() {
   auto it = sightings.begin();
 
   while (it != sightings.end()) {
-    (*it)->~Sighting();
+    //(*it)->~Sighting();
     delete *it;
+    ++it;
   }
 
   sightings.clear();

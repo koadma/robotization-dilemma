@@ -68,7 +68,7 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
     id = 0;
   }
   if (id < keyframes.size()) {
-    return keyframes[id]->goTo(t, maxVelocity);
+    return keyframes[id]->getAt(t, maxVelocity);
   }
   else {
     throw 1;

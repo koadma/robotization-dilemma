@@ -139,7 +139,7 @@ ostream& operator<<(ostream& os, const Bubble& b) // only for test
 */
 
 
-Movement Movement::goTo(float gTime, float maxVelocity) {
+Movement Movement::getAt(float gTime, float maxVelocity) {
   /*if (time < timestamp) {
   return goBackTo(time, maxVelocity);
   }
@@ -149,6 +149,7 @@ Movement Movement::goTo(float gTime, float maxVelocity) {
   Movement m = *this;
   m.pos = pos + vel*(gTime-gTimeStamp) + acc*pow(gTime-gTimeStamp, 2) / 2.0f;
   m.vel = vel + acc*(gTime - gTimeStamp);
+  m.gTimeStamp = gTime;
   return m;
 }
 void Movement::get(DataElement* data) {

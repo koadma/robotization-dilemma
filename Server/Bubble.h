@@ -103,7 +103,7 @@ public:
   throw 1;
   return 0;
   }*/
-  Movement goTo(float gTime, float maxVelocity);
+  Movement getAt(float gTime, float maxVelocity);
   /*Movement goForwardTo(float time, float maxVelocity) {
   Movement res;
   res.timestamp = time;
