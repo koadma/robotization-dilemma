@@ -1,9 +1,5 @@
 #pragma once
 
-#include "..\Core\Point.h"
-#include "..\Core\helperFunctions.h"
-#include "..\Core\constants.h"
+#include "../Server/Bubble.h"
 
-class Player {
-
-};
+extern bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* ship);

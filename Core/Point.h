@@ -1,12 +1,13 @@
 #ifndef __POINT_H__
 #define __POINT_H__
 
-#include <iostream>
+#include "Fraction.h"
+
 
 template<typename T> struct vec3;
-typedef vec3<float> fVec3;
-typedef vec3<int>   iVec3;
-typedef vec3<bool>  bVec3;
+typedef vec3<float>          fVec3;
+typedef vec3<int>            iVec3;
+typedef vec3<bool>           bVec3;
 
 template<typename T>
 class vec3 {
@@ -34,6 +35,10 @@ public:
   }
   vec3<T> & operator*=(vec3<T> rhs) {
     x *= rhs.x; y *= rhs.y; z *= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator*=(T rhs) {
+    x *= rhs; y *= rhs; z *= rhs;
     return *this;
   }
   vec3<T> & operator/=(vec3<T> rhs) {
@@ -68,6 +73,7 @@ public:
   vec3<T> operator+ (vec3<T> rhs) const { return vec3<T>(*this) += rhs; }
   vec3<T> operator- (vec3<T> rhs) const { return vec3<T>(*this) -= rhs; }
   vec3<T> operator* (vec3<T> rhs) const { return vec3<T>(*this) *= rhs; }
+  vec3<T> operator* (T rhs) const { return vec3<T>(*this) *= rhs; }
   vec3<T> operator/ (vec3<T> rhs) const { return vec3<T>(*this) /= rhs; }
   vec3<T> operator% (vec3<T> rhs) const { return vec3<T>(*this) %= rhs; }
   vec3<T> operator& (vec3<T> rhs) const { return vec3<T>(*this) &= rhs; }
@@ -138,6 +144,10 @@ public:
     return bvec3(x > rhs.x, y > rhs.y, z > rhs.z);
   }
 
+  fVec3 at(float t) { //Only for polynomial vectors
+    return {x.at(t), y.at(t), z.at(t)};
+  }
+
   vec3<T> randomize(T r)
   {
     //I am not sure if this is random
@@ -159,6 +169,25 @@ public:
       notEnd = this->length() > r / 2;
     } while (notEnd);
     return *this;
+  }
+
+  void get(DataElement* data) {
+    DataElement* xx = new DataElement();
+    xx->_core->fromType<T>(x);
+    data->addChild(xx);
+
+    DataElement* yy = new DataElement();
+    yy->_core->fromType<T>(y);
+    data->addChild(yy);
+
+    DataElement* zz = new DataElement();
+    zz->_core->fromType<T>(z);
+    data->addChild(zz);
+  }
+  void set(DataElement* data) {
+    x = data->_children[0]->_core->toType<T>();
+    y = data->_children[1]->_core->toType<T>();
+    z = data->_children[2]->_core->toType<T>();
   }
 };
 

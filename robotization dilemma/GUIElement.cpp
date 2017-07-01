@@ -1,6 +1,7 @@
 #include "GUIElement.h"
 
-GUIElement::GUIElement(Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) {
+GUIElement::GUIElement(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) {
+  name = lname;
   mincorner = lmincorner;
   maxcorner = lmaxcorner;
   bgColor = lbg;
@@ -51,5 +52,14 @@ int GUIElement::mouseWheel(int a, int b, int mx, int my) {
 
 void GUIElement::render() {
 
+}
+
+GUIElement* GUIElement::getElementById(string id) {
+  if (name == id) {
+    return this;
+  }
+  else {
+    return NULL;
+  }
 }
 

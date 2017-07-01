@@ -10,7 +10,9 @@ int Panel::mouseEnter(int state) {
   int bstate = 0;
 
   while (it != elements.end() && !(state & 2)) {
-    bstate |= (*it)->mouseEnter(state);
+    if (!(*it)->toDelete) {
+      bstate |= (*it)->mouseEnter(state);
+    }
     ++it;
   }
   return bstate;
@@ -23,7 +25,9 @@ int Panel::mouseMoved(int mx, int my) {
   int state = 0;
 
   while (it != elements.end() && !(state & 2)) {
-    state |= (*it)->mouseMoved(mx, my);
+    if (!(*it)->toDelete) {
+      state |= (*it)->mouseMoved(mx, my);
+    }
     ++it;
   }
   return state;
@@ -36,7 +40,9 @@ int Panel::mouseClicked(int button, int state, int mx, int my) {
   int bstate = 0;
 
   while (it != elements.end() && !(bstate & 2)) {
-    bstate |= (*it)->mouseClicked(button, state, mx, my);
+    if (!(*it)->toDelete) {
+      bstate |= (*it)->mouseClicked(button, state, mx, my);
+    }
     ++it;
   }
   return bstate;
@@ -49,7 +55,9 @@ int Panel::mouseWheel(int delta, int state, int mx, int my) {
   int bstate = 0;
 
   while (it != elements.end() && !(bstate & 2)) {
-    bstate |= (*it)->mouseWheel(delta, state, mx, my);
+    if (!(*it)->toDelete) {
+      bstate |= (*it)->mouseWheel(delta, state, mx, my);
+    }
     ++it;
   }
   return bstate;
@@ -62,7 +70,9 @@ int Panel::keyPressed(unsigned char key, int mx, int my) {
   int state = 0;
 
   while (it != elements.end() && !(state & 2)) {
-    state |= (*it)->keyPressed(key, mx, my);
+    if (!(*it)->toDelete) {
+      state |= (*it)->keyPressed(key, mx, my);
+    }
     ++it;
   }
   return state;
@@ -75,7 +85,9 @@ int Panel::specialPressed(int key, int mx, int my) {
   int state = 0;
 
   while (it != elements.end() && !(state & 2)) {
-    state |= (*it)->specialPressed(key, mx, my);
+    if (!(*it)->toDelete) {
+      state |= (*it)->specialPressed(key, mx, my);
+    }
     ++it;
   }
   return state;
@@ -92,7 +104,7 @@ void Panel::render() {
     } else {
       //glPushMatrix();
       //glViewport(cax, cay, cbx - cax, cby - cay);
-      glScissor((*it)->cax, (*it)->cay, (*it)->cbx - (*it)->cax, (*it)->cby - (*it)->cay);
+      //glScissor((*it)->cax, (*it)->cay, (*it)->cbx - (*it)->cax, (*it)->cby - (*it)->cay);
       (*it)->render();
       //glPopMatrix();
       ++it;
@@ -133,3 +145,26 @@ void Panel::deleteElements(bool hard) {
   }
 }
 
+GUIElement* Panel::getElementById(string id) {
+  if (name == id) {
+    return this;
+  }
+  else {
+    GUIElement* res = NULL;
+
+    auto it = elements.begin();
+
+    while (it != elements.end() && res == NULL) {
+      if (!(*it)->toDelete) {
+        GUIElement* e = (*it)->getElementById(id);
+
+        if (e != NULL) {
+          res = e;
+        }
+      }
+
+      ++it;
+    }
+    return res;
+  }
+}

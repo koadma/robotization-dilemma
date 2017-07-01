@@ -18,24 +18,25 @@ enum NetworkErrorCodes {
   NetworkErrorCodeServerAccept,
 };
 
-void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen) {
+/*void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen) {
   cout << Id << " " << Data << endl;
 }
-
-void NetworkError(int ID, int WSAError = 0) {
+*/
+void NetworkError(int ID, int& set, int WSAError) {
+  set = ID;
   cout << "Error code: " << to_string(ID) << endl;
 }
 
 NetworkS::NetworkS() {
 }
-NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
+NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   RecivePacket = recivePacketFunc;
   struct addrinfo *result = NULL;
   int iResult;
   // Initialize Winsock
   iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeInitalize, iResult);
+    NetworkError(NetworkErrorCodeInitalize, error, iResult);
     return;
   }
 
@@ -48,7 +49,7 @@ NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
   // Resolve the server address and port
   iResult = getaddrinfo(NULL, port.c_str(), &hints, &result);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeResolveServerAddress, iResult);
+    NetworkError(NetworkErrorCodeResolveServerAddress, error, iResult);
     WSACleanup();
     return;
   }
@@ -56,7 +57,7 @@ NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
   // Create a SOCKET for connecting to server
   ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
   if (ListenSocket == INVALID_SOCKET) {
-    NetworkError(NetworkErrorCodeCreateListenSocket);
+    NetworkError(NetworkErrorCodeCreateListenSocket, error, 0);
     freeaddrinfo(result);
     WSACleanup();
     return;
@@ -65,7 +66,7 @@ NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
   // Setup the TCP listening socket
   iResult = ::bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
   if (iResult == SOCKET_ERROR) {
-    NetworkError(NetworkErrorCodeBindListenSocket);
+    NetworkError(NetworkErrorCodeBindListenSocket, error, 0);
     freeaddrinfo(result);
     closesocket(ListenSocket);
     WSACleanup();
@@ -78,7 +79,7 @@ NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
 
   iResult = listen(ListenSocket, SOMAXCONN);
   if (iResult == SOCKET_ERROR) {
-    NetworkError(NetworkErrorCodeServerListen);
+    NetworkError(NetworkErrorCodeServerListen, error, 0);
     closesocket(ListenSocket);
     WSACleanup();
     return;
@@ -87,7 +88,7 @@ NetworkS::NetworkS(string port, RecivePacketFunc recivePacketFunc) {
   // Accept a client socket
   ClientSocket = accept(ListenSocket, NULL, NULL);
   if (ClientSocket == INVALID_SOCKET) {
-    NetworkError(NetworkErrorCodeServerAccept);
+    NetworkError(NetworkErrorCodeServerAccept, error, 0);
     closesocket(ListenSocket);
     WSACleanup();
     return;
@@ -119,7 +120,7 @@ void NetworkS::Loop()
       if (iResult == 0) {
       }
       else {
-        NetworkError(NetworkErrorCodeServerReciveData  );
+        NetworkError(NetworkErrorCodeServerReciveData, error, 0);
         closesocket(ClientSocket);
         WSACleanup();
         return;
@@ -148,14 +149,35 @@ int NetworkS::SendData(char *Data, int Id, int DataLen) {
   }
 
   int iSendResult = send(ClientSocket, SendRaw, DataLen + 2 * PACKET_HEADER_LEN, 0);
+
+  delete[] SendRaw;
+  delete[] Data;
+
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
-    NetworkError(NetworkErrorCodeServerSendData  );
+    NetworkError(NetworkErrorCodeServerSendData, error, 0);
     closesocket(ClientSocket);
     WSACleanup();
     return -1;
   }
   //NetLog.LogString("Bytes sent: " + to_string(iSendResult));
   return iSendResult;
+}
+
+int NetworkS::SendData(DataElement* Data, int Id) {
+  int len = Data->getLen();
+  unsigned char* datac = new unsigned char[len];
+  int start = 0;
+  Data->fill(datac, start);
+  if (start != len) {
+    throw 1;
+  }
+  //Data->~DataElement();
+  delete Data;
+  return SendData(datac, Id, len);
+}
+
+int NetworkS::SendData(unsigned char *Data, int Id, int DataLen) {
+  return SendData(reinterpret_cast<char*>(Data), Id, DataLen);
 }
 
 int NetworkS::ReciveData() {
@@ -201,14 +223,28 @@ int NetworkS::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen);
-  delete data;
+  DataElement* datae = new DataElement();
+  int start = 0;
+  datae->empty(reinterpret_cast<unsigned char*>(data), start);
+  if (start != dlen) {
+    throw 1;
+  }
+  bool t = RecivePacket(datae, pid, this, ConnectedShip);
+  //datae->~DataElement();
+  delete datae;
+
+  //delete data;
+
+  if (t) {
+    return 0;
+  }
+
   return dlen;
 }
 
 NetworkC::NetworkC() {
 }
-NetworkC::NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc) {
+NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   RecivePacket = recivePacketFunc;
   struct addrinfo *result, *ptr;
   result = NULL;
@@ -217,7 +253,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc) {
   // Initialize Winsock
   iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeInitalize);
+    NetworkError(NetworkErrorCodeInitalize, error, 0);
     return;
   }
 
@@ -229,7 +265,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc) {
   // Resolve the server address and port
   iResult = getaddrinfo(IP.c_str(), port.c_str(), &hints, &result);
   if (iResult != 0) {
-    NetworkError(NetworkErrorCodeResolveServerAddress);
+    NetworkError(NetworkErrorCodeResolveServerAddress, error, 0);
     WSACleanup();
     return;
   }
@@ -241,7 +277,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc) {
     ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
       ptr->ai_protocol);
     if (ConnectSocket == INVALID_SOCKET) {
-      NetworkError(NetworkErrorCodeCreateClientSocket  );
+      NetworkError(NetworkErrorCodeCreateClientSocket, error, 0);
       WSACleanup();
       return;
     }
@@ -259,7 +295,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFunc recivePacketFunc) {
   freeaddrinfo(result);
 
   if (ConnectSocket == INVALID_SOCKET) {
-    NetworkError(NetworkErrorCodeConnectServer);
+    NetworkError(NetworkErrorCodeConnectServer, error, 0);
     WSACleanup();
     return;
   }
@@ -290,7 +326,7 @@ void NetworkC::Loop()
 
       }
       else {
-        NetworkError(NetworkErrorCodeClientReciveData, WSAGetLastError());
+        NetworkError(NetworkErrorCodeClientReciveData, error, WSAGetLastError());
         closesocket(ConnectSocket);
         //WSACleanup();
         return;
@@ -319,13 +355,40 @@ int NetworkC::SendData(char *Data, int Id, int DataLen) {
   }
 
   int iSendResult = send(ConnectSocket, SendRaw, DataLen + 2 * PACKET_HEADER_LEN, 0);
+
+  //delete Data;
+  //delete SendRaw;
+  
+  delete[] Data;
+  delete[] SendRaw;
+
+
+  //TODO: Free memory properly
+
   if (iSendResult != DataLen + 2 * PACKET_HEADER_LEN) {
-    NetworkError(NetworkErrorCodeClientSendData  );
+    NetworkError(NetworkErrorCodeClientSendData, error, 0);
     closesocket(ConnectSocket);
     WSACleanup();
     return -1;
   }
   return iSendResult;
+}
+
+int NetworkC::SendData(unsigned char *Data, int Id, int DataLen) {
+  return SendData(reinterpret_cast<char*>(Data), Id, DataLen);
+}
+
+int NetworkC::SendData(DataElement* Data, int Id) {
+  int len = Data->getLen();
+  unsigned char* datac = new unsigned char[len];
+  int start = 0;
+  Data->fill(datac, start);
+  if (start != len) {
+    throw 1;
+  }
+  //Data->~DataElement();
+  delete Data;
+  return SendData(datac, Id, len);
 }
 
 int NetworkC::ReciveData() {
@@ -375,7 +438,84 @@ int NetworkC::ReciveData() {
     //NetLog.LogString("RECiRes: " + to_string(iRes));
   }
 
-  RecivePacket(reinterpret_cast<unsigned char*>(data), pid, dlen);
-  delete data;
+  DataElement* datae = new DataElement();
+  int start = 0;
+  datae->empty(reinterpret_cast<unsigned char*>(data), start);
+  if (start != dlen) {
+    throw 1;
+  }
+  bool t = RecivePacket(datae, pid, this, ConnectedShip);
+  //datae->~DataElement();
+  delete datae;
+
+  if (t) {
+    return 0;
+  }
+
   return dlen;
+}
+
+void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC, bool destroy) {
+
+  Packet_Header_Convertor conv;
+
+  lenC = 0;
+
+  for (int i = 0; i<in.size(); i++) {
+
+    lenC += PACKET_HEADER_LEN + in[i].second;
+  }
+
+  *C = new unsigned char[lenC];
+
+  int prevSector = 0;
+
+  for (int k = 0; k<in.size(); k++) {
+    conv.i = in[k].second;
+
+    for (int i = 0; i < PACKET_HEADER_LEN; i++) {
+      (*C)[prevSector + i] = conv.chararr.chars[i];
+    }
+
+    prevSector += PACKET_HEADER_LEN;
+
+    for (int i = 0; i < in[k].second; i++) {
+      (*C)[prevSector + i] = in[k].first[i];
+    }
+
+    prevSector += in[k].second;
+
+    if (destroy) {
+      delete in[k].first;
+    }
+  }
+
+
+}
+
+void split(unsigned char* data, int dataLen, vector<pair<unsigned char*, int> > &split, bool destroy) {
+  Packet_Header_Convertor conv;
+
+  int till = 0;
+  while (till < dataLen) {
+    for (int i = 0; i < PACKET_HEADER_LEN; i++) {
+      conv.chararr.chars[i] = data[till + i];
+    }
+
+    till += PACKET_HEADER_LEN;
+
+    unsigned char *text = new unsigned char[conv.i];
+
+    for (int i = 0; i < conv.i; i++) {
+      text[i] = data[till + i];
+    }
+
+    till += conv.i;
+
+    split.push_back({ text, conv.i });
+  }
+
+  if(destroy) {
+    delete data;
+  }
 }

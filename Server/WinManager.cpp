@@ -2,7 +2,7 @@
 #include <algorithm>
 
 using namespace std;
-
+/*
 WinManager::WinManager(unsigned int numOfPlayers) :
   numOfPlayers(numOfPlayers),
   canWin(numOfPlayers, true),
@@ -80,3 +80,4 @@ unsigned int WinManager::getWinner() const
   }
   return winner;
 }
+*/
