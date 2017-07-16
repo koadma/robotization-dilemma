@@ -10,6 +10,7 @@ public:
 
 class Path {
 public:
+  long int originID;
   static const enum PathType {
     PathTypePath = 0,
     PathTypeShot = 1,

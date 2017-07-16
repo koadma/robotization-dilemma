@@ -3,6 +3,10 @@
 
 #include "WinManager.h"
 
+/*class Event {
+  float time;
+
+};*/
 
 class Game {
 public:

@@ -24,7 +24,7 @@ public:
   }
   template<typename T> void fromType(T val) {
     delete[] _data;
-    serialize(val, &_data, _len);
+    serialize<T>(val, &_data, _len);
   }
   template<typename T> T toType() {
     return deserializeT<T>(_data, _len);

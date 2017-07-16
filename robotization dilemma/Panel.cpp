@@ -5,90 +5,90 @@ void Panel::transformCoordiantes(int &mx, int &my) {
   my -= cay;*/
 }
 int Panel::mouseEnter(int state) {
-  auto it = elements.begin();
+  auto it = elements.end();
 
   int bstate = 0;
 
-  while (it != elements.end() && !(state & 2)) {
+  while (it != elements.begin() && !(state & 2)) {
+    --it;
     if (!(*it)->toDelete) {
       bstate |= (*it)->mouseEnter(state);
     }
-    ++it;
   }
   return bstate;
 }
 int Panel::mouseMoved(int mx, int my) {
   transformCoordiantes(mx, my);
 
-  auto it = elements.begin();
+  auto it = elements.end();
 
   int state = 0;
 
-  while (it != elements.end() && !(state & 2)) {
+  while (it != elements.begin() && !(state & 2)) {
+    --it;
     if (!(*it)->toDelete) {
       state |= (*it)->mouseMoved(mx, my);
     }
-    ++it;
   }
   return state;
 }
 int Panel::mouseClicked(int button, int state, int mx, int my) {
   transformCoordiantes(mx, my);
 
-  auto it = elements.begin();
+  auto it = elements.end();
 
   int bstate = 0;
 
-  while (it != elements.end() && !(bstate & 2)) {
+  while (it != elements.begin() && !(bstate & 2)) {
+    --it;
     if (!(*it)->toDelete) {
       bstate |= (*it)->mouseClicked(button, state, mx, my);
     }
-    ++it;
   }
   return bstate;
 }
 int Panel::mouseWheel(int delta, int state, int mx, int my) {
   transformCoordiantes(mx, my);
 
-  auto it = elements.begin();
+  auto it = elements.end();
 
   int bstate = 0;
 
-  while (it != elements.end() && !(bstate & 2)) {
+  while (it != elements.begin() && !(bstate & 2)) {
+    --it;
     if (!(*it)->toDelete) {
       bstate |= (*it)->mouseWheel(delta, state, mx, my);
     }
-    ++it;
   }
   return bstate;
 }
 int Panel::keyPressed(unsigned char key, int mx, int my) {
   transformCoordiantes(mx, my);
 
-  auto it = elements.begin();
+  auto it = elements.end();
 
   int state = 0;
 
-  while (it != elements.end() && !(state & 2)) {
+  while (it != elements.begin() && !(state & 2)) {
+    --it;
     if (!(*it)->toDelete) {
       state |= (*it)->keyPressed(key, mx, my);
     }
-    ++it;
   }
   return state;
 }
 int Panel::specialPressed(int key, int mx, int my) {
   transformCoordiantes(mx, my);
 
-  auto it = elements.begin();
+  auto it = elements.end();
 
   int state = 0;
 
-  while (it != elements.end() && !(state & 2)) {
+  while (it != elements.begin() && !(state & 2)) {
+    --it;
     if (!(*it)->toDelete) {
       state |= (*it)->specialPressed(key, mx, my);
     }
-    ++it;
   }
   return state;
 }

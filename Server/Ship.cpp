@@ -29,6 +29,10 @@ void Object::getStatus(DataElement* data) {
   rade->_core->fromType<int>(_radius);
   data->addChild(rade);
 
+  DataElement* ide = new DataElement();
+  ide->_core->fromType<uint64_t>(_ID);
+  data->addChild(ide);
+
   DataElement* vire = new DataElement();
   getVStatus(vire);
   data->addChild(vire);
@@ -42,7 +46,9 @@ void Object::setStatus(DataElement* data) {
 
   _radius = data->_children[4]->_core->toType<float>();
 
-  setVStatus(data->_children[5]);
+  _ID = data->_children[5]->_core->toType<uint64_t>();
+
+  setVStatus(data->_children[6]);
 }
 
 void Object::getVStatus(DataElement* data) {
@@ -101,8 +107,10 @@ void Laser::setVStatus(DataElement* data) {
 
 void Sensor::getPathVirt(Path* p) {
   if (p->type() == Path::PathTypeBubble) {
-    if (ran1() < _health / float(_maxHealth)) { //
-      if (ran1() < 1 / (1 + pow(E, -(reinterpret_cast<Bubble*>(p)->energy * _energy)))) { //detect
+    float h = _health / float(_maxHealth);
+    if (ran1() < 2 * (1 - 1 / (1 + h))) {
+      float e = reinterpret_cast<Bubble*>(p)->energy / _energy;
+      if (ran1() < 1 / (1 + pow(2, (1 / e - e) * 3))) { //detect
         cout << "Detected" << endl;
         Sighting* s = new Sighting();
         Movement* m = new Movement();
@@ -141,7 +149,7 @@ list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori,
 }
 void Object::drawObject(float camcx, float camcy, float camcz, float d) {
   glTranslatef(_relativePos.x, _relativePos.y, _relativePos.z);
-  setColor(0xffff0000 + int(0xff * _health / float(_maxHealth)) + 0x100 * int(0xff * _health / float(_maxHealth)));
+  setColor(0xffdf0000 + int(0xff * _health / float(_maxHealth)) + 0x100 * int(0xdf * _health / float(_maxHealth)));
   glutSolidSphere(_radius, 20, 20);
   glTranslatef(- _relativePos.x, - _relativePos.y, - _relativePos.z);
 }
@@ -253,10 +261,12 @@ void Engine::collectPath(list<Path*> &addTo, float time) {
   p->emitter = parentShip->mov;
   p->emitter.pos += _relativePos;
   p->gEmissionTime = time;
+  p->originID = _ID;
   addTo.push_back(p);
 }
 void Laser::collectPath(list<Path*> &addTo, float time) {
   Shot* p = new Shot();
+  p->originID = _ID;
   p->energy = _shot.first;
   p->origin = parentShip->mov.pos + _relativePos;
   p->origintime = time;
@@ -481,22 +491,22 @@ void Ship::setStatus(DataElement* data) {
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Sensor:
-      nObj = new Sensor(fVec3(), 0, 0, 0, 0);
+      nObj = new Sensor(fVec3(), 0, 0, 0, 0, 0);
       break;
     case Object::Type::Computer:
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Generator:
-      nObj = new Generator(fVec3(), 0, 0, 0, 0);
+      nObj = new Generator(fVec3(), 0, 0, 0, 0, 0);
       break;
     case Object::Type::Storage:
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Engine:
-      nObj = new Engine(fVec3(), 0, 0, 0, 0, fVec3());
+      nObj = new Engine(fVec3(), 0, 0, 0, 0, fVec3(), 0);
       break;
     case Object::Type::Laser:
-      nObj = new Laser(fVec3(), 0, 0, 0);
+      nObj = new Laser(fVec3(), 0, 0, 0, 0);
       break;
     }
     if(nObj != NULL) {

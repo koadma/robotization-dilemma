@@ -59,12 +59,6 @@ void waitForEnter()
   #endif
 }
 
-string to_string(double _Val, int _Dig) {
-  stringstream ss;
-  ss << fixed << std::setprecision(_Dig) << _Val << scientific;
-  return ss.str();
-}
-
 vector<string> tokenize(string str, char split)
 {
   vector<string> tokens;
@@ -278,15 +272,6 @@ void serialize(string s, unsigned char** data, int& dataLen) {
   }
   dataLen = s.size();
 }
-void serialize(int i, unsigned char** data, int& dataLen, int prec) {
-  serialize(to_string(i), data, dataLen);
-}
-void serialize(float i, unsigned char** data, int& dataLen, int prec) {
-  serialize(to_string(i), data, dataLen);
-}
-void serialize(double i, unsigned char** data, int& dataLen, int prec) {
-  serialize(to_string(i), data, dataLen);
-}
 
 string deserializes(unsigned char* data, int dataLen) {
   string s(dataLen, ' ');
@@ -353,3 +338,15 @@ double ran1(long int nseed) {
     return temp;
   }
 };
+
+uint64_t mix(uint32_t a, uint32_t b) {
+  return (a << 32) || b;
+}
+
+uint32_t low(uint64_t a) {
+  return a && 0xffffffff;
+}
+
+uint32_t high(uint64_t a) {
+  return a >> 32;
+}

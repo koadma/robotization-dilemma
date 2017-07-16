@@ -41,7 +41,7 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
     int loginState = checkLogin(data, id);
     if (loginState == LoginErrorOk) { //If can join
 
-      Ship* newShip = new Ship();
+      Ship* newShip = new Ship(game->ships.size());
       newShip->connectedClient = thisptr;
       thisptr->ConnectedShip = newShip;
 

@@ -76,7 +76,12 @@ void terminalClear();
 void waitForEnter();
 
 //_Val: value, _Dig: Number of digits
-string to_string(double _Val, int _Dig);
+template <typename T>
+string to_string(T _Val, int _Dig) {
+  stringstream ss;
+  ss << fixed << std::setprecision(_Dig) << _Val << scientific;
+  return ss.str();
+}
 
 //Function for tokenizing a string to vector of string.
 std::vector<std::string> tokenize(std::string str, char split = ' ');
@@ -120,9 +125,10 @@ vector<double> solveCubic(double &a, double &b, double &c, double &d);
 vector<double> solveQuartic(double &a, double &b, double &c, double &d, double &e);
 
 void serialize(string s, unsigned char** data, int& dataLen);
-void serialize(int i, unsigned char** data, int& dataLen, int prec = 3);
-void serialize(float i, unsigned char** data, int& dataLen, int prec = 3);
-void serialize(double i, unsigned char** data, int& dataLen, int prec = 3);
+template <typename T>
+void serialize(T v, unsigned char** data, int& dataLen, int prec = 3) {
+  serialize(to_string(v, prec), data, dataLen);
+}
 
 string deserializes(unsigned char* data, int dataLen);
 int    deserializei(unsigned char* data, int dataLen);
@@ -134,5 +140,9 @@ T deserializeT(unsigned char* data, int dataLen) {
 }
 
 double ran1(long int nseed = 0);
+
+uint64_t mix(uint32_t a, uint32_t b);
+uint32_t low(uint64_t a);
+uint32_t high(uint64_t a);
 
 #endif

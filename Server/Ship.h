@@ -2,6 +2,8 @@
 #define __SHIP_H__
 
 #include "Sighting.h"
+#include "Bubble.h"
+#include <time.h>
 
 extern class Object;
 extern Object* selected;
@@ -10,18 +12,19 @@ class Drone;
 
 class Object {       //Order of serialisation
 protected:
-
+  unsigned long int _ID;
   fVec3 _relativePos; //1
   int _maxHealth;     //2
   int _health;        //3
   float _radius;      //4
 public:
 
-  Object(fVec3 relativePos, int maxHealth, float radius, int health) {
+  Object(fVec3 relativePos, int maxHealth, float radius, int health, unsigned long int ID) {
     _relativePos = relativePos;
     _maxHealth = maxHealth;
     _health = health;
     _radius = radius;
+	_ID = ID;
   }
 
   Drone* parentShip;
@@ -61,8 +64,8 @@ public:
 
   }
   void getPath(Path* p) {
-    if(p->type() == Path::PathTypeShot) {
-      _health -= 100; //TODO BETTER
+    if((p->type() == Path::PathTypeShot) && (((Shot*)p)->originID !=this->_ID)) {
+      _health -= (((Shot*)p)->energy)/50; //TODO BETTER
       _health = max(_health, 0);
     }
     getPathVirt(p);
@@ -91,7 +94,7 @@ private:
   float _energy;
   float _maxEnergy;
 public:
-  Sensor(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy) : Object(relativePos, maxHealth, radius, health) {
+  Sensor(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _energy = 0;
     _maxEnergy = maxEnergy;
   }
@@ -124,7 +127,7 @@ private:
   float _maxEnergy;
   fVec3 _accel;
 public:
-  Engine(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, fVec3 accel) : Object(relativePos, maxHealth, radius, health) {
+  Engine(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, fVec3 accel, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _accel = accel;
     _maxEnergy = maxEnergy;
   }
@@ -157,8 +160,10 @@ class Laser : public Object {       //Order of serialisation
 private:
   //vector<pair<float, fVec3> > _shots; //energy, directipn
   pair<float, fVec3> _shot;
+
+
 public:
-  Laser(fVec3 relativePos, int maxHealth, float radius, int health) : Object(relativePos, maxHealth, radius, health) {
+  Laser(fVec3 relativePos, int maxHealth, float radius, int health, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
 
   }
 
@@ -188,7 +193,7 @@ class Generator : public Object {       //Order of serialisation
 private:
   float _maxEnergy;
 public:
-  Generator(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy) : Object(relativePos, maxHealth, radius, health) {
+  Generator(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _maxEnergy = maxEnergy;
   }
   int type() { return Type::Generator; }
@@ -212,6 +217,8 @@ class Drone {
 public:
   Movement mov;
 
+  long int _droneID;
+
   list<Object*> objects;
   list<Sighting*> sightings;
 };
@@ -219,24 +226,26 @@ public:
 class Ship : public Drone {
 private:
   bool canMove = false; //is the player open to moving / are we waiting for a move.
+  
 public:
-  Ship() {
-    Object* no = new ::Generator({ 100,0,0 }, 1000, 100, 800, 100000);
+  Ship(uint32_t _ID) {
+
+    Object* no = new ::Generator({ 100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 0));
     no->parentShip = this;
 
     objects.push_back(no);
 
-    no = new ::Sensor({ -100,0,0 }, 1000, 100, 1000, 100000);
+    no = new ::Sensor({ -100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 1));
     no->parentShip = this;
 
     objects.push_back(no);
 
-    no = new ::Engine({ 0,173.2f ,0 }, 1000, 100, 900, 100000, {0, 0, 0});
+    no = new ::Engine({ 0,173.2f ,0 }, 1000, 100, 1000, 100000, {0, 0, 0}, mix(_ID, 2));
     no->parentShip = this;
 
     objects.push_back(no);
 
-    no = new ::Laser({ 0,-173.2f ,0 }, 1000, 100, 900);
+    no = new ::Laser({ 0,-173.2f ,0 }, 1000, 100, 1000, mix(_ID, 3));
     no->parentShip = this;
 
     objects.push_back(no);
