@@ -1,5 +1,77 @@
 #include "Ship.h"
+
+#ifdef M_SERVER
 #include "Game.h"
+#endif
+
+#ifdef M_SERVER
+void Event::apply(Game *g) {
+  throw 1;
+}
+void Collision::apply(Game *g) {
+  _o->getPath(_p);
+}
+void StateChange::apply(Game *g) {
+  throw 1;
+}
+void ThermalRadiation::apply(Game *g) {
+  Bubble* b = new Bubble();
+  b->btype = Bubble::Thermal;
+  b->emitter = _o->getMovement();
+  b->energy = _o->getUsedPower();
+  b->gEmissionTime = _time;
+  b->origin = _o->getMovement().getAt(_time, SOL).pos;
+  b->originID = _o->getId();
+  g->paths.push_back(b);
+}
+void EngineAcc::apply(Game *g) {
+  _o->parentShip->moveShip(_time);
+  reinterpret_cast<Engine*>(_o)->setComponent(0, _acc.x);
+  reinterpret_cast<Engine*>(_o)->setComponent(1, _acc.y);
+  reinterpret_cast<Engine*>(_o)->setComponent(2, _acc.z);
+  g->removeIntersect(_o->parentShip);
+  g->calcIntersect(_o->parentShip); //recalculate ship related future intersections
+}
+void SensorPow::apply(Game *g) {
+  reinterpret_cast<Sensor*>(_o)->setPower(_power);
+  //g.removeIntersect(_o->parentShip);
+  //g.calcIntersect(_o->parentShip); //recalculate ship related future intersections
+}
+void LaserShot::apply(Game *g) {
+  Shot* s = new Shot();
+  s->energy = _energy;
+  s->origin = _o->getMovement().getAt(_time, SOL).pos;
+  s->originID = _o->getId();
+  s->origintime = _time;
+  s->vel = _dir;
+
+  g->paths.push_back(s);
+  g->calcIntersect(s);
+}
+#endif
+
+int Event::type() {
+  return EvTEvent;
+}
+int Collision::type() {
+  return EvTCollision;
+}
+int StateChange::type() {
+  return EvTStateChange;
+}
+int ThermalRadiation::type() {
+  return EvTThermalRadiation;
+}
+int EngineAcc::type() {
+  return EvTEngineAcc;
+}
+int SensorPow::type() {
+  return EvTSensorPow;
+}
+int LaserShot::type() {
+  return EvTLaserShot;
+}
+
 
 using namespace std;
 
@@ -59,20 +131,20 @@ void Object::setVStatus(DataElement* data) {
 }
 void Sensor::getVStatus(DataElement* data) {
   DataElement* enee = new DataElement();
-  enee->_core->fromType<int>(_energy);
+  enee->_core->fromType<int>(_power);
   data->addChild(enee);
 
   DataElement* maxe = new DataElement();
-  maxe->_core->fromType<int>(_maxEnergy);
+  maxe->_core->fromType<int>(_maxPower);
   data->addChild(maxe);
 }
 void Sensor::setVStatus(DataElement* data) {
-  _energy = data->_children[0]->_core->toType<float>();
-  _maxEnergy = data->_children[1]->_core->toType<float>();
+  _power = data->_children[0]->_core->toType<float>();
+  _maxPower = data->_children[1]->_core->toType<float>();
 }
 void Engine::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
-  maxe->_core->fromType<int>(_maxEnergy);
+  maxe->_core->fromType<int>(_maxPower);
   data->addChild(maxe);
 
   DataElement* acce = new DataElement();
@@ -80,16 +152,16 @@ void Engine::getVStatus(DataElement* data) {
   data->addChild(acce);
 }
 void Engine::setVStatus(DataElement* data) {
-  _maxEnergy = data->_children[0]->_core->toType<float>();
+  _maxPower = data->_children[0]->_core->toType<float>();
   _accel.set(data->_children[1]);
 }
 void Generator::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
-  maxe->_core->fromType<int>(_maxEnergy);
+  maxe->_core->fromType<int>(_maxPower);
   data->addChild(maxe);
 }
 void Generator::setVStatus(DataElement* data) {
-  _maxEnergy = data->_children[0]->_core->toType<float>();
+  _maxPower = data->_children[0]->_core->toType<float>();
 }
 void Laser::getVStatus(DataElement* data) {
   DataElement* enee = new DataElement();
@@ -109,7 +181,7 @@ void Sensor::getPathVirt(Path* p) {
   if (p->type() == Path::PathTypeBubble) {
     float h = _health / float(_maxHealth);
     if (ran1() < 2 * (1 - 1 / (1 + h))) {
-      float e = reinterpret_cast<Bubble*>(p)->energy / _energy;
+      float e = reinterpret_cast<Bubble*>(p)->energy / _power;
       if (ran1() < 1 / (1 + pow(2, (1 / e - e) * 3))) { //detect
         cout << "Detected" << endl;
         Sighting* s = new Sighting();
@@ -166,8 +238,8 @@ void Sensor::setSidebar() {
   }
 
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxEnergy, 0);
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_energy, 2);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxPower, 0);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_power, 2);
 }
 void Sensor::setSidebarElement() {
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/sensor_settings.html");
@@ -184,7 +256,7 @@ void Generator::setSidebar() {
   }
 
     reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth);
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxEnergy, 0);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxPower, 0);
   
 }
 void Generator::setSidebarElement() {
@@ -202,7 +274,7 @@ void Engine::setSidebar() {
   }
 
     reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarHealth"))->text = "Health: " + to_string(_health) + " / " + to_string(_maxHealth, 0);
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(usedEnergy(), 3) + " / " + to_string(_maxEnergy, 0);
+    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(getUsedPower(), 3) + " / " + to_string(_maxPower, 0);
     reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.x, 2);
     reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.y, 2);
     reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.z, 2);
@@ -233,7 +305,7 @@ void Laser::setSidebarElement() {
 void Ship::setSidebar() {
   selected = NULL;
   setSidebarElement();
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text = to_string(reinterpret_cast<::Ship*>(this)->getSpentShipEnergy()) + " / " + to_string(reinterpret_cast<::Ship*>(this)->getTotalShipEnergy());
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text = to_string(reinterpret_cast<::Ship*>(this)->getUsedShipPower()) + " / " + to_string(reinterpret_cast<::Ship*>(this)->getGeneratedShipPower());
 
 }
 void Ship::setSidebarElement() {
@@ -246,37 +318,82 @@ Object::~Object() {
 
 }
 
-#ifdef M_SERVER
-void Object::collectPath(list<Path*> &addTo, float time) {
+void Object::collectEvents(list<Event*> &addTo, float time) {
 
 }
-void Sensor::collectPath(list<Path*> &addTo, float time) {
- 
+void Sensor::collectEvents(list<Event*> &addTo, float time) {
+  SensorPow* ev = new SensorPow();
+  ev->_power = _power;
+  ev->_o = this;
+  ev->_time = time;
+  addTo.push_back(ev);
 }
-void Engine::collectPath(list<Path*> &addTo, float time) {
-  Bubble* p = new Bubble();
-  p->btype = Bubble::Thermal;
-  p->energy = usedEnergy();
-  p->origin = parentShip->mov.pos + _relativePos;
-  p->emitter = parentShip->mov;
-  p->emitter.pos += _relativePos;
-  p->gEmissionTime = time;
-  p->originID = _ID;
-  addTo.push_back(p);
+void Engine::collectEvents(list<Event*> &addTo, float time) {
+  LaserShot* ev = new LaserShot();
+  
 }
-void Laser::collectPath(list<Path*> &addTo, float time) {
-  Shot* p = new Shot();
-  p->originID = _ID;
-  p->energy = _shot.first;
-  p->origin = parentShip->mov.pos + _relativePos;
-  p->origintime = time;
-  p->vel = _shot.second;
-  addTo.push_back(p);
+void Laser::collectEvents(list<Event*> &addTo, float time) {
+  LaserShot* ev = new LaserShot();
+  ev->_dir = _shot.second;
+  ev->_energy = _shot.first;
+  ev->_o = this;
+  ev->_time = time;
 }
-void Generator::collectPath(list<Path*> &addTo, float time) {
+void Generator::collectEvents(list<Event*> &addTo, float time) {
+  
+}
 
+float Drone::getGeneratedShipPower() {
+  float sum = 0;
+  for(auto it : objects) {
+    sum += it->getGeneratedPower();
+  }
+  return sum;
 }
-#endif
+float Drone::getUnusedShipPower() {
+  return getGeneratedShipPower() - getUsedShipPower();
+}
+float Drone::getUsedShipPower() {
+  float sum = 0;
+  for (auto it : objects) {
+    sum += it->getUsedPower();
+  }
+  return sum;
+}
+float Drone::getMaxShipEnergy() {
+  float sum = 0;
+  for (auto it : objects) {
+    sum += it->getMaxEnergy();
+  }
+  return sum;
+}
+float Drone::getStoredShipEnergy() {
+  float sum = 0;
+  for (auto it : objects) {
+    sum += it->getStoredEnergy();
+  }
+  return sum;
+}
+float Drone::useEnergy(float amount, float time) {
+  refreshEnergy(time);
+  for (auto it : objects) {
+    amount = it->useEnergy(amount);
+  }
+  return amount;
+}
+float Drone::chargeEnergy(float amount) {
+  for (auto it : objects) {
+    amount = it->chargeEnergy(amount);
+  }
+  return amount;
+}
+void Drone::refreshEnergy(float time) {
+  chargeEnergy(getUnusedShipPower() * (time - lastEnergyCalcTime));
+  lastEnergyCalcTime = time;
+}
+float Drone::runOut(float time) {
+  return time - getStoredShipEnergy() / getUnusedShipPower();
+}
 
 #ifdef M_SERVER
 int Ship::makeMove(DataElement *Data) {
@@ -343,7 +460,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
 }
 void Ship::collectPath(list<Path*> &addTo, float time) {
   for (auto it : objects) {
-    it->collectPath(addTo, time);
+    //it->collectPath(addTo, time);
   }
 }
 #endif
@@ -439,27 +556,7 @@ Object* Ship::getGenerator() {
 void  Ship::setSensorEnergy(float energy) {
   getSensor()->energy = energy;
 }*/
-float Ship::getTotalShipEnergy() {
-  float res = 0;
-  auto it = objects.begin();
-  while (it != objects.end()) {
-    res += (*it)->prodEnergy();
-    ++it;
-  }
-  return res;
-}
-float Ship::getSpentShipEnergy() {
-  float res = 0;
-  auto it = objects.begin();
-  while (it != objects.end()) {
-    res += (*it)->usedEnergy();
-    ++it;
-  }
-  return res;
-}
-float Ship::getRemainingShipEnergy() {
-  return getTotalShipEnergy()-getSpentShipEnergy();
-}
+
 void Ship::getStatus(DataElement* data) {
   DataElement* pose = new DataElement();
   mov.get(pose);

@@ -1,5 +1,6 @@
 #include "Sighting.h"
 
+
 vector<double> intersectPaths(Path* lhs, Path* rhs) {
   Eqnsys impleq; //
   Eqnsys expleq; //

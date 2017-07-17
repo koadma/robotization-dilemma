@@ -2,17 +2,110 @@
 #define __SHIP_H__
 
 #include "Sighting.h"
-#include "Bubble.h"
-#include <time.h>
 
 extern class Object;
 extern Object* selected;
+
+
+#ifdef M_SERVER
+extern class Game;
+#endif
+
+///############################################///
+//                    Events                    //
+///############################################///
+
+class Event {
+public:
+  enum Type {
+    EvTEvent = 0,
+    EvTCollision = 1,
+    EvTStateChange = 2,
+    EvTEngineAcc = 3,
+    EvTSensorPow = 4,
+    EvTLaserShot = 5,
+    EvTThermalRadiation = 6
+  };
+  float _time;
+#ifdef M_SERVER
+  virtual void apply(Game *g);
+#endif
+  virtual int type();
+};
+
+class Collision : public Event {
+public:
+  Path* _p;
+  Object* _o;
+#ifdef M_SERVER
+  void apply(Game *g);
+#endif
+  int type();
+
+};
+
+class ThermalRadiation : public Event {
+public:
+  Object* _o;
+#ifdef M_SERVER
+  void apply(Game *g);
+#endif
+  int type();
+};
+
+class StateChange : public Event {
+public:
+  Object* _o;
+#ifdef M_SERVER
+  virtual void apply(Game *g);
+#endif
+  virtual int type();
+};
+
+class EngineAcc : public StateChange {
+public:
+  fVec3 _acc;
+#ifdef M_SERVER
+  void apply(Game *g);
+#endif
+  int type();
+};
+
+class SensorPow : public StateChange {
+public:
+  float _power;
+#ifdef M_SERVER
+  void apply(Game *g);
+#endif
+  int type();
+};
+
+class LaserShot : public StateChange {
+public:
+  fVec3 _dir;
+  float _energy;
+#ifdef M_SERVER
+  void apply(Game *g);
+#endif
+  int type();
+};
+
+struct EventSort{
+  bool operator ()(const Event* lhs, const Event* rhs) const
+  {
+    return lhs->_time < rhs->_time;
+  }
+};
+
+///############################################///
+//                  Ship parts                  //
+///############################################///
 
 class Drone;
 
 class Object {       //Order of serialisation
 protected:
-  unsigned long int _ID;
+  uint64_t _ID;
   fVec3 _relativePos; //1
   int _maxHealth;     //2
   int _health;        //3
@@ -29,6 +122,10 @@ public:
 
   Drone* parentShip;
 
+  uint64_t getId() {
+    return _ID;
+  }
+
   static enum Type {
     Ship = 1,
     Shield = 2,
@@ -40,8 +137,14 @@ public:
     Laser = 8
   };
   virtual int type() { throw 1; return 0; }         //0
-  virtual float usedEnergy() {throw 1; return 0;}
-  virtual float prodEnergy() {return 0;}
+  virtual float getGeneratedPower() { return 0;}
+  virtual float getUsedPower() {return 0;}
+  virtual float getMaxEnergy() {return 0;}
+  virtual float getStoredEnergy() {return 0;}
+  virtual float useEnergy(float amount){return amount;} //no change
+  virtual float chargeEnergy(float amount) {
+    return amount;
+  } //no change
 
   virtual fVec3 getAccel() {
     return {0,0,0};
@@ -56,9 +159,7 @@ public:
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
 
-#ifdef M_SERVER
-  virtual void collectPath(list<Path*> &addTo, float time);
-#endif
+  virtual void collectEvents(list<Event*> &addTo, float time);
 
   virtual void getPathVirt(Path* p) {
 
@@ -91,20 +192,20 @@ public:
 
 class Sensor : public Object {       //Order of serialisation
 private:
-  float _energy;
-  float _maxEnergy;
+  float _power;
+  float _maxPower;
 public:
-  Sensor(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
-    _energy = 0;
-    _maxEnergy = maxEnergy;
+  Sensor(fVec3 relativePos, int maxHealth, float radius, int health, float maxPower, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
+    _power = 0;
+    _maxPower = maxPower;
   }
 
   int type() {return Type::Sensor;}
 
-  float usedEnergy() { return _energy; }
+  float getUsedPower() { return _power; }
 
-  void setEnergy(float val) {
-    _energy = max(min(val, _maxEnergy), 0.0f);
+  void setPower(float val) {
+    _power = max(min(val, _maxPower), 0.0f);
   }
 
   void getPathVirt(Path* p);
@@ -114,9 +215,7 @@ public:
   void setSidebar();
 #endif
 
-#ifdef M_SERVER
-  void collectPath(list<Path*> &addTo, float time);
-#endif
+  void collectEvents(list<Event*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
@@ -124,17 +223,17 @@ public:
 
 class Engine : public Object {       //Order of serialisation
 private:
-  float _maxEnergy;
+  float _maxPower;
   fVec3 _accel;
 public:
-  Engine(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, fVec3 accel, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
+  Engine(fVec3 relativePos, int maxHealth, float radius, int health, float maxPower, fVec3 accel, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _accel = accel;
-    _maxEnergy = maxEnergy;
+    _maxPower = maxPower;
   }
 
   int type() { return Type::Engine; }
-  float usedEnergy() { return _accel.sqrlen(); }
-
+  virtual float getUsedPower() { return _accel.sqrlen(); }
+  
   fVec3 getAccel() {
     return _accel;
   }
@@ -148,9 +247,7 @@ public:
   void setSidebar();
 #endif
 
-#ifdef M_SERVER
-  void collectPath(list<Path*> &addTo, float time);
-#endif
+  void collectEvents(list<Event*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
@@ -161,14 +258,12 @@ private:
   //vector<pair<float, fVec3> > _shots; //energy, directipn
   pair<float, fVec3> _shot;
 
-
 public:
   Laser(fVec3 relativePos, int maxHealth, float radius, int health, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
 
   }
 
   int type() { return Type::Laser; }
-  float usedEnergy() { return _shot.second.sqrlen(); }
 
   void setComponent(int c, float val) {
     _shot.second[c] = val;
@@ -181,9 +276,8 @@ public:
   void setSidebarElement();
   void setSidebar();
 #endif
-#ifdef M_SERVER
-  void collectPath(list<Path*> &addTo, float time);
-#endif
+
+  void collectEvents(list<Event*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
@@ -191,43 +285,95 @@ public:
 
 class Generator : public Object {       //Order of serialisation
 private:
-  float _maxEnergy;
+  float _maxPower;
+  float _energyStored;
+  float _maxStorage;
 public:
-  Generator(fVec3 relativePos, int maxHealth, float radius, int health, float maxEnergy, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
-    _maxEnergy = maxEnergy;
+  Generator(fVec3 relativePos, int maxHealth, float radius, int health, float maxPower, unsigned long int ID) : Object(relativePos, maxHealth, radius, health, ID) {
+    _maxPower = maxPower;
   }
   int type() { return Type::Generator; }
-  float usedEnergy() { return 0; }
-  float prodEnergy() { return _maxEnergy; }
+  
+  float getGeneratedPower() { return _maxPower; }
+  float getMaxEnergy() { return _maxStorage; }
+  float getStoredEnergy() { return _energyStored; }
+  float useEnergy(float amount) {
+    _energyStored -= amount;
+    float remain = -_energyStored;
+    _energyStored = max(0.0f, _energyStored); //cant go below 0 energy
+    return max(0.0f, remain); 
+  } //no change
+  float chargeEnergy(float amount) {
+    _energyStored += amount;
+    float extra = _energyStored - _maxStorage;
+    _energyStored = min(_maxStorage, _energyStored); //cant go below 0 energy
+    return max(0.0f, extra);
+  } //no change
 
 #ifdef M_CLIENT
   void setSidebarElement();
   void setSidebar();
 #endif
 
-#ifdef M_SERVER
-  void collectPath(list<Path*> &addTo, float time);
-#endif
+  void collectEvents(list<Event*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
 };
 
+///############################################///
+//                     Ship                     //
+///############################################///
+
 class Drone {
 public:
   Movement mov;
-
   long int _droneID;
-
   list<Object*> objects;
   list<Sighting*> sightings;
+
+  float lastEnergyCalcTime;
+
+  list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
+    list< pair<double, pair<Object*, Path*>>> res;
+    auto it = objects.begin();
+    while (it != objects.end()) {
+      res.splice(res.end(), (*it)->intersect(p));
+      ++it;
+    }
+    return res;
+  }
+  
+  float getGeneratedShipPower();
+  float getUnusedShipPower();
+  float getUsedShipPower();
+  float getMaxShipEnergy();
+  float getStoredShipEnergy();
+  float useEnergy(float amount, float time);
+  float chargeEnergy(float amount);
+  void refreshEnergy(float time); 
+  float runOut(float time); //when will storage run out
+
+  fVec3 getAccel() {
+    fVec3 sum = { 0,0,0 };
+    for (auto it : objects) {
+      sum += it->getAccel();
+    }
+    return sum;
+  }
+  void setAccel() {
+    mov.acc = getAccel();
+  }
+  void moveShip(float to) {
+    mov = mov.getAt(to, SOL);
+  }
 };
 
 class Ship : public Drone {
 private:
   bool canMove = false; //is the player open to moving / are we waiting for a move.
-  
 public:
+
   Ship(uint32_t _ID) {
 
     Object* no = new ::Generator({ 100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 0));
@@ -251,22 +397,12 @@ public:
     objects.push_back(no);
   }
 
-  list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
-    list< pair<double, pair<Object*, Path*>>> res;
-    auto it = objects.begin();
-    while (it != objects.end()) {
-      res.splice(res.end(), (*it)->intersect(p));
-      ++it;
-    }
-    return res;
-  }
-
-
 #ifdef M_SERVER
   NetworkS* connectedClient;
 
   int makeMove(DataElement* data);
   void newTurn(int id);
+
   bool packetRecv(DataElement *Data, int Id, NetworkS* thisptr);
 
   void collectPath(list<Path*> &addTo, float time);
@@ -275,12 +411,10 @@ public:
   NetworkC* connectedServer;
 
   void commit();
-
   void newTurn(int id);
 
   void setSidebarElement();
   void setSidebar();
-
   void setSidebar(vec3<double> ori, vec3<double> dir) {
     list< pair<double, pair<Object*, Path*>>> inters;
 
@@ -306,29 +440,6 @@ public:
 
   bool packetRecv(DataElement *Data, int Id, NetworkC* thisptr);
 #endif
-  /*Object* getObject(int type);
-  Object* getGenerator();
-  Object* getSensor();
-  void  setSensorEnergy(float energy);
-  float getSensorEnergy();
-  float getMaximumSensorEnergy();*/
-
-  float getTotalShipEnergy();
-  float getRemainingShipEnergy();
-  float getSpentShipEnergy();
-  fVec3 getAccel() {
-    fVec3 sum = {0,0,0};
-    for (auto it : objects) {
-      sum += it->getAccel();
-    }
-    return sum;
-  }
-  void setAccel() {
-    mov.acc = getAccel();
-  }
-  void moveShip(float to) {
-    mov = mov.getAt(to, SOL);
-  }
 
   void getStatus(DataElement* data);
   void setStatus(DataElement* data);
@@ -343,7 +454,6 @@ public:
 };
 
 #ifdef M_CLIENT
-//extern lis<Command> commands
 extern Ship* ship;
 #endif
 

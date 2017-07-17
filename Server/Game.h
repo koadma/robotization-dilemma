@@ -3,10 +3,7 @@
 
 #include "WinManager.h"
 
-/*class Event {
-  float time;
-
-};*/
+extern class Game;
 
 class Game {
 public:
@@ -17,10 +14,11 @@ public:
   mutex lock;
   int targetPlayerCount;
   int waitingFor;
-  list<Ship*> ships;
+  list<Drone*> drones;
   list<Path*> paths;
 
-  set<pair<double, pair<Object*, Path*> > > intersects;
+  //set<pair<double, pair<Object*, Path*> > > intersects;
+  set<Event*, EventSort> events;
 
   enum State {
     Joining,
@@ -33,16 +31,20 @@ public:
   void newTurn();
   void startGame();
   void addShip(Ship* ship);
+  void removeIntersect(Object* object);
   void removeIntersect(Drone* drone);
-  void removeIntersect(Bubble* bubble);
-  void collectPath(list<Path*> &addTo, float time) {
-    for (auto it : ships) {
+  void removeIntersect(Path* path);
+  /*void collectPath(list<Path*> &addTo, float time) {
+    for (auto it : drones) {
 #ifdef M_SERVER
       it->collectPath(paths, time);
 #endif
     }
-  }
-  void calcIntersect();
+  }*/
+  void calcIntersect(Object* object);
+  void calcIntersect(Drone* drone);
+  void calcIntersect(Path* path);
+  //void calcIntersect();
   void simulate(float from, float till);
 };
 

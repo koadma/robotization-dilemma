@@ -29,7 +29,7 @@ void ingameLaserSidebarEnergyInput(string s) {
 }
 
 void ingameSensorSidebarEnergyInput(string s) {
-  reinterpret_cast<Sensor*>(selected)->setEnergy(strTo<float>(s));
+  reinterpret_cast<Sensor*>(selected)->setPower(strTo<float>(s));
 }
 
 void ingameMenuCommitButton() {

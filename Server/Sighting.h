@@ -10,6 +10,7 @@
 
 vector<double> intersectPaths(Path* lhs, Path* rhs);
 
+
 class Sighting {
 public:
   vector<Movement*> keyframes; //time - keyframe. Sorted.

@@ -21,7 +21,7 @@ void solve2(float a, float b, float c, float sol[2], int& numOfSol)
     numOfSol = 2;
     sol[0] = (-b+sqrt(disc))/(2*a);
     sol[1] = (-b-sqrt(disc))/(2*a);
-  } else if (disc = 0)
+  } else if (disc == 0)
   {
     numOfSol = 1;
     sol[0] = -b/(2*a);
