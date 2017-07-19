@@ -5,8 +5,6 @@ Game* game;
 
 using namespace std;
  
-
-
 void Game::moveMade() {
   waitingFor--;
   if (waitingFor == 0) {
@@ -114,11 +112,6 @@ void Game::calcIntersect(Path* path) {
   }
 }*/
 void Game::simulate(float from, float till) {
-  /*for (auto it : ships) {
-    it->setAccel();
-  }
-  collectPath(paths, from);
-  calcIntersect();*/
   auto it = events.begin();
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
@@ -126,9 +119,6 @@ void Game::simulate(float from, float till) {
     }
     ++it;
   }
-  /*for (auto it : ships) {
-    it->moveShip(till);
-  }*/
   newTurn();
 }
 

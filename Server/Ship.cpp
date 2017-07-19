@@ -11,8 +11,62 @@ void Event::apply(Game *g) {
 void Collision::apply(Game *g) {
   _o->getPath(_p);
 }
+void BatteryDrain::apply(Game *g) {
+  cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
+}
 void StateChange::apply(Game *g) {
   throw 1;
+}
+void StateChange::set(DataElement* data, Game* game) {
+  _o = game->getObject(data->_children[0]->_core->toType<uint64_t>());
+  if (_o == NULL) {
+    cout << __FILE__ << ":" << __LINE__ << " Unknown Object ID " << data->_children[0]->_core->toType<uint64_t>() << endl;
+    throw 1;
+  }
+
+  setV(data->_children[1], game);
+}
+void StateChange::setV(DataElement* data, Game* game) {
+
+}
+void EngineAcc::apply(Game *g) {
+  _o->parentShip->moveShip(_time);
+  reinterpret_cast<Engine*>(_o)->setComponent(0, _acc.x);
+  reinterpret_cast<Engine*>(_o)->setComponent(1, _acc.y);
+  reinterpret_cast<Engine*>(_o)->setComponent(2, _acc.z);
+  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  g->removeIntersect(_o->parentShip);
+  g->calcIntersect(_o->parentShip); //recalculate ship related future intersections
+}
+void EngineAcc::setV(DataElement* data, Game* game) {
+  _acc.set(data->_children[0]);
+}
+void SensorPow::apply(Game *g) {
+  reinterpret_cast<Sensor*>(_o)->setPower(_power);
+  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  //g.removeIntersect(_o->parentShip);
+  //g.calcIntersect(_o->parentShip); //recalculate ship related future intersections
+}
+void SensorPow::setV(DataElement* data, Game* game) {
+  _power = data->_children[0]->_core->toType<float>();
+}
+void LaserShot::apply(Game *g) {
+  Shot* s = new Shot();
+  s->energy = _energy - _o->useEnergy(_energy);
+  s->origin = _o->getMovement().getAt(_time, SOL).pos;
+  s->originID = _o->getId();
+  s->origintime = _time;
+  s->vel = _dir;
+
+  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+
+  g->paths.push_back(s);
+  g->calcIntersect(s);
+}
+void LaserShot::setV(DataElement* data, Game* game) {
+  _dir.set(data->_children[0]);
+  
+  _energy = data->_children[1]->_core->toType<float>();
 }
 void ThermalRadiation::apply(Game *g) {
   Bubble* b = new Bubble();
@@ -22,31 +76,13 @@ void ThermalRadiation::apply(Game *g) {
   b->gEmissionTime = _time;
   b->origin = _o->getMovement().getAt(_time, SOL).pos;
   b->originID = _o->getId();
+
+  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+
   g->paths.push_back(b);
 }
-void EngineAcc::apply(Game *g) {
-  _o->parentShip->moveShip(_time);
-  reinterpret_cast<Engine*>(_o)->setComponent(0, _acc.x);
-  reinterpret_cast<Engine*>(_o)->setComponent(1, _acc.y);
-  reinterpret_cast<Engine*>(_o)->setComponent(2, _acc.z);
-  g->removeIntersect(_o->parentShip);
-  g->calcIntersect(_o->parentShip); //recalculate ship related future intersections
-}
-void SensorPow::apply(Game *g) {
-  reinterpret_cast<Sensor*>(_o)->setPower(_power);
-  //g.removeIntersect(_o->parentShip);
-  //g.calcIntersect(_o->parentShip); //recalculate ship related future intersections
-}
-void LaserShot::apply(Game *g) {
-  Shot* s = new Shot();
-  s->energy = _energy;
-  s->origin = _o->getMovement().getAt(_time, SOL).pos;
-  s->originID = _o->getId();
-  s->origintime = _time;
-  s->vel = _dir;
+void ThermalRadiation::setV(DataElement* data, Game* game) {
 
-  g->paths.push_back(s);
-  g->calcIntersect(s);
 }
 #endif
 
@@ -56,22 +92,58 @@ int Event::type() {
 int Collision::type() {
   return EvTCollision;
 }
+int BatteryDrain::type() {
+  return EvTBatteryDrain;
+}
 int StateChange::type() {
   return EvTStateChange;
 }
-int ThermalRadiation::type() {
-  return EvTThermalRadiation;
+void StateChange::getV(DataElement* data) {
+
+}
+void StateChange::get(DataElement* data) {
+  DataElement* oe = new DataElement();
+  oe->_core->fromType<uint64_t>(_o->getId());
+  data->addChild(oe);
+
+  DataElement* virte = new DataElement();
+  getV(virte);
+  data->addChild(virte);
 }
 int EngineAcc::type() {
   return EvTEngineAcc;
 }
+void EngineAcc::getV(DataElement* data) {
+  DataElement* acce = new DataElement();
+  _acc.get(acce);
+  data->addChild(acce);
+}
 int SensorPow::type() {
   return EvTSensorPow;
+}
+void SensorPow::getV(DataElement* data) {
+  DataElement* powe = new DataElement();
+  powe->_core->fromType<float>(_power);
+  data->addChild(powe);
 }
 int LaserShot::type() {
   return EvTLaserShot;
 }
+void LaserShot::getV(DataElement* data) {
+  DataElement* dire = new DataElement();
+  _dir.get(dire);
+  data->addChild(dire);
+  
+  DataElement* enee = new DataElement();
+  enee->_core->fromType<float>(_energy);
+  data->addChild(enee);
+}
+int ThermalRadiation::type() {
+  return EvTThermalRadiation;
+}
+void ThermalRadiation::getV(DataElement* data) {
 
+}
 
 using namespace std;
 
@@ -318,29 +390,34 @@ Object::~Object() {
 
 }
 
-void Object::collectEvents(list<Event*> &addTo, float time) {
+void Object::collectEvents(list<StateChange*> &addTo, float time) {
 
 }
-void Sensor::collectEvents(list<Event*> &addTo, float time) {
+void Sensor::collectEvents(list<StateChange*> &addTo, float time) {
   SensorPow* ev = new SensorPow();
   ev->_power = _power;
   ev->_o = this;
   ev->_time = time;
   addTo.push_back(ev);
 }
-void Engine::collectEvents(list<Event*> &addTo, float time) {
-  LaserShot* ev = new LaserShot();
-  
+void Engine::collectEvents(list<StateChange*> &addTo, float time) {
+  EngineAcc* ev = new EngineAcc();
+  ev->_acc = _accel;
+  ev->_o = this;
+  ev->_time = time;
+  addTo.push_back(ev);
 }
-void Laser::collectEvents(list<Event*> &addTo, float time) {
+void Laser::collectEvents(list<StateChange*> &addTo, float time) {
   LaserShot* ev = new LaserShot();
   ev->_dir = _shot.second;
   ev->_energy = _shot.first;
   ev->_o = this;
   ev->_time = time;
+  addTo.push_back(ev);
 }
-void Generator::collectEvents(list<Event*> &addTo, float time) {
-  
+void Generator::collectEvents(list<StateChange*> &addTo, float time) {
+  ThermalRadiation* ev = new ThermalRadiation();
+  addTo.push_back(ev);
 }
 
 float Drone::getGeneratedShipPower() {
@@ -374,6 +451,7 @@ float Drone::getStoredShipEnergy() {
   }
   return sum;
 }
+
 float Drone::useEnergy(float amount, float time) {
   refreshEnergy(time);
   for (auto it : objects) {
@@ -391,26 +469,14 @@ void Drone::refreshEnergy(float time) {
   chargeEnergy(getUnusedShipPower() * (time - lastEnergyCalcTime));
   lastEnergyCalcTime = time;
 }
-float Drone::runOut(float time) {
-  return time - getStoredShipEnergy() / getUnusedShipPower();
+Event* Drone::runOut() {
+  BatteryDrain* ev = new BatteryDrain();
+  ev->_time = lastEnergyCalcTime - getStoredShipEnergy() / getUnusedShipPower();
+  return ev;
 }
 
 #ifdef M_SERVER
-int Ship::makeMove(DataElement *Data) {
-  if (!Data->_children.size()) {
-    return 1;
-  }
-  switch (Data->_children[0]->_core->toType<int>()) {
-  case CommandAccel:
-    if (Data->_children.size() < 4) {
-      return 1;
-    }
-    //_accel = fVec3(strTo<int>(data[1]), strTo<int>(data[2]), strTo<int>(data[3]));
-    return 0;
-    break;
-  }
-  
-}
+
 void Ship::newTurn(int id) {
   canMove = true;
 
@@ -423,19 +489,16 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
   switch (Id) {
   case PacketCommand:
     if (canMove) {
-
-      int res = makeMove(Data);
-
-      DataElement* de = new DataElement();
-      de->_core->fromType<int>(res);
-      connectedClient->SendData(de, PacketCommand);
+      StateChange* ev = new StateChange;
+      ev->set(Data, game);
+      game->events.insert(ev);
     }
     break;
   case PacketCommit:
     if (canMove) {
       canMove = false;
-      setSightings(Data->_children[0]);
-      setStatus(Data->_children[1]);
+      //setSightings(Data->_children[0]);
+      //setStatus(Data->_children[1]);
       game->moveMade();
     }
     else {
@@ -469,18 +532,23 @@ void Ship::commit() {
   if(canMove) {
     canMove = false;
 
-    DataElement* de = new DataElement();
-    DataElement* se = new DataElement();
-    DataElement* oe = new DataElement();
-    getSightings(se);
-    getStatus(oe);
-    de->addChild(se);
-    de->addChild(oe);
-    connectedServer->SendData(de, PacketCommit);
+    list<StateChange*> evs;
+    for (auto it : objects) {
+      it->collectEvents(evs, time);
+    }
+
+    for(auto it : evs) {
+      DataElement* ev = new DataElement();
+      it->get(ev);
+      connectedServer->SendData(ev, PacketCommand);
+    }
+
+    connectedServer->SendData(new DataElement(), PacketCommit);
   }
 }
 void Ship::newTurn(int id) {
   canMove = true;
+  time = (id - 1) * ROUND_TIME;
   renderNewRound(id);
 }
 void Ship::drawSightings(float camcx, float camcy, float camcz, float d) {
@@ -680,361 +748,6 @@ Ship::~Ship() {
 #endif
 
 }
-
-/*void shipPacketRecv(unsigned char *Data, int Id, int DataLen, NetworkS* thisptr, Ship* ship) {
-    ship->packetRecv(Data, Id, DataLen, thisptr);
-  }
-
-int Ship::getSpentEnergy() const
-{
-  return command.accel.length()+(command.didFire?100:0)+command.sensorEnergy;
-}
-
-ostream& operator<<(ostream& os, const Command& c)
-{
-  cout << "Gyorsulas: " << c.accel << endl;
-  cout << "Tuzel-e: " << (c.didFire?"igen":"nem") << endl;
-  if (c.didFire)
-  {
-    cout << "Cel: " << c.aim << endl;
-  }
-  cout << "Sensor energia: " <<c. sensorEnergy; //no endl
-  return os;
-}
-
-ostream& operator<<(ostream& os, const SensorDataElement& sde)
-{
-  cout << ((sde.detectType == SensorDataElement::Active)?"Aktiv":"Passziv") << " szenzor jelzett!" << endl;
-  cout << "Jatekos: " << sde.player << endl;
-  cout << "Hely: " << sde.place << endl;
-  cout << "Sebesseg: " << sde.velocity << endl;
-  cout << "Josolt hely: " << sde.nextPlace << endl;
-  cout << "Biztos-e a talalat: " << (sde.sureFire?"igen":"nem"); // no endl
-  return os;
-}
-
-void Object::move(fVec3 accel, float time)
-{
-  float solut[2];
-  int numOfSolut;
-  float a = pow(accel.length(), 2);
-  float b = 2*(velocity.x*accel.x + velocity.y*accel.y + velocity.z*accel.z);
-  float c = pow(velocity.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
-  if (a == 0)
-  {
-    velocity = velocity;
-    place = place + velocity*time;
-  } else
-  {
-    solve2(a, b, c, solut, numOfSolut); //calculate time of reacing maximum velocity
-    float reachMaxT = max(solut[0], solut[1]);
-    if (reachMaxT < 0 || numOfSolut != 0) 
-    {
-      throw 1;
-    }
-    if (reachMaxT > time)
-    {
-      place = place + velocity * time + accel*(pow(time, 2)/2);
-      velocity = velocity + accel*time;
-    } else
-    {
-      fVec3 startVelocity = velocity;
-      velocity = velocity + accel*reachMaxT;
-      place = place + startVelocity*time + velocity*(time-reachMaxT) + accel*(pow(reachMaxT, 2)/2);
-    }
-  }
-}
-
-void Ship::flushSensorData() 
-{
-  sensorData = vector<SensorDataElement>();
-}
-
-void Ship::giveSensorData() const
-{
-  if (not destroyed)
-  {
-    for (auto sde : sensorData)
-    {
-      cout << sde << endl << endl;
-    }
-  }
-}
-
-void Ship::getCommand()
-//with Command class
-{
-  cout << "Adj meg parancsokat!" << endl;
-  bool gettingInput = true;
-  while (gettingInput)
-  {
-    string input;
-    getline(cin, input);
-    if (input == "" or input == "\n")
-    {
-      continue;
-    }
-    vector<string> cmd = tokenize(input);
-    //parse (move x y z, aim x, sensor energy, data) 
-    if (cmd[0] == "move")
-    {
-      if (cmd.size() != 4)
-      {
-        cout << "Rossz szamu szo!" << endl;
-      } else
-      {
-        command.accel = {strTo<float>(cmd[1]), strTo<float>(cmd[2]), strTo<float>(cmd[3])};
-        if (command.accel.length() > maxAcceleration)
-        {
-          cout << "Tul nagy gyorsulast adtal meg!" << endl;
-          cout << "A hajod " << maxAcceleration << " gyorsulasra kepes!" << endl;
-          command.accel = {0, 0, 0};
-        } 
-      }
-    } else if (cmd[0] == "aim")
-    {
-      if (cmd.size() != 2)
-      {
-        cout << "Rossz szamu szo!" << endl;
-      } else
-      {
-        if (cmd[1] == "off")
-        {
-          command.didFire = false;
-        } else
-        {
-          int target = strTo<float>(cmd[1]);
-          //Is the aiming sure?
-          bool valid = false;
-          for (auto sde : sensorData)
-          {
-            if (sde.player == target && sde.sureFire)
-            {
-              valid = true;
-            }
-          }
-          if (valid)
-          {
-            command.didFire = true;
-            command.aim = strTo<float>(cmd[1]);
-          } else
-          {
-            cout << "Nem biztos a loves!" << endl;
-          }
-        }
-      }
-    } else if(cmd[0] == "sensor")
-    {
-      if (cmd.size() == 2)
-      {
-        command.sensorEnergy = strTo<float>(cmd[1]);
-        if (strTo<float>(cmd[1]) > maxSensorEnergy)
-        {
-          cout << "Tul nagy szenzor energiat adtal meg!" << endl;
-          cout << "A hajod " << maxSensorEnergy << "-re kepes!" << endl;
-          command.sensorEnergy = 0;
-        }
-      } else
-      {
-        cout << "Rossz szamu szo!" << endl;
-      }
-    } else if (cmd[0] == "data")
-    {
-      cout << command << endl;
-    } else if (input == "over")
-    {
-      if (getSpentEnergy() <= maxGeneratorEnergy)
-      {
-        gettingInput = false;
-      } else
-      {
-        cout << getSpentEnergy() << " energiat szeretnel felhasznalni." << endl;
-        cout << "A hajod generatora maximum " << maxGeneratorEnergy << "-re kepes." << endl;
-      }
-    } else
-    {
-      cout << "Ismeretlen parancs!" << endl;
-    }
-  }
-}
-
-bool Ship::didFire() const
-{
-  return command.didFire;
-}
-
-int Ship::getAim() const
-{
-  return command.aim;
-}
-
-void Ship::sense(SensorDataElement sde)
-{
-  sensorData.push_back(sde);
-}
-
-int Ship::getVisibility() const
-{
-  return floor(command.accel.length())+(command.didFire?10:0)+(command.sensorEnergy); // placeholder
-}
-
-int Ship::getSensorRadiation() const
-{
-  return command.sensorEnergy; //placeholder
-}
-
-void Ship::move(float time)
-{
-  this->Object::move(command.accel, time);
-}
-
-bool Ship::isDestroyed() const
-{
-  return destroyed;
-}
-
-void Ship::destroy() 
-{
-  destroyed = true;
-}
-
-fVec3 Ship::getPlace() const
-{
-  return place;
-}
-
-fVec3 Ship::getVelocity() const
-{
-  return velocity;
-}
-
-int Ship::getHullRadius() const
-{
-  return hullRadius;
-}
-
-
-unsigned int Ship::getOwner() const
-{
-  return owner;
-}
-
-ostream& operator<<(ostream& os, const Ship& s)
-{
-  if (s.destroyed)
-  {
-    os << "A hajo megsemmisult!"; // no endl
-  } else
-  {
-    os << "Helyvektor: " << s.place << endl;
-    os << "Sebessegvektor: " << s.velocity; // no endl
-  }
-  return os;
-}
-fpVec3 Movement::getPosPolynomial() {
-return
-(acc * 0.5f) * PolynomialF(
-vector<float>(1, -gTimeStamp)
-) *PolynomialF( vector<float>(1, -gTimeStamp ) ) +
-vel * PolynomialF( vector<float>( 1, -gTimeStamp ) ) +
-pos * PolynomialF( vector<float>(1) );
-}
-float reachMaxVelIn(float maxVelocity, bool& will) {
-//-1: No acceleration, cant be solved.
-//0 .. 2: number of solutions
-int numOfSolut;
-float sol[2];
-float a = pow(acc.length(), 2);
-float b = 2 * (vel.x*acc.x + vel.y*acc.y + vel.z*acc.z);
-float c = pow(vel.length(), 2) - pow(maxVelocity, 2); //solve (a+vt)^2 = vmax^2 for t
-if (a == 0)
-{
-will = false;
-return 0;
-} else {
-will = true;
-solve2(a, b, c, sol, numOfSolut); //calculate time of reacing maximum velocity
-if(numOfSolut < 2) {
-throw 1;
-return 0;
-} else {
-return max(sol[0], sol[1]);
-}
-}
-throw 1;
-return 0;
-}Movement goForwardTo(float time, float maxVelocity) {
-Movement res;
-res.timestamp = time;
-float dt = time - timestamp;
-bool will = false;
-float reachMaxT = reachMaxVelIn(maxVelocity, will);
-if (!will) {
-res.pos = pos + vel * dt;
-res.vel = vel;
-res.acc = 0;
-}
-else
-{
-if (reachMaxT < 0)
-{
-throw 1;
-}
-if (reachMaxT > dt)
-{
-res.pos = pos + vel * dt + acc*(pow(dt, 2) / 2);
-res.vel = vel + acc*dt;
-res.acc = acc;
-}
-else
-{
-fVec3 startVelocity = vel;
-res.vel = vel + acc*reachMaxT;
-res.pos = pos + startVelocity*dt + vel*(dt - reachMaxT) + acc*(pow(reachMaxT, 2) / 2);
-res.acc = 0;
-}
-}
-//timestamp = time;
-}
-Movement goBackTo(float time, float maxVelocity) {
-Movement res;
-res.timestamp = time;
-float dt = time - timestamp;
-res.pos = pos + vel * dt + acc*(pow(dt, 2) / 2);
-res.vel = vel + acc*dt;
-res.acc = acc;
-}//CHANGE!!!!!!!!!!!!!!!!
-float Movement::intersect(Bubble &b, float maxVelocity) {
-//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
-//solve c^2 (t-t_e)^2 = (px + vx t - ex)^2 + ...
-PolynomialF p =
-SOL*SOL*PolynomialF{ vector<float> {1, -b.gEmissionTime } }*PolynomialF{ vector<float> {1, -b.gEmissionTime } }-
-PolynomialF{ vector<float> { vel.x, pos.x - b.origin.x - vel.x*gTimeStamp } } *PolynomialF{ vector<float> { vel.x, pos.x - b.origin.x - vel.x*gTimeStamp } }-
-PolynomialF{ vector<float> { vel.y, pos.y - b.origin.y - vel.y*gTimeStamp } } *PolynomialF{ vector<float> { vel.y, pos.y - b.origin.y - vel.y*gTimeStamp } }-
-PolynomialF{ vector<float> { vel.z, pos.z - b.origin.z - vel.z*gTimeStamp } } *PolynomialF{ vector<float> { vel.z, pos.z - b.origin.z - vel.z*gTimeStamp } };
-float sol[2];
-int numOfSols;
-solve2(p.Coefficient[2], p.Coefficient[1], p.Coefficient[0], sol, numOfSols);
-if (numOfSols != 2) {
-throw 1;
-return 0;
-}
-else {
-return max(sol[0], sol[1]);
-}
-}
-float Movement::intersect(Shot &l, float radius) {
-//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE//CHANGE
-PolynomialF p =
-vel.x * PolynomialF{ vector<float> { vel.x, vel.x*gTimeStamp + pos.x } } +
-vel.y * PolynomialF{ vector<float> { vel.y, vel.y*gTimeStamp + pos.y } } +
-vel.z * PolynomialF{ vector<float> { vel.z, vel.z*gTimeStamp + pos.z } } -
-PolynomialF{ vector<float> { l.vel.x, l.vel.x*l.time + l.origin.x } } -
-PolynomialF{ vector<float> { l.vel.y, l.vel.y*l.time + l.origin.y } } -
-PolynomialF{ vector<float> { l.vel.z, l.vel.z*l.time + l.origin.z } };
-return -p.Coefficient[0] / p.Coefficient[1];
-}
-*/
 
 #ifdef M_CLIENT
 Ship* ship;

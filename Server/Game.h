@@ -20,6 +20,16 @@ public:
   //set<pair<double, pair<Object*, Path*> > > intersects;
   set<Event*, EventSort> events;
 
+  Object* getObject(uint64_t oid) {
+    Object* o = NULL;
+    auto it = drones.begin();
+    while (it != drones.end() && o == NULL) {
+      o = (*it)->getObject(oid);
+      ++it;
+    }
+    return o;
+  }
+
   enum State {
     Joining,
     Waiting,
@@ -34,13 +44,7 @@ public:
   void removeIntersect(Object* object);
   void removeIntersect(Drone* drone);
   void removeIntersect(Path* path);
-  /*void collectPath(list<Path*> &addTo, float time) {
-    for (auto it : drones) {
-#ifdef M_SERVER
-      it->collectPath(paths, time);
-#endif
-    }
-  }*/
+ 
   void calcIntersect(Object* object);
   void calcIntersect(Drone* drone);
   void calcIntersect(Path* path);
@@ -50,29 +54,4 @@ public:
 
 extern Game* game;
 
-/*
-class Game
-{
-private:
-  unsigned int numOfShips;
-  std::vector<Ship> ships;
-  int roundNumber = 0;
-  WinManager winManager;
-  BubbleManager bubbles;
-  std::vector<int> projectiles; 
-
-  void askToContinue(int nextPlayer) const;
-  void giveInformation(int currentPlayer) const;
-  void mainGameLoop();
-  void playRound();
-  void manageBubbles();
-  void manageProjectiles();
-  void moveShips();
-  void manageDetections();
-  void giveWinScreen();
-public:
-  Game(unsigned int numOfShips);
-  Game();
-};
-*/
 #endif

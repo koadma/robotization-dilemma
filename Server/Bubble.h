@@ -225,19 +225,5 @@ public:
     return res;
   }
 };
-/*
-class BubbleManager
-{
-private:
-  std::list<Bubble> bubbles;
-  bool didDetectPassively(Bubble bubble) const;
-  bool didDetectActively(Bubble bubble) const;
-  bool isSureFire(Bubble bubble) const;
-public:
-  void interactWithShip(Ship& ship);
-  void add(Bubble bubble);
-  void move();
-  void out() const; //for test
-};*/
 
 #endif

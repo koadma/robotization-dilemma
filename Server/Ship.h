@@ -1,11 +1,9 @@
-#ifndef __SHIP_H__
-#define __SHIP_H__
-
+#pragma once
 #include "Sighting.h"
 
-extern class Object;
+class Object;
+class Drone;
 extern Object* selected;
-
 
 #ifdef M_SERVER
 extern class Game;
@@ -24,71 +22,101 @@ public:
     EvTEngineAcc = 3,
     EvTSensorPow = 4,
     EvTLaserShot = 5,
-    EvTThermalRadiation = 6
+    EvTThermalRadiation = 6,
+    EvTBatteryDrain = 7
   };
   float _time;
+
+  virtual int type();
+  
 #ifdef M_SERVER
   virtual void apply(Game *g);
 #endif
-  virtual int type();
 };
-
 class Collision : public Event {
 public:
   Path* _p;
   Object* _o;
+
+  int type();
+  
 #ifdef M_SERVER
   void apply(Game *g);
 #endif
-  int type();
 
 };
+class BatteryDrain : public Event {
+  Drone* _d;
 
-class ThermalRadiation : public Event {
-public:
-  Object* _o;
+  int type();
+
 #ifdef M_SERVER
   void apply(Game *g);
 #endif
-  int type();
-};
 
+};
 class StateChange : public Event {
 public:
   Object* _o;
+
+  virtual int type();
+  virtual void getV(DataElement* data);
+  void get(DataElement* data);
+
 #ifdef M_SERVER
   virtual void apply(Game *g);
+  void set(DataElement* data, Game* game);
+  virtual void setV(DataElement* data, Game* game);
 #endif
-  virtual int type();
 };
-
 class EngineAcc : public StateChange {
 public:
   fVec3 _acc;
+
+  int type();
+  void getV(DataElement* data);
+
 #ifdef M_SERVER
   void apply(Game *g);
+  void setV(DataElement* data, Game* game);
 #endif
-  int type();
 };
-
 class SensorPow : public StateChange {
 public:
   float _power;
+
+  int type();
+  void getV(DataElement* data);
+
 #ifdef M_SERVER
   void apply(Game *g);
+  void setV(DataElement* data, Game* game);
 #endif
-  int type();
 };
-
 class LaserShot : public StateChange {
 public:
   fVec3 _dir;
   float _energy;
+
+  int type();
+  void getV(DataElement* data);
+
 #ifdef M_SERVER
   void apply(Game *g);
+  void setV(DataElement* data, Game* game);
 #endif
-  int type();
 };
+class ThermalRadiation : public StateChange {
+public:
+  int type();
+  void getV(DataElement* data);
+
+#ifdef M_SERVER
+  void apply(Game *g);
+  void setV(DataElement* data, Game* game);
+#endif
+};
+
 
 struct EventSort{
   bool operator ()(const Event* lhs, const Event* rhs) const
@@ -100,8 +128,6 @@ struct EventSort{
 ///############################################///
 //                  Ship parts                  //
 ///############################################///
-
-class Drone;
 
 class Object {       //Order of serialisation
 protected:
@@ -159,7 +185,7 @@ public:
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
 
-  virtual void collectEvents(list<Event*> &addTo, float time);
+  virtual void collectEvents(list<StateChange*> &addTo, float time);
 
   virtual void getPathVirt(Path* p) {
 
@@ -189,7 +215,6 @@ public:
 
   ~Object();
 };
-
 class Sensor : public Object {       //Order of serialisation
 private:
   float _power;
@@ -215,12 +240,11 @@ public:
   void setSidebar();
 #endif
 
-  void collectEvents(list<Event*> &addTo, float time);
+  void collectEvents(list<StateChange*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
 };
-
 class Engine : public Object {       //Order of serialisation
 private:
   float _maxPower;
@@ -247,12 +271,11 @@ public:
   void setSidebar();
 #endif
 
-  void collectEvents(list<Event*> &addTo, float time);
+  void collectEvents(list<StateChange*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
 };
-
 class Laser : public Object {       //Order of serialisation
 private:
   //vector<pair<float, fVec3> > _shots; //energy, directipn
@@ -277,12 +300,11 @@ public:
   void setSidebar();
 #endif
 
-  void collectEvents(list<Event*> &addTo, float time);
+  void collectEvents(list<StateChange*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
 };
-
 class Generator : public Object {       //Order of serialisation
 private:
   float _maxPower;
@@ -315,7 +337,7 @@ public:
   void setSidebar();
 #endif
 
-  void collectEvents(list<Event*> &addTo, float time);
+  void collectEvents(list<StateChange*> &addTo, float time);
 
   void getVStatus(DataElement* data);
   void setVStatus(DataElement* data);
@@ -338,10 +360,19 @@ public:
     list< pair<double, pair<Object*, Path*>>> res;
     auto it = objects.begin();
     while (it != objects.end()) {
-      res.splice(res.end(), (*it)->intersect(p));
+      res.splice(res.begin(), (*it)->intersect(p));
       ++it;
     }
     return res;
+  }
+
+  Object* getObject(uint64_t oid) {
+    for (auto it : objects) {
+      if (it->getId() == oid) {
+        return it;
+      }
+    }
+    return NULL;
   }
   
   float getGeneratedShipPower();
@@ -351,8 +382,8 @@ public:
   float getStoredShipEnergy();
   float useEnergy(float amount, float time);
   float chargeEnergy(float amount);
-  void refreshEnergy(float time); 
-  float runOut(float time); //when will storage run out
+  void refreshEnergy(float time);
+  Event* runOut(); //when will storage run out
 
   fVec3 getAccel() {
     fVec3 sum = { 0,0,0 };
@@ -368,10 +399,11 @@ public:
     mov = mov.getAt(to, SOL);
   }
 };
-
 class Ship : public Drone {
 private:
   bool canMove = false; //is the player open to moving / are we waiting for a move.
+
+  float time;
 public:
 
   Ship(uint32_t _ID) {
@@ -455,6 +487,4 @@ public:
 
 #ifdef M_CLIENT
 extern Ship* ship;
-#endif
-
 #endif

@@ -42,29 +42,109 @@
 
 using namespace std;
 
-/*#if !defined(__cplusplus) || defined(_MSC_EXTENSIONS)
-#define and	&&
-#define and_eq	&=
-#define bitand	&
-#define bitor	|
-#define compl	~
-#define not	!
-#define not_eq	!=
-#define or		||
-#define or_eq	|=
-#define xor	^
-#define xor_eq	^=
-#endif /* !defined(__cplusplus) || defined(_MSC_EXTENSIONS) */
+///##################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
+///##################################################///
+template <typename... Ts>
+class TextBind
+{
+private:
+  std::string str;
+  std::tuple<Ts...> args;
+public:
+  template <typename... Args>
+  TextBind(string s, Args&&... arg)
+    : args(std::forward<Args>(arg)...)
+  {
+    str = s;
+  }
+  template <typename... Args>
+  void SetArgs(Args&&... arg) {
+    args(std::forward<Args>(arg)...);
+  }
+  ///##################################################///
+  //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
+  ///##################################################///
+  void SetString(string s) {
+    str = s;
+  }
+  template<class F, class...Ts, std::size_t...Is>
+  void for_each_in_tuple(string& str, int& n, stringstream& ss, const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...>) {
+    using expander = int[];
+    (void)expander {
+      0, ((void)func(str, n, ss, std::get<Is>(tuple)), 0)...
+    };
+  }
+  template<class F, class...Ts>
+  void for_each_in_tuple(string& str, int& n, stringstream& ss, const std::tuple<Ts...> & tuple, F func) {
+    for_each_in_tuple(str, n, ss, tuple, func, std::make_index_sequence<sizeof...(Ts)>());
+  }
+  ///##################################################///
+  //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
+  ///##################################################///
+  string TextBind<Ts...>::tostr()
+  {
+    stringstream ss;
+    int n = 0;
+    for_each_in_tuple(str, n, ss, args,
+      [](string& str, int& n, stringstream& ss, const auto &x) {
+      bool b = true;
+      while (b) {
+        switch (str[n]) {
+        case '\\':
+          if (str[n + 1] == '%') {
+            ss << "%";
+          }
+          else {
+            ss << "\\" << str[n + 1];
+          }
+          n += 2;
+          break;
+        case '%':
+          b = false;
+          n += 1;
+          break;
+        default:
+          ss << str[n];
+          n += 1;
+          break;
+        }
+      }
+      ss << *x;
+    }
+    );
+    ///##################################################///
+    //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
+    ///##################################################///
+    while (n < str.size()) {
+      switch (str[n]) {
+      case '\\':
+        if (n < str.size() && str[n + 1] == '%') {
+          ss << "%";
+        }
+        else {
+          ss << "\\" << str[n + 1];
+        }
+        n += 2;
+        break;
+      case '%':
+        throw 1;
+        n += 1;
+        break;
+      default:
+        ss << str[n];
+        n += 1;
+        break;
+      }
+    }
 
-/*template <typename T>
-T mini(T a, T b) {
-  return (a<b) ? a : b;
-}
+    return ss.str();
+  }
+};
+///##################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
+///##################################################///
 
-template <typename T>
-T maxi(T a, T b) {
-  return (a>b) ? a : b;
-}*/
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);
