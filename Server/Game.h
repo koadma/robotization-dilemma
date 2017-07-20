@@ -18,7 +18,7 @@ public:
   list<Path*> paths;
 
   //set<pair<double, pair<Object*, Path*> > > intersects;
-  set<Event*, EventSort> events;
+  multiset<Event*, EventSort> events;
 
   Object* getObject(uint64_t oid) {
     Object* o = NULL;
@@ -48,7 +48,7 @@ public:
   void calcIntersect(Object* object);
   void calcIntersect(Drone* drone);
   void calcIntersect(Path* path);
-  //void calcIntersect();
+  void recalcIntersects();
   void simulate(float from, float till);
 };
 

@@ -148,7 +148,13 @@ void joinMenuBackButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/game_menu.html");
 }
 
+void mainMenuDemoSliderInput(float val) {
+  cout << "ASD" << endl;
+}
+
 int InitWindow() {
+  Graphics::setName("mainMenuDemoSliderInput", mainMenuDemoSliderInput);
+
   Graphics::setName("newSingleMenuBackButton", newSingleMenuBackButton);
   Graphics::setName("joinMenuBackButton", joinMenuBackButton);
   Graphics::setName("newSingleMenu3PlayerButton", newSingleMenu3PlayerButton);

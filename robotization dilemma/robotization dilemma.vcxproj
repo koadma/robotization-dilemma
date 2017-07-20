@@ -167,6 +167,7 @@
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="RenderIn.cpp" />
     <ClCompile Include="RenderOut.cpp" />
+    <ClCompile Include="Slider.cpp" />
     <ClCompile Include="TextInput.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="Panel.h" />
     <ClInclude Include="RenderIn.h" />
     <ClInclude Include="RenderOut.h" />
+    <ClInclude Include="Slider.h" />
     <ClInclude Include="TextInput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -18,13 +18,14 @@ void StateChange::apply(Game *g) {
   throw 1;
 }
 void StateChange::set(DataElement* data, Game* game) {
-  _o = game->getObject(data->_children[0]->_core->toType<uint64_t>());
+  _o = game->getObject(data->_children[1]->_core->toType<uint64_t>());
   if (_o == NULL) {
-    cout << __FILE__ << ":" << __LINE__ << " Unknown Object ID " << data->_children[0]->_core->toType<uint64_t>() << endl;
+    cout << __FILE__ << ":" << __LINE__ << " Unknown Object ID " << data->_children[1]->_core->toType<uint64_t>() << endl;
     throw 1;
   }
+  _time = data->_children[2]->_core->toType<float>();
 
-  setV(data->_children[1], game);
+  setV(data->_children[3], game);
 }
 void StateChange::setV(DataElement* data, Game* game) {
 
@@ -80,6 +81,7 @@ void ThermalRadiation::apply(Game *g) {
   _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
 
   g->paths.push_back(b);
+  g->calcIntersect(b);
 }
 void ThermalRadiation::setV(DataElement* data, Game* game) {
 
@@ -102,9 +104,17 @@ void StateChange::getV(DataElement* data) {
 
 }
 void StateChange::get(DataElement* data) {
+  DataElement* ide = new DataElement();
+  ide->_core->fromType<uint64_t>(type());
+  data->addChild(ide);
+
   DataElement* oe = new DataElement();
   oe->_core->fromType<uint64_t>(_o->getId());
   data->addChild(oe);
+
+  DataElement* timee = new DataElement();
+  timee->_core->fromType<float>(_time);
+  data->addChild(timee);
 
   DataElement* virte = new DataElement();
   getV(virte);
@@ -194,7 +204,6 @@ void Object::setStatus(DataElement* data) {
 
   setVStatus(data->_children[6]);
 }
-
 void Object::getVStatus(DataElement* data) {
 
 }
@@ -417,6 +426,7 @@ void Laser::collectEvents(list<StateChange*> &addTo, float time) {
 }
 void Generator::collectEvents(list<StateChange*> &addTo, float time) {
   ThermalRadiation* ev = new ThermalRadiation();
+  ev->_o = this;
   addTo.push_back(ev);
 }
 
@@ -489,16 +499,52 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
   switch (Id) {
   case PacketCommand:
     if (canMove) {
-      StateChange* ev = new StateChange;
-      ev->set(Data, game);
-      game->events.insert(ev);
-    }
+      
+      }
     break;
   case PacketCommit:
     if (canMove) {
       canMove = false;
-      //setSightings(Data->_children[0]);
-      //setStatus(Data->_children[1]);
+      
+      for(auto it : Data->_children) {
+        int typ = it->_children[0]->_core->toType<int>();
+
+        StateChange* nObj = NULL;
+        switch (typ) {
+        case Event::Type::EvTEvent:
+          //nObj = new Event();
+          break;
+        case Event::Type::EvTCollision:
+          //nObj = new Collision();
+          break;
+        case Event::Type::EvTStateChange:
+          //nObj = new StateChange();
+          break;
+        case Event::Type::EvTEngineAcc:
+          nObj = new EngineAcc();
+          break;
+        case Event::Type::EvTSensorPow:
+          nObj = new SensorPow();
+          break;
+        case Event::Type::EvTLaserShot:
+          nObj = new LaserShot();
+          break;
+        case Event::Type::EvTThermalRadiation:
+          nObj = new ThermalRadiation();
+          break;
+        case Event::Type::EvTBatteryDrain:
+          //nObj = new BatteryDrain();
+          break;
+        }
+        if (nObj != NULL) {
+          nObj->set(it, game);
+          game->events.insert(nObj);
+        }
+        else {
+          cout << __FILE__ << " " << __LINE__ << ": Wrong type " << typ << endl;
+        }
+      }
+
       game->moveMade();
     }
     else {
@@ -532,6 +578,8 @@ void Ship::commit() {
   if(canMove) {
     canMove = false;
 
+    DataElement* events = new DataElement();
+
     list<StateChange*> evs;
     for (auto it : objects) {
       it->collectEvents(evs, time);
@@ -540,10 +588,10 @@ void Ship::commit() {
     for(auto it : evs) {
       DataElement* ev = new DataElement();
       it->get(ev);
-      connectedServer->SendData(ev, PacketCommand);
+      events->addChild(ev);
     }
 
-    connectedServer->SendData(new DataElement(), PacketCommit);
+    connectedServer->SendData(events, PacketCommit);
   }
 }
 void Ship::newTurn(int id) {

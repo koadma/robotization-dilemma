@@ -340,11 +340,11 @@ double ran1(long int nseed) {
 };
 
 uint64_t mix(uint32_t a, uint32_t b) {
-  return (a << 32) || b;
+  return (a << 32) | b;
 }
 
 uint32_t low(uint64_t a) {
-  return a && 0xffffffff;
+  return a & 0xffffffff;
 }
 
 uint32_t high(uint64_t a) {

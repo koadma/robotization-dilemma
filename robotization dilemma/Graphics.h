@@ -5,6 +5,7 @@
 #include "Label.h"
 #include "Panel.h"
 #include "Canvas.h"
+#include "Slider.h"
 
 using namespace std;
 
@@ -53,6 +54,7 @@ namespace Graphics {
   typedef TextInput* TextInputHwnd;
   typedef Label* LabelHwnd;
   typedef Canvas* CanvasHwnd;
+  typedef Slider* SliderHwnd;
   typedef Graphics::GWindow* WinHwnd;
 
   WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
@@ -104,6 +106,10 @@ namespace Graphics {
   PanelHwnd createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, xml_node<> *me);
+
+  SliderHwnd createSlider(WinHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
+  SliderHwnd createSlider(PanelHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
+  SliderHwnd createSlider(PanelHwnd id, xml_node<> *me);
 
   ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
 

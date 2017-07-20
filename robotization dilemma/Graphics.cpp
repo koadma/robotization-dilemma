@@ -330,6 +330,42 @@ Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, xml_node<> *me) {
   return p;
 }
 
+Graphics::SliderHwnd Graphics::createSlider(WinHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
+return createSlider(id->myPanel, name, mincorner, maxcorner, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
+}
+Graphics::SliderHwnd Graphics::createSlider(PanelHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
+ElemHwnd elem = new Slider(name, mincorner, maxcorner, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
+  return reinterpret_cast<SliderHwnd>(createElement(id, elem));
+}
+Graphics::SliderHwnd Graphics::createSlider(PanelHwnd id, xml_node<> *me) {
+  SliderHwnd p = createSlider(
+    id,
+    me->first_attribute("id")->value(),
+    Coordiante{
+      strTo<float>(me->first_attribute("minrelx")->value()),
+      strTo<float>(me->first_attribute("minrely")->value()),
+      strTo<float>(me->first_attribute("minabsx")->value()),
+      strTo<float>(me->first_attribute("minabsy")->value()),
+    },
+    Coordiante{
+      strTo<float>(me->first_attribute("maxrelx")->value()),
+      strTo<float>(me->first_attribute("maxrely")->value()),
+      strTo<float>(me->first_attribute("maxabsx")->value()),
+      strTo<float>(me->first_attribute("maxabsy")->value()),
+    },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    hexToInt(me->first_attribute("pulledcolor")->value()),
+    strTo<float>(me->first_attribute("minvalue")->value()),
+    strTo<float>(me->first_attribute("maxvalue")->value()),
+    strTo<float>(me->first_attribute("startvalue")->value()),
+    strTo<float>(me->first_attribute("quanta")->value()),
+    reinterpret_cast<SliderInputFunc>(funcs[me->first_attribute("callback")->value()])
+  );
+  return p;
+}
+
 Graphics::ElemHwnd Graphics::createElement(PanelHwnd id, ElemHwnd elem) {
   id->elements.push_back(elem);
   Graphics::elementResizeManager(id, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
@@ -363,6 +399,9 @@ void Graphics::setElements(PanelHwnd id, xml_node<> *data) {
     }
     else if (name == "panel" || name == "div") {
       createPanel(id, pElem);
+    }
+    else if (name == "slider") {
+      createSlider(id, pElem);
     }
     else {
       throw 1;

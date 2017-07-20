@@ -76,6 +76,7 @@ void Game::calcIntersect(Object* object) {
       coll->_time = it.first;
       coll->_o = it.second.first;
       coll->_p = it.second.second;
+      events.insert(coll);
     }
   }
 }
@@ -93,25 +94,18 @@ void Game::calcIntersect(Path* path) {
       coll->_time = it.first;
       coll->_o = it.second.first;
       coll->_p = it.second.second;
+      events.insert(coll);
     }
     ++its;
   }
 }
-/*void Game::calcIntersect() {
-  
-  events.clear(); //reset intersections
-  auto itb = paths.begin();
-  while (itb != paths.end()) {
-    auto its = ships.begin();
-    while (its != ships.end()) {
-      list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
-      intersects.insert(inters.begin(), inters.end());
-      ++its;
-    }
-    ++itb;
+void Game::recalcIntersects() {
+  for (auto it : drones) {
+    calcIntersect(it);
   }
-}*/
+}
 void Game::simulate(float from, float till) {
+  //recalcIntersects();
   auto it = events.begin();
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
