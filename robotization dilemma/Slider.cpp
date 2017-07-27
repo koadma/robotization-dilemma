@@ -1,9 +1,10 @@
 #include "Slider.h"
 
 void Slider::mouseAt(int x, int y) {
-  val = minv + (maxv - minv) * float(x - cax) / float(cbx - cax);
+  val = minv + (maxv - minv) * float(x - cax) / float(cbx - cax - 1);
   val = val + quanta / 2.0f - fmod(val + quanta/2.0f, quanta);
   val = min(max(val, minv),maxv);
+  clickCallback(val);
 }
 
 int Slider::mouseEnter(int state) {
@@ -16,7 +17,7 @@ int Slider::mouseMoved(int mx, int my) {
   }
   else {
     active = false;
-    clickCallback(val);
+    //clickCallback(val);
   }
 
   return (mousebuttons & 1) | (oactive xor active); //if state changed
@@ -36,7 +37,7 @@ int Slider::mouseClicked(int button, int state, int mx, int my) {
   else {
     mousebuttons = 0;
     active = false;
-    clickCallback(val);
+    //clickCallback(val);
   }
 
   if (state == 0 && button == 1) {

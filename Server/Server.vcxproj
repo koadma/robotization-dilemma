@@ -18,6 +18,37 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Core\Bubble.h" />
+    <ClInclude Include="..\Core\constants.h" />
+    <ClInclude Include="..\Core\Fraction.h" />
+    <ClInclude Include="..\Core\helperFunctions.h" />
+    <ClInclude Include="..\Core\Keyframe.h" />
+    <ClInclude Include="..\Core\Network.h" />
+    <ClInclude Include="..\Core\NetworkData.h" />
+    <ClInclude Include="..\Core\Point.h" />
+    <ClInclude Include="..\Core\Polynomial.h" />
+    <ClInclude Include="..\Core\Ship.h" />
+    <ClInclude Include="..\Core\Sighting.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Main.h" />
+    <ClInclude Include="WinManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Core\Bubble.cpp" />
+    <ClCompile Include="..\Core\Fraction.cpp" />
+    <ClCompile Include="..\Core\helperFunctions.cpp" />
+    <ClCompile Include="..\Core\Keyframe.cpp" />
+    <ClCompile Include="..\Core\Network.cpp" />
+    <ClCompile Include="..\Core\NetworkData.cpp" />
+    <ClCompile Include="..\Core\Point.cpp" />
+    <ClCompile Include="..\Core\Polynomial.cpp" />
+    <ClCompile Include="..\Core\Ship.cpp" />
+    <ClCompile Include="..\Core\Sighting.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="WinManager.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{74475862-5789-4265-A647-096AC8B5A65C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -145,33 +176,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Core\Fraction.cpp" />
-    <ClCompile Include="..\Core\helperFunctions.cpp" />
-    <ClCompile Include="..\Core\Network.cpp" />
-    <ClCompile Include="..\Core\Point.cpp" />
-    <ClCompile Include="..\Core\Polynomial.cpp" />
-    <ClCompile Include="Bubble.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Ship.cpp" />
-    <ClCompile Include="Sighting.cpp" />
-    <ClCompile Include="WinManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Core\constants.h" />
-    <ClInclude Include="..\Core\Fraction.h" />
-    <ClInclude Include="..\Core\helperFunctions.h" />
-    <ClInclude Include="..\Core\Network.h" />
-    <ClInclude Include="..\Core\Point.h" />
-    <ClInclude Include="..\Core\Polynomial.h" />
-    <ClInclude Include="Bubble.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="Ship.h" />
-    <ClInclude Include="Sighting.h" />
-    <ClInclude Include="WinManager.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

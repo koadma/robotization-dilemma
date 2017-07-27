@@ -49,8 +49,8 @@ vector<double> intersectPaths(Path* lhs, Path* rhs) {
 
   return impleq.eqns.begin()->second.getPolynomial('t').solve();
 }
-
-int Sighting::getLastSmaller(float t)
+/*
+int Sighting::getLastSmaller(time_type_s t)
 {
   int first = 0, last = int(keyframes.size()) - 1;
   while (first <= last)
@@ -63,7 +63,7 @@ int Sighting::getLastSmaller(float t)
   }
   return first - 1 < 0 ? -1 : first - 1;
 }
-Movement Sighting::estimatePos(float t, float maxVelocity) {
+Movement Sighting::estimatePos(time_type_s t, vel_type_mpers maxVelocity) {
   int id = getLastSmaller(t);
   if (id == -1) {
     id = 0;
@@ -77,17 +77,17 @@ Movement Sighting::estimatePos(float t, float maxVelocity) {
   }
 }
 #ifdef M_CLIENT
-void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, float maxVel) {
+void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel) {
   glLineWidth(2.0f);
 
   glBegin(GL_LINES);
   glColor3f(1.0f, 1.0f, 1.0f);
   if (keyframes.size()) {
-    float t = keyframes[0]->gTimeStamp;
+    time_type_s t = keyframes[0]->gTimeStamp;
 
     while (t < keyframes[keyframes.size() - 1]->gTimeStamp + ROUND_TIME) {
       Movement estpos = estimatePos(t, maxVel);
-      glVertex3f(estpos.pos.x, estpos.pos.y, estpos.pos.z);
+      glVertex3d(estpos.pos.x, estpos.pos.y, estpos.pos.z);
       t += ROUND_TIME * 0.1f;
     }
   }
@@ -98,31 +98,32 @@ void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, floa
 }
 #endif
 void Sighting::getSighting(DataElement* data) {
-  for (auto it : keyframes) {
-    DataElement* ne = new DataElement();
-    it->get(ne);
-    data->_children.push_back(ne);
-  }
+  keyframes.get(data);
 }
 void Sighting::setSighting(DataElement* data) {
-  clearKeyframes();
-
-  for (DataElement* it : data->_children) {
-    Movement* nMov = new Movement();
-    nMov->set(it);
-    keyframes.push_back(nMov);
-  }
-}
-void Sighting::clearKeyframes() {
-  auto it = keyframes.begin();
-
-  while (it != keyframes.end()) {
-    (*it)->~Movement();
-    delete *it;
-  }
-
-  keyframes.clear();
+  keyframes.set(data);
 }
 Sighting::~Sighting() {
 
 }
+*/
+
+#ifdef M_CLIENT
+void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel) {
+  glLineWidth(2.0f);
+
+  glBegin(GL_LINES);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  if (keyframes.size()) {
+    time_type_s t = keyframes.getFirst();
+
+    while (t < keyframes.getLast() + ROUND_TIME) {
+      Movement estpos = getAt(t);
+      glVertex3d(estpos.pos.x, estpos.pos.y, estpos.pos.z);
+      t += ROUND_TIME * 0.1f;
+    }
+  }
+
+  glEnd();
+}
+#endif

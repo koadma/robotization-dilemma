@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/Polynomial.h"
+#include "Polynomial.h"
 
 #ifdef WIN32
 #include <winsock2.h>

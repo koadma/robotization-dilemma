@@ -58,6 +58,13 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
   return 0;
 }
 
+int main() {
+  setlocale(LC_ALL, "");
+  srand(time(NULL));
+
+  InitWindow();
+  glutMainLoop();
+}
 
 int CALLBACK WinMain(
   HINSTANCE   hInstance,
@@ -65,9 +72,6 @@ int CALLBACK WinMain(
   LPSTR       lpCmdLine,
   int         nCmdShow
 ) {
-  setlocale(LC_ALL, "");
-  srand(time(NULL));
-  InitWindow();
-  glutMainLoop();
-  return 0;
+  
+  return main();
 }

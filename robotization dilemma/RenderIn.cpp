@@ -1,35 +1,35 @@
 #include "RenderIn.h"
 
 void ingameEngineSidebarAccInputX(string s) {
-  reinterpret_cast<Engine*>(selected)->setComponent(0,strTo<float>(s));
+  reinterpret_cast<Engine*>(selected)->setComponent(timeNow, 0,strTo<acc_type_mperss>(s));
 }
 
 void ingameEngineSidebarAccInputY(string s) {
-  reinterpret_cast<Engine*>(selected)->setComponent(1, strTo<float>(s));
+  reinterpret_cast<Engine*>(selected)->setComponent(timeNow, 1, strTo<acc_type_mperss>(s));
 }
 
 void ingameEngineSidebarAccInputZ(string s) {
-  reinterpret_cast<Engine*>(selected)->setComponent(2, strTo<float>(s));
+  reinterpret_cast<Engine*>(selected)->setComponent(timeNow, 2, strTo<acc_type_mperss>(s));
 }
 
 void ingameLaserSidebarAccInputX(string s) {
-  reinterpret_cast<Laser*>(selected)->setComponent(0, strTo<float>(s));
+  //reinterpret_cast<Laser*>(selected)->setComponent(0, strTo<float>(s));
 }
 
 void ingameLaserSidebarAccInputY(string s) {
-  reinterpret_cast<Laser*>(selected)->setComponent(1, strTo<float>(s));
+  //reinterpret_cast<Laser*>(selected)->setComponent(1, strTo<float>(s));
 }
 
 void ingameLaserSidebarAccInputZ(string s) {
-  reinterpret_cast<Laser*>(selected)->setComponent(2, strTo<float>(s));
+  //reinterpret_cast<Laser*>(selected)->setComponent(2, strTo<float>(s));
 }
 
 void ingameLaserSidebarEnergyInput(string s) {
-  reinterpret_cast<Laser*>(selected)->setEnergy(strTo<float>(s));
+  //reinterpret_cast<Laser*>(selected)->setEnergy(strTo<float>(s));
 }
 
 void ingameSensorSidebarEnergyInput(string s) {
-  reinterpret_cast<Sensor*>(selected)->setPower(strTo<float>(s));
+  reinterpret_cast<Sensor*>(selected)->setPower(timeNow, strTo<power_type_W>(s));
 }
 
 void ingameMenuCommitButton() {
@@ -149,7 +149,7 @@ void joinMenuBackButton() {
 }
 
 void mainMenuDemoSliderInput(float val) {
-  cout << "ASD" << endl;
+  timeNow = val;
 }
 
 int InitWindow() {

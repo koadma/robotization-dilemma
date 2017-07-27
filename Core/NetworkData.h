@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\Core\helperFunctions.h"
+#include "helperFunctions.h"
 
 #define PACKET_HEADER_LEN 4 //Used to store packet ID and data length;
 #define PACKET_HEADER_TYPE int
@@ -125,3 +125,42 @@ public:
   }
 };
 
+
+template<typename T>
+void vSFunc(T& val, DataElement* elem) {
+  elem->_core->fromType<T>(val);
+}
+
+template<typename T>
+void vGFunc(T& val, DataElement* elem) {
+  val = elem->_core->toType<T>();
+}
+
+template<typename T>
+void oSFunc(T& val, DataElement* elem) {
+  val.set(elem);
+}
+
+template<typename T>
+void oGFunc(T& val, DataElement* elem) {
+  val.get(elem);
+}
+
+/*template<typename T>
+void setVecO(vector<T>& vec, DataElement* data, void(sFunc)(void(sFunc)(T&, DataElement*))) {
+  for (auto&& it : vec) {
+    DataElement* ne;
+    sFunc<T>(it, ne);
+    data->addChild(ne);
+  }
+}
+
+template<typename T>
+void getVecO(vector<T>& vec, DataElement* data, void(gFunc)(T&, DataElement*)) {
+  for (auto&& it : data->_childer) {
+    T nval;
+    nval.get(it->_core);
+    vec.push_back(nval);
+  }
+}
+*/

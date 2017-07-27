@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Server/Ship.h"
+#include "../Core/Ship.h"
 
 void ingameMenuSensorInput(string s);
 

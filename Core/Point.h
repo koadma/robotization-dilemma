@@ -5,9 +5,14 @@
 
 
 template<typename T> struct vec3;
-typedef vec3<float>          fVec3;
-typedef vec3<int>            iVec3;
-typedef vec3<bool>           bVec3;
+//typedef vec3<float>           fVec3;
+typedef vec3<int>               iVec3;
+typedef vec3<bool>              bVec3;
+typedef vec3<distance_type_m>   mVec3;
+typedef vec3<vel_type_mpers>    mpsVec3;
+typedef vec3<acc_type_mperss>   mpssVec3;
+typedef vec3<scalar_type>       sVec3;
+typedef vec3<double>            fVec3;
 
 template<typename T>
 class vec3 {
@@ -198,14 +203,16 @@ inline bool bxor(bVec3 v) { return v.x != v.y != v.z; }
 
 template<typename T> std::ostream& operator<<(std::ostream& os, const vec3<T>& v)
 {
+  throw 1;
   os << v.x << " " << v.y << " " << v.z;
   return os;
 }
-/*template<typename T> std::istream& operator>> <>(std::istream& is, vec3<T>& v)
+template<typename T> std::istream& operator>> <>(std::istream& is, vec3<T>& v)
 {
+  throw 1;
   is >> v.x >> v.y >> v.z;
   return is;
-}*/
+}
 
 template<typename T> inline T dot(vec3<T> lhs, vec3<T> rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;

@@ -4,6 +4,18 @@
 
 using namespace std;
 
+template <typename T>
+Zero<T>::Zero() { val = T(); }
+template <typename T>
+T Zero<T>::ret() {
+  return val;
+}
+
+Zero<int>        intZero;
+Zero<float>    floatZero;
+Zero<double>  doubleZero;
+Zero<string>  stringZero;
+
 void solve2(float a, float b, float c, float sol[2], int& numOfSol)
 {
   if (a == 0)

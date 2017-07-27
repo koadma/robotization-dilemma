@@ -3,9 +3,11 @@
 #include "Button.h"
 #include "TextInput.h"
 #include "Label.h"
+#include "LabelBind.h"
 #include "Panel.h"
 #include "Canvas.h"
 #include "Slider.h"
+#include "Container.h"
 
 using namespace std;
 
@@ -50,9 +52,12 @@ namespace Graphics {
 
   typedef GUIElement* ElemHwnd;
   typedef Panel* PanelHwnd;
+  typedef Container* ContainerHwnd;
   typedef Button* ButtonHwnd;
   typedef TextInput* TextInputHwnd;
   typedef Label* LabelHwnd;
+  template <typename ...Ts>
+  using LabelBindHwnd = LabelBind<Ts...>*;
   typedef Canvas* CanvasHwnd;
   typedef Slider* SliderHwnd;
   typedef Graphics::GWindow* WinHwnd;
@@ -101,15 +106,23 @@ namespace Graphics {
 
   CanvasHwnd createCanvas(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
   CanvasHwnd createCanvas(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
-  //CanvasHwnd createCanvas(PanelHwnd id, xml_node<> *me);
 
   PanelHwnd createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, xml_node<> *me);
 
+  ContainerHwnd createContainer(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  ContainerHwnd createContainer(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  ContainerHwnd createContainer(PanelHwnd id, xml_node<> *me);
+
   SliderHwnd createSlider(WinHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
   SliderHwnd createSlider(PanelHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
   SliderHwnd createSlider(PanelHwnd id, xml_node<> *me);
+
+  template <typename ...Ts>
+  LabelBindHwnd<Ts...> createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  template <typename ...Ts>
+  LabelBindHwnd<Ts...> createLabel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
 
   ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
 

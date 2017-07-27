@@ -1,7 +1,6 @@
-#ifndef __HELPERFUNCS_H__
-#define __HELPERFUNCS_H__
+#pragma once
 
-#include "..\Core\constants.h"
+#include "constants.h"
 
 #include <algorithm>
 #include <cmath>
@@ -42,29 +41,37 @@
 
 using namespace std;
 
+template <typename T>
+class Zero {
+private:
+  T val;
+public:
+  Zero();
+  T ret();
+};
+
+extern Zero<int>        intZero;
+extern Zero<float>    floatZero;
+extern Zero<double>  doubleZero;
+extern Zero<string>  stringZero;
+
 ///##################################################///
 //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
 ///##################################################///
 template <typename... Ts>
-class TextBind
-{
+class TextBind {
 private:
   std::string str;
   std::tuple<Ts...> args;
 public:
-  template <typename... Args>
-  TextBind(string s, Args&&... arg)
-    : args(std::forward<Args>(arg)...)
+  TextBind(string s, Ts&&... arg)
+    : args(std::forward<Ts>(arg)...)
   {
     str = s;
   }
-  template <typename... Args>
-  void SetArgs(Args&&... arg) {
-    args(std::forward<Args>(arg)...);
+  void SetArgs(Ts&&... arg) {
+    args(std::forward<Ts>(arg)...);
   }
-  ///##################################################///
-  //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
-  ///##################################################///
   void SetString(string s) {
     str = s;
   }
@@ -79,10 +86,7 @@ public:
   void for_each_in_tuple(string& str, int& n, stringstream& ss, const std::tuple<Ts...> & tuple, F func) {
     for_each_in_tuple(str, n, ss, tuple, func, std::make_index_sequence<sizeof...(Ts)>());
   }
-  ///##################################################///
-  //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
-  ///##################################################///
-  string TextBind<Ts...>::tostr()
+  string tostr()
   {
     stringstream ss;
     int n = 0;
@@ -92,52 +96,35 @@ public:
       while (b) {
         switch (str[n]) {
         case '\\':
-          if (str[n + 1] == '%') {
-            ss << "%";
+          if (n + 1 < str.size()) {
+            if (str[n + 1] == '%') { ss << "%"; }
+            else if (str[n + 1] == '\\') { ss << "\\"; }
+            else { ss << "\\" << str[n + 1]; }
           }
-          else {
-            ss << "\\" << str[n + 1];
-          }
-          n += 2;
-          break;
+          n += 2; break;
         case '%':
-          b = false;
-          n += 1;
-          break;
+          b = false; n += 1; break;
         default:
-          ss << str[n];
-          n += 1;
-          break;
+          ss << str[n]; n += 1; break;
         }
       }
-      ss << *x;
-    }
-    );
-    ///##################################################///
-    //         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
-    ///##################################################///
+      ss << ((x.first.first).*(x.first.second))() + *(x.second);
+    });
     while (n < str.size()) {
       switch (str[n]) {
       case '\\':
-        if (n < str.size() && str[n + 1] == '%') {
-          ss << "%";
+        if (n + 1 < str.size()) {
+          if (str[n + 1] == '%') { ss << "%"; }
+          else if (str[n + 1] == '\\') { ss << "\\"; }
+          else { ss << "\\" << str[n + 1]; }
         }
-        else {
-          ss << "\\" << str[n + 1];
-        }
-        n += 2;
-        break;
+        n += 2; break;
       case '%':
-        throw 1;
-        n += 1;
-        break;
+        throw 1; n += 1; break;
       default:
-        ss << str[n];
-        n += 1;
-        break;
+        ss << str[n]; n += 1; break;
       }
     }
-
     return ss.str();
   }
 };
@@ -225,4 +212,3 @@ uint64_t mix(uint32_t a, uint32_t b);
 uint32_t low(uint64_t a);
 uint32_t high(uint64_t a);
 
-#endif

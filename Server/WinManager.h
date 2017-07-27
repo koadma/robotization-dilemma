@@ -1,7 +1,7 @@
 #ifndef __WINMANAGER_H__
 #define __WINMANAGER_H__
 
-#include "Ship.h"
+#include "..\Core\Ship.h"
 
 /*
 Class for managing win conditions for the game.

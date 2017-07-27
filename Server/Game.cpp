@@ -14,7 +14,7 @@ void Game::moveMade() {
 void Game::newTurn() {
   turnId++;
   waitingFor = drones.size();
-  for(auto it : drones) {
+  for(auto&& it : drones) {
     ((Ship*)it)->newTurn(turnId);
   }
 }
@@ -81,7 +81,7 @@ void Game::calcIntersect(Object* object) {
   }
 }
 void Game::calcIntersect(Drone* drone) {
-  for(auto ito : drone->objects) {
+  for(auto&& ito : drone->objects) {
     calcIntersect(ito);
   }
 }
