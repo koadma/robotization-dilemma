@@ -67,6 +67,12 @@ struct IWindowManagers {
 
 //extern map<int, Graphics::WindowData> Graphics::windows;
 
+namespace Graphics {
+
+  void resetViewport();
+
+}
+
 class Coordiante {
 public:
   float x;

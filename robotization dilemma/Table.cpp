@@ -24,9 +24,13 @@ void TableRow::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
 }
 
 void Table::render() {
+  glViewport(cax, cay, cbx - cax, cby - cay);
+
   for(auto&& it : data) {
     it->render();
   }
+
+  Graphics::resetViewport();
 }
 
 void Table::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {

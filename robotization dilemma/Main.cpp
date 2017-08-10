@@ -10,7 +10,7 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
 
         ship->connectedServer = Connection;
 
-        Graphics::setElements(objectGameSubWindow, "html/game_screen.html");
+        Graphics::setElements(objectGameSubWindow, "html/game_screen.xml");
 
         objectMainGameCanvas = Graphics::createCanvas(
           reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectMainGameCanvasContainer")),
@@ -44,6 +44,10 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
             MainGameShipCanvas::mouseWheelManager
            }
         );
+
+        bindLabels();
+
+        glutPostRedisplay();
       }
       else {
         createMainMenu();

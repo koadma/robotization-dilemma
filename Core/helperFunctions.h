@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -55,11 +56,76 @@ extern Zero<float>    floatZero;
 extern Zero<double>  doubleZero;
 extern Zero<string>  stringZero;
 
-///##################################################///
-//         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
-///##################################################///
+///####################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
+///####################################################///
+namespace TextBindHelper
+{
+  template <int... Is>
+  struct index {};
+
+  template <int N, int... Is>
+  struct gen_seq : gen_seq<N - 1, N - 1, Is...> {};
+
+  template <int... Is>
+  struct gen_seq<0, Is...> : index<Is...> {};
+}
+template<typename T>
+class TextBindBase {
+public:
+  virtual const T get() {
+    throw 1;
+    return T();
+  }
+};
+template<typename T>
+class TextBindVar : public TextBindBase<T> {
+public:
+  T* _val;
+  TextBindVar<T>() {
+
+  }
+  TextBindVar<T>(T* val) {
+    _val = val;
+  }
+  const T get() {
+    return *_val;
+  }
+};
+template<typename T, typename... Ts>
+class TextBindFunc : public TextBindBase<T> {
+public:
+  std::function<T(Ts...)> _func;
+  std::tuple<Ts...> _args;
+  template <typename F, typename... Args>
+  TextBindFunc<T, Ts...>(F&& func, Args&&... args)
+    : _func(std::forward<F>(func)),
+    _args(std::forward<Args>(args)...)
+  {}
+  template <typename... Args, int... Is>
+  T func(std::tuple<Args...>& tup, TextBindHelper::index<Is...>)
+  {
+    return _func(std::get<Is>(tup)...);
+  }
+  template <typename... Args>
+  T func(std::tuple<Args...>& tup)
+  {
+    return func(tup, TextBindHelper::gen_seq<sizeof...(Args)>{});
+  }
+  const T get() {
+    return func(_args);
+  }
+};
+class TextBindCore {
+public:
+  virtual string tostr()
+  {
+    throw 1;
+    return "ERROR!";
+  }
+};
 template <typename... Ts>
-class TextBind {
+class TextBind : public TextBindCore {
 private:
   std::string str;
   std::tuple<Ts...> args;
@@ -76,14 +142,14 @@ public:
     str = s;
   }
   template<class F, class...Ts, std::size_t...Is>
-  void for_each_in_tuple(string& str, int& n, stringstream& ss, const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...>) {
+  void for_each_in_tuple(string& str, int& n, stringstream& ss, std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...>) {
     using expander = int[];
     (void)expander {
       0, ((void)func(str, n, ss, std::get<Is>(tuple)), 0)...
     };
   }
   template<class F, class...Ts>
-  void for_each_in_tuple(string& str, int& n, stringstream& ss, const std::tuple<Ts...> & tuple, F func) {
+  void for_each_in_tuple(string& str, int& n, stringstream& ss, std::tuple<Ts...> & tuple, F func) {
     for_each_in_tuple(str, n, ss, tuple, func, std::make_index_sequence<sizeof...(Ts)>());
   }
   string tostr()
@@ -91,7 +157,7 @@ public:
     stringstream ss;
     int n = 0;
     for_each_in_tuple(str, n, ss, args,
-      [](string& str, int& n, stringstream& ss, const auto &x) {
+      [](string& str, int& n, stringstream& ss, auto &x) {
       bool b = true;
       while (b) {
         switch (str[n]) {
@@ -108,7 +174,7 @@ public:
           ss << str[n]; n += 1; break;
         }
       }
-      ss << ((x.first.first).*(x.first.second))() + *(x.second);
+      ss << x.get();
     });
     while (n < str.size()) {
       switch (str[n]) {
@@ -128,10 +194,26 @@ public:
     return ss.str();
   }
 };
-///##################################################///
-//         DO NOT TOUCH THE TEXTBIND CLASS!!!         //
-///##################################################///
 
+///####################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
+///####################################################///
+/* Class how to use:
+ 1) Create a TextBind object specifying the template string, and the parameters
+ 2) Call the .tostr() function to substitute the current value
+Example:
+TextBind<
+  TextBindVar<float>,                                                             /// Substitute a variable
+  TextBindFunc<float, TStruct*, float*>,                                          /// Member function in TStruct class
+  TextBindFunc<string, string, int, int>                                          /// Global function
+> b("% asd \\% wa \\ nsd % %\\",                                                  /// Template string (% = to substitute, \% = print % character)
+  TextBindVar<float>(&n),                                                         /// Substitute variable "n"
+  TextBindFunc<float, TStruct*, float*>(&(TStruct::asd), &t, &x),                 /// Substitute return value of "TSruct::asd" function, called for "TStruct" object "t" with argument pointer to "x"
+  TextBindFunc<string, string, int, int>(testFunc, "Wubba lubba dub dub", 6, 5)   /// Substitute return value of "testFunc" with arguments ""Wubba lubba dub dub", 6, 5"
+);*/
+///####################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
+///####################################################///
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);

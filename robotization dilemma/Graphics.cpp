@@ -393,14 +393,36 @@ Graphics::SliderHwnd Graphics::createSlider(PanelHwnd id, xml_node<> *me) {
   return p;
 }
 
-template <typename ...Ts>
-Graphics::LabelBindHwnd<Ts...> Graphics::createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center) {
-  return createLabelBind<Ts...>(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, text, align);
+Graphics::LabelBindHwnd Graphics::createLabelBind(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center) {
+  return createLabelBind(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, center);
 }
-template <typename ...Ts>
-Graphics::LabelBindHwnd<Ts...> Graphics::createLabel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center) {
-  ElemHwnd elem = new LabelBind<Ts...>(lname, mincorner, maxcorner, bg, active, textColor, text, align);
-  return reinterpret_cast<LabelBindHwnd<Ts...>>(createElement(id, elem));
+Graphics::LabelBindHwnd Graphics::createLabelBind(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center) {
+  ElemHwnd elem = new LabelBind(lname, mincorner, maxcorner, bg, active, textColor, center);
+  return reinterpret_cast<LabelBindHwnd>(createElement(id, elem));
+}
+Graphics::LabelBindHwnd Graphics::createLabelBind(PanelHwnd id, xml_node<> *me) {
+  return createLabelBind(
+    id,
+    me->first_attribute("id")->value(),
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    strTo<int>(me->first_attribute("align")->value()));
+}
+
+void Graphics::deleteElements(WinHwnd id) {
+  deleteElements(id->myPanel);
 }
 
 Graphics::ElemHwnd Graphics::createElement(PanelHwnd id, ElemHwnd elem) {
@@ -417,10 +439,6 @@ void Graphics::deleteElements(PanelHwnd id) {
   id->deleteElements(false);
 }
 
-void Graphics::deleteElements(WinHwnd id) {
-  deleteElements(id->myPanel);
-}
-
 void Graphics::setElements(PanelHwnd id, xml_node<> *data) {
   for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling())
   {
@@ -430,6 +448,9 @@ void Graphics::setElements(PanelHwnd id, xml_node<> *data) {
     }
     else if (name == "label" || name == "text") {
       createLabel(id, pElem);
+    }
+    else if (name == "labelbind" || name == "textbind") {
+      createLabelBind(id, pElem);
     }
     else if (name == "container") {
       createContainer(id, pElem);
@@ -466,22 +487,6 @@ void Graphics::setElements(PanelHwnd id, string filename) {
   setElements(id, doc.first_node("body"));
 
   defaultResizeManager(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-}
-
-void Graphics::resetViewport() {
-  glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-
-  //glGetIntegerv(GL_VIEWPORT, arr);
-  glDisable(GL_DEPTH_TEST);
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glLoadIdentity();
-  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),
-    0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-  glColor3ub(0, 255, 0);
 }
 
 Graphics::ElemHwnd Graphics::getElementById(Graphics::PanelHwnd pId, string id) {

@@ -16,4 +16,7 @@ void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d);
 
 void renderNewRound(int id);
 
+power_type_W getCurrentUsedShipPower();
+power_type_W getCurrentGeneratedShipPower();
+
 void createMainMenu();

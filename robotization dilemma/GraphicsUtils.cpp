@@ -63,6 +63,21 @@ int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in) {
   return 0;
 }
 
+void Graphics::resetViewport() {
+  glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+  //glGetIntegerv(GL_VIEWPORT, arr);
+  glDisable(GL_DEPTH_TEST);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),
+    0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glColor3ub(0, 255, 0);
+}
 
 Coordiante::Coordiante() {
   x = 0;

@@ -116,6 +116,6 @@ void renderNewRound(int id) {
 }
 
 void createMainMenu() {
-  Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+  Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
   Graphics::deleteElements(objectGameSubWindow);
 }

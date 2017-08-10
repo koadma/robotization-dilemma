@@ -308,8 +308,16 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
 }
 
 #ifdef M_CLIENT
-void Object::setSidebarElement() {
-  cout << "Unimplemented type " << type() << endl;
+void Object::setSidebarElement(string filename) {
+  bool reset = true;
+  if (selected == NULL || selected->type() != type()) {
+    reset = true;
+  }
+  selected = this;
+  if (reset) {
+    Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), filename);
+
+  }
 }
 void Object::setSidebar() {
   cout << "Unimplemented type " << type() << endl;
@@ -338,93 +346,45 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d) {
   glutSolidSphere(_radius, 20, 20);
   glTranslated(- _relativePos.x, - _relativePos.y, - _relativePos.z);
 }
-
 void Sensor::setSidebar() {
-  //cout << type << " clicked " << health/float(maxHealth) << endl;
-  bool reset = true;
-  if (selected == NULL || selected->type() != type()) {
-    reset = true;
-  }
-  selected = this;
-  if (reset) {
-    setSidebarElement();
-  }
-
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarHealth"))->text = "Health: " + to_string(_health.getAt(timeNow)()) + " / " + to_string(_maxHealth);
+  setSidebarElement("html/sensor_settings.xml");
+  
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxPower, 0);
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_power.getAt(timeNow)(), 2);
-}
-void Sensor::setSidebarElement() {
-  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/sensor_settings.html");
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_power.getAt(timeNow)(), 2);
 }
 void Generator::setSidebar() {
-  //cout << type << " clicked " << health/float(maxHealth) << endl;
-  bool reset = true;
-  if (selected == NULL || selected->type() != type()) {
-    reset = true;
-  }
-  selected = this;
-  if (reset) {
-    setSidebarElement();
-  }
+  setSidebarElement("html/generator_settings.xml");
 
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarHealth"))->text = "Health: " + to_string(_health.getAt(timeNow)()) + " / " + to_string(_maxHealth);
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxPower, 0);
-  
-}
-void Generator::setSidebarElement() {
-  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/generator_settings.html");
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxPower, 0);
 }
 void Engine::setSidebar() {
-  //cout << type << " clicked " << health/float(maxHealth) << endl;
-  bool reset = true;
-  if (selected == NULL || selected->type() != type()) {
-    reset = true;
-  }
-  selected = this;
-  if (reset) {
-    setSidebarElement();
-  }
+  setSidebarElement("html/engine_settings.xml");
 
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarHealth"))->text = "Health: " + to_string(_health.getAt(timeNow)()) + " / " + to_string(_maxHealth, 0);
-    reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(getUsedPower(timeNow), 3) + " / " + to_string(_maxPower, 0);
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.getAt(timeNow)().x, 2);
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.getAt(timeNow)().y, 2);
-    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.getAt(timeNow)().z, 2);
-   
-}
-void Engine::setSidebarElement() {
-  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/engine_settings.html");
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(getUsedPower(timeNow), 3) + " / " + to_string(_maxPower, 0);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.getAt(timeNow)().x, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.getAt(timeNow)().y, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.getAt(timeNow)().z, 2);
 }
 void Laser::setSidebar() {
-  bool reset = true;
-  if (selected == NULL || selected->type() != type()) {
-    reset = true;
-  }
-  selected = this;
-  if (reset) {
-    setSidebarElement();
-  }
+  setSidebarElement("html/laser_settings.xml");
 
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectLaserSidebarHealth"))->text = "Health: " + to_string(_health.getAt(timeNow)()) + " / " + to_string(_maxHealth, 0);
   /*reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarEnergyInput"))->text = to_string(_shot.first, 3);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(_shot.second.x, 2);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputY"))->text = to_string(_shot.second.y, 2);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputZ"))->text = to_string(_shot.second.z, 2);*/
 }
-void Laser::setSidebarElement() {
-  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/laser_settings.html");
-}
 void Ship::setSidebar() {
   selected = NULL;
-  setSidebarElement();
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text = to_string(reinterpret_cast<::Ship*>(this)->getUsedShipPower(timeNow)) + " / " + to_string(reinterpret_cast<::Ship*>(this)->getGeneratedShipPower(timeNow));
-
+  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.xml");
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text =
+    new TextBind<
+    TextBindFunc<power_type_W>,
+    TextBindFunc<power_type_W>
+    >("% / %",
+      TextBindFunc<power_type_W>(getCurrentUsedShipPower),
+      TextBindFunc<power_type_W>(getCurrentGeneratedShipPower)
+      );
 }
-void Ship::setSidebarElement() {
-  Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.html");
-}
-
 #endif
 
 Object::~Object() {

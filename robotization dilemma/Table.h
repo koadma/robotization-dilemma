@@ -5,7 +5,7 @@
 
 class TableRow : public GUIElement {
 public:
-  list<LabelBindCore*> data;
+  list<GUIElement*> data;
   int align;
   TableRow(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, int lalign) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {

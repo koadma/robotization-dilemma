@@ -18,4 +18,6 @@ void mainMenuPlayButton();
 
 void mainMenuExitButton();
 
+void bindLabels();
+
 int InitWindow();

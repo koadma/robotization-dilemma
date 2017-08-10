@@ -25,7 +25,7 @@ void ingameLaserSidebarAccInputZ(string s) {
 }
 
 void ingameLaserSidebarEnergyInput(string s) {
-  //reinterpret_cast<Laser*>(selected)->setEnergy(strTo<float>(s));
+  //reinterpret_cast<Laser*>(selected)->set(strTo<float>(s));
 }
 
 void ingameSensorSidebarEnergyInput(string s) {
@@ -85,19 +85,19 @@ void joinMenuInputButton() {
 }
 
 void gameMenuJoinButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/join_menu.html");
+  Graphics::setElements(objectMenuSubWindow, "html/join_menu.xml");
 }
 
 void gameMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
 }
 
 void mainMenuStoryModePlayButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/story_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
 }
 
 void mainMenuPlayButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.html");
+  Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
 }
 
 void mainMenuExitButton() {
@@ -105,51 +105,113 @@ void mainMenuExitButton() {
 }
 
 void storyMenuJoinButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/newsingle_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/newsingle_menu.xml");
 }
 
 void storyMenuLoadButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void storyMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void ffaMenuNewGameButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/game_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
 }
 
 void ffaMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void ffaMenuLoadGameButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void newSingleMenu3PlayerButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void newSingleMenu4PlayerButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void newSingleMenu5PlayerButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 
 void newSingleMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/story_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
 }
 
 void joinMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/game_menu.html");
+	Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
 }
 
 void mainMenuDemoSliderInput(float val) {
   timeNow = val;
+}
+
+string getCurrentName() {
+  if (selected != NULL) {
+    return to_string(selected->type());
+  }
+  if (ship != NULL) {
+    return "Ship";
+  }
+  return "";
+}
+
+int getCurrentHealth() {
+  if (selected != NULL) {
+    return selected->getHealth(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getHealth(timeNow);
+  }
+  return 0;
+}
+
+int getCurrentMaxHealth() {
+  if (selected != NULL) {
+    return selected->getMaxHealth(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getMaxHealth(timeNow);
+  }
+  return 0;
+}
+
+power_type_W getCurrentUsedShipPower() {
+  if (ship != NULL) {
+    return ship->getUsedShipPower(timeNow);
+  }
+  return 0;
+}
+
+power_type_W getCurrentGeneratedShipPower() {
+  if (ship != NULL) {
+    return ship->getMaxHealth(timeNow);
+  }
+  return 0;
+}
+
+void bindLabels() {
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectSidebarName"))->text =
+    new TextBind<
+    TextBindFunc<string>
+    >("%",
+      TextBindFunc<string>(getCurrentName)
+      );
+
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectSidebarHealth"))->text =
+    new TextBind<
+    TextBindFunc<int>,
+    TextBindFunc<int>
+    >("% / %",
+      TextBindFunc<int>(getCurrentHealth),
+      TextBindFunc<int>(getCurrentMaxHealth)
+      );
 }
 
 int InitWindow() {

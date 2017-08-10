@@ -171,6 +171,13 @@ public:
     return amount;
   } //no change
 
+  int getHealth(time_type_s time) {
+    return _health.getAt(time)();
+  }
+  int getMaxHealth(time_type_s time) {
+    return _maxHealth;
+  }
+
   virtual mpssVec3 getAccel(time_type_s time) {
     return {0,0,0};
   }
@@ -179,7 +186,7 @@ public:
 
 #ifdef M_CLIENT
   list< pair<double, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
-  virtual void setSidebarElement();
+  virtual void setSidebarElement(string filename);
   virtual void setSidebar();
   void drawObject(float camcx, float camcy, float camcz, float d);
 #endif
@@ -231,7 +238,6 @@ public:
   void getPathVirt(time_type_s time, Path* p);
 
 #ifdef M_CLIENT
-  void setSidebarElement();
   void setSidebar();
 #endif
 
@@ -264,7 +270,6 @@ public:
   }
 
 #ifdef M_CLIENT
-  void setSidebarElement();
   void setSidebar();
 #endif
 
@@ -293,7 +298,6 @@ public:
   }*/
 
 #ifdef M_CLIENT
-  void setSidebarElement();
   void setSidebar();
 #endif
 
@@ -330,7 +334,6 @@ public:
   } //no change
 
 #ifdef M_CLIENT
-  void setSidebarElement();
   void setSidebar();
 #endif
 
@@ -382,6 +385,22 @@ public:
   void refreshEnergy(time_type_s time);
   Event* runOut(); //when will storage run out
 
+  int getHealth(time_type_s time) {
+    int sum = 0;
+    for(auto&& it : objects) {
+      sum += it->getHealth(time);
+    }
+    return sum;
+  }
+  int getMaxHealth(time_type_s time) {
+    int sum = 0;
+    for (auto&& it : objects) {
+      sum += it->getMaxHealth(time);
+    }
+    return sum;
+  }
+
+
   mpssVec3 getAccel(time_type_s time) {
     mpssVec3 sum = { 0,0,0 };
     for (auto it : objects) {
@@ -421,6 +440,12 @@ public:
     no->parentShip = this;
 
     objects.push_back(no);
+
+    Movement m = Movement();
+    m.vel = {0, 200, 0};
+    m.acc = {0, -10, 0};
+
+    mov.addFrame(0, m);
   }
 
 #ifdef M_SERVER
@@ -439,7 +464,6 @@ public:
   void commit();
   void newTurn(int id);
 
-  void setSidebarElement();
   void setSidebar();
   void setSidebar(vec3<double> ori, vec3<double> dir) {
     list< pair<double, pair<Object*, Path*>>> inters;

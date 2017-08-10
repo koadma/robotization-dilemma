@@ -56,8 +56,7 @@ namespace Graphics {
   typedef Button* ButtonHwnd;
   typedef TextInput* TextInputHwnd;
   typedef Label* LabelHwnd;
-  template <typename ...Ts>
-  using LabelBindHwnd = LabelBind<Ts...>*;
+  typedef LabelBind* LabelBindHwnd;
   typedef Canvas* CanvasHwnd;
   typedef Slider* SliderHwnd;
   typedef Graphics::GWindow* WinHwnd;
@@ -119,10 +118,9 @@ namespace Graphics {
   SliderHwnd createSlider(PanelHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
   SliderHwnd createSlider(PanelHwnd id, xml_node<> *me);
 
-  template <typename ...Ts>
-  LabelBindHwnd<Ts...> createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
-  template <typename ...Ts>
-  LabelBindHwnd<Ts...> createLabel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  LabelBindHwnd createLabelBind(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center);
+  LabelBindHwnd createLabelBind(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center);
+  LabelBindHwnd createLabelBind(PanelHwnd id, xml_node<> *me);
 
   ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
 
@@ -135,8 +133,6 @@ namespace Graphics {
   void setElements(PanelHwnd id, xml_node<> *data);
 
   void setElements(PanelHwnd id, string filename);
-
-  void resetViewport();
 
   ElemHwnd getElementById(PanelHwnd pId, string id);
 
