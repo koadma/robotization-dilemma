@@ -128,13 +128,14 @@ struct EventSort{
 //                  Ship parts                  //
 ///############################################///
 
-class Object {       //Order of serialisation
+class Object {
 protected:
   uint64_t _ID;
-  mVec3 _relativePos;         //1
-  int _maxHealth;             //2
-  keyframe<value<int> > _health;      //3
-  distance_type_m _radius;    //4
+  mVec3 _relativePos;
+  int _maxHealth;
+  keyframe<value<int> > _health;
+  distance_type_m _radius;
+  string _name;
 public:
 
   Object(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, uint64_t ID) {
@@ -161,9 +162,11 @@ public:
     Engine = 7,
     Laser = 8
   };
-  virtual int type() { throw 1; return 0; }         //0
+  virtual int type() { throw 1; return 0; }
+  string name() { return _name; }
   virtual power_type_W getGeneratedPower(time_type_s time) { return 0;}
   virtual power_type_W getUsedPower(time_type_s time) {return 0;}
+  virtual power_type_W getMaxPower(time_type_s time) {return 0;}
   virtual energy_type_J getMaxEnergy(time_type_s time) {return 0;}
   virtual energy_type_J getStoredEnergy(time_type_s time) {return 0;}
   virtual energy_type_J useEnergy(time_type_s time, energy_type_J amount){return amount;} //no change
@@ -225,11 +228,13 @@ public:
   Sensor(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _power.addFrame(0, 0);
     _maxPower = maxPower;
+    _name = "Sensor";
   }
 
   int type() {return Type::Sensor;}
 
   power_type_W getUsedPower(time_type_s time) { return _power.getAt(time)(); }
+  power_type_W getMaxPower(time_type_s time) { return _maxPower; }
 
   void setPower(time_type_s time, power_type_W val) {
     _power.addFrame(time, max(min(val, _maxPower), 0.0));
@@ -254,11 +259,14 @@ public:
   Engine(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower, mpssVec3 accel, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _accel.addFrame(0, accel);
     _maxPower = maxPower;
+    _name = "Engine";
+
   }
 
   int type() { return Type::Engine; }
-  virtual power_type_W getUsedPower(time_type_s time) { return _accel.getAt(time)().sqrlen(); }
-  
+  power_type_W getUsedPower(time_type_s time) { return _accel.getAt(time)().sqrlen(); }
+  power_type_W getMaxPower(time_type_s time) { return _maxPower; }
+
   mpssVec3 getAccel(time_type_s time) {
     return _accel.getAt(time)();
   }
@@ -282,13 +290,31 @@ class Laser : public Object {       //Order of serialisation
 private:
   list<pair<time_type_s,pair<energy_type_J, sVec3> > > _shots; //energy, directipn
   //pair<energy_type_J, sVec3> _shot;
-
+  keyframe<value<energy_type_J>> _energyStored;
+  keyframe<value<energy_type_J>> _maxStorage;
 public:
   Laser(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
-
+    _name = "Laser";
+    _energyStored.addFrame(0, 0);
+    _maxStorage.addFrame(0, 0);
   }
 
   int type() { return Type::Laser; }
+
+  energy_type_J getMaxEnergy(time_type_s time) { return 0; }
+  energy_type_J getStoredEnergy(time_type_s time) { return 0; }
+  energy_type_J useEnergy(time_type_s time, energy_type_J amount) {
+    energy_type_J nenergy = _energyStored.getAt(time)() - amount;
+    energy_type_J remain = max(0.0, -nenergy);
+    _energyStored.addFrame(time, max(0.0, nenergy)); //cant go below 0 energy
+    return max(0.0, remain);
+  }
+  energy_type_J chargeEnergy(time_type_s time, energy_type_J amount) {
+    energy_type_J nenergy = _energyStored.getAt(time)() + amount;
+    energy_type_J extra = nenergy - _maxStorage.getAt(time)();
+    _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
+    return max(0.0, extra);
+  }
 
   void setComponent(time_type_s time, pair<energy_type_J, sVec3> shot) {
     _shots.push_back({time, shot});
@@ -308,30 +334,34 @@ public:
 };
 class Generator : public Object {       //Order of serialisation
 private:
-  power_type_W _maxPower;
-  energy_type_J _energyStored;
-  energy_type_J _maxStorage;
+  keyframe<value<power_type_W>> _maxPower;
+  keyframe<value<energy_type_J>> _energyStored;
+  keyframe<value<energy_type_J>> _maxStorage;
 public:
   Generator(mVec3 relativePos, int maxHealth, float radius, int health, float maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
-    _maxPower = maxPower;
+    _maxPower.addFrame(0, maxPower);
+    _name = "Generator";
+    _energyStored.addFrame(0, 0);
+    _maxStorage.addFrame(0, 0);
   }
   int type() { return Type::Generator; }
   
-  power_type_W getGeneratedPower() { return _maxPower; }
-  energy_type_J getMaxEnergy() { return _maxStorage; }
-  energy_type_J getStoredEnergy() { return _energyStored; }
-  energy_type_J useEnergy(energy_type_J amount) {
-    _energyStored -= amount;
-    energy_type_J remain = -_energyStored;
-    _energyStored = max(0.0, _energyStored); //cant go below 0 energy
+  power_type_W getGeneratedPower(time_type_s time) { return _maxPower.getAt(time)(); }
+  power_type_W getMaxPower(time_type_s time) { return _maxPower.getAt(time)(); }
+  energy_type_J getMaxEnergy(time_type_s time) { return _maxStorage.getAt(time)(); }
+  energy_type_J getStoredEnergy(time_type_s time) { return _energyStored.getAt(time)(); }
+  energy_type_J useEnergy(time_type_s time, energy_type_J amount) {
+    energy_type_J nenergy = _energyStored.getAt(time)() - amount;
+    energy_type_J remain = max(0.0,-nenergy);
+    _energyStored.addFrame(time, max(0.0, nenergy)); //cant go below 0 energy
     return max(0.0, remain); 
-  } //no change
-  energy_type_J chargeEnergy(energy_type_J amount) {
-    _energyStored += amount;
-    energy_type_J extra = _energyStored - _maxStorage;
-    _energyStored = min(_maxStorage, _energyStored); //cant go below 0 energy
+  }
+  energy_type_J chargeEnergy(time_type_s time, energy_type_J amount) {
+    energy_type_J nenergy = _energyStored.getAt(time)() + amount;
+    energy_type_J extra = nenergy - _maxStorage.getAt(time)();
+    _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
     return max(0.0, extra);
-  } //no change
+  }
 
 #ifdef M_CLIENT
   void setSidebar();
@@ -360,7 +390,7 @@ public:
     list< pair<double, pair<Object*, Path*>>> res;
     auto it = objects.begin();
     while (it != objects.end()) {
-      res.splice(res.begin(), (*it)->intersect(p));
+      res.splice(res.end(), (*it)->intersect(p));
       ++it;
     }
     return res;

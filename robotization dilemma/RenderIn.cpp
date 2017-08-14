@@ -154,7 +154,7 @@ void mainMenuDemoSliderInput(float val) {
 
 string getCurrentName() {
   if (selected != NULL) {
-    return to_string(selected->type());
+    return selected->name();
   }
   if (ship != NULL) {
     return "Ship";
@@ -182,16 +182,29 @@ int getCurrentMaxHealth() {
   return 0;
 }
 
-power_type_W getCurrentUsedShipPower() {
+power_type_W getCurrentUsedPower() {
+  if (selected != NULL) {
+    return selected->getUsedPower(timeNow);
+  }
   if (ship != NULL) {
     return ship->getUsedShipPower(timeNow);
   }
   return 0;
 }
 
-power_type_W getCurrentGeneratedShipPower() {
+power_type_W getCurrentMaxPower() {
+  if (selected != NULL) {
+    return selected->getMaxPower(timeNow);
+  }
+  return 0;
+}
+
+power_type_W getCurrentGeneratedPower() {
+  if (selected != NULL) {
+    return selected->getGeneratedPower(timeNow);
+  }
   if (ship != NULL) {
-    return ship->getMaxHealth(timeNow);
+    return ship->getGeneratedShipPower(timeNow);
   }
   return 0;
 }

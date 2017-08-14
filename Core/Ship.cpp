@@ -53,7 +53,7 @@ void SensorPow::setV(DataElement* data, Game* game) {
 }
 void LaserShot::apply(Game *g) {
   Shot* s = new Shot();
-  s->energy = _energy - _o->useEnergy(_time, _energy);
+  s->energy = _energy/* - _o->useEnergy(_time, _energy)*/;///TODO When energy system is stabilized, enable
   s->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   s->originID = _o->getId();
   s->origintime = _time;
@@ -174,6 +174,7 @@ list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
         res.push_back({ itt,{ this, p } });
       }
     }
+    ++it;
   }
   return res;
 }
@@ -202,9 +203,14 @@ void Object::getStatus(DataElement* data) {
   ide->_core->fromType<uint64_t>(_ID);
   data->addChild(ide);
 
+  DataElement* name = new DataElement();
+  name->_core->fromType<string>(_name);
+  data->addChild(name);
+
   DataElement* vire = new DataElement();
   getVStatus(vire);
   data->addChild(vire);
+
 }
 void Object::setStatus(DataElement* data) {
   _relativePos.set(data->_children[1]);
@@ -217,7 +223,9 @@ void Object::setStatus(DataElement* data) {
 
   _ID = data->_children[5]->_core->toType<uint64_t>();
 
-  setVStatus(data->_children[6]);
+  _name = data->_children[6]->_core->toType<string>();
+  
+  setVStatus(data->_children[7]);
 }
 void Object::getVStatus(DataElement* data) {
 
@@ -253,13 +261,24 @@ void Engine::setVStatus(DataElement* data) {
 }
 void Generator::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
-  maxe->_core->fromType<power_type_W>(_maxPower);
+  _maxPower.get(maxe);
   data->addChild(maxe);
+
+  DataElement* store = new DataElement();
+  _energyStored.get(store);
+  data->addChild(store);
+
+  DataElement* mstoe = new DataElement();
+  _maxStorage.get(mstoe);
+  data->addChild(mstoe);
 }
 void Generator::setVStatus(DataElement* data) {
-  _maxPower = data->_children[0]->_core->toType<float>();
+  _maxPower.set(data->_children[0]);
+  _energyStored.set(data->_children[1]);
+  _maxStorage.set(data->_children[2]);
 }
 void Laser::getVStatus(DataElement* data) {
+  DataElement* shote = new DataElement();
   for (auto&& it : _shots) {
     DataElement* ne = new DataElement();
     
@@ -275,20 +294,31 @@ void Laser::getVStatus(DataElement* data) {
     ne->addChild(enee);
     ne->addChild(dire);
 
-    data->addChild(ne);
+    shote->addChild(ne);
   }
-  
+  data->addChild(shote);
+
+  DataElement* store = new DataElement();
+  _energyStored.get(store);
+  data->addChild(store);
+
+  DataElement* mstoe = new DataElement();
+  _maxStorage.get(mstoe);
+  data->addChild(mstoe);
 }
 void Laser::setVStatus(DataElement* data) {
-  for (auto&& it : data->_children) {
+  for (auto&& it : data->_children[0]->_children) {
 
     pair<time_type_s, pair<energy_type_J, sVec3> > nVal;
 
     vSFunc<time_type_s>(nVal.first, it->_children[0]);
     vSFunc<energy_type_J>(nVal.second.first, it->_children[1]);
     nVal.second.second.set(it->_children[2]);
-
   }
+
+  _energyStored.set(data->_children[1]);
+  _maxStorage.set(data->_children[2]);
+
 }
 
 void Sensor::getPathVirt(time_type_s time, Path* p) {
@@ -355,12 +385,24 @@ void Sensor::setSidebar() {
 void Generator::setSidebar() {
   setSidebarElement("html/generator_settings.xml");
 
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text = "Max output: " + to_string(_maxPower, 0);
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text =
+    new TextBind<
+    TextBindFunc<power_type_W>
+    >("Max: %",
+      TextBindFunc<power_type_W>(getCurrentMaxPower)
+      );
 }
 void Engine::setSidebar() {
   setSidebarElement("html/engine_settings.xml");
 
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text = to_string(getUsedPower(timeNow), 3) + " / " + to_string(_maxPower, 0);
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text =
+    new TextBind<
+    TextBindFunc<power_type_W>,
+    TextBindFunc<power_type_W>
+    >("% / %",
+      TextBindFunc<power_type_W>(getCurrentUsedPower),
+      TextBindFunc<power_type_W>(getCurrentMaxPower)
+      );
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.getAt(timeNow)().x, 2);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.getAt(timeNow)().y, 2);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.getAt(timeNow)().z, 2);
@@ -381,8 +423,8 @@ void Ship::setSidebar() {
     TextBindFunc<power_type_W>,
     TextBindFunc<power_type_W>
     >("% / %",
-      TextBindFunc<power_type_W>(getCurrentUsedShipPower),
-      TextBindFunc<power_type_W>(getCurrentGeneratedShipPower)
+      TextBindFunc<power_type_W>(getCurrentUsedPower),
+      TextBindFunc<power_type_W>(getCurrentGeneratedPower)
       );
 }
 #endif
@@ -395,18 +437,22 @@ void Object::collectEvents(list<StateChange*> &addTo, time_type_s time) {
 
 }
 void Sensor::collectEvents(list<StateChange*> &addTo, time_type_s time) {
-  SensorPow* ev = new SensorPow();
-  ev->_power = _power.getAt(time)();
-  ev->_o = this;
-  ev->_time = time;
-  addTo.push_back(ev);
+  for(auto&& it : _power._frames) {
+    SensorPow* ev = new SensorPow();
+    ev->_power = it.second();
+    ev->_o = this;
+    ev->_time = it.first;
+    addTo.push_back(ev);
+  }
 }
 void Engine::collectEvents(list<StateChange*> &addTo, time_type_s time) {
-  EngineAcc* ev = new EngineAcc();
-  ev->_acc = _accel.getAt(time)();
-  ev->_o = this;
-  ev->_time = time;
-  addTo.push_back(ev);
+  for (auto&& it : _accel._frames) {
+    EngineAcc* ev = new EngineAcc();
+    ev->_acc = it.second();
+    ev->_o = this;
+    ev->_time = it.first;
+    addTo.push_back(ev);
+  }
 }
 void Laser::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   for(auto&& it : _shots) {

@@ -6,7 +6,7 @@
 template<typename T>
 struct HasGetMethod
 {
-  template<typename U, size_t(U::*)() const> struct SFINAE {};
+  template<typename U, void(U::*)(DataElement*)> struct SFINAE {};
   template<typename U> static char Test(SFINAE<U, &U::get>*);
   template<typename U> static int Test(...);
   static const bool Has = sizeof(Test<T>(0)) == sizeof(char);
@@ -15,7 +15,7 @@ struct HasGetMethod
 template<typename T>
 struct HasSetMethod
 {
-  template<typename U, size_t(U::*)() const> struct SFINAE {};
+  template<typename U, void(U::*)(DataElement*)> struct SFINAE {};
   template<typename U> static char Test(SFINAE<U, &U::set>*);
   template<typename U> static int Test(...);
   static const bool Has = sizeof(Test<T>(0)) == sizeof(char);
