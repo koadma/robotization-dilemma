@@ -9,7 +9,7 @@ void Event::apply(Game *g) {
   throw 1;
 }
 void Collision::apply(Game *g) {
-  _o->getPath(_time, _p);
+  _o->getPath(_time, _p, g);
 }
 void BatteryDrain::apply(Game *g) {
   cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
@@ -31,13 +31,15 @@ void StateChange::setV(DataElement* data, Game* game) {
 
 }
 void EngineAcc::apply(Game *g) {
-  //_o->parentShip->moveShip(_time);
-  //reinterpret_cast<Engine*>(_o)->setComponent(0, _acc.x);
-  //reinterpret_cast<Engine*>(_o)->setComponent(1, _acc.y);
-  //reinterpret_cast<Engine*>(_o)->setComponent(2, _acc.z);
-  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  reinterpret_cast<Engine*>(_o)->setAccel(_time, _acc);
+
   g->removeIntersect(_o->parentShip);
   g->calcIntersect(_o->parentShip); //recalculate ship related future intersections
+
+  ThermalRadiation ev;
+  ev._o = _o;
+  ev._time = _time;
+  ev.apply(game);
 }
 void EngineAcc::setV(DataElement* data, Game* game) {
   _acc.set(data->_children[0]);
@@ -160,6 +162,7 @@ using namespace std;
 Movement Object::getMovement(time_type_s time) {
   Movement m = parentShip->mov.getAt(time);
   m.pos = m.pos + _relativePos;
+  m.radius = _radius;
   return m;
 }
 list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
@@ -321,11 +324,35 @@ void Laser::setVStatus(DataElement* data) {
 
 }
 
+#ifdef M_SERVER
+void Object::getPath(time_type_s time, Path* p, Game* g) {
+  if ((p->type() == Path::PathTypeShot) && (p->originID != _ID)) {
+    _health.addFrame(time,
+      value<int>(max(
+        0,
+        _health.getAt(time)() - int(((Shot*)p)->energy / 50)
+        ))); //TODO BETTER
+  }
+  if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && ((Bubble*)p)->getFlux(time) > BUBBLE_REMOVE && ((Bubble*)p)->btype != Bubble::Chat) { //Thermal and ping are reflected
+    Bubble* b = new Bubble();
+    b->btype = ((Bubble*)p)->btype;
+    b->emitter = getMovement(time);
+    b->energy = _radius*_radius*PI*((Bubble*)p)->getFlux(time);
+    b->gEmissionTime = time;
+    b->origin = getMovement(time).pos;
+    b->originID = _ID;
+
+    g->calcIntersect(b);
+    g->paths.push_back(b);
+  }
+  getPathVirt(time, p);
+}
 void Sensor::getPathVirt(time_type_s time, Path* p) {
   if (p->type() == Path::PathTypeBubble) {
     float h = _health.getAt(time)() / float(_maxHealth);
+    cout << "SENSOR " << _ID << " EN " << reinterpret_cast<Bubble*>(p)->energy << " FROM " << p->originID << endl;
     if (ran1() < 2 * (1 - 1 / (1 + h))) {
-      float e = reinterpret_cast<Bubble*>(p)->energy / _power.getAt(time)();
+      float e = reinterpret_cast<Bubble*>(p)->energy * _power.getAt(time)();
       if (ran1() < 1 / (1 + pow(2, (1 / e - e) * 3))) { //detect
         cout << "Detected" << endl;
         Sighting* s = new Sighting();
@@ -336,14 +363,32 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
     }
   }
 }
+#endif
+
+void Engine::setAccel(time_type_s time, mpssVec3 acc) {
+  Movement m = parentShip->mov.getAt(time);
+  m.acc = parentShip->getAccel(time);
+
+  _accel.addFrame(time, acc);
+
+  m.acc += acc;
+  parentShip->mov.addFrame(time, m);
+
+  parentShip->refreshEnergy(time); //recalculate ship energy info
+}
+void Engine::setComponent(time_type_s time, int c, acc_type_mperss val) {
+  mpssVec3 nval = _accel.getAt(time)();
+  nval[c] = val;
+  setAccel(time, nval);
+}
 
 #ifdef M_CLIENT
 void Object::setSidebarElement(string filename) {
   bool reset = true;
-  if (selected == NULL || selected->type() != type()) {
+  if (selectedo == NULL || selectedo->type() != type()) {
     reset = true;
   }
-  selected = this;
+  selectedo = this;
   if (reset) {
     Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), filename);
 
@@ -370,9 +415,9 @@ list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori,
   }
   return res;
 }
-void Object::drawObject(float camcx, float camcy, float camcz, float d) {
+void Object::drawObject(float camcx, float camcy, float camcz, float d, time_type_s time) {
   glTranslated(_relativePos.x, _relativePos.y, _relativePos.z);
-  setColor(0xffdf0000 + int(0xdf * _health.getAt(timeNow)() / float(_maxHealth)) + 0x100 * int(0xdf * _health.getAt(timeNow)() / float(_maxHealth)));
+  setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth)) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth)));
   glutSolidSphere(_radius, 20, 20);
   glTranslated(- _relativePos.x, - _relativePos.y, - _relativePos.z);
 }
@@ -410,13 +455,15 @@ void Engine::setSidebar() {
 void Laser::setSidebar() {
   setSidebarElement("html/laser_settings.xml");
 
-  /*reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarEnergyInput"))->text = to_string(_shot.first, 3);
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(_shot.second.x, 2);
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputY"))->text = to_string(_shot.second.y, 2);
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputZ"))->text = to_string(_shot.second.z, 2);*/
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectLaserSidebarSurefireLabel"))->text =
+    new TextBind<
+    TextBindFunc<string>
+    >("%",
+      TextBindFunc<string>(isSurefire)
+      );
 }
 void Ship::setSidebar() {
-  selected = NULL;
+  selectedo = NULL;
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.xml");
   reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text =
     new TextBind<
@@ -638,12 +685,13 @@ void Ship::newTurn(int id) {
   canMove = true;
   lastEvtTime = (id - 1) * ROUND_TIME;
   renderNewRound(id);
+  timeNow = ROUND_TIME*(id - 1);
 }
 void Ship::drawSightings(float camcx, float camcy, float camcz, float d) {
   auto it = sightings.begin();
 
   while (it != sightings.end()) {
-    (*it)->drawSighting(camcx, camcy, camcz, d, SOL);
+    (*it)->drawSighting(camcx, camcy, camcz, d, SOL, timeNow);
     ++it;
   }
 }
@@ -654,7 +702,7 @@ void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool b) {
     glTranslatef(mov.getAt(timeNow).pos.x, mov.getAt(timeNow).pos.y, mov.getAt(timeNow).pos.z);
   }
   while (it != objects.end()) {
-    (*it)->drawObject(camcx, camcy, camcz, d);
+    (*it)->drawObject(camcx, camcy, camcz, d, timeNow);
     ++it;
   }
   if (b) {
@@ -692,6 +740,41 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkC* thisptr) {
   }
   return 0;
 }
+void Ship::selectSighting(vec3<double> ori, vec3<double> dir) {
+  list<pair<double, Sighting*>> inters;
+
+  Shot p;
+  p.origin = ori;
+  p.origintime = 0;
+  p.vel = dir;
+
+  auto it = sightings.begin();
+
+  while (it != sightings.end()) {
+    if((*it)->getFirst() < timeNow) {
+      Movement m = (*it)->getAt(timeNow);
+      m.acc = { 0,0,0 };
+      m.vel = { 0,0,0 };
+      vector<double> temp = intersectPaths(&m, &p);
+      for (auto&& itt : temp) {
+        inters.push_back({ itt, *it });
+      }
+    }
+    ++it;
+  }
+
+  inters.sort();
+
+  if (inters.size()) {
+    selecteds = inters.begin()->second;
+    //inters.begin()->second->select();
+  }
+  else {
+    selecteds = NULL;
+    //selectSighting();
+  }
+}
+
 #endif
 /*Object* Ship::getObject(int type) {
   auto it = objects.begin();
@@ -837,8 +920,14 @@ Ship::~Ship() {
 
 }
 
+bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction) {
+  direction.randomize(100);
+  return fmodf(when, 0.5)<0.25;
+}
+
 #ifdef M_CLIENT
 Ship* ship;
 time_type_s timeNow;
+Object* selectedo;
+Sighting* selecteds;
 #endif
-Object* selected;

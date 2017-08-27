@@ -290,7 +290,7 @@ T deserializeT(unsigned char* data, int dataLen) {
 
 double ran1(long int nseed = 0);
 
-uint64_t mix(uint32_t a, uint32_t b);
+uint64_t mix(uint64_t a, uint64_t b);
 uint32_t low(uint64_t a);
 uint32_t high(uint64_t a);
 

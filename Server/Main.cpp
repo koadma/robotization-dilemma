@@ -40,13 +40,21 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
   if(ship == NULL) {
     int loginState = checkLogin(data, id);
     if (loginState == LoginErrorOk) { //If can join
-
-      Ship* newShip = new Ship(game->drones.size());
+      int sid = game->drones.size();
+      Ship* newShip = new Ship(sid);
       newShip->connectedClient = thisptr;
       thisptr->ConnectedShip = newShip;
 
       DataElement* de = new DataElement();
-      de->_core->fromType<int>(loginState);
+
+      DataElement* state = new DataElement();
+      state->_core->fromType<int>(loginState);
+      de->addChild(state);
+
+      DataElement* ide = new DataElement();
+      ide->_core->fromType<uint64_t>(sid);
+      de->addChild(ide);
+
       thisptr->SendData(de, PacketLogin);
 
       game->addShip(newShip);

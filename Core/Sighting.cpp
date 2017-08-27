@@ -109,21 +109,35 @@ Sighting::~Sighting() {
 */
 
 #ifdef M_CLIENT
-void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel) {
+void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel, time_type_s time) {
   glLineWidth(2.0f);
 
   glBegin(GL_LINES);
-  glColor3f(1.0f, 1.0f, 1.0f);
   if (keyframes.size()) {
     time_type_s t = keyframes.getFirst();
 
     while (t < keyframes.getLast() + ROUND_TIME) {
       Movement estpos = getAt(t);
+      if (t < keyframes.getLast()) {
+        glColor3f(1.0f, 1.0f, 1.0f);
+      }
+      else {
+        glColor3f(0.2f, 1.0f, 0.2f);
+      }
       glVertex3d(estpos.pos.x, estpos.pos.y, estpos.pos.z);
       t += ROUND_TIME * 0.1f;
     }
   }
-
+  
   glEnd();
+
+  if (keyframes.size() && keyframes.getFirst() < time) {
+    Movement now = keyframes.getAt(time);
+
+    glTranslated(now.pos.x, now.pos.y, now.pos.z);
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glutSolidSphere(now.radius, 20, 20);
+    glTranslated(-now.pos.x, -now.pos.y, -now.pos.z);
+  }
 }
 #endif

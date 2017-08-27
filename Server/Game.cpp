@@ -69,7 +69,7 @@ void Game::removeIntersect(Path* path) {
   }
 }
 void Game::calcIntersect(Object* object) {
-  for (auto itb : paths) {
+  for (auto&& itb : paths) {
     list< pair<double, pair<Object*, Path*>>> inters = object->intersect(itb);
     for (auto it : inters) {
       Collision* coll = new Collision();
@@ -89,7 +89,7 @@ void Game::calcIntersect(Path* path) {
   auto its = drones.begin();
   while (its != drones.end()) {
     list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(path);
-    for (auto it : inters) {
+    for (auto&& it : inters) {
       Collision* coll = new Collision();
       coll->_time = it.first;
       coll->_o = it.second.first;
@@ -100,18 +100,28 @@ void Game::calcIntersect(Path* path) {
   }
 }
 void Game::recalcIntersects() {
-  for (auto it : drones) {
+  for (auto&& it : drones) {
     calcIntersect(it);
   }
 }
 void Game::simulate(float from, float till) {
   //recalcIntersects();
+  cout << "SIM " << from << " " << till << endl;
   auto it = events.begin();
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
       (*it)->apply(this);
+      auto it2 = it;
+      ++it;
+      cout << "PEVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      events.erase(it2);
     }
-    ++it;
+    else {
+      auto it2 = it;
+      ++it;
+      cout << "DEVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      events.erase(it2);
+    }
   }
   newTurn();
 }

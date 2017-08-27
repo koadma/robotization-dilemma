@@ -54,14 +54,11 @@ void Movement::set(DataElement* data) {
   //acc
   acc.set(data->_children[3]);
 
-  //type
-  //type = data->_children[0]->_core->toType<int>();
-
   //pathData
-  pathData = data->_children[0]->_core->toType<string>();
+  pathData = data->_children[5]->_core->toType<string>();
 
   //radius
-  radius = data->_children[0]->_core->toType<double>();
+  radius = data->_children[6]->_core->toType<double>();
 }
 Movement::~Movement() {
 

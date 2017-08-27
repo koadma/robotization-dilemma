@@ -10,6 +10,11 @@ namespace MainGameCanvas {
   extern int myold;
   extern int mousebuttons; //left, center, right
 
+  extern GLdouble model_view[16];
+  extern GLdouble projection[16];
+  extern GLint viewport[4];
+  extern vec3<double> cameraEye;
+
   void normalizeAngles();
   int renderManager(int ax, int ay, int bx, int by);
   int resizeManager(int x, int y);

@@ -20,4 +20,6 @@ power_type_W getCurrentUsedPower();
 power_type_W getCurrentMaxPower();
 power_type_W getCurrentGeneratedPower();
 
+string isSurefire();
+
 void createMainMenu();

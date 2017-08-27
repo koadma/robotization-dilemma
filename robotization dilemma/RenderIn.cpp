@@ -1,35 +1,35 @@
 #include "RenderIn.h"
 
 void ingameEngineSidebarAccInputX(string s) {
-  reinterpret_cast<Engine*>(selected)->setComponent(timeNow, 0,strTo<acc_type_mperss>(s));
+  reinterpret_cast<Engine*>(selectedo)->setComponent(timeNow, 0,strTo<acc_type_mperss>(s));
 }
 
 void ingameEngineSidebarAccInputY(string s) {
-  reinterpret_cast<Engine*>(selected)->setComponent(timeNow, 1, strTo<acc_type_mperss>(s));
+  reinterpret_cast<Engine*>(selectedo)->setComponent(timeNow, 1, strTo<acc_type_mperss>(s));
 }
 
 void ingameEngineSidebarAccInputZ(string s) {
-  reinterpret_cast<Engine*>(selected)->setComponent(timeNow, 2, strTo<acc_type_mperss>(s));
+  reinterpret_cast<Engine*>(selectedo)->setComponent(timeNow, 2, strTo<acc_type_mperss>(s));
 }
 
 void ingameLaserSidebarAccInputX(string s) {
-  //reinterpret_cast<Laser*>(selected)->setComponent(0, strTo<float>(s));
+  //reinterpret_cast<Laser*>(selectedo)->setComponent(0, strTo<float>(s));
 }
 
 void ingameLaserSidebarAccInputY(string s) {
-  //reinterpret_cast<Laser*>(selected)->setComponent(1, strTo<float>(s));
+  //reinterpret_cast<Laser*>(selectedo)->setComponent(1, strTo<float>(s));
 }
 
 void ingameLaserSidebarAccInputZ(string s) {
-  //reinterpret_cast<Laser*>(selected)->setComponent(2, strTo<float>(s));
+  //reinterpret_cast<Laser*>(selectedo)->setComponent(2, strTo<float>(s));
 }
 
 void ingameLaserSidebarEnergyInput(string s) {
-  //reinterpret_cast<Laser*>(selected)->set(strTo<float>(s));
+  //reinterpret_cast<Laser*>(selectedo)->set(strTo<float>(s));
 }
 
 void ingameSensorSidebarEnergyInput(string s) {
-  reinterpret_cast<Sensor*>(selected)->setPower(timeNow, strTo<power_type_W>(s));
+  reinterpret_cast<Sensor*>(selectedo)->setPower(timeNow, strTo<power_type_W>(s));
 }
 
 void ingameMenuCommitButton() {
@@ -153,8 +153,8 @@ void mainMenuDemoSliderInput(float val) {
 }
 
 string getCurrentName() {
-  if (selected != NULL) {
-    return selected->name();
+  if (selectedo != NULL) {
+    return selectedo->name();
   }
   if (ship != NULL) {
     return "Ship";
@@ -163,8 +163,8 @@ string getCurrentName() {
 }
 
 int getCurrentHealth() {
-  if (selected != NULL) {
-    return selected->getHealth(timeNow);
+  if (selectedo != NULL) {
+    return selectedo->getHealth(timeNow);
   }
   if (ship != NULL) {
     return ship->getHealth(timeNow);
@@ -173,8 +173,8 @@ int getCurrentHealth() {
 }
 
 int getCurrentMaxHealth() {
-  if (selected != NULL) {
-    return selected->getMaxHealth(timeNow);
+  if (selectedo != NULL) {
+    return selectedo->getMaxHealth(timeNow);
   }
   if (ship != NULL) {
     return ship->getMaxHealth(timeNow);
@@ -183,8 +183,8 @@ int getCurrentMaxHealth() {
 }
 
 power_type_W getCurrentUsedPower() {
-  if (selected != NULL) {
-    return selected->getUsedPower(timeNow);
+  if (selectedo != NULL) {
+    return selectedo->getUsedPower(timeNow);
   }
   if (ship != NULL) {
     return ship->getUsedShipPower(timeNow);
@@ -193,20 +193,38 @@ power_type_W getCurrentUsedPower() {
 }
 
 power_type_W getCurrentMaxPower() {
-  if (selected != NULL) {
-    return selected->getMaxPower(timeNow);
+  if (selectedo != NULL) {
+    return selectedo->getMaxPower(timeNow);
   }
   return 0;
 }
 
 power_type_W getCurrentGeneratedPower() {
-  if (selected != NULL) {
-    return selected->getGeneratedPower(timeNow);
+  if (selectedo != NULL) {
+    return selectedo->getGeneratedPower(timeNow);
   }
   if (ship != NULL) {
     return ship->getGeneratedShipPower(timeNow);
   }
   return 0;
+}
+
+string isSurefire() {
+  if (selecteds != NULL && selectedo != NULL && selectedo->type() == Object::Laser) {
+    sVec3 sdir;
+    bool b = surefire(ship->mov, selecteds->keyframes, timeNow, sdir);
+    if (b) {
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(sdir.x);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(sdir.y);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(sdir.z);
+      reinterpret_cast<Laser*>(selectedo)->setDir(sdir);
+      return "YES";
+    }
+    return "NO";
+  }
+  else {
+    return "No sighting selected";
+  }
 }
 
 void bindLabels() {

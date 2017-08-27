@@ -113,6 +113,8 @@ void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d) {
 
 void renderNewRound(int id) {
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Turn " + to_string(id);
+  reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->maxv = ROUND_TIME*id;
+  reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->val = ROUND_TIME*(id-1);
 }
 
 void createMainMenu() {

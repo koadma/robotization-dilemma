@@ -25,17 +25,17 @@
 		minrely = "0.0"
 		minabsx = "0.0"
 		minabsy = "0.0"
-		maxrelx = "0.7"
+		maxrelx = "0.9"
 		maxrely = "1.0"
-		maxabsx = "0.0"
+		maxabsx = "-150.0"
 		maxabsy = "-30.0"
 		bgcolor = "ff070918"
 	></div>
 	<div
 		id = "objectMainGameShipCanvasContainer"
-		minrelx = "0.7"
+		minrelx = "0.9"
 		minrely = "0.0"
-		minabsx = "0.0"
+		minabsx = "-150.0"
 		minabsy = "0.0"
 		maxrelx = "1.0"
 		maxrely = "0.5"
@@ -45,9 +45,9 @@
 	></div>
 	<div
 		id = "objectMainGameMenuSidebar"
-		minrelx = "0.7"
+		minrelx = "0.9"
 		minrely = "0.5"
-		minabsx = "0.0"
+		minabsx = "-150.0"
 		minabsy = "0.0"
 		maxrelx = "1.0"
 		maxrely = "1.0"

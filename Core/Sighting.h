@@ -30,9 +30,8 @@ public:
 
 
 class Sighting {
-private:
-  keyframe<Movement, Movement, time_type_s> keyframes;
 public:
+  keyframe<Movement, Movement, time_type_s> keyframes;
   void addFrame(time_type_s& _time, Movement& _val) {
     keyframes.addFrame(_time, _val);
   }
@@ -54,6 +53,6 @@ public:
   }
 
 #ifdef M_CLIENT
-  void drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel);
+  void drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel, time_type_s time);
 #endif
 };

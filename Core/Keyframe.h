@@ -156,7 +156,17 @@ public:
   }
   U getAt(T _time) {
     typename std::map<T, V>::iterator it = search(_time);
-    return it->second.getAt(_time);
+    if(it != _frames.end()) {
+      return it->second.getAt(_time);
+    }
+    else {
+      if(_frames.size()) {
+        cout << "Asked " << _time << ", first " << getFirst() << endl;
+      } else {
+        cout << "Asked " << _time << ", no frames" << endl;
+      }
+      return U();
+    }
   }
   void get(DataElement* data) {
     for (auto it : _frames) {

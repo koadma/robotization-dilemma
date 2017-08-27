@@ -4,7 +4,6 @@
 class Object;
 class Drone;
 
-extern Object* selected;
 #ifdef M_SERVER
 class Game;
 #endif
@@ -191,24 +190,17 @@ public:
   list< pair<double, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
   virtual void setSidebarElement(string filename);
   virtual void setSidebar();
-  void drawObject(float camcx, float camcy, float camcz, float d);
+  void drawObject(float camcx, float camcy, float camcz, float d, time_type_s time);
 #endif
 
   virtual void collectEvents(list<StateChange*> &addTo, time_type_s time);
 
+#ifdef M_SERVER
   virtual void getPathVirt(time_type_s time, Path* p) {
 
   }
-  void getPath(time_type_s time, Path* p) {
-    if((p->type() == Path::PathTypeShot) && (((Shot*)p)->originID !=this->_ID)) {
-      _health.addFrame(time,
-        value<int>(max(
-          0,
-          _health.getAt(time)() - int(((Shot*)p)->energy / 50)
-      ))); //TODO BETTER
-    }
-    getPathVirt(time, p);
-  }
+  void getPath(time_type_s time, Path* p, Game* g);
+#endif
 
   void getStatus(DataElement* data);
   void setStatus(DataElement* data);
@@ -240,7 +232,9 @@ public:
     _power.addFrame(time, max(min(val, _maxPower), 0.0));
   }
 
+#ifdef M_SERVER
   void getPathVirt(time_type_s time, Path* p);
+#endif
 
 #ifdef M_CLIENT
   void setSidebar();
@@ -271,11 +265,8 @@ public:
     return _accel.getAt(time)();
   }
 
-  void setComponent(time_type_s time, int c, acc_type_mperss val) {
-    mpssVec3 nval = _accel.getAt(time)();
-    nval[c] = val;
-    _accel.addFrame(time, nval);
-  }
+  void setAccel(time_type_s time, mpssVec3 acc);
+  void setComponent(time_type_s time, int c, acc_type_mperss val);
 
 #ifdef M_CLIENT
   void setSidebar();
@@ -292,6 +283,9 @@ private:
   //pair<energy_type_J, sVec3> _shot;
   keyframe<value<energy_type_J>> _energyStored;
   keyframe<value<energy_type_J>> _maxStorage;
+
+  energy_type_J _tempE;
+  sVec3 _tempD;
 public:
   Laser(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _name = "Laser";
@@ -316,12 +310,15 @@ public:
     return max(0.0, extra);
   }
 
-  void setComponent(time_type_s time, pair<energy_type_J, sVec3> shot) {
-    _shots.push_back({time, shot});
+  void setComponent(int index, scalar_type comp) {
+    _tempD[index] = comp;
   }
-  /*void setEnergy(time_type_s energy_type_J val) {
-    _shot.first = val;
-  }*/
+  void setDir(sVec3 dir) {
+    _tempD = dir;
+  }
+  void setEnergy(energy_type_J val) {
+    _tempE = val;
+  }
 
 #ifdef M_CLIENT
   void setSidebar();
@@ -438,11 +435,6 @@ public:
     }
     return sum;
   }
-  void setAccel(time_type_s time) {
-    Movement nMov = mov.getAt(time);
-    nMov.acc = getAccel(time);
-    mov.addFrame(time, nMov);
-  }
 };
 class Ship : public Drone {
 private:
@@ -471,17 +463,15 @@ public:
 
     objects.push_back(no);
 
-    Movement m = Movement();
-    m.vel = {0, 200, 0};
-    m.acc = {0, -10, 0};
-
+    Movement m;
+    m.pos.z = 1000.0 * _ID;
     mov.addFrame(0, m);
   }
 
 #ifdef M_SERVER
   NetworkS* connectedClient;
 
-  int makeMove(DataElement* data);
+  //int makeMove(DataElement* data);
   void newTurn(int id);
 
   bool packetRecv(DataElement *Data, int Id, NetworkS* thisptr);
@@ -515,6 +505,8 @@ public:
      }
   }
 
+  void selectSighting(vec3<double> ori, vec3<double> dir);
+
   void drawSightings(float camcx, float camcy, float camcz, float d);
   void drawObjects(float camcx, float camcy, float camcz, float d, bool b = false);
 
@@ -533,7 +525,11 @@ public:
   ~Ship();
 };
 
+bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction);
+
 #ifdef M_CLIENT
 extern Ship* ship;
 extern time_type_s timeNow;
+extern Object* selectedo;
+extern Sighting* selecteds;
 #endif

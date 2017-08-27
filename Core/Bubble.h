@@ -102,7 +102,7 @@ public:
     if (t <= gEmissionTime) {
       return 0;
     }
-    return energy / ((SOL * (t - gEmissionTime)) * (SOL * (t - gEmissionTime)));
+    return energy / (4 * PI * (SOL * (t - gEmissionTime)) * (SOL * (t - gEmissionTime)));
   }
   Type btype;
   int etype() {

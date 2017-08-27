@@ -40,7 +40,7 @@ public:
   }
 	Polynomial Trim() {
     Polynomial p = *this;
-    while (p.Coefficient.size() > 0 && p.Coefficient[p.Coefficient.size() - 1] == 0) {
+    while (p.Coefficient.size() > 1 && p.Coefficient[p.Coefficient.size() - 1] == 0) {
       p.degree--;
       p.Coefficient.resize(p.Coefficient.size() - 1);
 
@@ -484,7 +484,7 @@ template<typename T> void Equation<T>::substitute(Equation<T> eq, char t) {
 
 template<typename T> Polynomial<T> Equation<T>::getPolynomial(char t) {
 
-  Polynomial<T> res;
+  Polynomial<T> res(0);
 
   auto it = terms.begin();
 

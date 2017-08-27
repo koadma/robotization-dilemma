@@ -11,22 +11,26 @@ typedef double vel_type_mpers;
 typedef double acc_type_mperss;
 typedef double scalar_type;
 typedef double en_flux_type_Jpermm;
+//typedef double en_flux_type_Jy; //1Jy = 10e-26 J/m m
 typedef double mass_density_type_kgpermmm;
 
-const vel_type_mpers SOL = 3e8; // m/s
-const vel_type_mpers INITIAL_MAX_VELOCITY = 0.1*SOL;
-const acc_type_mperss G = 10; // m/s^2
-const vel_type_mpers INITIAL_VELOCITY = 1e-6*SOL; //1e-2*SOL;
-const time_type_s ROUND_TIME = 2; // s
-//const int MAP_SCALE = 10; // 1 coord = MAP_SCALE real meters 
-const double THREE_PI    = 9.4247779607694;
-const double TWO_PI      = 6.2831853071796;
-const double PI          = 3.1415926535898;
-const double HALF_PI     = 1.5707963267949;
-const double THIRD_PI    = 1.0471975511966;
-const double QUARTER_PI  = 0.7853981633974;
+const en_flux_type_Jpermm BUBBLE_REMOVE = 10e-7;
 
-#define E 2.71828182845904523536028747135266249775724709369995
+///!!!!!!!! ######## &&&&&&&&&
+const vel_type_mpers SOL = 3e5; ///TODO FIX 3e8 ######### ######### !!!!!!!!! ERROR &&&&&&&& WARNING !!!!!!!!!
+///(Changed for better testing, to reduce floating point errors)
+
+
+const time_type_s ROUND_TIME = 2;
+
+#define THREE_PI    9.4247779607694
+#define TWO_PI      6.2831853071796
+#define PI          3.1415926535898
+#define HALF_PI     1.5707963267949
+#define THIRD_PI    1.0471975511966
+#define QUARTER_PI  0.7853981633974
+
+#define E           2.71828182845904523536028747135266249775724709369995
 
 #define ElementBaseColor 0xff070918
 #define ElementActiveColor 0xff190077
@@ -34,9 +38,10 @@ const double QUARTER_PI  = 0.7853981633974;
 #define ElementBackColor 0xff030014
 
 #define VersionA 0
-#define VersionB 2
+#define VersionB 3
 #define VersionC 0
-//0.2.0
+//0.3.0
+//Converge to
 
 enum LoginError {
   LoginErrorOk = 0,

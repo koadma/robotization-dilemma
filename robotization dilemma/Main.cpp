@@ -5,8 +5,8 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
   if (ship == NULL) {
     switch (id) {
     case PacketLogin:
-      if (data->_core->toType<int>() == LoginErrorOk) {
-        Connection->ConnectedShip = ship = new Ship(time(0));
+      if (data->_children[0]->_core->toType<int>() == LoginErrorOk) {
+        Connection->ConnectedShip = ship = new Ship(data->_children[1]->_core->toType<uint64_t>());
 
         ship->connectedServer = Connection;
 
