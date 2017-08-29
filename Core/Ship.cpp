@@ -51,7 +51,7 @@ void SensorPow::apply(Game *g) {
   //g.calcIntersect(_o->parentShip); //recalculate ship related future intersections
 }
 void SensorPow::setV(DataElement* data, Game* game) {
-  _power = data->_children[0]->_core->toType<float>();
+  _power = data->_children[0]->_core->toType<power_type_W>();
 }
 void LaserShot::apply(Game *g) {
   Shot* s = new Shot();
@@ -69,7 +69,7 @@ void LaserShot::apply(Game *g) {
 void LaserShot::setV(DataElement* data, Game* game) {
   _dir.set(data->_children[0]);
   
-  _energy = data->_children[1]->_core->toType<float>();
+  _energy = data->_children[1]->_core->toType<energy_type_J>();
 }
 void ThermalRadiation::apply(Game *g) {
   Bubble* b = new Bubble();
@@ -87,6 +87,23 @@ void ThermalRadiation::apply(Game *g) {
 }
 void ThermalRadiation::setV(DataElement* data, Game* game) {
 
+}
+void SensorPing::apply(Game *g) {
+  Bubble* b = new Bubble();
+  b->btype = Bubble::Ping;
+  b->emitter = _o->getMovement(_time);
+  b->energy = _energy;
+  b->gEmissionTime = _time;
+  b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
+  b->originID = _o->getId();
+
+  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+
+  g->paths.push_back(b);
+  g->calcIntersect(b);
+}
+void SensorPing::setV(DataElement* data, Game* game) {
+  _energy = data->_children[0]->_core->toType<energy_type_J>();
 }
 #endif
 
@@ -156,6 +173,14 @@ int ThermalRadiation::type() {
 void ThermalRadiation::getV(DataElement* data) {
 
 }
+int SensorPing::type() {
+  return EvTSensorPing;
+}
+void SensorPing::getV(DataElement* data) {
+  DataElement* enee = new DataElement();
+  enee->_core->fromType<energy_type_J>(_energy);
+  data->addChild(enee);
+}
 
 using namespace std;
 
@@ -169,7 +194,10 @@ list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
   list< pair<double, pair<Object*, Path*>>> res;
   auto it = parentShip->mov._frames.begin();
   while (it != parentShip->mov._frames.end()) {
-    vector<double> times = intersectPaths(p, &(it->second));
+    Movement m = it->second;
+    m.pos += _relativePos;
+    m.radius = _radius;
+    vector<double> times = intersectPaths(p, &m);
     for (auto&& itt : times) {
       auto nit = it;
       ++nit;
@@ -244,10 +272,43 @@ void Sensor::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
   maxe->_core->fromType<power_type_W>(_maxPower);
   data->addChild(maxe);
+
+  DataElement* pinge = new DataElement();
+  for (auto&& it : _pings) {
+    DataElement* ne = new DataElement();
+
+    DataElement* timee = new DataElement();
+    vGFunc<time_type_s>(get<0>(it), timee);
+    ne->addChild(timee);
+
+    DataElement* enee = new DataElement();
+    vGFunc<energy_type_J>(get<1>(it), enee);
+    ne->addChild(enee);
+
+    DataElement* usede = new DataElement();
+    vGFunc<bool>(get<2>(it), usede);
+    ne->addChild(usede);
+
+    pinge->addChild(ne);
+  }
+  data->addChild(pinge);
 }
 void Sensor::setVStatus(DataElement* data) {
   _power.set(data->_children[0]);
   _maxPower = data->_children[1]->_core->toType<float>();
+
+  _pings.clear();
+
+  for (auto&& it : data->_children[2]->_children) {
+
+    tuple<time_type_s, energy_type_J, bool> nVal;
+
+    vSFunc<time_type_s>(get<0>(nVal), it->_children[0]);
+    vSFunc<energy_type_J>(get<1>(nVal), it->_children[1]);
+    vSFunc<bool>(get<2>(nVal), it->_children[2]);
+
+    _pings.push_back(nVal);
+  }
 }
 void Engine::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
@@ -286,16 +347,20 @@ void Laser::getVStatus(DataElement* data) {
     DataElement* ne = new DataElement();
     
     DataElement* timee = new DataElement();
-    DataElement* enee = new DataElement();
-    DataElement* dire = new DataElement();
-
-    vGFunc<time_type_s>(it.first, timee);
-    vGFunc<energy_type_J>(it.second.first, enee);
-    it.second.second.get(dire);
-
+    vGFunc<time_type_s>(get<0>(it), timee); 
     ne->addChild(timee);
+
+    DataElement* enee = new DataElement();
+    vGFunc<energy_type_J>(get<1>(it), enee);
     ne->addChild(enee);
+
+    DataElement* dire = new DataElement();
+    get<2>(it).get(dire);
     ne->addChild(dire);
+
+    DataElement* usede = new DataElement();
+    vGFunc<bool>(get<3>(it), usede);
+    ne->addChild(usede);
 
     shote->addChild(ne);
   }
@@ -310,13 +375,18 @@ void Laser::getVStatus(DataElement* data) {
   data->addChild(mstoe);
 }
 void Laser::setVStatus(DataElement* data) {
+  _shots.clear();
+
   for (auto&& it : data->_children[0]->_children) {
 
-    pair<time_type_s, pair<energy_type_J, sVec3> > nVal;
+    tuple<time_type_s, energy_type_J, sVec3, bool> nVal;
 
-    vSFunc<time_type_s>(nVal.first, it->_children[0]);
-    vSFunc<energy_type_J>(nVal.second.first, it->_children[1]);
-    nVal.second.second.set(it->_children[2]);
+    vSFunc<time_type_s>(get<0>(nVal), it->_children[0]);
+    vSFunc<energy_type_J>(get<1>(nVal), it->_children[1]);
+    get<2>(nVal).set(it->_children[2]);
+    vSFunc<bool>(get<3>(nVal), it->_children[3]);
+
+    _shots.push_back(nVal);
   }
 
   _energyStored.set(data->_children[1]);
@@ -357,8 +427,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
         cout << "Detected" << endl;
         Sighting* s = new Sighting();
         Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
-        s->addFrame(time, m);
-        parentShip->sightings.push_back(s);
+        parentShip->sightMovement(m, time);
       }
     }
   }
@@ -420,12 +489,13 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
   setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth)) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth)));
   glutSolidSphere(_radius, 20, 20);
   glTranslated(- _relativePos.x, - _relativePos.y, - _relativePos.z);
+  drawObjectVirt(camcx, camcy, camcz, d, time);
 }
 void Sensor::setSidebar() {
   setSidebarElement("html/sensor_settings.xml");
   
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarEnergyLabel"))->text = " / " + to_string(_maxPower, 0);
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = to_string(_power.getAt(timeNow)(), 2);
+  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarPowerLabel"))->text = " / " + to_string(_maxPower, 0);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectSensorSidebarPowerInput"))->text = to_string(_power.getAt(timeNow)(), 2);
 }
 void Generator::setSidebar() {
   setSidebarElement("html/generator_settings.xml");
@@ -462,6 +532,26 @@ void Laser::setSidebar() {
       TextBindFunc<string>(isSurefire)
       );
 }
+void Laser::drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time) {
+  for (auto&& it : _shots) {
+    if (time - ROUND_TIME <= get<0>(it) && get<0>(it) <= time + ROUND_TIME) {
+      if(time < get<0>(it)) {
+        glColor3f(0.6f, 0.0f, 0.0f);
+      } else {
+        glColor3f(1.0f, 0.0f, 0.0f);
+      }
+      glLineWidth(2.0f);
+      glBegin(GL_LINES);
+      mVec3 p = getMovement(time).pos;
+      glVertex3d(p.x, p.y, p.z);
+      sVec3 dvec = get<2>(it);
+      dvec.norm();
+      dvec *= (get<1>(it) / 100.0f + _radius);
+      glVertex3d(p.x + dvec.x, p.y + dvec.y, p.z + dvec.z);
+      glEnd();
+    }
+  }
+}
 void Ship::setSidebar() {
   selectedo = NULL;
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.xml");
@@ -491,6 +581,17 @@ void Sensor::collectEvents(list<StateChange*> &addTo, time_type_s time) {
     ev->_time = it.first;
     addTo.push_back(ev);
   }
+
+  for (auto&& it : _pings) {
+    if (time <= get<0>(it) && get<2>(it) == false) {
+      SensorPing* ev = new SensorPing();
+      ev->_energy = get<1>(it);
+      ev->_o = this;
+      ev->_time = get<0>(it);
+      addTo.push_back(ev);
+    }
+    get<2>(it) = true;
+  }
 }
 void Engine::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   for (auto&& it : _accel._frames) {
@@ -503,12 +604,15 @@ void Engine::collectEvents(list<StateChange*> &addTo, time_type_s time) {
 }
 void Laser::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   for(auto&& it : _shots) {
-    LaserShot* ev = new LaserShot();
-    ev->_dir = it.second.second;
-    ev->_energy = it.second.first;
-    ev->_o = this;
-    ev->_time = it.first;
-    addTo.push_back(ev);
+    if(time <= get<0>(it) && get<3>(it) == false) {
+      LaserShot* ev = new LaserShot();
+      ev->_dir = get<2>(it);
+      ev->_energy = get<1>(it);
+      ev->_o = this;
+      ev->_time = get<0>(it);
+      addTo.push_back(ev);
+    }
+    get<3>(it) = true;
   }
 }
 void Generator::collectEvents(list<StateChange*> &addTo, time_type_s time) {
@@ -572,6 +676,44 @@ Event* Drone::runOut() {
   return ev;
 }
 
+int Drone::getHealth(time_type_s time) {
+  int sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getHealth(time);
+  }
+  return sum;
+}
+int Drone::getMaxHealth(time_type_s time) {
+  int sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getMaxHealth(time);
+  }
+  return sum;
+}
+
+void Drone::sightMovement(Movement& m, time_type_s time) {
+  priority_queue<pair<scalar_type, Sighting*>> dists; //
+  for (auto&& it : sightings) {
+    dists.push({-(it->getAt(time).pos - m.getAt(time).pos).sqrlen() / (m.radius * it->getAt(time).radius), it});
+  }
+  if (dists.size()) {
+    pair<scalar_type, Sighting*> elem = dists.top();
+    if(- elem.first < 1) {
+      elem.second->addFrame(time, m);
+    }
+    else {
+      Sighting* s = new Sighting();;
+      s->addFrame(time, m);
+      sightings.push_back(s);
+    }
+  }
+  else {
+    Sighting* s = new Sighting();
+    s->addFrame(time, m);
+    sightings.push_back(s);
+  }
+}
+
 #ifdef M_SERVER
 
 void Ship::newTurn(int id) {
@@ -621,6 +763,9 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
           break;
         case Event::Type::EvTBatteryDrain:
           //nObj = new BatteryDrain();
+          break;
+        case Event::Type::EvTSensorPing:
+          nObj = new SensorPing();
           break;
         }
         if (nObj != NULL) {
@@ -691,7 +836,7 @@ void Ship::drawSightings(float camcx, float camcy, float camcz, float d) {
   auto it = sightings.begin();
 
   while (it != sightings.end()) {
-    (*it)->drawSighting(camcx, camcy, camcz, d, SOL, timeNow);
+    (*it)->drawSighting(camcx, camcy, camcz, d, SOL, timeNow, *it == selecteds);
     ++it;
   }
 }
@@ -921,8 +1066,14 @@ Ship::~Ship() {
 }
 
 bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction) {
-  direction.randomize(100);
-  return fmodf(when, 0.5)<0.25;
+  //direction.randomize(100);
+  //return fmodf(when, 0.5)<0.25;
+  Movement m = me.getAt(when);
+  Movement e = (--enemy._frames.end())->second;
+  time_type_s t = (--enemy._frames.end())->first;
+  result res = surefire1(t, e.vel, e.pos, when, m.pos, MAX_ACCEL, e.radius);
+  direction = res.dir;
+  return res.answ;
 }
 
 #ifdef M_CLIENT

@@ -12,24 +12,36 @@ void ingameEngineSidebarAccInputZ(string s) {
   reinterpret_cast<Engine*>(selectedo)->setComponent(timeNow, 2, strTo<acc_type_mperss>(s));
 }
 
-void ingameLaserSidebarAccInputX(string s) {
-  //reinterpret_cast<Laser*>(selectedo)->setComponent(0, strTo<float>(s));
+void ingameLaserSidebarDirInputX(string s) {
+  reinterpret_cast<Laser*>(selectedo)->setComponent(0, strTo<float>(s));
 }
 
-void ingameLaserSidebarAccInputY(string s) {
-  //reinterpret_cast<Laser*>(selectedo)->setComponent(1, strTo<float>(s));
+void ingameLaserSidebarDirInputY(string s) {
+  reinterpret_cast<Laser*>(selectedo)->setComponent(1, strTo<float>(s));
 }
 
-void ingameLaserSidebarAccInputZ(string s) {
-  //reinterpret_cast<Laser*>(selectedo)->setComponent(2, strTo<float>(s));
+void ingameLaserSidebarDirInputZ(string s) {
+  reinterpret_cast<Laser*>(selectedo)->setComponent(2, strTo<float>(s));
 }
 
 void ingameLaserSidebarEnergyInput(string s) {
-  //reinterpret_cast<Laser*>(selectedo)->set(strTo<float>(s));
+  reinterpret_cast<Laser*>(selectedo)->setEnergy(strTo<float>(s));
+}
+
+void ingameSensorSidebarPowerInput(string s) {
+  reinterpret_cast<Sensor*>(selectedo)->setPower(timeNow, strTo<power_type_W>(s));
 }
 
 void ingameSensorSidebarEnergyInput(string s) {
-  reinterpret_cast<Sensor*>(selectedo)->setPower(timeNow, strTo<power_type_W>(s));
+  reinterpret_cast<Sensor*>(selectedo)->setEnergy(strTo<energy_type_J>(s));
+}
+
+void ingameSensorSidebarPing() {
+  reinterpret_cast<Sensor*>(selectedo)->ping(timeNow);
+}
+
+void ingameLaserSidebarShoot() {
+  reinterpret_cast<Laser*>(selectedo)->shoot(timeNow);
 }
 
 void ingameMenuCommitButton() {
@@ -148,7 +160,7 @@ void joinMenuBackButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
 }
 
-void mainMenuDemoSliderInput(float val) {
+void ingameTimeSliderInput(float val) {
   timeNow = val;
 }
 
@@ -214,9 +226,9 @@ string isSurefire() {
     sVec3 sdir;
     bool b = surefire(ship->mov, selecteds->keyframes, timeNow, sdir);
     if (b) {
-      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(sdir.x);
-      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(sdir.y);
-      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarAccInputX"))->text = to_string(sdir.z);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputX"))->text = to_string(sdir.x, 2);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputY"))->text = to_string(sdir.y, 2);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputZ"))->text = to_string(sdir.z, 2);
       reinterpret_cast<Laser*>(selectedo)->setDir(sdir);
       return "YES";
     }
@@ -246,8 +258,6 @@ void bindLabels() {
 }
 
 int InitWindow() {
-  Graphics::setName("mainMenuDemoSliderInput", mainMenuDemoSliderInput);
-
   Graphics::setName("newSingleMenuBackButton", newSingleMenuBackButton);
   Graphics::setName("joinMenuBackButton", joinMenuBackButton);
   Graphics::setName("newSingleMenu3PlayerButton", newSingleMenu3PlayerButton);
@@ -268,14 +278,18 @@ int InitWindow() {
   Graphics::setName("ingameMenuExitButton", ingameMenuExitButton);
   Graphics::setName("joinMenuInput", joinMenuInput);
   Graphics::setName("ingameMenuCommitButton", ingameMenuCommitButton);
+  Graphics::setName("ingameSensorSidebarPowerInput", ingameSensorSidebarPowerInput);
   Graphics::setName("ingameSensorSidebarEnergyInput", ingameSensorSidebarEnergyInput);
+  Graphics::setName("ingameSensorSidebarPing", ingameSensorSidebarPing);
   Graphics::setName("ingameEngineSidebarAccInputX", ingameEngineSidebarAccInputX);
   Graphics::setName("ingameEngineSidebarAccInputY", ingameEngineSidebarAccInputY);
   Graphics::setName("ingameEngineSidebarAccInputZ", ingameEngineSidebarAccInputZ);
   Graphics::setName("ingameLaserSidebarEnergyInput", ingameLaserSidebarEnergyInput);
-  Graphics::setName("ingameLaserSidebarAccInputX", ingameLaserSidebarAccInputX);
-  Graphics::setName("ingameLaserSidebarAccInputY", ingameLaserSidebarAccInputY);
-  Graphics::setName("ingameLaserSidebarAccInputZ", ingameLaserSidebarAccInputZ);
+  Graphics::setName("ingameLaserSidebarDirInputX", ingameLaserSidebarDirInputX);
+  Graphics::setName("ingameLaserSidebarDirInputY", ingameLaserSidebarDirInputY);
+  Graphics::setName("ingameLaserSidebarDirInputZ", ingameLaserSidebarDirInputZ);
+  Graphics::setName("ingameLaserSidebarShoot", ingameLaserSidebarShoot);
+  Graphics::setName("ingameTimeSliderInput", ingameTimeSliderInput);
 
   Graphics::setName("textValidator", textValidator);
   Graphics::setName("numericalValidator", numericalValidator);

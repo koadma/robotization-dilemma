@@ -17,7 +17,7 @@
 		maxvalue = "2"
 		startvalue = "0"
 		quanta = "0.001"
-		callback = "mainMenuDemoSliderInput"
+		callback = "ingameTimeSliderInput"
 	>Play Story Mode</slider>
 	<div
 		id = "objectMainGameCanvasContainer"

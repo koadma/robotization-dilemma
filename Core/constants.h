@@ -40,6 +40,8 @@ const time_type_s ROUND_TIME = 2;
 #define VersionA 0
 #define VersionB 3
 #define VersionC 0
+
+const acc_type_mperss MAX_ACCEL = 250;
 //0.3.0
 //Converge to
 

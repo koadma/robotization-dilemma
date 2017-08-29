@@ -123,6 +123,32 @@ void Game::simulate(float from, float till) {
       events.erase(it2);
     }
   }
+
+  //Clean bubbles
+  auto pit = paths.begin();
+  while(pit != paths.end()) {
+    bool land = true;
+    if ((*pit)->type() == Path::PathTypeBubble) {
+      auto dit = drones.begin();
+      while (dit != drones.end() && land) {
+        auto oit = (*dit)->objects.begin();
+        while (oit != (*dit)->objects.end() && land) {
+          land = land && !((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
+          ++oit;
+        }
+        ++dit;
+      }
+    }
+    if (land) {
+      auto dpit = pit;
+      ++pit;
+      removeIntersect(*dpit);
+      paths.erase(dpit);
+    } else {
+      ++pit;
+    }
+  }
+
   newTurn();
 }
 

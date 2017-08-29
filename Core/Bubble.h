@@ -125,6 +125,10 @@ public:
     }
     return res;
   }
+  bool isWellIn(mVec3 point, distance_type_m radius, time_type_s time) {
+    distance_type_m brad = (time - gEmissionTime) * SOL;
+    return (2 * (brad + radius)) > ((point - origin).length());
+  }
   //unsigned int receiver; //only for reflection, would be cleaner with virtual methods
   //friend std::ostream& operator<<(std::ostream& os, const Bubble& b); // only for test
  
@@ -145,7 +149,7 @@ public:
   Eqnsys getEquations(bool b) {//approximate
     Eqnsys res;
     if (b) {
-      throw 1; //Cant approxiamte bubble
+      throw 1; //Cant approxiamte shot
     }
     else {
       res.eqns['x'] = Equation<double>({ { vel.x, "t" }, { -vel.x * origintime, "" } ,{ origin.x, "" },{ -1, "x" } });

@@ -146,7 +146,7 @@ public:
   }
   typename std::map<T, V>::iterator search(T _time) {
     typename std::map<T, V>::iterator lb(_frames.upper_bound(_time));
-    return (lb == _frames.begin()) ? (_frames.end()) : --lb;
+    return ((lb == _frames.begin()) ? (_frames.end()) : (--lb));
   }
   T getFirst() {
     return _frames.begin()->first;

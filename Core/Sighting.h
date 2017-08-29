@@ -53,6 +53,28 @@ public:
   }
 
 #ifdef M_CLIENT
-  void drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel, time_type_s time);
+  void drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel, time_type_s time, bool selected);
 #endif
 };
+
+//Surefire maths
+
+class result
+{
+public:
+  bool answ;
+  sVec3 dir;
+
+  result(double inputx, double inputy, double inputz, bool inansw) : dir(inputx, inputy, inputz), answ(inansw) {};
+  result(sVec3 idir, bool inansw) : dir(idir), answ(inansw) {};
+};
+
+result coordinates(mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, acc_type_mperss amax, distance_type_m d, time_type_s tpassed);
+
+//automata visszaloveshez a koordianatak, ez meg az eszleles pillanataban megtortenik
+result surefire1(time_type_s obsTime, mpsVec3 vTarget, mVec3 sTarget, time_type_s now, mVec3 sShip, acc_type_mperss amax, distance_type_m d);
+
+//azt szamoljuk ki hogy az elozo korben tortent eszlelesre a mostani mozgassorok közben meddig biztos a talalat
+//vector<result> surefire2(mpsVec3 vship, mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, mVec3 nowship, double amax, double d, keyframe<Movement>& movements, double utime, double round);
+
+//result surefire3(mpsVec3 vship, mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, mVec3 nowship, double amax, double d, keyframe<Movement>& movements, double utime, double qtime, double round);

@@ -61,7 +61,7 @@
 		align = "1"
 	>z</label>
 	<input
-		id = "objectLaserSidebarAccInputX"
+		id = "objectLaserSidebarDirInputX"
 		minrelx = "0.0"
 		minrely = "1.0"
 		minabsx = "5.0"
@@ -73,11 +73,11 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		inputfunc = "ingameLaserSidebarAccInputX"
+		inputfunc = "ingameLaserSidebarDirInputX"
 		validatorfunc = "floatValidator"
 	>0</input>
 	<input
-		id = "objectLaserSidebarAccInputY"
+		id = "objectLaserSidebarDirInputY"
 		minrelx = "0.33"
 		minrely = "1.0"
 		minabsx = "5.0"
@@ -89,11 +89,11 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		inputfunc = "ingameLaserSidebarAccInputY"
+		inputfunc = "ingameLaserSidebarDirInputY"
 		validatorfunc = "floatValidator"
 	>0</input>
 	<input
-		id = "objectLaserSidebarAccInputZ"
+		id = "objectLaserSidebarDirInputZ"
 		minrelx = "0.67"
 		minrely = "1.0"
 		minabsx = "5.0"
@@ -105,7 +105,7 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		inputfunc = "ingameLaserSidebarAccInputZ"
+		inputfunc = "ingameLaserSidebarDirInputZ"
 		validatorfunc = "floatValidator"
 	>0</input>
 	<labelbind
@@ -124,7 +124,7 @@
 		align = "1"
 	>ERROR</labelbind>
 	<button
-		id = "objectLaserSidebarAutoButton"
+		id = "objectLaserSidebarShootButton"
 		minrelx = "0.0"
 		minrely = "1.0"
 		minabsx = "5.0"

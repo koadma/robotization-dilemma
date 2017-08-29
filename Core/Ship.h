@@ -22,7 +22,8 @@ public:
     EvTSensorPow = 4,
     EvTLaserShot = 5,
     EvTThermalRadiation = 6,
-    EvTBatteryDrain = 7
+    EvTBatteryDrain = 7,
+    EvTSensorPing = 8
   };
   time_type_s _time;
 
@@ -115,6 +116,19 @@ public:
   void setV(DataElement* data, Game* game);
 #endif
 };
+class SensorPing : public StateChange {
+public:
+  energy_type_J _energy;
+
+  int type();
+  void getV(DataElement* data);
+
+#ifdef M_SERVER
+  void apply(Game *g);
+  void setV(DataElement* data, Game* game);
+#endif
+};
+
 
 struct EventSort{
   bool operator ()(const Event* lhs, const Event* rhs) const
@@ -190,6 +204,7 @@ public:
   list< pair<double, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
   virtual void setSidebarElement(string filename);
   virtual void setSidebar();
+  virtual void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time) {}
   void drawObject(float camcx, float camcy, float camcz, float d, time_type_s time);
 #endif
 
@@ -216,6 +231,8 @@ class Sensor : public Object {       //Order of serialisation
 private:
   keyframe<value<power_type_W>> _power;
   power_type_W _maxPower;
+  energy_type_J _tempE;
+  list<tuple<time_type_s, energy_type_J, bool>> _pings; //time, energy, eventCrate
 public:
   Sensor(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _power.addFrame(0, 0);
@@ -231,6 +248,13 @@ public:
   void setPower(time_type_s time, power_type_W val) {
     _power.addFrame(time, max(min(val, _maxPower), 0.0));
   }
+  void setEnergy(energy_type_J val) {
+    _tempE = val;
+  }
+  void ping(time_type_s time) {
+    _pings.push_back(make_tuple(time, _tempE, false));
+  }
+
 
 #ifdef M_SERVER
   void getPathVirt(time_type_s time, Path* p);
@@ -279,7 +303,7 @@ public:
 };
 class Laser : public Object {       //Order of serialisation
 private:
-  list<pair<time_type_s,pair<energy_type_J, sVec3> > > _shots; //energy, directipn
+  list<tuple<time_type_s,energy_type_J, sVec3, bool>> _shots; //time, energy, direction, eventCrated
   //pair<energy_type_J, sVec3> _shot;
   keyframe<value<energy_type_J>> _energyStored;
   keyframe<value<energy_type_J>> _maxStorage;
@@ -320,8 +344,13 @@ public:
     _tempE = val;
   }
 
+  void shoot(time_type_s time) {
+    _shots.push_back(make_tuple(time, _tempE, _tempD * (SOL / _tempD.length()), false));
+  }
+
 #ifdef M_CLIENT
   void setSidebar();
+  void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time);
 #endif
 
   void collectEvents(list<StateChange*> &addTo, time_type_s time);
@@ -412,21 +441,10 @@ public:
   void refreshEnergy(time_type_s time);
   Event* runOut(); //when will storage run out
 
-  int getHealth(time_type_s time) {
-    int sum = 0;
-    for(auto&& it : objects) {
-      sum += it->getHealth(time);
-    }
-    return sum;
-  }
-  int getMaxHealth(time_type_s time) {
-    int sum = 0;
-    for (auto&& it : objects) {
-      sum += it->getMaxHealth(time);
-    }
-    return sum;
-  }
+  int getHealth(time_type_s time);
+  int getMaxHealth(time_type_s time);
 
+  void sightMovement(Movement& m, time_type_s time);
 
   mpssVec3 getAccel(time_type_s time) {
     mpssVec3 sum = { 0,0,0 };

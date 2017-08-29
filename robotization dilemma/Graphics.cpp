@@ -79,35 +79,18 @@ void Graphics::GWindow::getWin(float pax, float pay, float pbx, float pby) {
 }
 
 void Graphics::defaultRenderManager() {
+  netlock.lock();
+  
   glutSetWindow(glutGetWindow());
-  //int arr[4];
-  //glGetIntegerv(GL_VIEWPORT, arr);
 
   glClear(GL_COLOR_BUFFER_BIT);
   resetViewport();
 
   elementRenderManager(GetWinHwnd(glutGetWindow()));
   
-  /*
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  glDisable(GL_DEPTH_TEST);
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glLoadIdentity();
-
-
-
-  glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),
-    0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-  glColor3ub(0, 1, 0);
-
-  elementRenderManager(GetWinHwnd(glutGetWindow()));
-  */
   glutSwapBuffers();
+
+  netlock.unlock();
 }
 void Graphics::defaultResizeManager(int x, int y) {
   WinHwnd h = GetWinHwnd(glutGetWindow());

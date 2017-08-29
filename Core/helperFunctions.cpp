@@ -362,3 +362,5 @@ uint32_t low(uint64_t a) {
 uint32_t high(uint64_t a) {
   return a >> 32;
 }
+
+mutex netlock; //Locking for the network thread(s)

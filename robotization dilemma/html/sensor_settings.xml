@@ -1,6 +1,6 @@
 <body>
 	<input
-		id = "objectSensorSidebarEnergyInput"
+		id = "objectSensorSidebarPowerInput"
 		minrelx = "0.0"
 		minrely = "1.0"
 		minabsx = "5.0"
@@ -12,11 +12,11 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		inputfunc = "ingameSensorSidebarEnergyInput"
+		inputfunc = "ingameSensorSidebarPowerInput"
 		validatorfunc = "floatValidator"
 	>0</input>
 	<label
-		id = "objectSensorSidebarEnergyLabel"
+		id = "objectSensorSidebarPowerLabel"
 		minrelx = "0.5"
 		minrely = "1.0"
 		minabsx = "5.0"
@@ -30,4 +30,35 @@
 		textcolor = "ff838fa1"
 		align = "1"
 	> / 0</label>
+	<input
+		id = "objectSensorSidebarEnergyInput"
+		minrelx = "0.0"
+		minrely = "1.0"
+		minabsx = "5.0"
+		minabsy = "-95.0"
+		maxrelx = "1.0"
+		maxrely = "1.0"
+		maxabsx = "-5.0"
+		maxabsy = "-55.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		inputfunc = "ingameSensorSidebarEnergyInput"
+		validatorfunc = "floatValidator"
+	>0</input>
+	<button
+		id = "objectSensorSidebarPingButton"
+		minrelx = "0.0"
+		minrely = "1.0"
+		minabsx = "5.0"
+		minabsy = "-145.0"
+		maxrelx = "1.0"
+		maxrely = "1.0"
+		maxabsx = "-5.0"
+		maxabsy = "-105.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		callback = "ingameSensorSidebarPing"
+	>Ping</button>
 </body>

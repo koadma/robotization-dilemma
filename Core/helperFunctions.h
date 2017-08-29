@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <queue>
 #include <utility>
 #include <vector>
 
@@ -294,3 +295,4 @@ uint64_t mix(uint64_t a, uint64_t b);
 uint32_t low(uint64_t a);
 uint32_t high(uint64_t a);
 
+extern mutex netlock; //Locking for the network thread(s)

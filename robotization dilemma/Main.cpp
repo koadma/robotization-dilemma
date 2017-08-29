@@ -63,6 +63,9 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
 }
 
 int main() {
+  keyframe<value<int>> test;
+  test.getAt(5);
+
   setlocale(LC_ALL, "");
   srand(time(NULL));
 
@@ -76,6 +79,5 @@ int CALLBACK WinMain(
   LPSTR       lpCmdLine,
   int         nCmdShow
 ) {
-  
   return main();
 }
