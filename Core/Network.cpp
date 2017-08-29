@@ -229,7 +229,9 @@ int NetworkS::ReciveData() {
   if (start != dlen) {
     throw 1;
   }
+  netlock.lock();
   bool t = RecivePacket(datae, pid, this, ConnectedShip);
+  netlock.unlock();
   //datae->~DataElement();
   delete datae;
 
@@ -444,7 +446,9 @@ int NetworkC::ReciveData() {
   if (start != dlen) {
     throw 1;
   }
+  netlock.lock();
   bool t = RecivePacket(datae, pid, this, ConnectedShip);
+  netlock.unlock();
   //datae->~DataElement();
   delete datae;
 

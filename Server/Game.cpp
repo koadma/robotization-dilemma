@@ -4,186 +4,7 @@
 Game* game;
 
 using namespace std;
-/*
-void Game::askToContinue(int nextPlayer) const
-{
-  terminalClear();
-  cout << nextPlayer << ". jatekos kore kovetkezik!" << endl;
-  cout << "Nyomj entert, ha kezdodhet." << endl;
-  waitForEnter();
-}
-
-void Game::giveInformation(int currentPlayer) const
-{
-  cout << "Kor eleji informaciok:" << endl;
-  cout << roundNumber << ". kor" << endl << endl;
-  cout << ships[currentPlayer] << endl << endl;
-  ships[currentPlayer].giveSensorData();
-  cout << "----------------------" << endl;
-}
-
-
-void Game::manageBubbles()
-{
-  //create bubbles
-  for (const Ship& ship : ships)
-  {
-    if (not ship.isDestroyed())
-    {
-      //passive bubble
-      int vis = ship.getVisibility(); 
-      bubbles.add(Bubble
-      {
-        ship.getPlace(),    //place 
-        ship.getOwner(),    //emitter
-        ship.getVelocity(), //emitterVelocity
-        vis,                //visibility 
-        0,                  //age 
-        Bubble::Passive,    //btype
-        0                   //receiver
-      });
-      
-      //active bubble
-      if (ship.getSensorRadiation() > 0)
-      {
-        bubbles.add(Bubble
-        {
-          ship.getPlace(),
-          ship.getOwner(),
-          ship.getVelocity(),
-          ship.getSensorRadiation(),   //visibility
-          0,                          //age
-          Bubble::Active,
-          0                         //receiver
-        });
-      }
-    }
-  }
-  //move bubbles
-  bubbles.move();
-}
-
-void Game::manageProjectiles()
-{
-  //firing(creating projectiles)
-  for (const Ship& ship : ships)
-  {
-    if(ship.didFire())
-    {
-      int target = ship.getAim();
-      int oldT = projectiles[target];
-      int newT = floor( distance(ship.getPlace(), ship.getPlace()) / SOL );
-      if (oldT == -1)
-      {
-        projectiles[target] = newT;
-      } else
-      {
-        projectiles[target] = min(oldT, newT);
-      }
-    }
-  }
-  //move projectiles
-  for (int player = 0; player<numOfShips; player++)
-  {
-    if (projectiles[player] >= 0) //aimed at
-    {
-      if (projectiles[player] == 0) //reached
-      {
-        ships[player].destroy();
-        winManager.lose(player);
-      }
-      projectiles[player]--;
-    }
-  }
-}
-
-
-void Game::moveShips()
-{
-  for (Ship& ship : ships)
-  {
-    if (not ship.isDestroyed())
-    {
-      ship.move(ROUND_TIME);
-      //reaching origo == win
-      if (ship.getPlace().length() <= ship.getHullRadius()) //can go over, if the ship is fast
-      {
-        winManager.win(ship.getOwner());
-      }
-    }
-  }
-}
-
-
-void Game::manageDetections()
-{
-//todo: a bubble can be destroyed, when every player detects it
-  for (Ship& ship : ships)
-  {
-    ship.flushSensorData();
-    bubbles.interactWithShip(ship);
-  }
-}
-
-void Game::playRound()
-{
-  terminalClear();
-  cout << "Kor lejatszasa." << endl;
-  
-  manageBubbles();
-  manageProjectiles();
-  moveShips();
-  manageDetections();
-
-  waitForEnter();
-  terminalClear();
-}
-
-void Game::giveWinScreen()
-{
-  if (winManager.hasWinner())
-  {
-    cout << "Az " << winManager.getWinner() << ". jatekos nyert!" << endl;
-  } else
-  {
-    cout << "Mindenki elpusztult a csataban!" << endl;
-  }
-}
-
-void Game::mainGameLoop()
-{
-  do
-  {
-    bubbles.out(); // ONLY FOR TEST
-    waitForEnter();
-    for(int player=0; player<numOfShips; player++)
-    {
-      askToContinue(player);
-      giveInformation(player);
-      if (ships[player].isDestroyed())
-      {
-        waitForEnter();
-      } else
-      {
-        ships[player].getCommand();
-      }
-    }
-    playRound();
-    roundNumber++;
-  } while (not winManager.isOver());
-  giveWinScreen();
-}
-
-Game::Game(unsigned int numOfShips) : 
-numOfShips(numOfShips), winManager(numOfShips), projectiles(numOfShips, -1)
-{
-  for (unsigned int playerID=0; playerID<numOfShips; playerID++) 
-  {
-    ships.push_back(Ship(fVec3().randomize(MAP_SIZE), playerID));
-  }
-  mainGameLoop();
-}*/
-
+ 
 void Game::moveMade() {
   waitingFor--;
   if (waitingFor == 0) {
@@ -192,11 +13,9 @@ void Game::moveMade() {
 }
 void Game::newTurn() {
   turnId++;
-  waitingFor = ships.size();
-  auto it = ships.begin();
-  while (it != ships.end()) {
-    (*it)->newTurn(turnId);
-    ++it;
+  waitingFor = drones.size();
+  for(auto&& it : drones) {
+    ((Ship*)it)->newTurn(turnId);
   }
 }
 void Game::startGame() {
@@ -204,69 +23,132 @@ void Game::startGame() {
   newTurn();
 }
 void Game::addShip(Ship* ship) {
-  ships.push_back(ship);
-  if (targetPlayerCount == ships.size()) { //reached target number of players
+  drones.push_back(ship);
+  if (targetPlayerCount == drones.size()) { //reached target number of players
     startGame();
   }
 }
+void Game::removeIntersect(Object* object) {
+  auto it = events.begin();
+  while (it != events.end()) {
+    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o == object) {
+      auto it2 = it;
+      ++it;
+      events.erase(it2);
+    }
+    else {
+      ++it;
+    }
+  }
+}
 void Game::removeIntersect(Drone* drone) {
-  auto it = intersects.begin();
-
-  while (it != intersects.end()) {
-    if (it->second.first->parentShip == drone) {
+  auto it = events.begin();
+  while (it != events.end()) {
+    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->parentShip == drone) {
       auto it2 = it;
       ++it;
-      intersects.erase(it2);
+      events.erase(it2);
     }
     else {
       ++it;
     }
   }
 }
-void Game::removeIntersect(Bubble* bubble) {
-  auto it = intersects.begin();
+void Game::removeIntersect(Path* path) {
+  auto it = events.begin();
 
-  while (it != intersects.end()) {
-    if (it->second.second == bubble) {
+  while (it != events.end()) {
+    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
       auto it2 = it;
       ++it;
-      intersects.erase(it2);
+      events.erase(it2);
     }
     else {
       ++it;
     }
   }
 }
-void Game::calcIntersect() {
-  
-  intersects.clear(); //reset intersections
-  auto itb = paths.begin();
-  while (itb != paths.end()) {
-    auto its = ships.begin();
-    while (its != ships.end()) {
-      list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(*itb);
-      intersects.insert(inters.begin(), inters.end());
-      ++its;
+void Game::calcIntersect(Object* object) {
+  for (auto&& itb : paths) {
+    list< pair<double, pair<Object*, Path*>>> inters = object->intersect(itb);
+    for (auto it : inters) {
+      Collision* coll = new Collision();
+      coll->_time = it.first;
+      coll->_o = it.second.first;
+      coll->_p = it.second.second;
+      events.insert(coll);
     }
-    ++itb;
+  }
+}
+void Game::calcIntersect(Drone* drone) {
+  for(auto&& ito : drone->objects) {
+    calcIntersect(ito);
+  }
+}
+void Game::calcIntersect(Path* path) {
+  auto its = drones.begin();
+  while (its != drones.end()) {
+    list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(path);
+    for (auto&& it : inters) {
+      Collision* coll = new Collision();
+      coll->_time = it.first;
+      coll->_o = it.second.first;
+      coll->_p = it.second.second;
+      events.insert(coll);
+    }
+    ++its;
+  }
+}
+void Game::recalcIntersects() {
+  for (auto&& it : drones) {
+    calcIntersect(it);
   }
 }
 void Game::simulate(float from, float till) {
-  for (auto it : ships) {
-    it->setAccel();
-  }
-  collectPath(paths, from);
-  calcIntersect();
-  auto it = intersects.begin();
-  while (it != intersects.end() && it->first < till) {
-    if(from <= it->first) {
-      it->second.first->getPath(it->second.second);
+  //recalcIntersects();
+  cout << "SIM " << from << " " << till << endl;
+  auto it = events.begin();
+  while (it != events.end() && (*it)->_time < till) {
+    if(from <= (*it)->_time) {
+      (*it)->apply(this);
+      auto it2 = it;
+      ++it;
+      cout << "PEVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      events.erase(it2);
     }
-    ++it;
+    else {
+      auto it2 = it;
+      ++it;
+      cout << "DEVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      events.erase(it2);
+    }
   }
-  for (auto it : ships) {
-    it->moveShip(till);
+
+  //Clean bubbles
+  auto pit = paths.begin();
+  while(pit != paths.end()) {
+    bool land = true;
+    if ((*pit)->type() == Path::PathTypeBubble) {
+      auto dit = drones.begin();
+      while (dit != drones.end() && land) {
+        auto oit = (*dit)->objects.begin();
+        while (oit != (*dit)->objects.end() && land) {
+          land = land && !((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
+          ++oit;
+        }
+        ++dit;
+      }
+    }
+    if (land) {
+      auto dpit = pit;
+      ++pit;
+      removeIntersect(*dpit);
+      paths.erase(dpit);
+    } else {
+      ++pit;
+    }
   }
+
   newTurn();
 }
 

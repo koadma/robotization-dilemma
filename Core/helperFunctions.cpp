@@ -4,6 +4,18 @@
 
 using namespace std;
 
+template <typename T>
+Zero<T>::Zero() { val = T(); }
+template <typename T>
+T Zero<T>::ret() {
+  return val;
+}
+
+Zero<int>        intZero;
+Zero<float>    floatZero;
+Zero<double>  doubleZero;
+Zero<string>  stringZero;
+
 void solve2(float a, float b, float c, float sol[2], int& numOfSol)
 {
   if (a == 0)
@@ -21,7 +33,7 @@ void solve2(float a, float b, float c, float sol[2], int& numOfSol)
     numOfSol = 2;
     sol[0] = (-b+sqrt(disc))/(2*a);
     sol[1] = (-b-sqrt(disc))/(2*a);
-  } else if (disc = 0)
+  } else if (disc == 0)
   {
     numOfSol = 1;
     sol[0] = -b/(2*a);
@@ -57,12 +69,6 @@ void waitForEnter()
   #else
     system("read"); //ugly, inelegant, slow, not portable
   #endif
-}
-
-string to_string(double _Val, int _Dig) {
-  stringstream ss;
-  ss << fixed << std::setprecision(_Dig) << _Val << scientific;
-  return ss.str();
 }
 
 vector<string> tokenize(string str, char split)
@@ -278,15 +284,6 @@ void serialize(string s, unsigned char** data, int& dataLen) {
   }
   dataLen = s.size();
 }
-void serialize(int i, unsigned char** data, int& dataLen, int prec) {
-  serialize(to_string(i), data, dataLen);
-}
-void serialize(float i, unsigned char** data, int& dataLen, int prec) {
-  serialize(to_string(i), data, dataLen);
-}
-void serialize(double i, unsigned char** data, int& dataLen, int prec) {
-  serialize(to_string(i), data, dataLen);
-}
 
 string deserializes(unsigned char* data, int dataLen) {
   string s(dataLen, ' ');
@@ -352,4 +349,18 @@ double ran1(long int nseed) {
   else {
     return temp;
   }
-};
+}
+
+uint64_t mix(uint64_t a, uint64_t b) {
+  return (a << 32) + b;
+}
+
+uint32_t low(uint64_t a) {
+  return a & 0xffffffff;
+}
+
+uint32_t high(uint64_t a) {
+  return a >> 32;
+}
+
+mutex netlock; //Locking for the network thread(s)

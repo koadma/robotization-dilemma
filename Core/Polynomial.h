@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/Point.h"
+#include "Point.h"
 
 template<typename T> class Polynomial;
 
@@ -16,7 +16,7 @@ template<typename T>
 class Polynomial{
 public:
 	vector<T> Coefficient;
-	int degree;
+	size_t degree;
 
 	Polynomial() {
     this->degree = 0;
@@ -40,7 +40,7 @@ public:
   }
 	Polynomial Trim() {
     Polynomial p = *this;
-    while (p.Coefficient.size() > 0 && p.Coefficient[p.Coefficient.size() - 1] == Fraction(0)) {
+    while (p.Coefficient.size() > 1 && p.Coefficient[p.Coefficient.size() - 1] == 0) {
       p.degree--;
       p.Coefficient.resize(p.Coefficient.size() - 1);
 
@@ -84,7 +84,7 @@ public:
 
 template<typename T> Polynomial<T> operator+ (Polynomial<T> lhs, Polynomial<T> rhs) {
   Polynomial<T> p3(max(lhs.degree, rhs.degree));
-  for (int i = 0; i <= p3.degree; i++) {
+  for (size_t i = 0; i <= p3.degree; i++) {
     p3.Coefficient[i] = ((lhs.Coefficient.size() > i) ? lhs.Coefficient[i] : 0) + ((rhs.Coefficient.size() > i) ? rhs.Coefficient[i] : 0);
   }
   return (p3).Trim();
@@ -348,7 +348,7 @@ template<typename T> Term<T>::Term() {
 }
 template<typename T> Term<T>::Term(T t, string s) {
   coefficient = t;
-  for (int i = 0; i < s.length(); i++) {
+  for (size_t i = 0; i < s.length(); i++) {
     terms[s[i]]++;
   }
 }
@@ -418,8 +418,8 @@ template<typename T> void Equation<T>::addTerm(T coefficient, string sterms) {
   addTerm(t);
 }
 template<typename T> void Equation<T>::addTerms(vector<pair<T, string> > newterms) {
-  for (int i = 0; i < newterms.size(); i++) {
-    addTerm(newterms[i].first, newterms[i].second);
+  for (auto&& it : newterms) {
+    addTerm(it.first, it.second);
   }
 }
 template<typename T> void Equation<T>::addTerms(Equation& newterms) {
@@ -484,7 +484,7 @@ template<typename T> void Equation<T>::substitute(Equation<T> eq, char t) {
 
 template<typename T> Polynomial<T> Equation<T>::getPolynomial(char t) {
 
-  Polynomial<T> res;
+  Polynomial<T> res(0);
 
   auto it = terms.begin();
 

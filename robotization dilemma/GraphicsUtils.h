@@ -13,6 +13,7 @@ typedef uint32_t colorargb;
 
 typedef void(*ClickCallback)();
 typedef void(*TextInputFunc)(string);
+typedef void(*SliderInputFunc)(float);
 typedef bool(*TextValidatorFunc)(string, int, unsigned char);
 
 typedef void(*RenderManager)();
@@ -65,6 +66,12 @@ struct IWindowManagers {
 };
 
 //extern map<int, Graphics::WindowData> Graphics::windows;
+
+namespace Graphics {
+
+  void resetViewport();
+
+}
 
 class Coordiante {
 public:

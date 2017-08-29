@@ -1,6 +1,6 @@
 <body>
-	<label
-		id = "objectEngineSidebarName"
+	<input
+		id = "objectLaserSidebarEnergyInput"
 		minrelx = "0.0"
 		minrely = "1.0"
 		minabsx = "5.0"
@@ -12,11 +12,42 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		align = "1"
-	>Engine</label>
+		inputfunc = "ingameLaserSidebarEnergyInput"
+		validatorfunc = "floatValidator"
+	>0</input>
 	<label
-		id = "objectEngineSidebarHealth"
+		id = "objectEngineSidebarAccInputXLabel"
 		minrelx = "0.0"
+		minrely = "1.0"
+		minabsx = "5.0"
+		minabsy = "-95.0"
+		maxrelx = "0.33"
+		maxrely = "1.0"
+		maxabsx = "-5.0"
+		maxabsy = "-55.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		align = "1"
+	>x</label>
+	<label
+		id = "objectLaserSidebarAccInputYLabel"
+		minrelx = "0.33"
+		minrely = "1.0"
+		minabsx = "5.0"
+		minabsy = "-95.0"
+		maxrelx = "0.67"
+		maxrely = "1.0"
+		maxabsx = "-5.0"
+		maxabsy = "-55.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		align = "1"
+	>y</label>
+	<label
+		id = "objectLaserSidebarAccInputZLabel"
+		minrelx = "0.67"
 		minrely = "1.0"
 		minabsx = "5.0"
 		minabsy = "-95.0"
@@ -28,10 +59,42 @@
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
 		align = "1"
-	>0 / 0</label>
-	<label
-		id = "objectEngineSidebarEnergyLabel"
+	>z</label>
+	<input
+		id = "objectLaserSidebarDirInputX"
 		minrelx = "0.0"
+		minrely = "1.0"
+		minabsx = "5.0"
+		minabsy = "-145.0"
+		maxrelx = "0.33"
+		maxrely = "1.0"
+		maxabsx = "-5.0"
+		maxabsy = "-105.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		inputfunc = "ingameLaserSidebarDirInputX"
+		validatorfunc = "floatValidator"
+	>0</input>
+	<input
+		id = "objectLaserSidebarDirInputY"
+		minrelx = "0.33"
+		minrely = "1.0"
+		minabsx = "5.0"
+		minabsy = "-145.0"
+		maxrelx = "0.67"
+		maxrely = "1.0"
+		maxabsx = "-5.0"
+		maxabsy = "-105.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		inputfunc = "ingameLaserSidebarDirInputY"
+		validatorfunc = "floatValidator"
+	>0</input>
+	<input
+		id = "objectLaserSidebarDirInputZ"
+		minrelx = "0.67"
 		minrely = "1.0"
 		minabsx = "5.0"
 		minabsy = "-145.0"
@@ -42,41 +105,12 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		align = "1"
-	>0 / 0</label>
-	<label
-		id = "objectEngineSidebarAccInputXLabel"
+		inputfunc = "ingameLaserSidebarDirInputZ"
+		validatorfunc = "floatValidator"
+	>0</input>
+	<labelbind
+		id = "objectLaserSidebarSurefireLabel"
 		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-195.0"
-		maxrelx = "0.33"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-155.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
-		align = "1"
-	>x</label>
-	<label
-		id = "objectEngineSidebarAccInputYLabel"
-		minrelx = "0.33"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-195.0"
-		maxrelx = "0.67"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-155.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
-		align = "1"
-	>y</label>
-	<label
-		id = "objectEngineSidebarAccInputZLabel"
-		minrelx = "0.67"
 		minrely = "1.0"
 		minabsx = "5.0"
 		minabsy = "-195.0"
@@ -88,42 +122,10 @@
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
 		align = "1"
-	>z</label>
-	<input
-		id = "objectEngineSidebarAccInputX"
+	>ERROR</labelbind>
+	<button
+		id = "objectLaserSidebarShootButton"
 		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-245.0"
-		maxrelx = "0.33"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-205.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
-		inputfunc = "ingameEngineSidebarAccInputX"
-		validatorfunc = "floatValidator"
-	>0</input>
-	<input
-		id = "objectEngineSidebarAccInputY"
-		minrelx = "0.33"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-245.0"
-		maxrelx = "0.67"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-205.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
-		inputfunc = "ingameEngineSidebarAccInputY"
-		validatorfunc = "floatValidator"
-	>0</input>
-	<input
-		id = "objectEngineSidebarAccInputZ"
-		minrelx = "0.67"
 		minrely = "1.0"
 		minabsx = "5.0"
 		minabsy = "-245.0"
@@ -134,7 +136,6 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		inputfunc = "ingameEngineSidebarAccInputZ"
-		validatorfunc = "floatValidator"
-	>0</input>
+		callback = "ingameLaserSidebarShoot"
+	>Shoot</button>
 </body>

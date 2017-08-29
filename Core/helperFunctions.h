@@ -1,7 +1,6 @@
-#ifndef __HELPERFUNCS_H__
-#define __HELPERFUNCS_H__
+#pragma once
 
-#include "..\Core\constants.h"
+#include "constants.h"
 
 #include <algorithm>
 #include <cmath>
@@ -9,6 +8,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <queue>
 #include <utility>
 #include <vector>
 
@@ -42,29 +43,178 @@
 
 using namespace std;
 
-/*#if !defined(__cplusplus) || defined(_MSC_EXTENSIONS)
-#define and	&&
-#define and_eq	&=
-#define bitand	&
-#define bitor	|
-#define compl	~
-#define not	!
-#define not_eq	!=
-#define or		||
-#define or_eq	|=
-#define xor	^
-#define xor_eq	^=
-#endif /* !defined(__cplusplus) || defined(_MSC_EXTENSIONS) */
-
-/*template <typename T>
-T mini(T a, T b) {
-  return (a<b) ? a : b;
-}
-
 template <typename T>
-T maxi(T a, T b) {
-  return (a>b) ? a : b;
-}*/
+class Zero {
+private:
+  T val;
+public:
+  Zero();
+  T ret();
+};
+
+extern Zero<int>        intZero;
+extern Zero<float>    floatZero;
+extern Zero<double>  doubleZero;
+extern Zero<string>  stringZero;
+
+///####################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
+///####################################################///
+namespace TextBindHelper
+{
+  template <int... Is>
+  struct index {};
+
+  template <int N, int... Is>
+  struct gen_seq : gen_seq<N - 1, N - 1, Is...> {};
+
+  template <int... Is>
+  struct gen_seq<0, Is...> : index<Is...> {};
+}
+template<typename T>
+class TextBindBase {
+public:
+  virtual const T get() {
+    throw 1;
+    return T();
+  }
+};
+template<typename T>
+class TextBindVar : public TextBindBase<T> {
+public:
+  T* _val;
+  TextBindVar<T>() {
+
+  }
+  TextBindVar<T>(T* val) {
+    _val = val;
+  }
+  const T get() {
+    return *_val;
+  }
+};
+template<typename T, typename... Ts>
+class TextBindFunc : public TextBindBase<T> {
+public:
+  std::function<T(Ts...)> _func;
+  std::tuple<Ts...> _args;
+  template <typename F, typename... Args>
+  TextBindFunc<T, Ts...>(F&& func, Args&&... args)
+    : _func(std::forward<F>(func)),
+    _args(std::forward<Args>(args)...)
+  {}
+  template <typename... Args, int... Is>
+  T func(std::tuple<Args...>& tup, TextBindHelper::index<Is...>)
+  {
+    return _func(std::get<Is>(tup)...);
+  }
+  template <typename... Args>
+  T func(std::tuple<Args...>& tup)
+  {
+    return func(tup, TextBindHelper::gen_seq<sizeof...(Args)>{});
+  }
+  const T get() {
+    return func(_args);
+  }
+};
+class TextBindCore {
+public:
+  virtual string tostr()
+  {
+    throw 1;
+    return "ERROR!";
+  }
+};
+template <typename... Ts>
+class TextBind : public TextBindCore {
+private:
+  std::string str;
+  std::tuple<Ts...> args;
+public:
+  TextBind(string s, Ts&&... arg)
+    : args(std::forward<Ts>(arg)...)
+  {
+    str = s;
+  }
+  void SetArgs(Ts&&... arg) {
+    args(std::forward<Ts>(arg)...);
+  }
+  void SetString(string s) {
+    str = s;
+  }
+  template<class F, class...Ts, std::size_t...Is>
+  void for_each_in_tuple(string& str, int& n, stringstream& ss, std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...>) {
+    using expander = int[];
+    (void)expander {
+      0, ((void)func(str, n, ss, std::get<Is>(tuple)), 0)...
+    };
+  }
+  template<class F, class...Ts>
+  void for_each_in_tuple(string& str, int& n, stringstream& ss, std::tuple<Ts...> & tuple, F func) {
+    for_each_in_tuple(str, n, ss, tuple, func, std::make_index_sequence<sizeof...(Ts)>());
+  }
+  string tostr()
+  {
+    stringstream ss;
+    int n = 0;
+    for_each_in_tuple(str, n, ss, args,
+      [](string& str, int& n, stringstream& ss, auto &x) {
+      bool b = true;
+      while (b) {
+        switch (str[n]) {
+        case '\\':
+          if (n + 1 < str.size()) {
+            if (str[n + 1] == '%') { ss << "%"; }
+            else if (str[n + 1] == '\\') { ss << "\\"; }
+            else { ss << "\\" << str[n + 1]; }
+          }
+          n += 2; break;
+        case '%':
+          b = false; n += 1; break;
+        default:
+          ss << str[n]; n += 1; break;
+        }
+      }
+      ss << x.get();
+    });
+    while (n < str.size()) {
+      switch (str[n]) {
+      case '\\':
+        if (n + 1 < str.size()) {
+          if (str[n + 1] == '%') { ss << "%"; }
+          else if (str[n + 1] == '\\') { ss << "\\"; }
+          else { ss << "\\" << str[n + 1]; }
+        }
+        n += 2; break;
+      case '%':
+        throw 1; n += 1; break;
+      default:
+        ss << str[n]; n += 1; break;
+      }
+    }
+    return ss.str();
+  }
+};
+
+///####################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
+///####################################################///
+/* Class how to use:
+ 1) Create a TextBind object specifying the template string, and the parameters
+ 2) Call the .tostr() function to substitute the current value
+Example:
+TextBind<
+  TextBindVar<float>,                                                             /// Substitute a variable
+  TextBindFunc<float, TStruct*, float*>,                                          /// Member function in TStruct class
+  TextBindFunc<string, string, int, int>                                          /// Global function
+> b("% asd \\% wa \\ nsd % %\\",                                                  /// Template string (% = to substitute, \% = print % character)
+  TextBindVar<float>(&n),                                                         /// Substitute variable "n"
+  TextBindFunc<float, TStruct*, float*>(&(TStruct::asd), &t, &x),                 /// Substitute return value of "TSruct::asd" function, called for "TStruct" object "t" with argument pointer to "x"
+  TextBindFunc<string, string, int, int>(testFunc, "Wubba lubba dub dub", 6, 5)   /// Substitute return value of "testFunc" with arguments ""Wubba lubba dub dub", 6, 5"
+);*/
+///####################################################///
+//         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
+///####################################################///
 
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);
@@ -76,7 +226,12 @@ void terminalClear();
 void waitForEnter();
 
 //_Val: value, _Dig: Number of digits
-string to_string(double _Val, int _Dig);
+template <typename T>
+string to_string(T _Val, int _Dig) {
+  stringstream ss;
+  ss << fixed << std::setprecision(_Dig) << _Val << scientific;
+  return ss.str();
+}
 
 //Function for tokenizing a string to vector of string.
 std::vector<std::string> tokenize(std::string str, char split = ' ');
@@ -120,9 +275,10 @@ vector<double> solveCubic(double &a, double &b, double &c, double &d);
 vector<double> solveQuartic(double &a, double &b, double &c, double &d, double &e);
 
 void serialize(string s, unsigned char** data, int& dataLen);
-void serialize(int i, unsigned char** data, int& dataLen, int prec = 3);
-void serialize(float i, unsigned char** data, int& dataLen, int prec = 3);
-void serialize(double i, unsigned char** data, int& dataLen, int prec = 3);
+template <typename T>
+void serialize(T v, unsigned char** data, int& dataLen, int prec = 3) {
+  serialize(to_string(v, prec), data, dataLen);
+}
 
 string deserializes(unsigned char* data, int dataLen);
 int    deserializei(unsigned char* data, int dataLen);
@@ -135,4 +291,8 @@ T deserializeT(unsigned char* data, int dataLen) {
 
 double ran1(long int nseed = 0);
 
-#endif
+uint64_t mix(uint64_t a, uint64_t b);
+uint32_t low(uint64_t a);
+uint32_t high(uint64_t a);
+
+extern mutex netlock; //Locking for the network thread(s)
