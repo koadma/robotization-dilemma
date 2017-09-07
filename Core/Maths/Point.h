@@ -1,5 +1,4 @@
-#ifndef __POINT_H__
-#define __POINT_H__
+#pragma once
 
 #include "Fraction.h"
 
@@ -226,5 +225,3 @@ template<typename T> inline vec3<T> crs(vec3<T> lhs, vec3<T> rhs) {
 template<typename T> inline float distance(vec3<T> lhs, vec3<T> rhs) {
   return (lhs-rhs).length();
 }
-
-#endif

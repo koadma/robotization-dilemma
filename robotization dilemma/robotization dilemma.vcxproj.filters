@@ -1,186 +1,270 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Code">
+      <UniqueIdentifier>{d66bffac-f639-43cf-a6d3-676d5b4289e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Code\Libraries">
+      <UniqueIdentifier>{84df28ba-3a81-4ab3-a039-251beb514796}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Code\Libraries\GUI">
+      <UniqueIdentifier>{9391fbe4-7bce-4e79-b72a-c07c74b221e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\Maths">
+      <UniqueIdentifier>{ce2e52a3-2697-4943-9e00-b8fa6ffc079e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\Network">
+      <UniqueIdentifier>{ac0ece5f-ff31-42be-81ba-9cc8141a31c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Framework">
+      <UniqueIdentifier>{4cafe0d7-470e-4d3c-b32d-cea9d69654b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\EM">
+      <UniqueIdentifier>{b1d30ae4-92e3-4da2-bd01-2947cad4a46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Objects">
+      <UniqueIdentifier>{f731ef97-4023-4cae-bc4a-dd79dffef8c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GUI\Button.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GUI\Canvas.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Container.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Graphics.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\GraphicsUtils.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\GUIElement.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Label.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\LabelBind.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Panel.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Slider.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Table.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TextInput.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Fraction.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\helperFunctions.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Keyframe.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Point.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Polynomial.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Network\Network.cpp">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Network\NetworkData.cpp">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Battery.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Computer.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Engine.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Generator.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Hangar.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Laser.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Object.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Sensor.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Bubble.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Movement.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Path.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Shot.cpp">
+      <Filter>Code\EM</Filter>
     </ClCompile>
     <ClCompile Include="ClientCore.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="GameCanvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUIElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Label.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Panel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="RenderIn.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="RenderOut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Slider.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Bubble.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Fraction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\helperFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Keyframe.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Network.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\NetworkData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Point.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Polynomial.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\Ship.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\Sighting.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="LabelBind.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Table.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\Core\Event.cpp">
+      <Filter>Code\Framework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GUI\Button.h">
+      <Filter>Code\Libraries\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Canvas.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GUI\Canvas.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Container.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Graphics.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\GraphicsUtils.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\GUIElement.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Label.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\LabelBind.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Panel.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Slider.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Table.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TextInput.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\constants.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Fraction.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\helperFunctions.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Keyframe.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Point.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Polynomial.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Network\Network.h">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Network\NetworkData.h">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Battery.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Computer.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Engine.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Generator.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Hangar.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Laser.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Object.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Sensor.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Bubble.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Movement.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Path.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Shot.h">
+      <Filter>Code\EM</Filter>
     </ClInclude>
     <ClInclude Include="ClientCore.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="GameCanvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GUIElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Label.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Panel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="RenderIn.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="RenderOut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Slider.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Bubble.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Fraction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\helperFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Keyframe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\NetworkData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Point.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Polynomial.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Core\Ship.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Core\Sighting.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="LabelBind.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Table.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\Core\Event.h">
+      <Filter>Code\Framework</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

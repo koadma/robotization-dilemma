@@ -1,6 +1,6 @@
 #pragma once
 
-#include "helperFunctions.h"
+#include "../Maths/helperFunctions.h"
 
 #define PACKET_HEADER_LEN 4 //Used to store packet ID and data length;
 #define PACKET_HEADER_TYPE int

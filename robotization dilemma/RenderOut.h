@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics.h"
+#include "GUI/Graphics.h"
 
 extern Graphics::WinHwnd objectMainWindow;
 extern Graphics::PanelHwnd objectGameSubWindow;

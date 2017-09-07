@@ -1,10 +1,8 @@
-#include "Bubble.h"
+#include "Movement.h"
 
-using namespace std;
-
-Movement Movement::getAt(time_type_s gTime, vel_type_mpers maxVelocity) const  {
+Movement Movement::getAt(time_type_s gTime, vel_type_mpers maxVelocity) const {
   Movement m = *this;
-  m.pos = pos + vel*(gTime-gTimeStamp) + acc*pow(gTime-gTimeStamp, 2) / 2.0f;
+  m.pos = pos + vel*(gTime - gTimeStamp) + acc*pow(gTime - gTimeStamp, 2) / 2.0f;
   m.vel = vel + acc*(gTime - gTimeStamp);
   m.gTimeStamp = gTime;
   return m;

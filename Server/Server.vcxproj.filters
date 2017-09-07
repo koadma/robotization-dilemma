@@ -1,102 +1,177 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Code">
+      <UniqueIdentifier>{db08a49b-85be-4701-b629-a731b1504e33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Code\Libraries">
+      <UniqueIdentifier>{813c453a-db1a-4642-a47a-4bf1eecf768c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Code\Libraries\Maths">
+      <UniqueIdentifier>{d64b976d-7569-47cf-9900-cc0e95e2c887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\Network">
+      <UniqueIdentifier>{7476b7fb-02e3-4664-bcc8-c72e3577a880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Framework">
+      <UniqueIdentifier>{ffa63553-364d-4d8c-afbe-7b6528021c1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\EM">
+      <UniqueIdentifier>{ad809658-14bf-4ae3-a24f-51b183f418e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Objects">
+      <UniqueIdentifier>{5c391dd6-757d-4f3a-a633-49b13ef867e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WinManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Bubble.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Fraction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\helperFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Keyframe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\NetworkData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Point.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Polynomial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Ship.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Sighting.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="..\Core\Maths\Fraction.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\helperFunctions.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Keyframe.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Point.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Polynomial.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Network\Network.cpp">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Network\NetworkData.cpp">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Bubble.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Movement.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Path.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Shot.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Battery.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Computer.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Engine.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Generator.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Hangar.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Laser.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Object.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Sensor.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Bubble.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Fraction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\helperFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Keyframe.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Network.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\NetworkData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Point.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Polynomial.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\Ship.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\Sighting.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\Core\Event.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Core\Maths\constants.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Fraction.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\helperFunctions.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Keyframe.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Point.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Polynomial.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Network\Network.h">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Network\NetworkData.h">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Bubble.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Movement.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Path.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Shot.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Battery.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Computer.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Engine.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Generator.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Hangar.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Laser.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Object.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Sensor.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Main.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Ship.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Sighting.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Event.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

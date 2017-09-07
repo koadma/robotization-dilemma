@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GL\freeglut.h"
-#include "ClientCore.h"
-#include "..\rapidxml\rapidxml.hpp"
+#include "../GL/freeglut.h"
+#include "../ClientCore.h"
+#include "../../rapidxml/rapidxml.hpp"
 
 
 using namespace std;

@@ -522,3 +522,8 @@ template<typename T> Equation<T> operator/(Equation<T>& lhs, T rhs) {
   res /= rhs;
   return res;
 }
+
+class Eqnsys {
+public:
+  map<char, Equation<double> > eqns;
+};

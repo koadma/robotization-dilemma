@@ -1,7 +1,6 @@
 #pragma once
 
-//#include "Sighting.h"
-#include "NetworkData.h"
+#include "../Network/Network.h"
  
 template<typename T>
 struct HasGetMethod

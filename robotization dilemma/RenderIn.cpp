@@ -226,9 +226,9 @@ string isSurefire() {
     sVec3 sdir;
     bool b = surefire(ship->mov, selecteds->keyframes, timeNow, sdir);
     if (b) {
-      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputX"))->text = to_string(sdir.x, 2);
-      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputY"))->text = to_string(sdir.y, 2);
-      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputZ"))->text = to_string(sdir.z, 2);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputX"))->text = to_string(sdir.x);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputY"))->text = to_string(sdir.y);
+      reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputZ"))->text = to_string(sdir.z);
       reinterpret_cast<Laser*>(selectedo)->setDir(sdir);
       return "YES";
     }

@@ -1,7 +1,6 @@
-#ifndef __GAME_H__
-#define __GAME_H__
+#pragma once
 
-#include "WinManager.h"
+#include "..\Core\Ship.h"
 
 extern class Game;
 
@@ -53,5 +52,3 @@ public:
 };
 
 extern Game* game;
-
-#endif
