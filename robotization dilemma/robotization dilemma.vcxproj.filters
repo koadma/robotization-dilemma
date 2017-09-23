@@ -25,6 +25,9 @@
     <Filter Include="Code\Objects">
       <UniqueIdentifier>{f731ef97-4023-4cae-bc4a-dd79dffef8c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Libraries\Scripts">
+      <UniqueIdentifier>{f9b98839-2b1b-4107-805f-1faaba05afe2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Button.cpp">
@@ -143,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="..\Core\Event.cpp">
       <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Scripts\Scripts.cpp">
+      <Filter>Code\Libraries\Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +271,9 @@
     </ClInclude>
     <ClInclude Include="..\Core\Event.h">
       <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Scripts\Scripts.h">
+      <Filter>Code\Libraries\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

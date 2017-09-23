@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Network/Network.h"
+#include "../Scripts/Scripts.h"
  
 template<typename T>
 struct HasGetMethod

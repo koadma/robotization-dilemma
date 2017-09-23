@@ -22,6 +22,9 @@
     <Filter Include="Code\Objects">
       <UniqueIdentifier>{5c391dd6-757d-4f3a-a633-49b13ef867e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Libraries\Scripts">
+      <UniqueIdentifier>{cfc7ecb7-d249-4767-8237-d4eaed59656c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\Maths\Fraction.cpp">
@@ -95,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="..\Core\Event.cpp">
       <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Scripts\Scripts.cpp">
+      <Filter>Code\Libraries\Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="..\Core\Event.h">
       <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Scripts\Scripts.h">
+      <Filter>Code\Libraries\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

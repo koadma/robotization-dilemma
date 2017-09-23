@@ -83,6 +83,18 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
   }
 }
 
+// Use to convert bytes to MB
+#define DIV 1048576
+
+// Use to convert bytes to MB
+//#define DIV 1024
+
+// Specify the width of the field in which to print the numbers. 
+// The asterisk in the format specifier "%*I64d" takes an integer 
+// argument and uses it to pad and right justify the number.
+
+#define WIDTH 7
+
 int main(int argc, char** argv)
 {
   cout << sizeof(NetworkC) << endl;
@@ -93,8 +105,81 @@ int main(int argc, char** argv)
   cout << sizeof(Movement) << endl;
   cout << sizeof(Path) << endl;
 
-  game = new Game(2);
-  detachCreateClientBind(); //Begin accepting clients
+  //game = new Game(2);
+  //detachCreateClientBind(); //Begin accepting clients
+
+  ScriptIConstant cons0;
+  cons0._val = new ScriptData();
+  cons0._val->_data.fromType<double>(0);
+  cons0._val->type = ScriptData::TNUMERIC;
+  ScriptIConstant cons1;
+  cons1._val = new ScriptData();
+  cons1._val->_data.fromType<double>(1);
+  cons1._val->type = ScriptData::TNUMERIC;
+  ScriptIConstant cons2;
+  cons2._val = new ScriptData();
+  cons2._val->_data.fromType<double>(2);
+  cons2._val->type = ScriptData::TNUMERIC;
+  ScriptIConstant cons5;
+  cons5._val = new ScriptData();
+  cons5._val->_data.fromType<double>(5);
+  cons5._val->type = ScriptData::TNUMERIC;
+  
+  ScriptIVariable ln1lhsarr;
+  ln1lhsarr._arg = "a";
+
+  ScriptIIndex ln1lhs;
+  ln1lhs._arg = &ln1lhsarr;
+  ln1lhs._ind = &cons0;
+
+  ScriptIAssign ln1;
+  ln1._to = &ln1lhs;
+  ln1._val = &cons5;
+
+  ScriptIVariable ln2lhs;
+  ln2lhs._arg = "b";
+
+  ScriptIVariable ln2rhsarr;
+  ln2rhsarr._arg = "a";
+
+  ScriptIIndex ln2rhs;
+  ln2rhs._arg = &ln2rhsarr;
+  ln2rhs._ind = &cons0;
+
+  ScriptIAssign ln2;
+  ln2._to = &ln2lhs;
+  ln2._val = &ln2rhs;
+
+  ScriptIVariable ln3lhs;
+  ln3lhs._arg = "b";
+
+  ScriptIVariable ln3rhsr;
+  ln3rhsr._arg = "b";
+
+  ScriptIMath ln3rhs;
+  ln3rhs._arg1 = &cons2;
+  ln3rhs._arg2 = &ln3rhsr;
+  ln3rhs._oper = ScriptIMath::PLUS;
+
+  ScriptIAssign ln3;
+  ln3._to = &ln3lhs;
+  ln3._val = &ln3rhs;
+
+  ScriptIBlock root;
+  root._instructions.push_back(&ln1);
+  root._instructions.push_back(&ln2);
+  root._instructions.push_back(&ln3);
+
+  ScriptData* d;
+
+  //Memory safety test
+  for(int i=0;i<1000000; i++) {
+    d = new ScriptData();
+
+    DeletePtr(root.run(*d));
+
+    DeletePtr(d);
+  }
 
   int n;
   cout << "Press any key to exit" << endl;

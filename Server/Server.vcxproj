@@ -39,6 +39,7 @@
     <ClCompile Include="..\Core\Path\Movement.cpp" />
     <ClCompile Include="..\Core\Path\Path.cpp" />
     <ClCompile Include="..\Core\Path\Shot.cpp" />
+    <ClCompile Include="..\Core\Scripts\Scripts.cpp" />
     <ClCompile Include="..\Core\Ship.cpp" />
     <ClCompile Include="..\Core\Sighting.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="..\Core\Path\Movement.h" />
     <ClInclude Include="..\Core\Path\Path.h" />
     <ClInclude Include="..\Core\Path\Shot.h" />
+    <ClInclude Include="..\Core\Scripts\Scripts.h" />
     <ClInclude Include="..\Core\Ship.h" />
     <ClInclude Include="..\Core\Sighting.h" />
     <ClInclude Include="Game.h" />

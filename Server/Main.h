@@ -2,6 +2,9 @@
 
 #include "Game.h"
 
+#include <windows.h>
+#include <Psapi.h>
+
 using namespace std;
 
 void createClientBind();
