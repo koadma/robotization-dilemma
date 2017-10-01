@@ -105,10 +105,10 @@ int main(int argc, char** argv)
   cout << sizeof(Movement) << endl;
   cout << sizeof(Path) << endl;
 
-  //game = new Game(2);
-  //detachCreateClientBind(); //Begin accepting clients
+  game = new Game(2);
+  detachCreateClientBind(); //Begin accepting clients
 
-  ScriptIConstant cons0;
+  /*ScriptIConstant cons0;
   cons0._val = new ScriptData();
   cons0._val->_data.fromType<double>(0);
   cons0._val->type = ScriptData::TNUMERIC;
@@ -123,6 +123,18 @@ int main(int argc, char** argv)
   ScriptIConstant cons5;
   cons5._val = new ScriptData();
   cons5._val->_data.fromType<double>(5);
+  cons5._val->type = ScriptData::TNUMERIC;
+  ScriptIConstant cons6;
+  cons5._val = new ScriptData();
+  cons5._val->_data.fromType<double>(6);
+  cons5._val->type = ScriptData::TNUMERIC;
+  ScriptIConstant cons7;
+  cons5._val = new ScriptData();
+  cons5._val->_data.fromType<double>(7);
+  cons5._val->type = ScriptData::TNUMERIC;
+  ScriptIConstant cons10;
+  cons5._val = new ScriptData();
+  cons5._val->_data.fromType<double>(10);
   cons5._val->type = ScriptData::TNUMERIC;
   
   ScriptIVariable ln1lhsarr;
@@ -168,18 +180,34 @@ int main(int argc, char** argv)
   ScriptIBlock root;
   root._instructions.push_back(&ln1);
   root._instructions.push_back(&ln2);
-  root._instructions.push_back(&ln3);
+  root._instructions.push_back(&ln3);*/
+
+  /*ScriptIBlock root;
 
   ScriptData* d;
 
+  std::ifstream file("prog.prg");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  file.close();
+
+  xml_document<> doc;
+  std::string content(buffer.str());
+  doc.parse<0>(&content[0]);
+
+  ScriptInstruction* ni;
+
+  root.load(doc.first_node("root"));
+
   //Memory safety test
   for(int i=0;i<1000000; i++) {
+
     d = new ScriptData();
 
     DeletePtr(root.run(*d));
 
     DeletePtr(d);
-  }
+  }*/
 
   int n;
   cout << "Press any key to exit" << endl;
