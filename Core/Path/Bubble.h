@@ -14,6 +14,7 @@ public:
   time_type_s gEmissionTime;
   Movement emitter;
   energy_type_J energy = 1.0f;
+  string data = "";
   en_flux_type_Jpermm getFlux(time_type_s t) {
     if (t <= gEmissionTime) {
       return 0;

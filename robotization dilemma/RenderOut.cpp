@@ -121,3 +121,7 @@ void createMainMenu() {
   Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
   Graphics::deleteElements(objectGameSubWindow);
 }
+
+void createReconnectScreen() {
+  Graphics::setElements(objectMenuSubWindow, "html/reconnect_screen.xml");
+}

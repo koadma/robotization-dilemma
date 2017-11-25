@@ -1,5 +1,77 @@
 #include "Scripts.h"
 
+//In:
+//Root: NUMERIC number to convert
+//Out:
+//Root: STRING result
+ScriptData* ScriptApiFunctions::num_to_str(ScriptData& _args) {
+  ScriptData* res = new ScriptData();
+  res->CopyContent(&_args);
+  res->type = ScriptData::TSTRING;
+  return res;
+}
+
+//In:
+//Root: STRING number to convert
+//Out:
+//Root: NUMERIC result
+ScriptData* ScriptApiFunctions::str_to_num(ScriptData& _args) {
+  ScriptData* res = new ScriptData();
+  res->CopyContent(&_args);
+  res->type = ScriptData::TNUMERIC;
+  return res;
+}
+
+//In:
+//Root: Array of STRING, concat order lexographic (std::map)
+//Out:
+//Root: STRING result
+ScriptData* ScriptApiFunctions::str_concat(ScriptData& _args) {
+  ScriptData* res = new ScriptData();
+  res->type = ScriptData::TSTRING;
+  for (auto&& it : _args._elems) {
+    res->_data.fromType<string>(res->_data.toType<string>() + it.second->_data.toType<string>());
+  }
+  return res;
+}
+
+//In:
+//Root: STRING
+//Out:
+//Root: NUMERIC result, string length
+ScriptData* ScriptApiFunctions::str_len(ScriptData& _args) {
+  ScriptData* res = new ScriptData();
+  res->type = ScriptData::TNUMERIC;
+  res->_data.fromType<int>(_args._data.toType<string>().length());
+  return res;
+}
+
+//In:
+//str STRING
+//i NUMERIC
+//Out:
+//str STRING
+ScriptData* ScriptApiFunctions::str_index(ScriptData& _args) {
+  ScriptData* res = new ScriptData();
+  res->type = ScriptData::TNUMERIC;
+  res->_data.fromType<char>(_args._elems["str"]->_data.toType<string>()[_args._elems["i"]->_data.toType<int>()]);
+  return res;
+}
+
+//In:
+//a NUMERIC
+//b NUMERIC
+//Out:
+//r NUMERIC
+ScriptData* ScriptApiFunctions::num_rand(ScriptData& _args) {
+  ScriptData* res = new ScriptData();
+  res->type = ScriptData::TNUMERIC;
+  double a = _args._elems["a"]->_data.toType<double>();
+  double b = _args._elems["b"]->_data.toType<double>();
+  res->_data.fromType<double>(a + (b - a)*ran1());
+  return res;
+}
+
 ScriptData::ScriptData() {
   _instances = 1;
 }
@@ -255,6 +327,10 @@ void ScriptIConstant::load(xml_node<> *data) {
   }
   if (type == "str") {
     _val->type = ScriptData::TSTRING;
+    _val->_data.fromType<string>(data->value());
+  }
+  if (type == "char") {
+    _val->type = ScriptData::TCHAR;
     _val->_data.fromType<string>(data->value());
   }
 }
@@ -673,9 +749,21 @@ ScriptIFunctionCall::~ScriptIFunctionCall() {
 
 void ScriptIAPICall::load(xml_node<> *data) {
   _func = apiMap[data->first_attribute("name")->value()];
+
+  for (xml_node<> *pElem = data->first_node("arg"); pElem; pElem = pElem->next_sibling("arg")) {
+    ScriptIBlock* b = new ScriptIBlock();
+    b->load(pElem);
+    _arguments.push_back({ pElem->first_attribute("name")->value(), b });
+  }
 }
 ScriptData* ScriptIAPICall::run(ScriptData& _args) {
-  return _func(_args);
+  ScriptData _nargs;
+  for (auto&& it : _arguments) {
+    ScriptData* _nval;
+    _nval = it.second->run(_args);
+    _nargs._elems.insert({ it.first, _nval });
+  }
+  return _func(_nargs);
 }
 
 ScriptData* ScriptIBlock::run(ScriptData& _args) {

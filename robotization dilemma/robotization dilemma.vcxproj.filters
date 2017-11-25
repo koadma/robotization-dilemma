@@ -150,6 +150,9 @@
     <ClCompile Include="..\Core\Scripts\Scripts.cpp">
       <Filter>Code\Libraries\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Checkbox.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Button.h">
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="..\Core\Scripts\Scripts.h">
       <Filter>Code\Libraries\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Checkbox.h">
+      <Filter>Code\Libraries\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

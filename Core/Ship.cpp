@@ -114,6 +114,39 @@ void Drone::sightMovement(Movement& m, time_type_s time) {
   }
 }
 
+Ship::Ship(uint32_t _ID, mVec3 _pos) {
+  load(_ID, _pos);
+}
+Ship::Ship(uint32_t _ID) {
+  load(_ID, { 0,0,0 });
+}
+
+void Ship::load(uint32_t _ID, mVec3 _pos) {
+  Object* no = new ::Generator({ 100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 0));
+  no->parentShip = this;
+
+  objects.push_back(no);
+
+  no = new ::Sensor({ -100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 1));
+  no->parentShip = this;
+
+  objects.push_back(no);
+
+  no = new ::Engine({ 0,173.2f ,0 }, 1000, 100, 1000, 100000, { 0, 0, 0 }, mix(_ID, 2));
+  no->parentShip = this;
+
+  objects.push_back(no);
+
+  no = new ::Laser({ 0,-173.2f ,0 }, 1000, 100, 1000, mix(_ID, 3));
+  no->parentShip = this;
+
+  objects.push_back(no);
+
+  Movement m;
+  m.pos = _pos;
+  mov.addFrame(0, m);
+}
+
 #ifdef M_SERVER
 
 void Ship::newTurn(int id) {
@@ -129,7 +162,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
   case PacketCommand:
     if (canMove) {
       
-      }
+    }
     break;
   case PacketCommit:
     if (canMove) {
@@ -202,6 +235,50 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
 void Ship::collectPath(list<Path*> &addTo, float time) {
   for (auto it : objects) {
     //it->collectPath(addTo, time);
+  }
+}
+bool Ship::loadShip(string filename) {
+  std::ifstream file(filename);
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  file.close();
+
+  xml_document<> doc;
+  std::string content(buffer.str());
+  doc.parse<0>(&content[0]);
+
+  return loadShip(doc.first_node("ship"));
+}
+bool Ship::loadShip(xml_node<>* data) {
+  xml_node<>* elem;
+
+  elem = data->first_node("shipclass");
+  if(!elem) {
+    return false;
+  }
+  shipClass = ShipClassFromStr(elem->value());
+
+  elem = data->first_node("graphics");
+  if (!elem) {
+    return false;
+  }
+  graphicsName = ShipClassFromStr(elem->value());
+
+  int id = 0;
+
+  for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling()) {
+    string name = pElem->name();
+    Object* o = NULL;
+    if (name == "generator") {
+      o = new Generator(id);
+      if (!o->load(pElem)) {
+        return false;
+      }
+    }
+    if(o != NULL) {
+      objects.push_back(o);
+      ++id;
+    }
   }
 }
 #endif

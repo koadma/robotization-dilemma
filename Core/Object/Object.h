@@ -14,6 +14,10 @@ protected:
   string _name;
 public:
 
+  Object(uint64_t ID) {
+    _ID = ID;
+  }
+
   Object(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, uint64_t ID) {
     _relativePos = relativePos;
     _maxHealth = maxHealth;
@@ -78,6 +82,9 @@ public:
 
   }
   void getPath(time_type_s time, Path* p, Game* g);
+
+  bool load(xml_node<>* data);
+  virtual bool loadV(xml_node<>* data) { return false; }
 #endif
 
   void getStatus(DataElement* data);

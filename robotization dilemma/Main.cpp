@@ -1,12 +1,17 @@
 #include "Main.h"
 
-
 bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
   if (ship == NULL) {
     switch (id) {
     case PacketLogin:
       if (data->_children[0]->_core->toType<int>() == LoginErrorOk) {
         Connection->ConnectedShip = ship = new Ship(data->_children[1]->_core->toType<uint64_t>());
+        
+        ofstream last("lastserver.dat");
+        last << client->_IP << endl;
+        last << client->_port << endl;
+        last << data->_children[2]->_core->toType<string>() << endl;
+        last.close();
 
         ship->connectedServer = Connection;
 
@@ -62,14 +67,44 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
   return 0;
 }
 
-int main() {
-  keyframe<value<int>> test;
-  test.getAt(5);
+bool hasSaveFile(vector<string>& data) {
+  ifstream i("lastserver.dat");
+  string ip;
+  string port;
+  string code;
+  if (!i.good()) {
+    return false;
+  }
+  getline(i, ip);
+  if (!i.good()) {
+    return false;
+  }
+  i >> port;
+  if (!i.good()) {
+    return false;
+  }
+  i >> code;
+  i.close();
+  
+  data = {ip, port, code};
 
+  return true;
+}
+
+int main() {
   setlocale(LC_ALL, "");
   srand(time(NULL));
 
-  InitWindow();
+  InitGraphics();
+  vector<string> reConnectData;
+  if (hasSaveFile(reConnectData)) {
+    createReconnectScreen();
+    connectServer(reConnectData[0], reConnectData[1], reConnectData[2]);
+  }
+  else {
+    createMainMenu();
+  }
+
   glutMainLoop();
 }
 

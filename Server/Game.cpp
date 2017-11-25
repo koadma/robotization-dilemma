@@ -18,15 +18,23 @@ void Game::newTurn() {
     ((Ship*)it)->newTurn(turnId);
   }
 }
+void Game::tryGameStart() {
+  if (targetPlayerCount == drones.size()) { //reached target number of players
+    startGame();
+  }
+}
 void Game::startGame() {
   state = Waiting;
   newTurn();
 }
-void Game::addShip(Ship* ship) {
+string Game::addShip(Ship* ship) {
   drones.push_back(ship);
-  if (targetPlayerCount == drones.size()) { //reached target number of players
-    startGame();
-  }
+  string nCode;
+  do {
+    nCode = randomHexString(16);
+  } while (shipAuth.count(nCode));
+  shipAuth.insert({nCode, ship});
+  return nCode;
 }
 void Game::removeIntersect(Object* object) {
   auto it = events.begin();

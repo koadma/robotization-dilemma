@@ -8,6 +8,7 @@ private:
   keyframe<value<energy_type_J>> _energyStored;
   keyframe<value<energy_type_J>> _maxStorage;
 public:
+  Generator(uint64_t ID) : Object(ID) {}
   Generator(mVec3 relativePos, int maxHealth, float radius, int health, float maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _maxPower.addFrame(0, maxPower);
     _name = "Generator";
@@ -32,6 +33,18 @@ public:
     _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
     return max(0.0, extra);
   }
+
+#ifdef M_SERVER
+  bool loadV(xml_node<>* data) {
+    xml_node<>* elem;
+
+    elem = data->first_node("shipclass");
+    if (!elem) {
+      return false;
+    }
+    
+  }
+#endif
 
 #ifdef M_CLIENT
   void setSidebar();

@@ -21,6 +21,32 @@ public:
   list<Object*> objects;
   list<Sighting*> sightings;
 
+  enum ShipClass {
+    SCError = 0,
+    SCTerrainCruiser = 1,
+  };
+  ShipClass shipClass;
+
+  string graphicsName;
+
+  static ShipClass ShipClassFromStr(string s) {
+    if (s == "TerrainCruiser") {
+      return SCTerrainCruiser;
+    }
+    return SCError;
+  }
+  static string ShipClassToStr(ShipClass s) {
+    switch (s) {
+      case SCError:
+        return "Error";
+        break;
+      case SCTerrainCruiser:
+        return "TerrainCruiser";
+        break;
+    }
+    return "Error";
+  }
+
   time_type_s lastEvtTime;
 
   list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
@@ -69,33 +95,10 @@ class Ship : public Drone {
 private:
   bool canMove = false; //is the player open to moving / are we waiting for a move.
 public:
-
-  Ship(uint32_t _ID) {
-
-    Object* no = new ::Generator({ 100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 0));
-    no->parentShip = this;
-
-    objects.push_back(no);
-
-    no = new ::Sensor({ -100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 1));
-    no->parentShip = this;
-
-    objects.push_back(no);
-
-    no = new ::Engine({ 0,173.2f ,0 }, 1000, 100, 1000, 100000, {0, 0, 0}, mix(_ID, 2));
-    no->parentShip = this;
-
-    objects.push_back(no);
-
-    no = new ::Laser({ 0,-173.2f ,0 }, 1000, 100, 1000, mix(_ID, 3));
-    no->parentShip = this;
-
-    objects.push_back(no);
-
-    Movement m;
-    m.pos.z = 1000.0 * _ID;
-    mov.addFrame(0, m);
-  }
+  Ship(uint32_t _ID, mVec3 _pos);
+  Ship(uint32_t _ID);
+  
+  void load(uint32_t _ID, mVec3 _pos);
 
 #ifdef M_SERVER
   NetworkS* connectedClient;
@@ -106,6 +109,9 @@ public:
   bool packetRecv(DataElement *Data, int Id, NetworkS* thisptr);
 
   void collectPath(list<Path*> &addTo, float time);
+
+  bool loadShip(string filename);
+  bool loadShip(xml_node<>* data);
 #endif
 #ifdef M_CLIENT
   NetworkC* connectedServer;

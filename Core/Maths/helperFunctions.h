@@ -290,6 +290,8 @@ T deserializeT(unsigned char* data, int dataLen) {
   return strTo<T>(deserializes(data, dataLen));
 }
 
+string randomHexString(size_t length);
+
 double ran1(long int nseed = 0);
 
 uint64_t mix(uint64_t a, uint64_t b);

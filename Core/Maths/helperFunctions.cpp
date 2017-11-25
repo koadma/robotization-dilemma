@@ -363,4 +363,18 @@ uint32_t high(uint64_t a) {
   return a >> 32;
 }
 
+string randomHexString(size_t length) {
+  string s(length, '-');
+  for (size_t i = 0; i < length; i++) {
+    int r = 16 * ran1();
+    if (r < 10) {
+      s[i] = '0'+r;
+    }
+    else {
+      s[i] = 'A'+r-10;
+    }
+  }
+  return s;
+}
+
 mutex netlock; //Locking for the network thread(s)

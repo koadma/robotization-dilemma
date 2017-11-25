@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Button.h"
+#include "Checkbox.h"
 #include "TextInput.h"
 #include "Label.h"
 #include "LabelBind.h"
@@ -59,6 +60,7 @@ namespace Graphics {
   typedef LabelBind* LabelBindHwnd;
   typedef Canvas* CanvasHwnd;
   typedef Slider* SliderHwnd;
+  typedef Checkbox* CheckboxHwnd;
   typedef Graphics::GWindow* WinHwnd;
 
   WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
@@ -94,6 +96,10 @@ namespace Graphics {
   ButtonHwnd createButton(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
   ButtonHwnd createButton(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
   ButtonHwnd createButton(PanelHwnd id, xml_node<> *me);
+
+  CheckboxHwnd createCheckbox(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback);
+  CheckboxHwnd createCheckbox(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback);
+  CheckboxHwnd createCheckbox(PanelHwnd id, xml_node<> *me);
   
   LabelHwnd createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
   LabelHwnd createLabel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);

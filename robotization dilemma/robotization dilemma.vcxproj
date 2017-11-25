@@ -46,6 +46,7 @@
     <ClCompile Include="GameCanvas.cpp" />
     <ClCompile Include="GUI\Button.cpp" />
     <ClCompile Include="GUI\Canvas.cpp" />
+    <ClCompile Include="GUI\Checkbox.cpp" />
     <ClCompile Include="GUI\Container.cpp" />
     <ClCompile Include="GUI\Graphics.cpp" />
     <ClCompile Include="GUI\GraphicsUtils.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="GameCanvas.h" />
     <ClInclude Include="GUI\Button.h" />
     <ClInclude Include="GUI\Canvas.h" />
+    <ClInclude Include="GUI\Checkbox.h" />
     <ClInclude Include="GUI\Container.h" />
     <ClInclude Include="GUI\Graphics.h" />
     <ClInclude Include="GUI\GraphicsUtils.h" />

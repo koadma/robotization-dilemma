@@ -76,13 +76,14 @@ void Sensor::setSidebar() {
 
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarPowerLabel"))->text = " / " + to_string(_maxPower, 0);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectSensorSidebarPowerInput"))->text = to_string(_power.getAt(timeNow)(), 2);
+  reinterpret_cast<Graphics::CheckboxHwnd>(Graphics::getElementById("objectSensorAutoFireCheckbox"))->checked = _autofire;
 }
 #endif
 
 #ifdef M_SERVER
 void Sensor::getPathVirt(time_type_s time, Path* p) {
   if (p->type() == Path::PathTypeBubble) {
-    float h = _health.getAt(time)() / float(_maxHealth);
+    /*float h = _health.getAt(time)() / float(_maxHealth);
     cout << "SENSOR " << _ID << " EN " << reinterpret_cast<Bubble*>(p)->energy << " FROM " << p->originID << endl;
     if (ran1() < 2 * (1 - 1 / (1 + h))) {
       float e = reinterpret_cast<Bubble*>(p)->energy * _power.getAt(time)();
@@ -92,7 +93,29 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
         Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
         parentShip->sightMovement(m, time);
       }
+    }*/
+    ScriptData* d = new ScriptData();
+    ScriptData* hph = new ScriptData();
+    hph->type = ScriptData::TNUMERIC;
+    hph->_data.fromType<double>(_health.getAt(time)() / double(_maxHealth));
+    ScriptData* epp = new ScriptData();
+    epp->type = ScriptData::TNUMERIC;
+    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->energy * _power.getAt(time)());
+    ScriptData* meta = new ScriptData();
+    meta->type = ScriptData::TSTRING;
+    meta->_data.fromType<string>(reinterpret_cast<Bubble*>(p)->data);
+    d->_elems.insert({ "relHealth", hph });
+    d->_elems.insert({ "relEnergy", epp });
+    d->_elems.insert({ "metaData", meta });
+    ScriptData* res = _sensitivity->run(*d);
+    if (ran1() < res->_data.toType<float>()) {
+      cout << "Detected" << endl;
+      Sighting* s = new Sighting();
+      Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
+      parentShip->sightMovement(m, time);
     }
+    delete res;
+    delete d;
   }
 }
 #endif

@@ -40,6 +40,10 @@ void ingameSensorSidebarPing() {
   reinterpret_cast<Sensor*>(selectedo)->ping(timeNow);
 }
 
+void ingameSensorSidebarAutofire(bool checked) {
+  reinterpret_cast<Sensor*>(selectedo)->setAutofire(checked);
+}
+
 void ingameLaserSidebarShoot() {
   reinterpret_cast<Laser*>(selectedo)->shoot(timeNow);
 }
@@ -60,18 +64,14 @@ void joinMenuInput(string inp) {
 
 }
 
-void joinMenuInputButton() {
-
-  string ip = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuIpInput"))->text;
-  string port = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuPortInput"))->text;
-
+void connectServer(string ip, string port, string code) {
   Graphics::deleteElements(objectMenuSubWindow);
 
   Connection = new NetworkC(
     ip,
     port,
     recivePacket
-  );
+    );
 
   if (Connection->error != 0) {
     delete Connection;
@@ -79,7 +79,7 @@ void joinMenuInputButton() {
   }
   else {
     DataElement* data = new DataElement();
-    
+
     DataElement* ae = new DataElement();
     ae->_core->fromType<int>(VersionA);
     data->addChild(ae);
@@ -92,8 +92,20 @@ void joinMenuInputButton() {
     ce->_core->fromType<int>(VersionC);
     data->addChild(ce);
 
+    DataElement* codee = new DataElement();
+    codee->_core->fromType<string>(code);
+    data->addChild(codee);
+
     Connection->SendData(data, PacketLogin);
   }
+}
+
+void joinMenuInputButton() {
+
+  string ip = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuIpInput"))->text;
+  string port = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuPortInput"))->text;
+
+  connectServer(ip, port, "");
 }
 
 void gameMenuJoinButton() {
@@ -257,7 +269,7 @@ void bindLabels() {
       );
 }
 
-int InitWindow() {
+int InitGraphics() {
   Graphics::setName("newSingleMenuBackButton", newSingleMenuBackButton);
   Graphics::setName("joinMenuBackButton", joinMenuBackButton);
   Graphics::setName("newSingleMenu3PlayerButton", newSingleMenu3PlayerButton);
@@ -290,6 +302,7 @@ int InitWindow() {
   Graphics::setName("ingameLaserSidebarDirInputZ", ingameLaserSidebarDirInputZ);
   Graphics::setName("ingameLaserSidebarShoot", ingameLaserSidebarShoot);
   Graphics::setName("ingameTimeSliderInput", ingameTimeSliderInput);
+  Graphics::setName("ingameSensorSidebarAutofire", ingameSensorSidebarAutofire);
 
   Graphics::setName("textValidator", textValidator);
   Graphics::setName("numericalValidator", numericalValidator);
@@ -298,6 +311,5 @@ int InitWindow() {
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
   objectMenuSubWindow = Graphics::createPanel(objectMainWindow, "objectMenuSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, ElementBackColor);
   objectGameSubWindow = Graphics::createPanel(objectMainWindow, "objectGameSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, ElementBackColor);
-  createMainMenu();
   return 0;
 }

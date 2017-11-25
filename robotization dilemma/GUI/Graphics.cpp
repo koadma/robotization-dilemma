@@ -217,6 +217,35 @@ Graphics::ButtonHwnd Graphics::createButton(PanelHwnd id, xml_node<> *me) {
     reinterpret_cast<ClickCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
+Graphics::CheckboxHwnd Graphics::createCheckbox(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
+  return createCheckbox(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
+}
+Graphics::CheckboxHwnd Graphics::createCheckbox(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
+  ElemHwnd elem = new Checkbox(lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
+  return reinterpret_cast<CheckboxHwnd>(createElement(id, elem));
+}
+Graphics::CheckboxHwnd Graphics::createCheckbox(PanelHwnd id, xml_node<> *me) {
+  return createCheckbox(
+    id,
+    me->first_attribute("id")->value(),
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    strTo<bool>(me->value()),
+    reinterpret_cast<CheckCallback>(funcs[me->first_attribute("callback")->value()]));
+}
+
 Graphics::LabelHwnd Graphics::createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
   return createLabel(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, text, align);
 }
@@ -428,6 +457,9 @@ void Graphics::setElements(PanelHwnd id, xml_node<> *data) {
     string name = pElem->name();
     if (name == "button") {
       createButton(id, pElem);
+    }
+    else if (name == "checkbox") {
+      createCheckbox(id, pElem);
     }
     else if (name == "label" || name == "text") {
       createLabel(id, pElem);

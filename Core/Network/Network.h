@@ -39,6 +39,8 @@ public:
   NetworkS(string port, RecivePacketFuncS recivePacketFunc);
   ~NetworkS();
   int error = 0;
+  bool cleaned = true;
+  string _port;
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
   int SendData(unsigned char *Data, int Id, int DataLen);
@@ -67,6 +69,9 @@ public:
   NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc);
   ~NetworkC();
   int error = 0;
+  bool cleaned = true;
+  string _IP = "";
+  string _port;
   void Loop();
   int SendData(char *Data, int Id, int DataLen);
   int SendData(unsigned char *Data, int Id, int DataLen);
@@ -95,7 +100,7 @@ private:
   RecivePacketFuncC RecivePacket;
 };
 
-
+/*
 void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC, bool destroy = true);
 
-void split(unsigned char* data, int dataLen, vector<pair<unsigned char*, int> > &split, bool destroy = true);
+void split(unsigned char* data, int dataLen, vector<pair<unsigned char*, int> > &split, bool destroy = true);*/

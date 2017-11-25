@@ -161,4 +161,22 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
   }
   getPathVirt(time, p);
 }
+bool Object::load(xml_node<>* data) {
+  xml_node<>* elem;
+
+  elem = data->first_node("health");
+  if (!elem) {
+    return false;
+  }
+  _health._frames.clear();
+  _health.addFrame(0, strTo<int>(elem->value()));
+
+  elem = data->first_node("maxHealth");
+  if (!elem) {
+    return false;
+  }
+  _health._frames.clear();
+  _health.addFrame(0, strTo<int>(elem->value()));
+
+}
 #endif

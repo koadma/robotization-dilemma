@@ -9,6 +9,7 @@ using namespace std;
 typedef uint32_t colorargb;
 
 typedef void(*ClickCallback)();
+typedef void(*CheckCallback)(bool);
 typedef void(*TextInputFunc)(string);
 typedef void(*SliderInputFunc)(float);
 typedef bool(*TextValidatorFunc)(string, int, unsigned char);

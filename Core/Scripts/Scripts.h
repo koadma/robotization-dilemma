@@ -13,10 +13,11 @@ public:
     TNULL = 0, //Nothing
     TNUMERIC = 1,
     TSTRING = 2,
-    TBOOLEAN = 3,
-    TARRAY = 4,
-    TVECTOR = 5,
-    TDATA = 6
+    TCHAR = 3,
+    TBOOLEAN = 4,
+    TARRAY = 5,
+    TVECTOR = 6,
+    TDATA = 7
   };
   size_t _instances;
   VarType type;
@@ -25,6 +26,46 @@ public:
   void CopyContent(ScriptData* _from);
   ~ScriptData();
 };
+
+namespace ScriptApiFunctions {
+  //In:
+  //Root: NUMERIC number to convert
+  //Out:
+  //Root: STRING result
+  ScriptData* num_to_str(ScriptData& _args);
+
+  //In:
+  //Root: STRING number to convert
+  //Out:
+  //Root: NUMERIC result
+  ScriptData* str_to_num(ScriptData& _args);
+
+  //In:
+  //Root: Array of STRING, concat order lexographic (std::map)
+  //Out:
+  //Root: STRING result
+  ScriptData* str_concat(ScriptData& _args);
+
+  //In:
+  //Root: STRING
+  //Out:
+  //Root: NUMERIC result, string length
+  ScriptData* str_len(ScriptData& _args);
+
+  //In:
+  //str STRING
+  //i NUMERIC
+  //Out:
+  //str STRING
+  ScriptData* str_index(ScriptData& _args);
+
+  //In:
+  //a NUMERIC
+  //b NUMERIC
+  //Out:
+  //r NUMERIC
+  ScriptData* num_rand(ScriptData& _args);
+}
 
 ScriptData* CopyPtr(ScriptData* _in);
 bool DeletePtr(ScriptData* _in);
@@ -170,6 +211,7 @@ public:
 class ScriptIAPICall : public ScriptInstruction {
 public:
   APICall _func;
+  list<pair<string, ScriptInstruction*>> _arguments;
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
 };

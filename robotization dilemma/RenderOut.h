@@ -23,3 +23,5 @@ power_type_W getCurrentGeneratedPower();
 string isSurefire();
 
 void createMainMenu();
+
+void createReconnectScreen();

@@ -30,11 +30,13 @@ void NetworkError(int ID, int& set, int WSAError) {
 NetworkS::NetworkS() {
 }
 NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
+  _port = port;
   RecivePacket = recivePacketFunc;
   struct addrinfo *result = NULL;
   int iResult;
   // Initialize Winsock
   iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  cleaned = false;
   if (iResult != 0) {
     NetworkError(NetworkErrorCodeInitalize, error, iResult);
     return;
@@ -50,6 +52,8 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   iResult = getaddrinfo(NULL, port.c_str(), &hints, &result);
   if (iResult != 0) {
     NetworkError(NetworkErrorCodeResolveServerAddress, error, iResult);
+    cleaned = true;
+
     WSACleanup();
     return;
   }
@@ -59,6 +63,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   if (ListenSocket == INVALID_SOCKET) {
     NetworkError(NetworkErrorCodeCreateListenSocket, error, 0);
     freeaddrinfo(result);
+    cleaned = true;
     WSACleanup();
     return;
   }
@@ -69,6 +74,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
     NetworkError(NetworkErrorCodeBindListenSocket, error, 0);
     freeaddrinfo(result);
     closesocket(ListenSocket);
+    cleaned = true;
     WSACleanup();
     return;
   }
@@ -81,6 +87,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   if (iResult == SOCKET_ERROR) {
     NetworkError(NetworkErrorCodeServerListen, error, 0);
     closesocket(ListenSocket);
+    cleaned = true;
     WSACleanup();
     return;
   }
@@ -90,6 +97,7 @@ NetworkS::NetworkS(string port, RecivePacketFuncS recivePacketFunc) {
   if (ClientSocket == INVALID_SOCKET) {
     NetworkError(NetworkErrorCodeServerAccept, error, 0);
     closesocket(ListenSocket);
+    cleaned = true;
     WSACleanup();
     return;
   }
@@ -106,8 +114,11 @@ NetworkS::~NetworkS() {
   shutdown(ClientSocket, SD_SEND);
   // cleanup
   closesocket(ClientSocket);
-  //ReciveLoopThread.join();
-  WSACleanup();
+  ReciveLoopThread.join();
+  if(!cleaned) {
+  cleaned = true;
+    WSACleanup();
+  }
 }
 
 void NetworkS::Loop()
@@ -118,10 +129,14 @@ void NetworkS::Loop()
     iResult = ReciveData();
     if (iResult <= 0) {
       if (iResult == 0) {
+        closesocket(ClientSocket);
+        cleaned = true;
+        WSACleanup();
       }
       else {
         NetworkError(NetworkErrorCodeServerReciveData, error, 0);
         closesocket(ClientSocket);
+        cleaned = true;
         WSACleanup();
         return;
       }
@@ -247,6 +262,8 @@ int NetworkS::ReciveData() {
 NetworkC::NetworkC() {
 }
 NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
+  _port = port;
+  _IP = IP;
   RecivePacket = recivePacketFunc;
   struct addrinfo *result, *ptr;
   result = NULL;
@@ -254,6 +271,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   int iResult;
   // Initialize Winsock
   iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  cleaned = false;
   if (iResult != 0) {
     NetworkError(NetworkErrorCodeInitalize, error, 0);
     return;
@@ -268,6 +286,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
   iResult = getaddrinfo(IP.c_str(), port.c_str(), &hints, &result);
   if (iResult != 0) {
     NetworkError(NetworkErrorCodeResolveServerAddress, error, 0);
+    cleaned = true;
     WSACleanup();
     return;
   }
@@ -280,6 +299,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
       ptr->ai_protocol);
     if (ConnectSocket == INVALID_SOCKET) {
       NetworkError(NetworkErrorCodeCreateClientSocket, error, 0);
+      cleaned = true;
       WSACleanup();
       return;
     }
@@ -298,6 +318,7 @@ NetworkC::NetworkC(string IP, string port, RecivePacketFuncC recivePacketFunc) {
 
   if (ConnectSocket == INVALID_SOCKET) {
     NetworkError(NetworkErrorCodeConnectServer, error, 0);
+    cleaned = true;
     WSACleanup();
     return;
   }
@@ -312,8 +333,11 @@ NetworkC::~NetworkC() {
     shutdown(ConnectSocket, SD_SEND);
     // cleanup
     closesocket(ConnectSocket);
+    ReciveLoopThread.join();
   }
-  WSACleanup();
+  if(!cleaned) {
+    WSACleanup();
+  }
 }
 
 void NetworkC::Loop()
@@ -325,12 +349,15 @@ void NetworkC::Loop()
     //NetLog.LogString("iResult: " + to_string(iResult));
     if (iResult <= 0) {
       if (iResult == 0) {
-
+        closesocket(ConnectSocket);
+        cleaned = true;
+        WSACleanup();
       }
       else {
         NetworkError(NetworkErrorCodeClientReciveData, error, WSAGetLastError());
         closesocket(ConnectSocket);
-        //WSACleanup();
+        cleaned = true;
+        WSACleanup();
         return;
       }
     }
@@ -459,6 +486,7 @@ int NetworkC::ReciveData() {
   return dlen;
 }
 
+/*
 void concat(vector<pair<unsigned char*, int> > in, unsigned char** C, int &lenC, bool destroy) {
 
   Packet_Header_Convertor conv;
@@ -522,4 +550,4 @@ void split(unsigned char* data, int dataLen, vector<pair<unsigned char*, int> > 
   if(destroy) {
     delete data;
   }
-}
+}*/

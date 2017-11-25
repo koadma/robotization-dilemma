@@ -225,3 +225,18 @@ template<typename T> inline vec3<T> crs(vec3<T> lhs, vec3<T> rhs) {
 template<typename T> inline float distance(vec3<T> lhs, vec3<T> rhs) {
   return (lhs-rhs).length();
 }
+
+template<typename T> vector<vec3<T>> randstartpos(T radius)
+{
+  double modrad = radius*(0.25*ran1() + 0.5);
+  double modx1 = radius*ran1() / 8;
+  double modx2 = radius*ran1() / 8;
+  double mody1 = radius*ran1() / 8;
+  double mody2 = radius*ran1() / 8;
+  double modz1 = radius*ran1() / 8;
+  double modz2 = radius*ran1() / 8;
+
+  vec3<T> firstship(modrad + modx1, modrad + mody1, modrad + modz1);
+  vec3<T> secondship(-modrad - modx2, -modrad - mody2, -modrad - modz2);
+  return {firstship, secondship};
+}

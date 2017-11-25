@@ -50,7 +50,9 @@ enum LoginError {
   LoginErrorInvalidCredentials = 1,
   LoginErrorGameFull = 2,
   LoginErrorVersionError = 3,
-  LoginErrorProtocolError = 4
+  LoginErrorProtocolError = 4,
+  LoginErrorInvalidAuth = 5,
+  LoginErrorTryRejoin = 6
 };
 
 enum CommandIds {
