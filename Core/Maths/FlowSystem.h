@@ -76,6 +76,7 @@ public:
   ~FlowVertex() {
     while (_edges.size()) {
       delete *(_edges.begin());
+      _edges.pop_front();
     }
   }
 };
@@ -390,5 +391,6 @@ template <typename T, typename V, typename U>
 FlowGraph<T, V, U>::~FlowGraph() {
   while (_ver.size()) {
     delete *(_ver.begin());
+    _ver.pop_front();
   }
 }
