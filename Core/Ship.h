@@ -81,7 +81,7 @@ public:
   int getHealth(time_type_s time);
   int getMaxHealth(time_type_s time);
 
-  void sightMovement(Movement& m, time_type_s time);
+  void sightMovement(Movement& m, time_type_s time, bool autofire);
 
   mpssVec3 getAccel(time_type_s time) {
     mpssVec3 sum = { 0,0,0 };

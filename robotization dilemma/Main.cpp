@@ -95,17 +95,35 @@ int main() {
   setlocale(LC_ALL, "");
   srand(time(NULL));
 
+  FlowGraph<Fraction, double, double> f;
+
+  FlowVertex<Fraction, double, double>* v1 = f.addVertex(-10, -10, 0, 100, 50, 0);
+  FlowVertex<Fraction, double, double>* v2 = f.addVertex(0, 20, -30, 100, 50, 0);
+  FlowVertex<Fraction, double, double>* v3 = f.addVertex(10, 0, 10, 100, 50, 0);
+
+  f.addEdge(v1, v2, 30);
+  f.addEdge(v2, v3, 1);
+
+  for(int i = 0; i < 10; i++) {
+    f.goTo(i);
+  }
+
+
   InitGraphics();
-  vector<string> reConnectData;
+
+  Graphics::createPlot<linear<double,Fraction,double>, double, double>(objectGameSubWindow, "plot", Coordiante{0, 0}, Coordiante{1, 1}, &(v2->_val));
+
+  /*vector<string> reConnectData;
   if (hasSaveFile(reConnectData)) {
     createReconnectScreen();
     connectServer(reConnectData[0], reConnectData[1], reConnectData[2]);
   }
   else {
     createMainMenu();
-  }
+  }*/
 
   glutMainLoop();
+
 }
 
 int CALLBACK WinMain(

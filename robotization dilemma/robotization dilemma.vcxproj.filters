@@ -153,6 +153,15 @@
     <ClCompile Include="GUI\Checkbox.cpp">
       <Filter>Code\Libraries\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Core\Maths\FlowSystem.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Resources.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Plot.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Button.h">
@@ -279,6 +288,15 @@
       <Filter>Code\Libraries\Scripts</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Checkbox.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\FlowSystem.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Resources.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Plot.h">
       <Filter>Code\Libraries\GUI</Filter>
     </ClInclude>
   </ItemGroup>

@@ -49,12 +49,34 @@ Fraction operator + (Fraction x, int y) {
 	return Fraction(x.a + y*x.b, x.b).simplify();
 }
 
+Fraction & Fraction::operator +=(Fraction rhs) {
+  long long na = a*rhs.b + b*rhs.a;
+  long long nb = b*rhs.b;
+  a = na;
+  b = nb;
+  simplify();
+  return *this;
+}
+
 Fraction operator - (Fraction x, Fraction y) {
 	return Fraction(x.a*y.b - x.b*y.a, x.b*y.b).simplify();
 }
 
 Fraction operator - (Fraction x, int y) {
 	return Fraction(x.a - y*x.b, x.b).simplify();
+}
+
+Fraction operator - (Fraction x) {
+  return Fraction(-x.a, x.b).simplify();
+}
+
+Fraction & Fraction::operator -=(Fraction rhs) {
+  long long na = a*rhs.b - b*rhs.a;
+  long long nb = b*rhs.b;
+  a = na;
+  b = nb;
+  simplify();
+  return *this;
 }
 
 Fraction operator*(Fraction x, Fraction y) {
@@ -74,10 +96,33 @@ Fraction operator / (Fraction x, int y) {
 }
 
 bool operator== (Fraction lhs, Fraction rhs) {
-	if (lhs.a*rhs.b == lhs.b*rhs.a) {
-		return true;
-	}
-	return false;
+  lhs.simplify();
+  rhs.simplify();
+	return (lhs.a*rhs.b == lhs.b*rhs.a);
+}
+
+bool operator< (Fraction lhs, Fraction rhs) {
+  lhs.simplify();
+  rhs.simplify();
+  return (lhs.a*rhs.b < lhs.b*rhs.a);
+}
+
+bool operator> (Fraction lhs, Fraction rhs) {
+  lhs.simplify();
+  rhs.simplify();
+  return (lhs.a*rhs.b > lhs.b*rhs.a);
+}
+
+bool operator<= (Fraction lhs, Fraction rhs) {
+  lhs.simplify();
+  rhs.simplify();
+  return (lhs.a*rhs.b <= lhs.b*rhs.a);
+}
+
+bool operator>= (Fraction lhs, Fraction rhs) {
+  lhs.simplify();
+  rhs.simplify();
+  return (lhs.a*rhs.b >= lhs.b*rhs.a);
 }
 
 ostream& operator<<(ostream& o, Fraction f) {
@@ -107,6 +152,11 @@ Fraction Fraction::simplify() {
 	a /= d;
 	b /= d;
 
+  if (b < 0) {
+    a *= -1;
+    b *= -1;
+  }
+
 	return Fraction(a, b);
 }
 
@@ -117,3 +167,6 @@ int Fraction::gcd(int x, int y) {
 		return (gcd(y, x%y));
 }
 
+Fraction::operator double() const {
+  return double(a)/double(b);
+}

@@ -63,6 +63,7 @@ public:
   }
 };
 
+
 template<typename V>
 bool operator ==(const value<V> &a, const value<V> &b) {
   return a._val == b._val;
@@ -113,29 +114,64 @@ bool operator >=(const value<V> &a, const V &b) {
   return a._val >= b;
 }
 
-/*template<typename V>
-class unpoint {
+//Value, derivative, time
+template<typename V, typename dV = V, typename T = time_type_s>
+class linear {
 public:
-  V* _val;
-  unpoint() {}
-  unpoint(V* val) : _val(val) {}
-  V operator()() {
-    return *_val;
-  }
+  V _val;
+  T _at;
+  dV _change;
 
-  void get(DataElement* data) {
-    _val->get(data);
-  }
-  void set(DataElement* data) {
-    _val->set(data);
-  }
-
+  linear() : _val(V()) {}
+  linear(V val, T at) : _val(val), _at(at), _change(dV(0)) {}
+  linear(V val, T at, dV change) : _val(val), _at(at), _change(change) {}
+ 
   template<typename T>
   V getAt(T& _time) {
-    return _val->getAt(_time);
+    return _val + (_time - _at) * T(_change);
   }
-};*/
 
+  template<typename T> void set(DataElement* data, T& val, std::true_type)
+  {
+    val.set(data);
+  }
+  template<typename T> void set(DataElement* data, T& val, std::false_type)
+  {
+   val = data->_core->toType<T>();
+  }
+  void set(DataElement* data)
+  {
+    set<V>(data->_children[0], _val, std::integral_constant<bool, HasSetMethod<V>::Has>());
+    set<T>(data->_children[0], _at, std::integral_constant<bool, HasSetMethod<T>::Has>());
+    set<dV>(data->_children[0], _change, std::integral_constant<bool, HasSetMethod<dV>::Has>());
+  }
+
+  template<typename T>void get(DataElement* data, T val, std::true_type)
+  {
+    _val.get(data);
+  }
+  template<typename T> void get(DataElement* data, T val, std::false_type)
+  {
+    //_val.get(data);
+    data->_core->fromType<T>(val);
+  }
+  void get(DataElement* data)
+  {
+    DataElement* basee;
+    get<V>(basee, _val, std::integral_constant<bool, HasGetMethod<V>::Has>());
+    data->addChild(basee);
+
+    DataElement* timee;
+    get<T>(timee, _at, std::integral_constant<bool, HasGetMethod<T>::Has>());
+    data->addChild(timee);
+
+    DataElement* chge;
+    get<dV>(chge, _change, std::integral_constant<bool, HasGetMethod<dV>::Has>());
+    data->addChild(chge);
+  }
+};
+
+//Frametype, value, time
 template<typename V, typename U = V, typename T = time_type_s>
 class keyframe {
 public:
@@ -167,6 +203,9 @@ public:
       return U();
     }
   }
+  double getDoubleAt(double _time) {
+    return double(getAt(_time));
+  }
   void get(DataElement* data) {
     for (auto it : _frames) {
       DataElement* paire = new DataElement();
@@ -195,3 +234,4 @@ public:
     return _frames.size();
   }
 };
+

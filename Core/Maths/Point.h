@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Fraction.h"
-
+#include "FlowSystem.h"
 
 template<typename T> struct vec3;
 //typedef vec3<float>           fVec3;

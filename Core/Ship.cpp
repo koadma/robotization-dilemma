@@ -91,7 +91,7 @@ int Drone::getMaxHealth(time_type_s time) {
   return sum;
 }
 
-void Drone::sightMovement(Movement& m, time_type_s time) {
+void Drone::sightMovement(Movement& m, time_type_s time, bool _autofire = false) {
   priority_queue<pair<scalar_type, Sighting*>> dists; //
   for (auto&& it : sightings) {
     dists.push({-(it->getAt(time).pos - m.getAt(time).pos).sqrlen() / (m.radius * it->getAt(time).radius), it});
@@ -275,9 +275,17 @@ bool Ship::loadShip(xml_node<>* data) {
         return false;
       }
     }
+    if (name == "sensor") {
+      o = new Sensor(id);
+      if (!o->load(pElem)) {
+        return false;
+      }
+    }
     if(o != NULL) {
       objects.push_back(o);
       ++id;
+    } else {
+      cout << "Unknown class " << name << endl;
     }
   }
 }

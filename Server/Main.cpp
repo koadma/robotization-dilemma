@@ -161,14 +161,15 @@ int main(int argc, char** argv)
   cout << sizeof(Sighting) << endl;
   cout << sizeof(Object) << endl;
   cout << sizeof(Movement) << endl;
-  cout << sizeof(Path) << endl;*/
+  cout << sizeof(Path) << endl;
+  cout << sizeof(long double) << endl;*/
 
   ran1(-time(0));
 
   shipStarts = randstartpos(1000000.0);
 
   game = new Game(2);
-  detachCreateClientBind(); //Begin accepting clients*/
+  detachCreateClientBind(); //Begin accepting clients
 
   /*ScriptIBlock root;
 

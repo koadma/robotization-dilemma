@@ -112,7 +112,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
       cout << "Detected" << endl;
       Sighting* s = new Sighting();
       Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
-      parentShip->sightMovement(m, time);
+      parentShip->sightMovement(m, time, _autofire);
     }
     delete res;
     delete d;

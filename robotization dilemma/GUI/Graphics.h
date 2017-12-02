@@ -7,6 +7,7 @@
 #include "LabelBind.h"
 #include "Panel.h"
 #include "Canvas.h"
+#include "Plot.h"
 #include "Slider.h"
 #include "Container.h"
 
@@ -22,17 +23,6 @@ namespace Graphics {
   void defaultMouseMoveManager(int x, int y);
   void defaultMouseClickManager(int idk, int key, int x, int y);
   void defaultMouseWheelManager(int idk, int key, int x, int y);
-
-  /*struct WindowManagers {
-    RenderManager renderManager = defaultRenderManager;
-    ResizeManager resizeManager = defaultResizeManager;
-    KeyManager keyManager = defaultKeyManager;
-    SpecialKeyManager specialKeyManager = defaultSpecialKeyManager;
-    MouseEntryManager mouseEntryManager = defaultMouseEntryManager;
-    MouseMoveManager mouseMoveManager = defaultMouseMoveManager;
-    MouseClickManager mouseClickManager = defaultMouseClickManager;
-    MouseWheelManager mouseWheelManager = defaultMouseWheelManager;
-  };*/
 
   class GWindow {
   public:
@@ -59,6 +49,7 @@ namespace Graphics {
   typedef Label* LabelHwnd;
   typedef LabelBind* LabelBindHwnd;
   typedef Canvas* CanvasHwnd;
+  typedef Plot* PlotHwnd;
   typedef Slider* SliderHwnd;
   typedef Checkbox* CheckboxHwnd;
   typedef Graphics::GWindow* WinHwnd;
@@ -111,6 +102,16 @@ namespace Graphics {
 
   CanvasHwnd createCanvas(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
   CanvasHwnd createCanvas(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
+
+  template<typename T, typename V, typename U>
+  PlotHwnd createPlot(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, keyframe<T, V, U>* data) {
+    return createPlot(id->myPanel, lname, mincorner, maxcorner, data);
+  }
+  template<typename T, typename V, typename U>
+  PlotHwnd createPlot(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, keyframe<T, V, U>* data) {
+    ElemHwnd elem = new PlotT<T, V, U>(lname, mincorner, maxcorner, data);
+    return reinterpret_cast<PlotHwnd>(createElement(id, elem));
+  }
 
   PanelHwnd createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);

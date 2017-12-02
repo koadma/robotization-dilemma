@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\Event.cpp" />
+    <ClCompile Include="..\Core\Maths\FlowSystem.cpp" />
     <ClCompile Include="..\Core\Maths\Fraction.cpp" />
     <ClCompile Include="..\Core\Maths\helperFunctions.cpp" />
     <ClCompile Include="..\Core\Maths\Keyframe.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="..\Core\Path\Movement.cpp" />
     <ClCompile Include="..\Core\Path\Path.cpp" />
     <ClCompile Include="..\Core\Path\Shot.cpp" />
+    <ClCompile Include="..\Core\Resources.cpp" />
     <ClCompile Include="..\Core\Scripts\Scripts.cpp" />
     <ClCompile Include="..\Core\Ship.cpp" />
     <ClCompile Include="..\Core\Sighting.cpp" />
@@ -54,6 +56,7 @@
     <ClCompile Include="GUI\Label.cpp" />
     <ClCompile Include="GUI\LabelBind.cpp" />
     <ClCompile Include="GUI\Panel.cpp" />
+    <ClCompile Include="GUI\Plot.cpp" />
     <ClCompile Include="GUI\Slider.cpp" />
     <ClCompile Include="GUI\Table.cpp" />
     <ClCompile Include="GUI\TextInput.cpp" />
@@ -64,6 +67,7 @@
   <ItemGroup>
     <ClInclude Include="..\Core\Event.h" />
     <ClInclude Include="..\Core\Maths\constants.h" />
+    <ClInclude Include="..\Core\Maths\FlowSystem.h" />
     <ClInclude Include="..\Core\Maths\Fraction.h" />
     <ClInclude Include="..\Core\Maths\helperFunctions.h" />
     <ClInclude Include="..\Core\Maths\Keyframe.h" />
@@ -83,6 +87,7 @@
     <ClInclude Include="..\Core\Path\Movement.h" />
     <ClInclude Include="..\Core\Path\Path.h" />
     <ClInclude Include="..\Core\Path\Shot.h" />
+    <ClInclude Include="..\Core\Resources.h" />
     <ClInclude Include="..\Core\Scripts\Scripts.h" />
     <ClInclude Include="..\Core\Ship.h" />
     <ClInclude Include="..\Core\Sighting.h" />
@@ -98,6 +103,7 @@
     <ClInclude Include="GUI\Label.h" />
     <ClInclude Include="GUI\LabelBind.h" />
     <ClInclude Include="GUI\Panel.h" />
+    <ClInclude Include="GUI\Plot.h" />
     <ClInclude Include="GUI\Slider.h" />
     <ClInclude Include="GUI\Table.h" />
     <ClInclude Include="GUI\TextInput.h" />

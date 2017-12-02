@@ -293,6 +293,7 @@ int InitGraphics() {
   Graphics::setName("ingameSensorSidebarPowerInput", ingameSensorSidebarPowerInput);
   Graphics::setName("ingameSensorSidebarEnergyInput", ingameSensorSidebarEnergyInput);
   Graphics::setName("ingameSensorSidebarPing", ingameSensorSidebarPing);
+  Graphics::setName("ingameSensorSidebarAutofire", ingameSensorSidebarAutofire);
   Graphics::setName("ingameEngineSidebarAccInputX", ingameEngineSidebarAccInputX);
   Graphics::setName("ingameEngineSidebarAccInputY", ingameEngineSidebarAccInputY);
   Graphics::setName("ingameEngineSidebarAccInputZ", ingameEngineSidebarAccInputZ);
@@ -302,7 +303,6 @@ int InitGraphics() {
   Graphics::setName("ingameLaserSidebarDirInputZ", ingameLaserSidebarDirInputZ);
   Graphics::setName("ingameLaserSidebarShoot", ingameLaserSidebarShoot);
   Graphics::setName("ingameTimeSliderInput", ingameTimeSliderInput);
-  Graphics::setName("ingameSensorSidebarAutofire", ingameSensorSidebarAutofire);
 
   Graphics::setName("textValidator", textValidator);
   Graphics::setName("numericalValidator", numericalValidator);

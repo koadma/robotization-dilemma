@@ -11,6 +11,7 @@ private:
   ScriptInstruction* _sensitivity;
   bool _autofire;
 public:
+  Sensor(uint64_t ID) : Object(ID) {}
   Sensor(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
     _power.addFrame(0, 0);
     _maxPower = maxPower;
