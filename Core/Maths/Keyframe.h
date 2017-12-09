@@ -128,7 +128,7 @@ public:
  
   template<typename T>
   V getAt(T& _time) {
-    return _val + (_time - _at) * T(_change);
+    return _val + V((_time - _at) * T(_change));
   }
 
   template<typename T> void set(DataElement* data, T& val, std::true_type)

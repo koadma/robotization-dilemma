@@ -69,6 +69,11 @@ void Laser::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   }
 }
 
+#ifdef M_SERVER
+void Laser::updateEnergy(time_type_s time) {
+
+}
+#endif
 
 #ifdef M_CLIENT
 
@@ -104,8 +109,4 @@ void Laser::drawObjectVirt(float camcx, float camcy, float camcz, float d, time_
     }
   }
 }
-#endif
-
-#ifdef M_SERVER
-
 #endif

@@ -35,6 +35,10 @@ public:
     return max(0.0, extra);
   }
 
+#ifdef M_SERVER
+  void updateEnergy(time_type_s t);
+#endif
+
   void setComponent(int index, scalar_type comp) {
     _tempD[index] = comp;
   }

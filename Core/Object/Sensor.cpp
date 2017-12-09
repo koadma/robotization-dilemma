@@ -81,6 +81,9 @@ void Sensor::setSidebar() {
 #endif
 
 #ifdef M_SERVER
+void Sensor::updateEnergy(time_type_s time) {
+
+}
 void Sensor::getPathVirt(time_type_s time, Path* p) {
   if (p->type() == Path::PathTypeBubble) {
     /*float h = _health.getAt(time)() / float(_maxHealth);

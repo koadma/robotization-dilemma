@@ -21,6 +21,8 @@ public:
   list<Object*> objects;
   list<Sighting*> sightings;
 
+  FlowGraph<energy_type_J, Fraction, time_type_s> energySystem;
+
   enum ShipClass {
     SCError = 0,
     SCTerrainCruiser = 1,
@@ -68,15 +70,17 @@ public:
     return NULL;
   }
   
-  power_type_W getGeneratedShipPower(time_type_s time);
-  power_type_W getUnusedShipPower(time_type_s time);
-  power_type_W getUsedShipPower(time_type_s time);
-  energy_type_J getMaxShipEnergy(time_type_s time);
-  energy_type_J getStoredShipEnergy(time_type_s time);
-  energy_type_J useEnergy(time_type_s time, energy_type_J amount);
-  energy_type_J chargeEnergy(time_type_s time, energy_type_J amount);
-  void refreshEnergy(time_type_s time);
-  Event* runOut(); //when will storage run out
+  //power_type_W getGeneratedShipPower(time_type_s time);
+  //power_type_W getUnusedShipPower(time_type_s time);
+  //power_type_W getUsedShipPower(time_type_s time);
+  //energy_type_J getMaxShipEnergy(time_type_s time);
+  //energy_type_J getStoredShipEnergy(time_type_s time);
+  //energy_type_J useEnergy(time_type_s time, energy_type_J amount);
+  //energy_type_J chargeEnergy(time_type_s time, energy_type_J amount);
+  //void refreshEnergy(time_type_s time);
+#ifdef M_SERVER
+  void energyUpdate(time_type_s time, Game* g); //To do energy simulations. Callback for energy run out objects
+#endif
 
   int getHealth(time_type_s time);
   int getMaxHealth(time_type_s time);

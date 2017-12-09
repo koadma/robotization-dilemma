@@ -106,7 +106,9 @@ void StateChange::setV(DataElement* data, Game* game) {
 
 }
 void EngineAcc::apply(Game *g) {
-  reinterpret_cast<Engine*>(_o)->setAccel(_time, _acc);
+  reinterpret_cast<Engine*>(_o)->setTargetAccel(_time, _acc);
+
+  _o->parentShip->energyUpdate(_time, g); //recalculate ship energy info
 
   g->removeIntersect(_o->parentShip);
   g->calcIntersect(_o->parentShip); //recalculate ship related future intersections
@@ -120,8 +122,8 @@ void EngineAcc::setV(DataElement* data, Game* game) {
   _acc.set(data->_children[0]);
 }
 void SensorPow::apply(Game *g) {
-  reinterpret_cast<Sensor*>(_o)->setPower(_time, _power);
-  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  reinterpret_cast<Sensor*>(_o)->setTargetPower(_time, _power);
+  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
                                         //g.removeIntersect(_o->parentShip);
                                         //g.calcIntersect(_o->parentShip); //recalculate ship related future intersections
 }
@@ -136,7 +138,7 @@ void LaserShot::apply(Game *g) {
   s->origintime = _time;
   s->vel = _dir;
 
-  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(s);
   g->calcIntersect(s);
@@ -155,7 +157,7 @@ void ThermalRadiation::apply(Game *g) {
   b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
-  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(b);
   g->calcIntersect(b);
@@ -172,7 +174,7 @@ void SensorPing::apply(Game *g) {
   b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
-  _o->parentShip->refreshEnergy(_time); //recalculate ship energy info
+  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(b);
   g->calcIntersect(b);

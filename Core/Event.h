@@ -40,6 +40,7 @@ public:
 
 };
 class BatteryDrain : public Event {
+public:
   Drone* _d;
 
   int type();

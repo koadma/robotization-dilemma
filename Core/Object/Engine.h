@@ -4,7 +4,7 @@
 
 class Engine : public Object {       //Order of serialisation
 private:
-  power_type_W _maxPower;
+  
   keyframe<value<mpssVec3>> _accel;
 public:
   Engine(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower, mpssVec3 accel, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
@@ -22,7 +22,11 @@ public:
     return _accel.getAt(time)();
   }
 
-  void setAccel(time_type_s time, mpssVec3 acc);
+#ifdef M_SERVER
+  void updateEnergy(time_type_s t);
+#endif
+
+  void setTargetAccel(time_type_s time, mpssVec3 acc);
   void setComponent(time_type_s time, int c, acc_type_mperss val);
 
 #ifdef M_CLIENT

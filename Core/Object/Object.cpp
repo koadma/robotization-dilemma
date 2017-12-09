@@ -3,6 +3,52 @@
 #include "../../Server/Game.h"
 #endif
 
+power_type_W Object::getMaxGeneratedPower(time_type_s time) {
+  return _maxGeneratedPower.getAt(time)();
+}
+power_type_W Object::getGeneratedPower(time_type_s time) {
+  return _generatedPower.getAt(time)();
+}
+power_type_W Object::getMaxUseablePower(time_type_s time) {
+  return _maxUseablePower.getAt(time)();
+}
+power_type_W Object::getRequestedPower(time_type_s time) {
+  return _requestedPower.getAt(time)();
+}
+power_type_W Object::getUsedPower(time_type_s time) {
+  return _usedPower.getAt(time)();
+}
+energy_type_J Object::getMaxEnergy(time_type_s time) {
+  return _maxStorage.getAt(time)();
+}
+energy_type_J Object::getStoredEnergy(time_type_s time) {
+  return _energyStored.getAt(time)();
+}
+energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount) {
+  energy_type_J nenergy = _energyStored.getAt(time)() - amount;
+  energy_type_J remain = max(0.0, -nenergy);
+  _energyStored.addFrame(time, max(0.0, nenergy)); //cant go below 0 energy
+  return max(0.0, remain);
+}
+energy_type_J Object::chargeEnergy(time_type_s time, energy_type_J amount) {
+  energy_type_J nenergy = _energyStored.getAt(time)() + amount;
+  energy_type_J extra = nenergy - _maxStorage.getAt(time)();
+  _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
+  return max(0.0, extra);
+}
+void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power) {
+  _maxGeneratedPower.addFrame(time, power);
+}
+void Object::requestedPowerChange(time_type_s time, power_type_W power) {
+  _requestedPower.addFrame(time, power);
+}
+void Object::energyStoredChange(time_type_s time, energy_type_J energy) {
+  _energyStored.addFrame(time, energy);
+}
+void Object::maxStorageChange(time_type_s time, energy_type_J energy) {
+  _maxStorage.addFrame(time, energy);
+}
+
 Movement Object::getMovement(time_type_s time) {
   Movement m = parentShip->mov.getAt(time);
   m.pos = m.pos + _relativePos;
@@ -85,16 +131,13 @@ void Object::setVStatus(DataElement* data) {
 
 }
 
-
 Object::~Object() {
 
 }
 
-
 void Object::collectEvents(list<StateChange*> &addTo, time_type_s time) {
 
 }
-
 
 #ifdef M_CLIENT
 void Object::setSidebarElement(string filename) {

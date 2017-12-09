@@ -29,11 +29,11 @@ void ingameLaserSidebarEnergyInput(string s) {
 }
 
 void ingameSensorSidebarPowerInput(string s) {
-  reinterpret_cast<Sensor*>(selectedo)->setPower(timeNow, strTo<power_type_W>(s));
+  reinterpret_cast<Sensor*>(selectedo)->setTargetPower(timeNow, strTo<power_type_W>(s));
 }
 
 void ingameSensorSidebarEnergyInput(string s) {
-  reinterpret_cast<Sensor*>(selectedo)->setEnergy(strTo<energy_type_J>(s));
+  reinterpret_cast<Sensor*>(selectedo)->setTargetEnergy(strTo<energy_type_J>(s));
 }
 
 void ingameSensorSidebarPing() {
@@ -210,9 +210,9 @@ power_type_W getCurrentUsedPower() {
   if (selectedo != NULL) {
     return selectedo->getUsedPower(timeNow);
   }
-  if (ship != NULL) {
+  /*if (ship != NULL) {
     return ship->getUsedShipPower(timeNow);
-  }
+  }*/
   return 0;
 }
 
@@ -227,9 +227,9 @@ power_type_W getCurrentGeneratedPower() {
   if (selectedo != NULL) {
     return selectedo->getGeneratedPower(timeNow);
   }
-  if (ship != NULL) {
+  /*if (ship != NULL) {
     return ship->getGeneratedShipPower(timeNow);
-  }
+  }*/
   return 0;
 }
 

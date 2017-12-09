@@ -21,7 +21,7 @@ void Ship::setSidebar() {
 }
 #endif
 
-power_type_W Drone::getGeneratedShipPower(time_type_s time) {
+/*power_type_W Drone::getGeneratedShipPower(time_type_s time) {
   power_type_W sum = 0;
   for(auto&& it : objects) {
     sum += it->getGeneratedPower(time);
@@ -74,7 +74,8 @@ Event* Drone::runOut() {
   BatteryDrain* ev = new BatteryDrain();
   ev->_time = lastEvtTime - getStoredShipEnergy(0) / getUnusedShipPower(0);
   return ev;
-}
+}*/
+
 
 int Drone::getHealth(time_type_s time) {
   int sum = 0;
@@ -148,6 +149,17 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
 }
 
 #ifdef M_SERVER
+void Drone::energyUpdate(time_type_s time, Game* game) {
+  vector<time_type_s> runOut = energySystem.goTo(time);
+  list<Event*> res;
+  sort(runOut.begin(), runOut.end());
+  if (runOut.size()) { //first one is enough, recalc than will give the later ones.
+    BatteryDrain* ev = new BatteryDrain();
+    ev->_d = this;
+    ev->_time = runOut[0];
+    game->events.insert(ev);
+  }
+}
 
 void Ship::newTurn(int id) {
   canMove = true;

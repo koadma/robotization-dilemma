@@ -17,22 +17,28 @@ void Engine::setVStatus(DataElement* data) {
   _accel.set(data->_children[1]);
 }
 
-void Engine::setAccel(time_type_s time, mpssVec3 acc) {
-  Movement m = parentShip->mov.getAt(time);
-  m.acc = parentShip->getAccel(time);
-
+void Engine::setTargetAccel(time_type_s time, mpssVec3 acc) {
   _accel.addFrame(time, acc);
-
-  m.acc += acc;
-  parentShip->mov.addFrame(time, m);
-
-  parentShip->refreshEnergy(time); //recalculate ship energy info
+  _energySystem->_goal = acc.sqrlen(); ///TODO: Better energy conversion code; Match in other function
 }
 void Engine::setComponent(time_type_s time, int c, acc_type_mperss val) {
   mpssVec3 nval = _accel.getAt(time)();
   nval[c] = val;
-  setAccel(time, nval);
+  setTargetAccel(time, nval);
 }
+
+#ifdef M_SERVER
+void Engine::updateEnergy(time_type_s time) {
+  power_type_W energy = _energySystem->_delta;
+
+  mpssVec3 acc = _accel.getAt(time)().norm() * sqrt(energy); ///TODO: Better energy conversion; Match in other function
+
+  Movement m = parentShip->mov.getAt(time);
+  m.acc = parentShip->getAccel(time);
+  m.acc += acc;
+  parentShip->mov.addFrame(time, m);
+}
+#endif
 
 void Engine::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   for (auto&& it : _accel._frames) {

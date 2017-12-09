@@ -4,28 +4,31 @@
 
 //typedef int FlowType;
 
-//Derivative, value, time type
-template <typename T, typename V, typename U>
+//Value, Derivative, Time
+//Derivative MUST BE WITHOUT floating point errors!
+template <typename V, typename D,  typename T>
 class FlowVertex;
 
-//Derivative, value, time type
-template <typename T, typename V, typename U>
+//Value, Derivative, Time
+//Derivative MUST BE WITHOUT floating point errors!
+template <typename V, typename D, typename T>
 class FlowEdge
 {
 public:
-  T _flow, _capacity;
-  T _totalFlow;
-  T _totalCapacity;
+  D _flow; //Temporary - internal use
+  D _capacity; //Temporary - internal use
+  D _totalFlow; //Actual flow on edge
+  D _totalCapacity; //Set capacity
 
   // _u -> _v
-  FlowVertex<T, V, U>* _u;
-  FlowVertex<T, V, U>* _v;
+  FlowVertex<V, D, T>* _u;
+  FlowVertex<V, D, T>* _v;
 
   bool _real;
 
-  FlowEdge(T flow, T capacity, FlowVertex<T, V, U>* u, FlowVertex<T, V, U>* v, bool real = false)
+  FlowEdge(D flow, V capacity, FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, bool real = false)
   {
-    _totalFlow = T(0);
+    _totalFlow = D(0);
     _flow = flow;
     _capacity = capacity;
     _totalCapacity = _capacity;
@@ -35,42 +38,41 @@ public:
   }
 };
 
-//Derivative, value, time type
-template <typename T, typename V, typename U>
+//Value, Derivative, Time
+//Derivative MUST BE WITHOUT floating point errors!
+template <typename V, typename D, typename T>
 class FlowVertex
 {
 public:
-  int _h;
-  T _flow;
-  T _delta;
-  T _drain;
-  list<FlowEdge<T, V, U>*> _edges;
+  int _h; //Temporary - internal use
+  D _flow; //Temporary - internal use
+  D _delta; //Actual detla
+  list<FlowEdge<V, D, T>*> _edges;
 
-  keyframe<linear<V, T, U>, V, U> _val;
-  V _maxVal;
+  keyframe<linear<V, D, T>, V, T> _val; 
+  V _maxVal; //Maximum battery storage
 
   //Goal (+: out)
-  T _goal;
+  D _goal; //Requested delta
   //Charge max (-)
-  T _maxCharge;
-  bool _canCharge = true;
+  D _maxCharge; //Maximum battery charge rate
+  bool _canCharge = true; //Temporary - internal use
   //Drain max (+)
-  T _maxDrain;
-  bool _canDrain = true;
+  D _maxDrain; //Maximum battery drain rate
+  bool _canDrain = true; //Temporary - internal use
 
-  int _ID;
+  int _ID; //Temporary - internal use
 
-  FlowVertex(int h, T flow, T goal, T maxCharge, T maxDrain, V maxVal, V startVal, U startTime)
+  FlowVertex(int h, D flow, D goal, D maxCharge, D maxDrain, V maxVal, V startVal, T startTime)
   {
     _h = h;
     _flow = flow;
-    _delta = T(0);
-    _drain = T(0);
+    _delta = D(0);
     _goal = goal;
     _maxCharge = maxCharge;
     _maxDrain = maxDrain;
     _maxVal = maxVal;
-    _val.addFrame(startTime, linear<V,T,U>{startVal, startTime});
+    _val.addFrame(startTime, linear<V, D, T>{startVal, startTime});
   }
 
   ~FlowVertex() {
@@ -82,33 +84,34 @@ public:
 };
 
 //Derivative, value, time type
-template <typename T, typename V, typename U>
+//Derivative MUST BE WITHOUT floating point errors!
+template <typename V, typename D, typename T>
 class FlowGraph
 {
 public:
-  list<FlowVertex<T, V, U>*> _ver;
+  list<FlowVertex<V, D, T>*> _ver;
 
-  FlowVertex<T, V, U>* _s;
-  FlowVertex<T, V, U>* _t;
-  U _lastUpdate;
+  FlowVertex<V, D, T>* _s;
+  FlowVertex<V, D, T>* _t;
+  T _lastUpdate;
 
   FlowGraph();
 
-  void preflow(FlowVertex<T, V, U>* s);
+  void preflow(FlowVertex<V, D, T>* s);
 
-  FlowVertex<T, V, U>* getFirstOverflow();
+  FlowVertex<V, D, T>* getFirstOverflow();
   
-  void updateReverseFlow(FlowEdge<T, V, U>* i, T flow);
+  void updateReverseFlow(FlowEdge<V, D, T>* i, T flow);
 
-  bool push(FlowVertex<T, V, U>* u);
+  bool push(FlowVertex<V, D, T>* u);
 
-  void relabel(FlowVertex<T, V, U>* u);
+  void relabel(FlowVertex<V, D, T>* u);
 
-  FlowEdge<T, V, U>* addEdge(FlowVertex<T, V, U>* u, FlowVertex<T, V, U>* v,  T w, bool real = true, T flow = T(0));
+  FlowEdge<V, D, T>* addEdge(FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v,  D maxflow, bool real = true, D flow = D(0));
 
-  pair<FlowEdge<T, V, U>*, FlowEdge<T, V, U>*> addSymmetricEdge(FlowVertex<T, V, U>* u, FlowVertex<T, V, U>* v, T w, T flow = T(0));
+  pair<FlowEdge<V, D, T>*, FlowEdge<V, D, T>*> addSymmetricEdge(FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, D w, D flow = D(0));
 
-  FlowVertex<T, V, U>* addVertex(T goal, T maxCharge, T maxDrain, V maxval, V startval = V(0), V startitme = V(0));
+  FlowVertex<V, D, T>* addVertex(D goal, D maxCharge, D maxDrain, V maxval, V startval = V(0), T startitme = T(0));
 
   void addRootEdges(int mode);
 
@@ -117,45 +120,45 @@ public:
   void reset();
 
   void getMaxFlow();
-  void getMaxFlow(FlowVertex<T, V, U>* s, FlowVertex<T, V, U>* t);
+  void getMaxFlow(FlowVertex<V, D, T>* s, FlowVertex<V, D, T>* t);
 
-  vector<U> goTo(U time);
+  vector<T> goTo(T time);
 
   ~FlowGraph();
 };
 
-template <typename T, typename V, typename U>
-FlowGraph<T, V, U>::FlowGraph() {
-  _s = new FlowVertex<T, V, U>(0, 0, 0, 0, 0, 0, 0, 0);
+template <typename V, typename D, typename T>
+FlowGraph<V, D, T>::FlowGraph() {
+  _s = new FlowVertex<V, D, T>(0, 0, 0, 0, 0, 0, 0, 0);
   _ver.push_back(_s);
 
-  _t = new FlowVertex<T, V, U>(0, 0, 0, 0, 0, 0, 0, 0);
+  _t = new FlowVertex<V, D, T>(0, 0, 0, 0, 0, 0, 0, 0);
   _ver.push_back(_t);
 }
 
-template <typename T, typename V, typename U>
-FlowEdge<T, V, U>* FlowGraph<T, V, U>::addEdge(FlowVertex<T, V, U>* u, FlowVertex<T, V, U>* v, T capacity, bool real, T flow)
+template <typename V, typename D, typename T>
+FlowEdge<V, D, T>* FlowGraph<V, D, T>::addEdge(FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, D maxflow, bool real, D flow)
 {
-  FlowEdge<T, V, U>* n = new FlowEdge<T, V, U>(flow, capacity, u, v, real);
+  FlowEdge<V, D, T>* n = new FlowEdge<V, D, T>(flow, maxflow, u, v, real);
   u->_edges.push_back(n);
   return n;
 }
 
-template <typename T, typename V, typename U>
-pair<FlowEdge<T, V, U>*, FlowEdge<T, V, U>*> FlowGraph<T, V, U>::addSymmetricEdge(FlowVertex<T, V, U>* u, FlowVertex<T, V, U>* v, T w, T flow) {
+template <typename V, typename D, typename T>
+pair<FlowEdge<V, D, T>*, FlowEdge<V, D, T>*> FlowGraph<V, D, T>::addSymmetricEdge(FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, D w, D flow) {
   return{ addEdge(u, v, w, flow),addEdge(v, u, w, flow) };
 }
 
-template <typename T, typename V, typename U>
-FlowVertex<T, V, U>* FlowGraph<T, V, U>::addVertex(T goal, T maxCharge, T maxDrain, V maxval, V startval, V starttime) {
-  FlowVertex<T, V, U>* n = new FlowVertex<T, V, U>(0, 0, goal, maxCharge, maxDrain, maxval, startval, starttime);
+template <typename V, typename D, typename T>
+FlowVertex<V, D, T>* FlowGraph<V, D, T>::addVertex(D goal, D maxCharge, D maxDrain, V maxval, V startval, T starttime) {
+  FlowVertex<V, D, T>* n = new FlowVertex<V, D, T>(0, 0, goal, maxCharge, maxDrain, maxval, startval, starttime);
   _ver.push_back(n);
   return n;
 }
 
 // perform preflow
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::preflow(FlowVertex<T, V, U>* s)
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::preflow(FlowVertex<V, D, T>* s)
 {
   s->_h = _ver.size();
 
@@ -171,12 +174,12 @@ void FlowGraph<T, V, U>::preflow(FlowVertex<T, V, U>* s)
 }
 
 // first overflowing vertex
-template <typename T, typename V, typename U>
-FlowVertex<T, V, U>* FlowGraph<T, V, U>::getFirstOverflow()
+template <typename V, typename D, typename T>
+FlowVertex<V, D, T>* FlowGraph<V, D, T>::getFirstOverflow()
 {
   for (auto&& it : _ver) {
     if (it != _s && it != _t) {
-      if (it->_flow > T(0))
+      if (it->_flow > D(0))
         return it;
     }
   }
@@ -185,11 +188,11 @@ FlowVertex<T, V, U>* FlowGraph<T, V, U>::getFirstOverflow()
 }
 
 // Update reverse flow for flow added on ith Edge
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::updateReverseFlow(FlowEdge<T, V, U>* i, T flow)
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::updateReverseFlow(FlowEdge<V, D, T>* i, T flow)
 {
-  FlowVertex<T, V, U>* u = i->_v;
-  FlowVertex<T, V, U>* v = i->_u;
+  FlowVertex<V, D, T>* u = i->_v;
+  FlowVertex<V, D, T>* v = i->_u;
 
   for (auto&& j : u->_edges)
   {
@@ -204,8 +207,8 @@ void FlowGraph<T, V, U>::updateReverseFlow(FlowEdge<T, V, U>* i, T flow)
 }
 
 // push from u
-template <typename T, typename V, typename U>
-bool FlowGraph<T, V, U>::push(FlowVertex<T, V, U>* u)
+template <typename V, typename D, typename T>
+bool FlowGraph<V, D, T>::push(FlowVertex<V, D, T>* u)
 {
   for (auto&& it : u->_edges)
   {
@@ -214,7 +217,7 @@ bool FlowGraph<T, V, U>::push(FlowVertex<T, V, U>* u)
 
     if (u->_h > it->_v->_h)
     {
-      T flow = min(it->_capacity - it->_flow,
+      D flow = min(it->_capacity - it->_flow,
         u->_flow);
 
       u->_flow -= flow;
@@ -233,8 +236,8 @@ bool FlowGraph<T, V, U>::push(FlowVertex<T, V, U>* u)
 }
 
 // relabel u
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::relabel(FlowVertex<T, V, U>* u)
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::relabel(FlowVertex<V, D, T>* u)
 {
   int mh = INT_MAX;
 
@@ -253,12 +256,12 @@ void FlowGraph<T, V, U>::relabel(FlowVertex<T, V, U>* u)
 
 //connect to supersink, supersource.
 //0: goal, 1: charge, 2: drain
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::addRootEdges(int mode) {
-  T requested;
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::addRootEdges(int mode) {
+  D requested;
 
   for (auto&& it : _ver) {
-    requested = T(0);
+    requested = D(0);
     switch (mode) {
     case 0:
       requested = it->_goal;
@@ -274,18 +277,18 @@ void FlowGraph<T, V, U>::addRootEdges(int mode) {
       }
       break;
     }
-    if (requested > T(0)) {
+    if (requested > D(0)) {
       addEdge(it, _t, requested, false);
     }
-    if (requested < T(0)) {
+    if (requested < D(0)) {
       addEdge(_s, it, -requested, false);
     }
   }
 }
 
 //clean graph, decrease capacity?
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::clean(bool decrease) {
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::clean(bool decrease) {
   for (auto&& it : _ver) {
     auto et = it->_edges.begin();
 
@@ -303,29 +306,29 @@ void FlowGraph<T, V, U>::clean(bool decrease) {
         if (decrease) {
           (*et)->_capacity -= (*et)->_flow;
         }
-        (*et)->_flow = T(0);
+        (*et)->_flow = D(0);
         ++et;
       }
     }
-    it->_flow = T(0);
+    it->_flow = D(0);
     it->_h = 0;
   }
 }
 
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::reset() {
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::reset() {
   for (auto&& it : _ver) {
-    it->_delta = T(0);
+    it->_delta = D(0);
     for (auto&& et : it->_edges) {
       et->_capacity = et->_totalCapacity;
-      et->_totalFlow = T(0);
+      et->_totalFlow = D(0);
     }
   }
 }
 
 // calc max flow
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::getMaxFlow(FlowVertex<T, V, U>* s, FlowVertex<T, V, U>* t)
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::getMaxFlow(FlowVertex<V, D, T>* s, FlowVertex<V, D, T>* t)
 {
   _s = s;
   _t = t;
@@ -333,13 +336,13 @@ void FlowGraph<T, V, U>::getMaxFlow(FlowVertex<T, V, U>* s, FlowVertex<T, V, U>*
 
   while (getFirstOverflow() != NULL)
   {
-    FlowVertex<T, V, U>* u = getFirstOverflow();
+    FlowVertex<V, D, T>* u = getFirstOverflow();
     if (!push(u))
       relabel(u);
   }
 }
-template <typename T, typename V, typename U>
-void FlowGraph<T, V, U>::getMaxFlow() {
+template <typename V, typename D, typename T>
+void FlowGraph<V, D, T>::getMaxFlow() {
   //Reset the graph
   reset();
   clean(true);
@@ -364,31 +367,31 @@ void FlowGraph<T, V, U>::getMaxFlow() {
   clean(true);
 }
 
-template <typename T, typename V, typename U>
-vector<U> FlowGraph<T, V, U>::goTo(U time) {
-  vector<U> endtimes;
+template <typename V, typename D, typename T>
+vector<T> FlowGraph<V, D, T>::goTo(T time) {
+  vector<T> endtimes;
   if (time > _lastUpdate) {
     for (auto&& it : _ver) {
-      it->_canCharge = (it->_val.getAt(time) < 0.99 * it->_maxVal);
-      it->_canDrain = (0.01 * it->_maxVal < it->_val.getAt(time));
+      it->_canCharge = (it->_val.getAt(time) < V(0.99) * it->_maxVal);
+      it->_canDrain = (V(0.01) * it->_maxVal < it->_val.getAt(time));
     }
     getMaxFlow();
     for (auto&& it : _ver) {
-      if (it->_delta > T(0)) {
-        endtimes.push_back((it->_maxVal - it->_val.getAt(time)) / double(it->_delta));
+      if (it->_delta > D(0)) {
+        endtimes.push_back((it->_maxVal - it->_val.getAt(time)) / V(it->_delta));
       }
-      if (it->_delta < T(0)) {
-        endtimes.push_back((V(0) - it->_val.getAt(time)) / double(it->_delta));
+      if (it->_delta < D(0)) {
+        endtimes.push_back((V(0) - V(it->_val.getAt(time)) / V(it->_delta)));
       }
-      it->_val.addFrame(time, linear<V,T,U>(it->_val.getAt(time), time, it->_delta));
+      it->_val.addFrame(time, linear<V,D,T>(it->_val.getAt(time), time, it->_delta));
     }
     _lastUpdate = time;
   }
   return endtimes;
 }
 
-template <typename T, typename V, typename U>
-FlowGraph<T, V, U>::~FlowGraph() {
+template <typename V, typename D, typename T>
+FlowGraph<V, D, T>::~FlowGraph() {
   while (_ver.size()) {
     delete *(_ver.begin());
     _ver.pop_front();

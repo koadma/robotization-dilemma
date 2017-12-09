@@ -3,6 +3,15 @@
 #include "../../Server/Game.h"
 #endif
 
+Generator::Generator(uint64_t ID) : Object(ID) {}
+Generator::Generator(mVec3 relativePos, int maxHealth, float radius, int health, float maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
+  _maxPower.addFrame(0, maxPower);
+  _name = "Generator";
+  _energyStored.addFrame(0, 0);
+  _maxStorage.addFrame(0, 0);
+}
+int Generator::type() { return Type::Generator; }
+
 void Generator::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
   _maxPower.get(maxe);

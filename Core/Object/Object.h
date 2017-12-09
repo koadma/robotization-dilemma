@@ -12,6 +12,15 @@ protected:
   keyframe<value<int> > _health;
   distance_type_m _radius;
   string _name;
+  FlowVertex<energy_type_J, power_type_W, time_type_s>* _energySystem;
+
+  keyframe<value<power_type_W>> _maxGeneratedPower;
+  keyframe<value<power_type_W>> _generatedPower;
+  keyframe<value<power_type_W>> _maxUseablePower;
+  keyframe<value<power_type_W>> _requestedPower;
+  keyframe<value<power_type_W>> _usedPower;
+  keyframe<value<energy_type_J>> _maxStorage;
+  keyframe<value<energy_type_J>> _energyStored;
 public:
 
   Object(uint64_t ID) {
@@ -44,15 +53,19 @@ public:
   };
   virtual int type() { throw 1; return 0; }
   string name() { return _name; }
-  virtual power_type_W getGeneratedPower(time_type_s time) { return 0; }
-  virtual power_type_W getUsedPower(time_type_s time) { return 0; }
-  virtual power_type_W getMaxPower(time_type_s time) { return 0; }
-  virtual energy_type_J getMaxEnergy(time_type_s time) { return 0; }
-  virtual energy_type_J getStoredEnergy(time_type_s time) { return 0; }
-  virtual energy_type_J useEnergy(time_type_s time, energy_type_J amount) { return amount; } //no change
-  virtual energy_type_J chargeEnergy(time_type_s time, energy_type_J amount) {
-    return amount;
-  } //no change
+  power_type_W getMaxGeneratedPower(time_type_s time);
+  power_type_W getGeneratedPower(time_type_s time);
+  power_type_W getMaxUseablePower(time_type_s time);
+  power_type_W getRequestedPower(time_type_s time);
+  power_type_W getUsedPower(time_type_s time);
+  energy_type_J getMaxEnergy(time_type_s time);
+  energy_type_J getStoredEnergy(time_type_s time);
+  energy_type_J useEnergy(time_type_s time, energy_type_J amount);
+  energy_type_J chargeEnergy(time_type_s time, energy_type_J amount);
+  void maxGeneratedPowerChange(time_type_s time, power_type_W power);
+  void requestedPowerChange(time_type_s time, power_type_W power);
+  void energyStoredChange(time_type_s time, energy_type_J energy);
+  void maxStorageChange(time_type_s time, energy_type_J energy);
 
   int getHealth(time_type_s time) {
     return _health.getAt(time)();
@@ -85,6 +98,7 @@ public:
 
   bool load(xml_node<>* data);
   virtual bool loadV(xml_node<>* data) { return false; }
+  virtual void updateEnergy(time_type_s t) {}
 #endif
 
   void getStatus(DataElement* data);

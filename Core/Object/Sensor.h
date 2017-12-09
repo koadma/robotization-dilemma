@@ -29,10 +29,10 @@ public:
   power_type_W getUsedPower(time_type_s time) { return _power.getAt(time)(); }
   power_type_W getMaxPower(time_type_s time) { return _maxPower; }
 
-  void setPower(time_type_s time, power_type_W val) {
+  void setTargetPower(time_type_s time, power_type_W val) {
     _power.addFrame(time, max(min(val, _maxPower), 0.0));
   }
-  void setEnergy(energy_type_J val) {
+  void setTargetEnergy(energy_type_J val) {
     _tempE = val;
   }
   void setAutofire(bool val) {
@@ -44,6 +44,8 @@ public:
 
 
 #ifdef M_SERVER
+  void updateEnergy(time_type_s t);
+
   void getPathVirt(time_type_s time, Path* p);
 
   bool loadV(xml_node<>* data) {

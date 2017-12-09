@@ -1,0 +1,1186 @@
+﻿<ship>
+
+	<shipclass>Terran_Cruiser</shipclass>
+	<shipsubclass>Generic</shipsubclass>
+	<loadgraphics></loadgraphics>
+	<emptymass></emptymass>
+
+	<!--
+	Általános észrevételek.
+	1. A hatékonyságról és a felvett teljesítményről.
+	Ha az adott rendszer felvesz egy bizonyos teljesítményt, akkor a folyamatra a teljesítmény csak a hatékonyság arányában fordítódik.
+	A maradék a rendszert melegíti, így a heatbufferbe kerül. Ha a heatbuffer nem tud több energiát felvenni, a rendszer temporálisan működésképtelenné válik.
+	2. Életpontok.
+	A renszereknek különböző életpontjaik vannak, ezek mindegye más funkciót lát el.
+	A maxhp azt az elnyelhető energiamennysiéget fejezi ki, ami mellet a arendszer még üzemées marad.
+	Tehát, ha a hp nulla, az adott rendszer nem fog üzemelni.
+	A rendszert minden őt érő direkt elektromágneses, kinetikus támadás károsítja.
+	A saját hő nem károsítja, a rendszer úgy van kialakítva, hogy a keletkező hő a kritikus komponensektől el legyen szigetelve, ez nyilván a külső ártó szándékú sugárzás esetén
+	nem teljesül.
+	A crushdamage az a sebzés amit az adott alkatrész elnyel mielőtt teljesen keresztülvág rajta a lézers vagy más fegyver.
+	Másképp szólva ha a sebzés nagyobb mint a cruhdamage akkor a következő a lövedék útjában lévő rendszer is károsodni fog.
+	Ebből az is következik, hogy egy rendszer egy lövéstől nem szenvedhet nagyobb károsodást, mint a cruhdamage.
+	A maxstructure az a maximális károsodás amíg az adott rendszer javítható. Ha ennél nagyobb károsodás éri, a rendszer a továbbiakban teljesen újraépítendő,
+	több sebzést nem tud felvenni, lényegében a rendszer helyén lévő térfogatot üresnek kell tekinteni amely minden sebzést átenged.
+	3. Függőségek.
+	Ha egy rendszer dependenton, akkor annak a rendszernek működnie kell, a függő rendszer működőképességének érdekében.
+	4. Kritikus.
+	Ha egy kritikus rendszer megsemmisül, az egész hajó megy vele.
+	3 fajta krit van: hp, crush és structure krit.
+	Hp krit esetén a rendszernek működnie kell, hogy a hajó életben maradjon.
+	Crush kritnél a rendszer nem szabad hogy átlyukadjon.
+	Structure critnél nem szabad, hogy a struktúra lenullázódjon.
+	-->
+
+	<!--	A heatcapacity a burkolatra kivitt hő és a burkolat hőmérsékletnövekedése között mondja meg a kapcsolatot.
+	A maxtemperature a burkolat max hőmérséklete.
+	E felett a structure körönként károsodik.
+	HOGY MILYEN ARÁNYBAN MÉGNEM TALÁLTAM KI.
+	-->
+
+	<Hull>
+		<name>Hull</name>
+		<structureiscritical>true</structureiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<heatcapacity></heatcapacity>
+		<maxtemperature></maxtemperature>
+		<loadbody></loadbody>
+	</Hull>
+
+	<!--
+	A reaktor kapacitása lényegében korlátlan, a korlátozó tényező a hűthetősége és a tankokból kiáramló maximális mennyiségű üzemanyag.
+	A fúziós körülmények biztosításához szükséges teljesítmény a consumption.
+	Ha túlmelegedik, automatikusan leáll. Ez manuálisan felülbírálható, ám ekkor a buffer által fel nem vett heatnek megfelelő mértékben károsodik a hp és astructure.
+	-->
+
+	<Reactor>
+		<name>Main_Reactor</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<size></size>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<consumption></consumption>
+	</Reactor>
+
+	<Reactor>
+		<name>Backup_Reactor</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<consumption></consumption>
+	</Reactor>
+
+	<!--	A maxdrain a maximális akkuról levehető teljesítmény.
+	A maxcharge a max töltőteljesítmény.
+	-->
+
+	<Accumulator>
+		<name>Primary_Accumulator_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcharge></maxcharge>
+		<maxdrain></maxdrain>
+		<maxstoredenergy></maxstoredenergy>
+	</Accumulator>
+
+	<Accumulator>
+		<name>Primary_Accumulator_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcharge></maxcharge>
+		<maxdrain></maxdrain>
+		<maxstoredenergy></maxstoredenergy>
+	</Accumulator>
+
+	<Accumulator>
+		<name>Secondary_Accumulator_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcharge></maxcharge>
+		<maxdrain></maxdrain>
+		<maxstoredenergy></maxstoredenergy>
+	</Accumulator>
+
+	<Accumulator>
+		<name>Secondary_Accumulator_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcharge></maxcharge>
+		<maxdrain></maxdrain>
+		<maxstoredenergy></maxstoredenergy>
+	</Accumulator>
+
+	<!--	A consumptionpacc az egységnyi gyorsuláshoz szükséges energia.
+	A maxspreadangle azt szimbolizálja, hogy mivel nem minegyik foton és plamzmarészecske megy direktbe a kiáramlás irányába,
+	így a kilőtt fotonok nem egy egyenes mentén fognak terjedni, hanem gömbhéjszerűen.
+	A szög ennek a gömbhéjnek a középpnti szöge.
+	A hajtómű csak akkor működik, ha van reaktorplazma.
+	-->
+
+	<Engine>
+		<name>Engine_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<consumtionpacc></consumtionpacc>
+		<consumtionpangacc></consumtionpangacc>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<maxaccel>2500</maxaccel>
+		<maxangaccel>360</maxangaccel>
+		<maxspreadangle></maxspreadangle>
+		<dependenton>Main_Reactor:Backup_Reactor</dependenton>
+	</Engine>
+
+	<Engine>
+		<name>Engine_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<consumtionpacc></consumtionpacc>
+		<consumtionpangacc></consumtionpangacc>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<maxaccel>2500</maxaccel>
+		<maxangaccel>360</maxangaccel>
+		<maxspreadangle></maxspreadangle>
+		<dependenton>Main_Reactor:Backup_Reactor</dependenton>
+	</Engine>
+
+	<!--	Csak manőverezni lehet vele.
+	-->
+
+	<Maneuver_Thruster>
+		<name>Emergency_Thruster</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<consumtionpangacc></consumtionpangacc>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<maxangaccel>0.1</maxangaccel>
+		<dependenton>Main_Reactor:Backup_Reactor</dependenton>
+	</Maneuver_Thruster>
+
+	<!--	A maxcoolant a maximálisan tárolt hűtőanyag mennyiség.
+	A hűtés hűtőanyagot igényel (consumecoolantperheat), melynek egy része elvész a hűtése ciklusban (ezt a kis részét rohadtul fölmelegítik és kieresztik az űrbe,
+	míg a többi visszakerül a rendszerbe).
+	Ezen felül a hűtési ciklus energiát is igényel (consumeenergyperheat).
+	Alternatív megoldásként a burkolatra is áthelyezhető a hő, ami mivel a sugárzás által leadott hő a felülettel arányos, ezért a leghatékonyabb sugárás általi hűtés.
+	Természetesen a hőátvitel is energiaigényes(consumeenergypertransfer).
+	-->
+
+	<Cooling_System>
+		<name>Main_Cooler</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcoolant></maxcoolant>
+		<consumeenergyperheat></consumeenergyperheat>
+		<consumecoolantperheat></consumecoolantperheat>
+		<consumeenergypertransfer></consumeenergypertransfer>
+	</Cooling_System>
+
+	<Cooling_System>
+		<name>Supplementary_Cooler_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcoolant></maxcoolant>
+		<consumeenergyperheat></consumeenergyperheat>
+		<consumecoolantperheat></consumecoolantperheat>
+		<consumeenergypertransfer></consumeenergypertransfer>
+	</Cooling_System>
+
+	<Cooling_System>
+		<name>Supplementary_Cooler_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcoolant></maxcoolant>
+		<consumeenergyperheat></consumeenergyperheat>
+		<consumecoolantperheat></consumecoolantperheat>
+		<consumeenergypertransfer></consumeenergypertransfer>
+	</Cooling_System>
+
+	<!--	Triviális.
+	-->
+
+	<Fuel_Tank>
+		<name>Main_Tank_1</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcapacity></maxcapacity>
+		<maxdrain></maxdrain>
+	</Fuel_Tank>
+
+	<Fuel_Tank>
+		<name>Main_Tank_2</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcapacity></maxcapacity>
+		<maxdrain></maxdrain>
+	</Fuel_Tank>
+
+	<Fuel_Tank>
+		<name>Backup_Tank_1</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcapacity></maxcapacity>
+		<maxdrain></maxdrain>
+	</Fuel_Tank>
+
+	<Fuel_Tank>
+		<name>Backup_Tank_2</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcapacity></maxcapacity>
+		<maxdrain></maxdrain>
+	</Fuel_Tank>
+
+	<!--	A rendszer maxhp-je viszonylag magas, azonban annak nullázódásakor robban az egész hajó.
+	A hajó akkor is robban, ha nem kapja meg a rendszer a mágneses szigetelőmezők fenntartásához szükséges consumption-t.
+	-->
+
+	<Antimatter_Container>
+		<name>Antimatter_Container</name>
+		<hpiscritical>true</hpiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcapacity></maxcapacity>
+		<consumption></consumption>
+	</Antimatter_Container>
+
+	<!--	A maxshotenergy megadja a részecskék gyorsítására fordítható maximális energiáját (persze ebből a számból a teljesítményveszteség levonódik és csak a maradékból gyorsul a tömeg).
+	A maxmass az egyszerre kilőhető maximális antianyag ez nyilván levonódik a tároló kapacitásából.
+	A shottime az az idő ami az ágyúnak a lövés előkászítéséhez kell, szóval ennek az időnek a végén fog megtörténni az a lövés, aminek kiadták a parancsát ezen idő letelte előtt.
+	A 3 irányzékkordináta (dirx stb) a hajó tömegközéppontja által meghatározott origóhoz viszonyított egyenest ad meg (ami átmegy az origón és az irányzékon).
+	Ez az ágyú központi tengelye, a löveg ha másfele lő, e körül fordul el.
+	A maximális elfordulás ehez a szöghöz képest az angle.
+	Ha egy ágyú nem tud a célra fordulni, akkor nyilvánrá se tud lőni.
+	-->
+
+	<Antimatter_Gun>
+		<name>Antimatter_Accelerator</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<maxmass></maxmass>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Antimatter_Gun>
+
+	<!--	Hasonló a fentihez, azonban itt a maxshotenergy a lövés maximális energiája (nem számolva persze a teljesítményveszteséggel), mely fotonokban fejeződik ki.
+	A shottime ugyanaz.
+	A numofguns azt takarja, hogy ez az üteg hány különböző lövegnek az együttese.
+	Ezek mind külön célozhatóak és nem csak szinkronban tudnak lőni (szóval ha az egyik épp a shottime miatt nem lő a másik lehet pont akkor lő).
+	A direction és az angle ugyanaz.
+	-->
+
+	<Laser>
+		<name>Forward_Battery</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<Laser>
+		<name>Aft_Battery_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<Laser>
+		<name>Aft_Battery_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<Laser>
+		<name>Dorsal_Battery_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<Laser>
+		<name>Dorsal_Battery_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<Laser>
+		<name>Ventral_Battery_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<Laser>
+		<name>Ventral_Battery_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<numofguns></numofguns>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+	</Laser>
+
+	<!--	A maxshotenergy ugyanaz mint az antianyag ágyúnál.
+	A maxmass is ugyanaz, de itt ez nem vonódik le semmilyen tartályból, ugyanis reaktorplazmát használ, amihez viszont kell egy üzemképes reaktor.
+	A dir és angle ugyanaz.
+	-->
+
+	<Plasma_Emitter>
+		<name>Popgun</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxshotenergy></maxshotenergy>
+		<maxmass></maxmass>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<shottime></shottime>
+		<dirx></dirx>
+		<diry></diry>
+		<dirz></dirz>
+		<angle></angle>
+		<dependenton>Main_Reactor:Backup_Reactor</dependenton>
+	</Plasma_Emitter>
+
+	<!--	Az elfogyasztott teljesítmény hasznosuló részéből mágneses mezőt generál a hajó körül, eltérítve a töltött részecskéket.
+	Erősebb mező a gyorsabb részecskéket is el tudja téríteni.
+	NA EHHEZ LESZ GÁZ KISZÁMOLNI A KÉPLETEKET!!
+	-->
+
+	<EM_Field_Controll>
+		<name>Deflector_Field_Controll</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxconsumption></maxconsumption>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</EM_Field_Controll>
+
+	<!--	A rendszer maxjammingdensity esetén leáll és a számítógépnek újra kell indítania.
+	A kibocsátott ping maximális erőssége a maxpulsepower.
+	Ping-et pulsetime-onként tud a rendszer kibocsátani (ez amúgy nagyon pici idő).
+	A rendszer leadott teljesítménye úgy számolandó, hogy a ping idejére a leadott pluszteljesítmény maxpulsepower/pulsetime.
+	Egy pingbe lehet üzenetet és utasításokat is kódolni, tehát fontos kommunikációs funkciója is van.
+	A maxpulsenum adja meg, hogy hány darab pinget tud függetlenül kezelni a rendszer.
+	A mindetectabledensity az egységnyi felületre jutó minimális jelsűrűség ami még épp venni tud a készülék, ha a minpower teljesítményt felveszi (ez alatt nem működik).
+	Ha a rendszer enhancepower-nyi plusz teljesítményt kap, akkor erre az időre tresholdenhancment százalékkal kisebb jelsűrűséget is képes érzékelni.
+	A maxconsumption-t nem haladhatja meg a pingre és az érzékelésre fordított teljesítmény összegét.
+	-->
+
+	<EM_Sensor&Comm_Controll>
+		<name>Main_EM_Controll</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<maxconsumption></maxconsumption>
+		<maxpulsepower></maxpulsepower>
+		<pulsetime></pulsetime>
+		<maxpulsenum></maxpulsenum>
+		<minpower></minpower>
+		<mindetectabledensity></mindetectabledensity>
+		<enhancepower></enhancepower>
+		<tresholdenhancment></tresholdenhancment>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</EM_Sensor&Comm_Controll>
+
+	<EM_Sensor&Comm_Controll>
+		<name>Backup_EM_Controll</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<maxconsumption></maxconsumption>
+		<maxpulsepower></maxpulsepower>
+		<pulsetime></pulsetime>
+		<maxpulsenum></maxpulsenum>
+		<minpower></minpower>
+		<mindetectabledensity></mindetectabledensity>
+		<enhancepower></enhancepower>
+		<tresholdenhancment></tresholdenhancment>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</EM_Sensor&Comm_Controll>
+
+	<!--	A maxjammingdensity ugyanaz.
+	A maxconsumption a maximálisan felvehető teljesítményt jelzi.
+	A mindetectablepull a legkisebb érzékelhető gravitáviós mezőt.
+	Gravitációt kis elhanyagolások alapján a hajó üres tömege, az üzemanyag tömege, a hűtőfolyadék tömege és a hajón lévő drónok, rakéták tömege és a cargo tömege kelt.
+	Az enhancepower és a tresholdenhancment értelmezése analóg módon történik.
+	-->
+
+	<Gravity_Sensor>
+		<name>Gravity_Sensor</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<maxconsumption></maxconsumption>
+		<mindetectablepull">
+		<property enhancepower></mindetectablepull">
+		<property enhancepower>
+		<tresholdenhancment></tresholdenhancment>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</property enhancepower>
+
+	<!--	A maxjammingdensity ugyanaz.
+	A maxconsumption az összes funkció által felvehető maximális fogyasztás.
+	A zavaróberendezésnek 3 különböző használata és 4 különböző effektje van.
+	1. Ha a hajó körül kering legalább egy drone swarm akkor tudja monitorozni a kibocsátottem sugárzást és ezt megpróbálja maszkolni.
+	Az erre fordított energia heatmaskefficiency arányban hasznosul, melynek következtében a hajó hőmérsékleti sugárzása
+	(amely minden irányban ugyanaz, ugyanis a burkolat egyenletes hőmérsékletű a legtöbb helyen) minden irányban csökken
+	(az összes kisugárzott hő a hasznosult energia mértékével csökken).
+	2. Ha a hajó körül kering legalább egy drone swarm akkor a beérkező pingre megfelelő maszkolást még annak a burkolatra érkezése előtt ki tud dolgozni
+	és a visszaverődő sugárzással interferálva ki tud bocsátani. Mivel ez egy előre nem látható folyamat ezért ez a maszkolás kör közben automatikusan fog bekövetkezni.
+	Ennek következtében annyi energiát tud rá felhasználni amennyit épp a maxconsumption átlépése nélkül lehet.
+	Azonban a játékos prioritássá teheti ezt a funkciót, melyhez lehetősége lesz megjelölni, a jammer mely funkcióitóllehet energiát elvonni szükség esetén.
+	A foglalt teljesítmény a bejövő ping maszkolására fordított energia osztva a bejövő ping pulsetime-jával.
+	3.Zavarás.
+	Jammingefficiency hatékonysággal lehet ráenergiát fordítani, és egyszerre annyi irányba lehet zavarni amennyi a maxjammingdirections.
+	(Egy irányba történő zavaráshoz tartozik egy szög, szóval ez is gömbhélyszerű.)
+	Ha a zavart irányban egy bizonyos távolságban egység van akkor az két hatást fog érzékelni.
+	A.
+	A távolság segítségével meghatározott jammingdensity értékkel növekszik az eszköz EM szenzorainak az alap (szóval nem a pluszenergiával javított) mindetectabledensity-je
+	(mindenféle jelerősítés ekkor ehhez képest van számolva).
+	Egyszóval nehezebb lesz megtalálniuk a célpontokat.
+	Több esetleges zavaró hatás összegződhet.
+	B.
+	Ha a jammingdensity nagyobb az adott érzékeny eszköz maxjammingdensity-jénél, akkor az adott eszköz leáll és újra kell indulnia vagy újra kell indítani.
+	Több esetleges zavaró hatás összegződhet.
+	-->
+
+	<Jammer>
+		<name>Jammer_Array_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<maxconsumption></maxconsumption>
+		<pingmaskefficiency></pingmaskefficiency>
+		<heatmaskefficiency></heatmaskefficiency>
+		<jammingefficiency></jammingefficiency>
+		<maxjammingdirections></maxjammingdirections>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Jammer>
+
+	<Jammer>
+		<name>Jammer_Array_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<maxconsumption></maxconsumption>
+		<falsetargetefficiency></falsetargetefficiency>
+		<jammingefficiency></jammingefficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Jammer>
+
+	<!--	A restarttime annak az ideje, amennyi idő alatt feláll a gép, ha egy zavaróeszköz kiütötte.
+	A systemstarttime anna az ideje, hogy meddig tart egy másik nem számítógépet a rendszernek újraindítania.
+	-->
+
+	<Computer>
+		<name>Main_Computer</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<restarttime></restarttime>
+		<systemstarttime></systemstarttime>
+		<consumption></consumption>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+	</Computer>
+
+	<Computer>
+		<name>Backup_Computer</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxjammingdensity></maxjammingdensity>
+		<restarttime></restarttime>
+		<systemstarttime></systemstarttime>
+		<consumption></consumption>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+	</Computer>
+
+	<!--	A maxrepair adja meg, hogy másodpercenként mennyit tud javítani a rendszer.
+	A játékos beállíthatja, hogy egyes sérült rendszerre mennyi pontot szán.
+	Csak azon rendszerek javíthatóak, amiknek a structure-ja nagyobb mint 0.
+	A consumptionphp az egy hp egy másodperc alatti javításához szükséges teljesítmény.
+	-->
+
+	<Damage_Controll>
+		<name>Damage_Controll_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxrepair></maxrepair>
+		<consumptionphp></consumptionphp>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Damage_Controll>
+
+	<Damage_Controll>
+		<name>Damage_Controll_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxrepair></maxrepair>
+		<consumptionphp></consumptionphp>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Damage_Controll>
+
+	<!--	Rakétát lehet belőle indítani, ha valamilyen szenzor érzékelt célpontot, vagy egy megadott koordinátára.
+	Ha van warping rakéta azt csak akkor lehet indítani, ha a célt a gravitációs szenzor érzékelte.
+	A maxstoredmissiles a maximálisan tárolható rakéták számát jelenti.
+	Egy silóból egyszerre egy rakéta indítható.
+	A következő countdowntime után indítható.
+	-->
+
+	<Missile_Silo>
+		<name>Silo_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<countdowntime></countdowntime>
+		<maxstoredmissiles></maxstoredmissiles>
+		<size></size>
+	</Missile_Silo>
+
+	<Missile_Silo>
+		<name>Silo_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<countdowntime></countdowntime>
+		<maxstoredmissiles></maxstoredmissiles>
+		<size></size>
+	</Missile_Silo>
+
+	<!--	A hangárokban tárolt drónokat vagy drónrajokat tudja indítani.
+	Egyszerre launchcapacity-nyi drónt tud indítani (csak szinkronban lehet indítani), melyeket maximum a maxlaunchenergy-nyi mozgási energiára
+	(illetve ennek hasznosult részére) tud felgyorsítani (mindegyikre külön-külön ekkora a limit és az indítási energia egy indításkor csak egyféle lehet).
+	Egy indítás launchtime-nyi idejig tart, ez alatt a felvett teljesítmény: launchtime szor launchenergy szor indított drónok vagy rajok száma.
+	Minden indító csak a megadott hangárokból tud indítani drónt.
+	-->
+
+	<Launch_Tubes>
+		<name>Right_Tube_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxlaunchenergy></maxlaunchenergy>
+		<launchtime></launchtime>
+		<launchcapacity></launchcapacity>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<hangar>Right_Hangar</hangar>
+	</Launch_Tubes>
+
+	<Launch_Tubes>
+		<name>Right_Tube_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxlaunchenergy></maxlaunchenergy>
+		<launchtime></launchtime>
+		<launchcapacity></launchcapacity>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<hangar>Right_Hangar</hangar>
+	</Launch_Tubes>
+
+	<Launch_Tubes>
+		<name>Right_Tube_3</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxlaunchenergy></maxlaunchenergy>
+		<launchtime></launchtime>
+		<launchcapacity></launchcapacity>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<hangar>Right_Hangar</hangar>
+	</Launch_Tubes>
+
+	<Launch_Tubes>
+		<name>Left_Tube_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxlaunchenergy></maxlaunchenergy>
+		<launchtime></launchtime>
+		<launchcapacity></launchcapacity>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<hangar>Left_Hangar</hangar>
+	</Launch_Tubes>
+
+	<Launch_Tubes>
+		<name>Left_Tube_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxlaunchenergy></maxlaunchenergy>
+		<launchtime></launchtime>
+		<launchcapacity></launchcapacity>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<hangar>Left_Hangar</hangar>
+	</Launch_Tubes>
+
+	<Launch_Tubes>
+		<name>Left_Tube_3</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxlaunchenergy></maxlaunchenergy>
+		<launchtime></launchtime>
+		<launchcapacity></launchcapacity>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<hangar>Left_Hangar</hangar>
+	</Launch_Tubes>
+
+	<!--	Itt maxstoreddrones mennyiségű drónt vagy rajt lehet tárolni.
+	A leszálló egységek a hangárokba kerülnek.
+	-->
+
+	<Drone_Hangar>
+		<name>Right_Hangar</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxstoreddrones></maxstoreddrones>
+	</Drone_Hangar>
+
+	<Drone_Hangar>
+		<name>Left_Hangar</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxstoreddrones></maxstoreddrones>
+	</Drone_Hangar>
+
+	<Warp_Drive>
+		<name>Contraction_Drive_1</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Contraction_Drive_2</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Contraction_Drive_3</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Contraction_Drive_4</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Contraction_Drive_5</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Contraction_Drive_6</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Expansion_Drive_1</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Expansion_Drive_2</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Expansion_Drive_3</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Expansion_Drive_4</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Expansion_Drive_5</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<Warp_Drive>
+		<name>Expansion_Drive_6</name>
+		<crushiscritical>true</crushiscritical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Warp_Drive>
+
+	<!--	Maxcapacity térfogatnyi terhet tud szállítani.
+	-->
+
+	<Cargo_Bay>
+		<name>Cargo_Bay</name>
+		<critical>true</critical>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<maxcapacity></maxcapacity>
+	</Cargo_Bay>
+
+	<!--	A személyzet helye harc közben.
+	Intelligens zselé és egyéb mechanizmusok segítik a legénység életben maradását az extrém gyorsulások közepette.
+	Ha ez sem elég akkor a gyorsulás egy részének enged a szerkezet, így a legénység decelerationlength-nyit elmozdulhat,
+	hogy rövid ideig tartó extrém gyorsulásokat is túl tudjon élni.
+	Az adott Crew_Area-ban a maximum gyorsulást a centrifugális gyorsulás és a tehetetlenségi gyorsulás összege nem haladhatja meg.
+	(A Battle_Stations a legtöbb hajónál a tömegközéppontban van, így ennél az egy rendszernél a centrifugális gyorsulás nem játszik.)
+	-->
+
+	<Crew_Area>
+		<name>Battle_Stations</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<decelerationlength></decelerationlength>
+		<consumption></consumption>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Crew_Area>
+
+	<Crew_Area>
+		<name>Emergency_Controll_1</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<decelerationlength></decelerationlength>
+		<consumption></consumption>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Crew_Area>
+
+	<Crew_Area>
+		<name>Emergency_Controll_2</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+		<decelerationlength></decelerationlength>
+		<consumption></consumption>
+		<efficiency></efficiency>
+		<heatbuffer></heatbuffer>
+		<dependenton>Main_Computer:Backup_Computer</dependenton>
+	</Crew_Area>
+
+	<!--	A harc szüneteiben a megsemmisült rendszerek újraépítése és a drónok, rakéták utánpótlása történik itt.
+	(Szóval az in-game harcszimulációkban csak igyázni kell rá, hogy a sztorimódok átvezetői közben és egyéb esetekben lehessen használni.)
+	-->
+
+	<Industrial_Modul>
+		<name>Industrial_Modul</name>
+		<x></x>
+		<y></y>
+		<z></z>
+		<maxhp></maxhp>
+		<maxstructure></maxstructure>
+		<crushdamage></crushdamage>
+		<size></size>
+	</Industrial_Modul>
+</ship>

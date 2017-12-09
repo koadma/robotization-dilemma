@@ -124,8 +124,9 @@ public:
   double length() const {
     return sqrt(double(this->sqrlen()));
   }
-  void norm() {
+  vec3<T> norm() {
     *this /= length();
+    return *this;
   }
 
   bVec3 operator==(vec3<T> rhs) const {
