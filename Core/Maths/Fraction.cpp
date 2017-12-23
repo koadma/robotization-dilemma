@@ -5,12 +5,12 @@ Fraction::Fraction() {
 	b = 1;
 }
 
-Fraction::Fraction(int a) {
+Fraction::Fraction(long long a) {
 	this->a = a;
 	this->b = 1;
 }
 
-Fraction::Fraction(int a, int b) {
+Fraction::Fraction(long long a, long long b) {
 	this->a = a;
 	if (!b) {
 

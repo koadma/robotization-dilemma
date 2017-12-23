@@ -55,7 +55,9 @@ public:
   }
 
 #ifdef M_CLIENT
-  void drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel, time_type_s time, bool selected);
+  mVec3 reCalcPosition(mVec3 position, mVec3 viewCenter, distance_type_m maxDist);
+
+  void drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, time_type_s time, distance_type_m maxDist, OpenGLData data, bool selected);
 #endif
 };
 

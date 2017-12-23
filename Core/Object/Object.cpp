@@ -16,6 +16,14 @@ Object::Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth,
   _radius = radius;
   _ID = ID;
   _energySystem = _parentShip->energySystem.addVertex(0, 0, 0, 0);
+
+  _maxGeneratedPower.addFrame(-2, 0);
+  _requestedPower.addFrame(-2, 0);
+  _maxUseablePower.addFrame(-2, 0);
+  _energyStored.addFrame(-2, 0);
+  _maxStorage.addFrame(-2, 0);
+  _usedPower.addFrame(-2, 0);
+  _generatedPower.addFrame(-2, 0);
 }
 
 power_type_W Object::getMaxGeneratedPower(time_type_s time) {
@@ -44,7 +52,7 @@ void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power) {
   _energySystem->_goal = -power;
 }
 void Object::requestedPowerChange(time_type_s time, power_type_W power) {
-  power = min(power, getMaxUseablePower(time));
+  power = max(0.0,min(power, getMaxUseablePower(time)));
   _requestedPower.addFrame(time, power);
   _energySystem->_goal = power;
 }
@@ -153,10 +161,37 @@ void Object::getStatus(DataElement* data) {
   name->_core->fromType<string>(_name);
   data->addChild(name);
 
+  DataElement* mgpe = new DataElement();
+  _maxGeneratedPower.get(mgpe);
+  data->addChild(mgpe);
+
+  DataElement* gpe = new DataElement();
+  _generatedPower.get(gpe);
+  data->addChild(gpe);
+
+  DataElement* mupe = new DataElement();
+  _maxUseablePower.get(mupe);
+  data->addChild(mupe);
+
+  DataElement* rpe = new DataElement();
+  _requestedPower.get(rpe);
+  data->addChild(rpe);
+
+  DataElement* upe = new DataElement();
+  _usedPower.get(upe);
+  data->addChild(upe);
+
+  DataElement* mse = new DataElement();
+  _maxStorage.get(mse);
+  data->addChild(mse);
+
+  DataElement* ese = new DataElement();
+  _energyStored.get(ese);
+  data->addChild(ese);
+
   DataElement* vire = new DataElement();
   getVStatus(vire);
   data->addChild(vire);
-
 }
 void Object::setStatus(DataElement* data) {
   _relativePos.set(data->_children[1]);
@@ -171,7 +206,21 @@ void Object::setStatus(DataElement* data) {
 
   _name = data->_children[6]->_core->toType<string>();
 
-  setVStatus(data->_children[7]);
+  _maxGeneratedPower.set(data->_children[7]);
+
+  _generatedPower.set(data->_children[8]);
+
+  _maxUseablePower.set(data->_children[9]);
+
+  _requestedPower.set(data->_children[10]);
+
+  _usedPower.set(data->_children[11]);
+
+  _maxStorage.set(data->_children[12]);
+
+  _energyStored.set(data->_children[13]);
+
+  setVStatus(data->_children[14]);
 }
 
 void Object::getVStatus(DataElement* data) {

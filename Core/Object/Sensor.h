@@ -14,8 +14,8 @@ public:
   {}
   Sensor(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower) :
   Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    maxUseablePowerChange(0, maxPower);
-    requestedPowerChange(0, 0);
+    maxUseablePowerChange(-1, maxPower);
+    requestedPowerChange(-1, 0);
     _name = "Sensor";
     ScriptIConstant* sens = new ScriptIConstant();
     sens->_val = new ScriptData();

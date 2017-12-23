@@ -172,17 +172,23 @@ Ship::Ship(uint32_t _ID) {
 }
 
 void Ship::load(uint32_t _ID, mVec3 _pos) {
-  Object* no = new ::Generator(this, mix(_ID, 0), { 100,0,0 }, 1000, 100, 1000, 100000);
-  objects.push_back(no);
+  energySystem._lastUpdate = -0.01;
 
-  no = new ::Sensor(this, mix(_ID, 1), { -100,0,0 }, 1000, 100, 1000, 100000);
-  objects.push_back(no);
+  Object* go = new ::Generator(this, mix(_ID, 0), { 100,0,0 }, 1000, 100, 1000, 1000000);
+  objects.push_back(go);
 
-  no = new ::Engine(this, mix(_ID, 2), { 0,173.2f ,0 }, 1000, 100, 1000, 100000);
-  objects.push_back(no);
+  Object* so = new ::Sensor(this, mix(_ID, 1), { -100,0,0 }, 1000, 100, 1000, 1000);
+  objects.push_back(so);
 
-  no = new ::Laser(this, mix(_ID, 3), { 0,-173.2f ,0 }, 1000, 100, 1000, 1000000);
-  objects.push_back(no);
+  Object* eo = new ::Engine(this, mix(_ID, 2), { 0,173.2f ,0 }, 1000, 100, 1000, 10000);
+  objects.push_back(eo);
+
+  Object* lo = new ::Laser(this, mix(_ID, 3), { 0,-173.2f ,0 }, 1000, 100, 1000, 1000);
+  objects.push_back(lo);
+
+  energySystem.addSymmetricEdge(go->_energySystem, so->_energySystem, 1000000);
+  energySystem.addSymmetricEdge(go->_energySystem, eo->_energySystem, 1000000);
+  energySystem.addSymmetricEdge(go->_energySystem, lo->_energySystem, 1000000);
 
   Movement m;
   m.pos = _pos;
@@ -200,6 +206,7 @@ void Drone::energyUpdate(time_type_s time, Game* game) {
     ev->_time = runOut[0];
     game->events.insert(ev);
   }
+  energyCallback(time, game);
 }
 void Drone::energyCallback(time_type_s time, Game* game) {
   for(auto&& it : objects) {
@@ -381,12 +388,17 @@ void Ship::newTurn(int id) {
   renderNewRound(id);
   timeNow = ROUND_TIME*(id - 1);
 }
-void Ship::drawSightings(float camcx, float camcy, float camcz, float d) {
-  auto it = sightings.begin();
+void Ship::drawSightings(float camcx, float camcy, float camcz, float d, OpenGLData data) {
+  mVec3 pos = mov.getAt(timeNow).pos;
 
-  while (it != sightings.end()) {
-    (*it)->drawSighting(camcx, camcy, camcz, d, SOL, timeNow, *it == selecteds);
-    ++it;
+  distance_type_m maxD = 0;
+
+  for (auto&& it : sightings) {
+    maxD = max(maxD, (it->getAt(timeNow).pos - pos).length());
+  }
+
+  for (auto&& it : sightings) {
+    it->drawSighting({camcx, camcy, camcz}, d, SOL, timeNow, maxD, data, it == selecteds);
   }
 }
 void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool b) {
@@ -566,21 +578,16 @@ void Ship::setSightings(DataElement* data) {
   clearSightings();
 
   for (DataElement* it : data->_children) {
-    Sighting* nSig = new Sighting;
+    Sighting* nSig = new Sighting();
     nSig->set(it);
     sightings.push_back(nSig);
   }
 }
 void Ship::clearObjects() {
-  auto it = objects.begin();
-
-  while (it != objects.end()) {
-    //(*it)->~Object();
-    delete *it;
-    ++it;
+  while (objects.size()) {
+    delete *(objects.begin());
+    objects.erase(objects.begin());
   }
-
-  objects.clear();
 
 #ifdef M_CLIENT
   Graphics::deleteElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")));
@@ -589,15 +596,10 @@ void Ship::clearObjects() {
 
 }
 void Ship::clearSightings() {
-  auto it = sightings.begin();
-
-  while (it != sightings.end()) {
-    //(*it)->~Sighting();
-    delete *it;
-    ++it;
+  while (sightings.size()) {
+    delete *(sightings.begin());
+    sightings.erase(sightings.begin());
   }
-
-  sightings.clear();
 }
 Ship::~Ship() {
   clearObjects();

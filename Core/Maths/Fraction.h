@@ -7,8 +7,8 @@ public:
 	long long a, b;
 
 	Fraction();
-	Fraction(int a);
-	Fraction(int a, int b);
+	Fraction(long long a);
+	Fraction(long long a, long long b);
 	Fraction(string s);
 
   Fraction & operator +=(Fraction rhs);

@@ -56,6 +56,7 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
       }
       else {
         createMainMenu();
+        glutPostRedisplay();
       }
       break;
     }
@@ -95,22 +96,22 @@ int main() {
   setlocale(LC_ALL, "");
   srand(time(NULL));
 
-  FlowGraph<Fraction, double, double> f;
+  /*FlowGraph<double, Fraction, double> f;
 
-  FlowVertex<Fraction, double, double>* v1 = f.addVertex(-10, 0, 0, 100, 50, 0);
-  FlowVertex<Fraction, double, double>* v2 = f.addVertex(0, 20, -30, 100, 50, 0);
-  FlowVertex<Fraction, double, double>* v3 = f.addVertex(10, 0, 0, 100, 50, 0);
+  FlowVertex<double, Fraction, double>* v1 = f.addVertex(-5, 0, 0, 0, 0, 0);
+  FlowVertex<double, Fraction, double>* v2 = f.addVertex(0, 20, -30, 100, 50, 0);
+  FlowVertex<double, Fraction, double>* v3 = f.addVertex(10, 0, 0, 0, 0, 0);
 
-  f.addEdge(v1, v2, 30);
-  f.addEdge(v2, v3, 1);
+  f.addSymmetricEdge(v1, v2, 30);
+  f.addSymmetricEdge(v2, v3, 1);
 
   for(int i = 0; i < 10; i++) {
     f.goTo(i);
-  }
+  }*/
   
   InitGraphics();
 
-  //Graphics::createPlot<linear<double,Fraction,double>, double, double>(objectGameSubWindow, "plot", Coordiante{0, 0}, Coordiante{1, 1}, &(v2->_val));
+  //Graphics::createPlot<linear<double, Fraction,double>, double, double>(objectGameSubWindow, "plot", Coordiante{0, 0}, Coordiante{1, 1}, &(v2->_val));
 
   vector<string> reConnectData;
   if (hasSaveFile(reConnectData)) {

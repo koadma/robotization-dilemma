@@ -38,12 +38,13 @@ const time_type_s ROUND_TIME = 2;
 #define ElementBackColor 0xff030014
 
 #define VersionA 0
-#define VersionB 3
+#define VersionB 4
 #define VersionC 0
+//0.40
+//Converge to 137.035999139
 
 const acc_type_mperss MAX_ACCEL = 250;
-//0.3.0
-//Converge to
+
 
 enum LoginError {
   LoginErrorOk = 0,

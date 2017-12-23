@@ -11,10 +11,10 @@ public:
   {}
   Generator(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, float radius, int health, float maxPower) :
   Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    maxGeneratedPowerChange(0, maxPower);
+    maxGeneratedPowerChange(-1, maxPower);
     _name = "Generator";
-    energyStoredChange(0, 0);
-    maxStorageChange(0, 0);
+    energyStoredChange(-1, 0);
+    maxStorageChange(-1, 0);
   }
   int type();
 

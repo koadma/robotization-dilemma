@@ -109,8 +109,19 @@ Sighting::~Sighting() {
 */
 
 #ifdef M_CLIENT
-void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel, time_type_s time, bool selected) {
-  glLineWidth(2.0f);
+mVec3 Sighting::reCalcPosition(mVec3 position, mVec3 viewCenter, distance_type_m maxDist) {
+  return viewCenter + ((position - viewCenter) / maxDist)*5000;
+}
+
+void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, time_type_s time, distance_type_m maxDist, OpenGLData data, bool selected) {
+  //Close
+
+  if (selected) {
+    glLineWidth(3.0f);
+  }
+  else {
+    glLineWidth(1.0f);
+  }
 
   glBegin(GL_LINES);
   if (keyframes.size()) {
@@ -142,6 +153,32 @@ void Sighting::drawSighting(float camcx, float camcy, float camcz, float d, vel_
     }
     glutSolidSphere(now.radius, 20, 20);
     glTranslated(-now.pos.x, -now.pos.y, -now.pos.z);
+  }
+
+  //Far
+
+  if(keyframes.size() && keyframes.getFirst() <= time) {
+    if (selected) {
+      glColor3f(1.0f, 0.0f, 0.0f);
+    }
+    else {
+      glColor3f(1.0f, 1.0f, 1.0f);
+    }
+
+    glBegin(GL_LINES);
+    glVertex3d(viewCenter.x, viewCenter.y, viewCenter.z);
+    mVec3 position = keyframes.getAt(time).pos;
+    mVec3 transVec = reCalcPosition(position, viewCenter, maxDist);
+    glVertex3d(transVec.x, transVec.y, transVec.z);
+  
+
+    //GLdouble scx, scy, scz;
+    //gluProject(transVec.x, transVec.y, transVec.z, data.model_view, data.projection, data.viewport, &scx, &scy, &scz);
+
+    mVec3 deltaVector = keyframes.getAt(time).vel;
+    glVertex3d(transVec.x, transVec.y, transVec.z);
+    glVertex3d(transVec.x + deltaVector.x, transVec.y + deltaVector.y, transVec.z + deltaVector.z);
+    glEnd();
   }
 }
 

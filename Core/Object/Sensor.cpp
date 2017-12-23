@@ -117,8 +117,8 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
       Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
       _parentShip->sightMovement(m, time, _autofire);
     }
-    delete res;
-    delete d;
+    DeletePtr(res);
+    DeletePtr(d);
   }
 }
 #endif

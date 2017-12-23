@@ -12,7 +12,7 @@ public:
   {}
   Engine(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower) :
   Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    maxUseablePowerChange(0, maxPower);
+    maxUseablePowerChange(-1, maxPower);
     _name = "Engine";
   }
 

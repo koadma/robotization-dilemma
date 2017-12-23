@@ -41,6 +41,13 @@ int defaultIMouseMoveManager(int x, int y);
 int defaultIMouseClickManager(int idk, int key, int x, int y, bool in);
 int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in);
 
+struct OpenGLData {
+  GLdouble model_view[16];
+  GLdouble projection[16];
+  GLint viewport[4];
+  vec3<double> cameraEye;
+};
+
 struct WindowManagers {
   RenderManager renderManager;
   ResizeManager resizeManager;

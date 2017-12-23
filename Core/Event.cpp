@@ -109,7 +109,7 @@ void StateChange::setV(DataElement* data, Game* game) {
 
 }
 void EngineAcc::apply(Game *g) {
-  reinterpret_cast<Engine*>(_o)->setTargetAccel(_time, _acc);
+  reinterpret_cast<Engine*>(_o)->setTargetAccel(_time, _acc, g);
 
   _o->_parentShip->energyUpdate(_time, g); //recalculate ship energy info
 
@@ -125,10 +125,7 @@ void EngineAcc::setV(DataElement* data, Game* game) {
   _acc.set(data->_children[0]);
 }
 void SensorPow::apply(Game *g) {
-  reinterpret_cast<Sensor*>(_o)->setTargetPower(_time, _power);
-  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
-                                        //g.removeIntersect(_o->_parentShip);
-                                        //g.calcIntersect(_o->_parentShip); //recalculate ship related future intersections
+  reinterpret_cast<Sensor*>(_o)->setTargetPower(_time, _power, g);
 }
 void SensorPow::setV(DataElement* data, Game* game) {
   _power = data->_children[0]->_core->toType<power_type_W>();
@@ -140,8 +137,6 @@ void LaserShot::apply(Game *g) {
   s->originID = _o->getId();
   s->origintime = _time;
   s->vel = _dir;
-
-  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(s);
   g->calcIntersect(s);
@@ -172,7 +167,7 @@ void SensorPing::apply(Game *g) {
   Bubble* b = new Bubble();
   b->btype = Bubble::Ping;
   b->emitter = _o->getMovement(_time);
-  b->energy = _energy;
+  b->energy = _energy - _o->useEnergy(_time, _energy, g);
   b->gEmissionTime = _time;
   b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();

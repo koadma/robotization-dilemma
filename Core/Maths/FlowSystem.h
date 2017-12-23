@@ -46,6 +46,7 @@ class FlowVertex
 public:
   int _h; //Temporary - internal use
   D _flow; //Temporary - internal use
+  D _firstDelta; //Temporary - internal use
   D _delta; //Actual detla
   list<FlowEdge<V, D, T>*> _edges;
 
@@ -83,7 +84,7 @@ public:
   }
 };
 
-//Derivative, value, time type
+//Value, derivative, time type
 //Derivative MUST BE WITHOUT floating point errors!
 template <typename V, typename D, typename T>
 class FlowGraph
@@ -146,7 +147,7 @@ FlowEdge<V, D, T>* FlowGraph<V, D, T>::addEdge(FlowVertex<V, D, T>* u, FlowVerte
 
 template <typename V, typename D, typename T>
 pair<FlowEdge<V, D, T>*, FlowEdge<V, D, T>*> FlowGraph<V, D, T>::addSymmetricEdge(FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, D w, D flow) {
-  return{ addEdge(u, v, w, flow),addEdge(v, u, w, flow) };
+  return{ addEdge(u, v, w, true, flow),addEdge(v, u, w, true, flow) };
 }
 
 template <typename V, typename D, typename T>
@@ -268,13 +269,15 @@ void FlowGraph<V, D, T>::addRootEdges(int mode) {
       break;
     case 1:
       if (it->_canCharge) {
-        requested = it->_maxCharge + it->_goal;
+        requested = it->_maxCharge;
       }
+      requested += it->_goal - it->_firstDelta;
       break;
     case 2:
       if (it->_canDrain) {
-        requested = it->_maxDrain + it->_goal;
+        requested = it->_maxDrain;
       }
+      requested += it->_goal - it->_firstDelta;
       break;
     }
     if (requested > D(0)) {
@@ -293,7 +296,7 @@ void FlowGraph<V, D, T>::clean(bool decrease) {
     auto et = it->_edges.begin();
 
     while (et != it->_edges.end()) {
-      if (!(*et)->_real) {
+      if (!(*et)->_real || (*et)->_flow < D(0)) {
         auto et2 = et;
         ++et;
         it->_edges.erase(et2);
@@ -353,6 +356,10 @@ void FlowGraph<V, D, T>::getMaxFlow() {
   //Wipe graph
   clean(true);
 
+  for (auto&& it : _ver) {
+    it->_firstDelta = it->_delta;
+  }
+
   //Add root edges, charge mode
   addRootEdges(1);
   getMaxFlow(_s, _t);
@@ -370,7 +377,7 @@ void FlowGraph<V, D, T>::getMaxFlow() {
 template <typename V, typename D, typename T>
 vector<T> FlowGraph<V, D, T>::goTo(T time) {
   vector<T> endtimes;
-  if (time > _lastUpdate) {
+  if (time >= _lastUpdate) {
     for (auto&& it : _ver) {
       it->_canCharge = (it->_val.getAt(time) < V(0.99) * it->_maxVal);
       it->_canDrain = (V(0.01) * it->_maxVal < it->_val.getAt(time));

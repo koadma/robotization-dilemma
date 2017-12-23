@@ -147,7 +147,7 @@ public:
 
   void selectSighting(vec3<double> ori, vec3<double> dir);
 
-  void drawSightings(float camcx, float camcy, float camcz, float d);
+  void drawSightings(float camcx, float camcy, float camcz, float d, OpenGLData data);
   void drawObjects(float camcx, float camcy, float camcz, float d, bool b = false);
 
   bool packetRecv(DataElement *Data, int Id, NetworkC* thisptr);

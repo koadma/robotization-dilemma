@@ -4,32 +4,32 @@
 #endif
 
 void Engine::getVStatus(DataElement* data) {
-  DataElement* maxe = new DataElement();
-  _maxUseablePower.get(maxe);
-  data->addChild(maxe);
+  DataElement* acre = new DataElement();
+  _accelRequest.get(acre);
+  data->addChild(acre);
 
   DataElement* acce = new DataElement();
   _accel.get(acce);
   data->addChild(acce);
 }
 void Engine::setVStatus(DataElement* data) {
-  _maxUseablePower.set(data->_children[0]);
+  _accelRequest.set(data->_children[0]);
   _accel.set(data->_children[1]);
 }
 
 void Engine::setTargetAccel(time_type_s time, mpssVec3 acc) {
-  _accel.addFrame(time, acc);
-  _energySystem->_goal = accel2power(acc);
+  _accelRequest.addFrame(time, acc);
+  requestedPowerChange(time, accel2power(acc));
   #ifdef M_CLIENT
   auto mit = _parentShip->mov._frames.upper_bound(time);
-  auto aut = _accel.search(time);
+  auto aut = _accelRequest.search(time);
   
   _parentShip->mov._frames.erase(mit, _parentShip->mov._frames.end());
   Movement m = _parentShip->mov.getAt(time);
   m.acc = acc;
   _parentShip->mov.addFrame(time, m);
 
-  while (aut != _accel._frames.end()) {
+  while (aut != _accelRequest._frames.end()) {
     Movement m = _parentShip->mov.getAt(aut->first);
     m.acc = aut->second();
     _parentShip->mov.addFrame(aut->first, m);
@@ -53,17 +53,19 @@ void Engine::setTargetAccel(time_type_s time, mpssVec3 acc, Game* g) {
 void Engine::energyCallback(time_type_s time, Game* g) {
   power_type_W power = _energySystem->_delta;
 
-  mpssVec3 acc = _accel.getAt(time)().norm() * power2accel(power);
+  if(_accelRequest.size() && _accelRequest.getFirst() <= time && _accelRequest.getAt(time)().length() > 0.00001) {
+    mpssVec3 acc = _accelRequest.getAt(time)().norm() * power2accel(power);
+    _accel.addFrame(time, acc);
 
-  Movement m = _parentShip->mov.getAt(time);
-  m.acc = _parentShip->getAccel(time);
-  m.acc += acc;
-  _parentShip->mov.addFrame(time, m);
+    Movement m = _parentShip->mov.getAt(time);
+    m.acc = _parentShip->getAccel(time);
+    _parentShip->mov.addFrame(time, m);
+  }
 }
 #endif
 
 void Engine::collectEvents(list<StateChange*> &addTo, time_type_s time) {
-  for (auto&& it : _accel._frames) {
+  for (auto&& it : _accelRequest._frames) {
     EngineAcc* ev = new EngineAcc();
     ev->_acc = it.second();
     ev->_o = this;
@@ -84,8 +86,8 @@ void Engine::setSidebar() {
       TextBindFunc<power_type_W>(getCurrentUsedPower),
       TextBindFunc<power_type_W>(getCurrentMaxUseablePower)
       );
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.getAt(timeNow)().x, 2);
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.getAt(timeNow)().y, 2);
-  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.getAt(timeNow)().z, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accelRequest.getAt(timeNow)().x, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accelRequest.getAt(timeNow)().y, 2);
+  reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accelRequest.getAt(timeNow)().z, 2);
 }
 #endif

@@ -8,10 +8,7 @@ int MainGameCanvas::mxold;
 int MainGameCanvas::myold;
 int MainGameCanvas::mousebuttons = 0; //left, center, right
 
-GLdouble MainGameCanvas::model_view[16];
-GLdouble MainGameCanvas::projection[16];
-GLint MainGameCanvas::viewport[4];
-vec3<double> MainGameCanvas::cameraEye;
+OpenGLData MainGameCanvas::view;
 
 void MainGameCanvas::normalizeAngles() {
 
@@ -33,11 +30,11 @@ int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  cameraEye = { camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta) };
+  view.cameraEye = { camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta) };
 
   gluPerspective(60.0, (bx - ax) / float(by - ay), 1, 20000000);
   gluLookAt(
-    cameraEye.x, cameraEye.y, cameraEye.z,
+    view.cameraEye.x, view.cameraEye.y, view.cameraEye.z,
     camcx, camcy, camcz,
     -cos(camphi) * sin(camtheta), cos(camtheta), -sin(camphi) * sin(camtheta)
     );
@@ -50,9 +47,9 @@ int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
 
   glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
-  glGetDoublev(GL_MODELVIEW_MATRIX, model_view);
-  glGetDoublev(GL_PROJECTION_MATRIX, projection);
-  glGetIntegerv(GL_VIEWPORT, viewport);
+  glGetDoublev(GL_MODELVIEW_MATRIX, view.model_view);
+  glGetDoublev(GL_PROJECTION_MATRIX, view.projection);
+  glGetIntegerv(GL_VIEWPORT, view.viewport);
 
                                   // Render a color-cube consisting of 6 quads with different colors
   glLoadIdentity();                 // Reset the model-view matrix
@@ -150,7 +147,7 @@ int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
   glVertex3f(-1.0f, -1.0f, 1.0f);
   glEnd();   // Done drawing the pyramid*/
 
-  ship->drawSightings(camcx, camcy, camcz, d);
+  ship->drawSightings(camcx, camcy, camcz, d, view);
 
   ship->drawObjects(camcx, camcy, camcz, d, true);
 
@@ -176,6 +173,12 @@ int MainGameCanvas::keyManager(unsigned char key, int x, int y, bool in) {
     }
     if (key == 'd') {
       camphi -= 0.2;
+    }
+    if (key == 'c') {
+      mVec3 m = ship->mov.getAt(timeNow).pos;
+      camcx = m.x;
+      camcy = m.y;
+      camcz = m.z;
     }
     //glutPostRedisplay();
     return 3;
@@ -224,11 +227,11 @@ int MainGameCanvas::mouseClickManager(int button, int state, int x, int y, bool 
       // get 3D coordinates based on window coordinates
 
       gluUnProject(x, y, 0.01,
-        model_view, projection, viewport,
+        view.model_view, view.projection, view.viewport,
         &pos3D_ax, &pos3D_ay, &pos3D_az);
 
       vec3<double> rayori = { pos3D_ax, pos3D_ay, pos3D_az };
-      vec3<double> raydir = rayori - cameraEye;
+      vec3<double> raydir = rayori - view.cameraEye;
 
       ship->selectSighting(rayori, raydir);
     }
@@ -255,10 +258,7 @@ int MainGameShipCanvas::mxold;
 int MainGameShipCanvas::myold;
 int MainGameShipCanvas::mousebuttons = 0; //left, center, right
 
-GLdouble MainGameShipCanvas::model_view[16];
-GLdouble MainGameShipCanvas::projection[16];
-GLint MainGameShipCanvas::viewport[4];
-vec3<double> MainGameShipCanvas::cameraEye;
+OpenGLData MainGameShipCanvas::view;
 
 void MainGameShipCanvas::normalizeAngles() {
 
@@ -280,11 +280,11 @@ int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  cameraEye = { camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta) };
+  view.cameraEye = { camcx + d * cos(camphi) * cos(camtheta), camcy + d * sin(camtheta), camcz + d * sin(camphi) * cos(camtheta) };
 
   gluPerspective(60.0, (bx - ax) / float(by - ay), 1, 20000000);
   gluLookAt(
-    cameraEye.x, cameraEye.y, cameraEye.z,
+    view.cameraEye.x, view.cameraEye.y, view.cameraEye.z,
     camcx, camcy, camcz,
     -cos(camphi) * sin(camtheta), cos(camtheta), -sin(camphi) * sin(camtheta)
     );
@@ -297,9 +297,9 @@ int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
 
   glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
-  glGetDoublev(GL_MODELVIEW_MATRIX, model_view);
-  glGetDoublev(GL_PROJECTION_MATRIX, projection);
-  glGetIntegerv(GL_VIEWPORT, viewport);
+  glGetDoublev(GL_MODELVIEW_MATRIX, view.model_view);
+  glGetDoublev(GL_PROJECTION_MATRIX, view.projection);
+  glGetIntegerv(GL_VIEWPORT, view.viewport);
 
                                   // Render a color-cube consisting of 6 quads with different colors
   glLoadIdentity();                 // Reset the model-view matrix
@@ -469,11 +469,11 @@ int MainGameShipCanvas::mouseClickManager(int button, int state, int x, int y, b
       // get 3D coordinates based on window coordinates
 
       gluUnProject(x, y, 0.01,
-        model_view, projection, viewport,
+        view.model_view, view.projection, view.viewport,
         &pos3D_ax, &pos3D_ay, &pos3D_az);
 
       vec3<double> rayori = {pos3D_ax, pos3D_ay, pos3D_az};
-      vec3<double> raydir = rayori - cameraEye;
+      vec3<double> raydir = rayori - view.cameraEye;
 
       ship->setSidebar(rayori, raydir);
     }

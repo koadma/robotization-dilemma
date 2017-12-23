@@ -12,7 +12,7 @@ protected:
   keyframe<value<int> > _health;
   distance_type_m _radius;
   string _name;
-  FlowVertex<energy_type_J, Fraction, time_type_s>* _energySystem;
+
 
   keyframe<value<power_type_W>> _maxGeneratedPower;
   keyframe<value<power_type_W>> _generatedPower;
@@ -26,6 +26,7 @@ public:
   Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health);
 
   Drone* _parentShip;
+  FlowVertex<energy_type_J, Fraction, time_type_s>* _energySystem;
 
   uint64_t getId() {
     return _ID;

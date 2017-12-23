@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 
   ran1(-time(0));
 
-  shipStarts = randstartpos(1000000.0);
+  shipStarts = randstartpos(100000.0);
 
   game = new Game(2);
   detachCreateClientBind(); //Begin accepting clients
