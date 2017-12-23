@@ -76,6 +76,55 @@ Event* Drone::runOut() {
   return ev;
 }*/
 
+power_type_W Drone::getMaxGeneratedPower(time_type_s time) {
+  power_type_W sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getMaxGeneratedPower(time);
+  }
+  return sum;
+}
+power_type_W Drone::getGeneratedPower(time_type_s time) {
+  power_type_W sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getGeneratedPower(time);
+  }
+  return sum;
+}
+power_type_W Drone::getMaxUseablePower(time_type_s time) {
+  power_type_W sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getMaxUseablePower(time);
+  }
+  return sum;
+}
+power_type_W Drone::getRequestedPower(time_type_s time) {
+  power_type_W sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getRequestedPower(time);
+  }
+  return sum;
+}
+power_type_W Drone::getUsedPower(time_type_s time) {
+  power_type_W sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getUsedPower(time);
+  }
+  return sum;
+}
+energy_type_J Drone::getMaxEnergy(time_type_s time) {
+  energy_type_J sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getMaxEnergy(time);
+  }
+  return sum;
+}
+energy_type_J Drone::getStoredEnergy(time_type_s time) {
+  energy_type_J sum = 0;
+  for (auto&& it : objects) {
+    sum += it->getStoredEnergy(time);
+  }
+  return sum;
+}
 
 int Drone::getHealth(time_type_s time) {
   int sum = 0;
@@ -123,24 +172,16 @@ Ship::Ship(uint32_t _ID) {
 }
 
 void Ship::load(uint32_t _ID, mVec3 _pos) {
-  Object* no = new ::Generator({ 100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 0));
-  no->parentShip = this;
-
+  Object* no = new ::Generator(this, mix(_ID, 0), { 100,0,0 }, 1000, 100, 1000, 100000);
   objects.push_back(no);
 
-  no = new ::Sensor({ -100,0,0 }, 1000, 100, 1000, 100000, mix(_ID, 1));
-  no->parentShip = this;
-
+  no = new ::Sensor(this, mix(_ID, 1), { -100,0,0 }, 1000, 100, 1000, 100000);
   objects.push_back(no);
 
-  no = new ::Engine({ 0,173.2f ,0 }, 1000, 100, 1000, 100000, { 0, 0, 0 }, mix(_ID, 2));
-  no->parentShip = this;
-
+  no = new ::Engine(this, mix(_ID, 2), { 0,173.2f ,0 }, 1000, 100, 1000, 100000);
   objects.push_back(no);
 
-  no = new ::Laser({ 0,-173.2f ,0 }, 1000, 100, 1000, mix(_ID, 3));
-  no->parentShip = this;
-
+  no = new ::Laser(this, mix(_ID, 3), { 0,-173.2f ,0 }, 1000, 100, 1000, 1000000);
   objects.push_back(no);
 
   Movement m;
@@ -158,6 +199,11 @@ void Drone::energyUpdate(time_type_s time, Game* game) {
     ev->_d = this;
     ev->_time = runOut[0];
     game->events.insert(ev);
+  }
+}
+void Drone::energyCallback(time_type_s time, Game* game) {
+  for(auto&& it : objects) {
+    it->energyCallback(time, game);
   }
 }
 
@@ -282,13 +328,19 @@ bool Ship::loadShip(xml_node<>* data) {
     string name = pElem->name();
     Object* o = NULL;
     if (name == "generator") {
-      o = new Generator(id);
+      o = new Generator(this, id);
       if (!o->load(pElem)) {
         return false;
       }
     }
     if (name == "sensor") {
-      o = new Sensor(id);
+      o = new Sensor(this, id);
+      if (!o->load(pElem)) {
+        return false;
+      }
+    }
+    if (name == "engine") {
+      o = new Engine(this, id);
       if (!o->load(pElem)) {
         return false;
       }
@@ -469,26 +521,25 @@ void Ship::setStatus(DataElement* data) {
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Sensor:
-      nObj = new Sensor(fVec3(), 0, 0, 0, 0, 0);
+      nObj = new Sensor(this, 0, fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Computer:
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Generator:
-      nObj = new Generator(fVec3(), 0, 0, 0, 0, 0);
+      nObj = new Generator(this, 0, fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Storage:
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Engine:
-      nObj = new Engine(fVec3(), 0, 0, 0, 0, fVec3(), 0);
+      nObj = new Engine(this, 0, fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Laser:
-      nObj = new Laser(fVec3(), 0, 0, 0, 0);
+      nObj = new Laser(this, 0, fVec3(), 0, 0, 0, 0);
       break;
     }
     if(nObj != NULL) {
-      nObj->parentShip = this;
       nObj->setStatus(*it);
       objects.push_back(nObj);
     } else {

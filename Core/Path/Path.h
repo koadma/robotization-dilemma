@@ -27,4 +27,7 @@ public:
     throw 1;
     return Eqnsys();
   }
+  virtual bool verify(time_type_s time, mVec3 pos) {
+    return true;
+  }
 };

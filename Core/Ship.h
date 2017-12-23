@@ -69,17 +69,18 @@ public:
     }
     return NULL;
   }
+
+  power_type_W getMaxGeneratedPower(time_type_s time);
+  power_type_W getGeneratedPower(time_type_s time);
+  power_type_W getMaxUseablePower(time_type_s time);
+  power_type_W getRequestedPower(time_type_s time);
+  power_type_W getUsedPower(time_type_s time);
+  energy_type_J getMaxEnergy(time_type_s time);
+  energy_type_J getStoredEnergy(time_type_s time);
   
-  //power_type_W getGeneratedShipPower(time_type_s time);
-  //power_type_W getUnusedShipPower(time_type_s time);
-  //power_type_W getUsedShipPower(time_type_s time);
-  //energy_type_J getMaxShipEnergy(time_type_s time);
-  //energy_type_J getStoredShipEnergy(time_type_s time);
-  //energy_type_J useEnergy(time_type_s time, energy_type_J amount);
-  //energy_type_J chargeEnergy(time_type_s time, energy_type_J amount);
-  //void refreshEnergy(time_type_s time);
 #ifdef M_SERVER
   void energyUpdate(time_type_s time, Game* g); //To do energy simulations. Callback for energy run out objects
+  void energyCallback(time_type_s, Game* g);
 #endif
 
   int getHealth(time_type_s time);

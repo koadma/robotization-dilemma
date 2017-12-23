@@ -206,30 +206,67 @@ int getCurrentMaxHealth() {
   return 0;
 }
 
-power_type_W getCurrentUsedPower() {
+power_type_W getCurrentMaxGeneratedPower() {
   if (selectedo != NULL) {
-    return selectedo->getUsedPower(timeNow);
+    return selectedo->getMaxGeneratedPower(timeNow);
   }
-  /*if (ship != NULL) {
-    return ship->getUsedShipPower(timeNow);
-  }*/
-  return 0;
-}
-
-power_type_W getCurrentMaxPower() {
-  if (selectedo != NULL) {
-    return selectedo->getMaxPower(timeNow);
+  if (ship != NULL) {
+    return ship->getMaxGeneratedPower(timeNow);
   }
   return 0;
 }
-
 power_type_W getCurrentGeneratedPower() {
   if (selectedo != NULL) {
     return selectedo->getGeneratedPower(timeNow);
   }
-  /*if (ship != NULL) {
-    return ship->getGeneratedShipPower(timeNow);
-  }*/
+  if (ship != NULL) {
+    return ship->getGeneratedPower(timeNow);
+  }
+  return 0;
+}
+power_type_W getCurrentMaxUseablePower() {
+  if (selectedo != NULL) {
+    return selectedo->getMaxUseablePower(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getMaxUseablePower(timeNow);
+  }
+  return 0;
+}
+power_type_W getCurrentRequestedPower() {
+  if (selectedo != NULL) {
+    return selectedo->getRequestedPower(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getRequestedPower(timeNow);
+  }
+  return 0;
+}
+power_type_W getCurrentUsedPower() {
+  if (selectedo != NULL) {
+    return selectedo->getUsedPower(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getUsedPower(timeNow);
+  }
+  return 0;
+}
+energy_type_J getCurrentMaxEnergy() {
+  if (selectedo != NULL) {
+    return selectedo->getMaxEnergy(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getMaxEnergy(timeNow);
+  }
+  return 0;
+}
+energy_type_J getCurrentStoredEnergy() {
+  if (selectedo != NULL) {
+    return selectedo->getStoredEnergy(timeNow);
+  }
+  if (ship != NULL) {
+    return ship->getStoredEnergy(timeNow);
+  }
   return 0;
 }
 

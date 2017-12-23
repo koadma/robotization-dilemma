@@ -115,6 +115,21 @@
 			textcolor = "ff838fa1"
 			align = "1"
 		>ERROR</labelbind>
+		<button
+			id = "objectMainGameEnergyButton"
+			minrelx = "0.0"
+			minrely = "1.0"
+			minabsx = "5.0"
+			minabsy = "-135.0"
+			maxrelx = "1.0"
+			maxrely = "1.0"
+			maxabsx = "-5.0"
+			maxabsy = "-115.0"
+			bgcolor = "ff070918"
+			activecolor = "ff190077"
+			textcolor = "ff838fa1"
+			callback = "ingameMenuEnergyButton"
+		>Energy log</button>
 		<div
 			id = "objectIngameMenuSidebar"
 			minrelx = "0.0"
@@ -124,7 +139,7 @@
 			maxrelx = "1.0"
 			maxrely = "1.0"
 			maxabsx = "0.0"
-			maxabsy = "-100.0"
+			maxabsy = "-140.0"
 			bgcolor = "ff070918">
 		</div>
 	</div>

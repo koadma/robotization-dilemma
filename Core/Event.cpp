@@ -84,10 +84,13 @@ void Event::apply(Game *g) {
   throw 1;
 }
 void Collision::apply(Game *g) {
-  _o->getPath(_time, _p, g);
+  if (_p->verify(_time, _o->getMovement(_time).pos)) { //for future non full sphere em waves (e.g. cones)
+    _o->getPath(_time, _p, g);
+  }
 }
 void BatteryDrain::apply(Game *g) {
   cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
+  _d->energyCallback(_time, g);
 }
 void StateChange::apply(Game *g) {
   throw 1;
@@ -108,10 +111,10 @@ void StateChange::setV(DataElement* data, Game* game) {
 void EngineAcc::apply(Game *g) {
   reinterpret_cast<Engine*>(_o)->setTargetAccel(_time, _acc);
 
-  _o->parentShip->energyUpdate(_time, g); //recalculate ship energy info
+  _o->_parentShip->energyUpdate(_time, g); //recalculate ship energy info
 
-  g->removeIntersect(_o->parentShip);
-  g->calcIntersect(_o->parentShip); //recalculate ship related future intersections
+  g->removeIntersect(_o->_parentShip);
+  g->calcIntersect(_o->_parentShip); //recalculate ship related future intersections
 
   ThermalRadiation ev;
   ev._o = _o;
@@ -123,22 +126,22 @@ void EngineAcc::setV(DataElement* data, Game* game) {
 }
 void SensorPow::apply(Game *g) {
   reinterpret_cast<Sensor*>(_o)->setTargetPower(_time, _power);
-  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
-                                        //g.removeIntersect(_o->parentShip);
-                                        //g.calcIntersect(_o->parentShip); //recalculate ship related future intersections
+  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
+                                        //g.removeIntersect(_o->_parentShip);
+                                        //g.calcIntersect(_o->_parentShip); //recalculate ship related future intersections
 }
 void SensorPow::setV(DataElement* data, Game* game) {
   _power = data->_children[0]->_core->toType<power_type_W>();
 }
 void LaserShot::apply(Game *g) {
   Shot* s = new Shot();
-  s->energy = _energy/* - _o->useEnergy(_time, _energy)*/;///TODO When energy system is stabilized, enable
+  s->energy = _energy - _o->useEnergy(_time, _energy, g);
   s->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   s->originID = _o->getId();
   s->origintime = _time;
   s->vel = _dir;
 
-  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
+  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(s);
   g->calcIntersect(s);
@@ -157,7 +160,7 @@ void ThermalRadiation::apply(Game *g) {
   b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
-  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
+  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(b);
   g->calcIntersect(b);
@@ -174,7 +177,7 @@ void SensorPing::apply(Game *g) {
   b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
-  _o->parentShip->energyUpdate(_time, game); //recalculate ship energy info
+  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(b);
   g->calcIntersect(b);

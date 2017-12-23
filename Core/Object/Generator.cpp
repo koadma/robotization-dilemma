@@ -3,18 +3,11 @@
 #include "../../Server/Game.h"
 #endif
 
-Generator::Generator(uint64_t ID) : Object(ID) {}
-Generator::Generator(mVec3 relativePos, int maxHealth, float radius, int health, float maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
-  _maxPower.addFrame(0, maxPower);
-  _name = "Generator";
-  _energyStored.addFrame(0, 0);
-  _maxStorage.addFrame(0, 0);
-}
 int Generator::type() { return Type::Generator; }
 
 void Generator::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
-  _maxPower.get(maxe);
+  _maxGeneratedPower.get(maxe);
   data->addChild(maxe);
 
   DataElement* store = new DataElement();
@@ -26,7 +19,7 @@ void Generator::getVStatus(DataElement* data) {
   data->addChild(mstoe);
 }
 void Generator::setVStatus(DataElement* data) {
-  _maxPower.set(data->_children[0]);
+  _maxGeneratedPower.set(data->_children[0]);
   _energyStored.set(data->_children[1]);
   _maxStorage.set(data->_children[2]);
 }
@@ -44,9 +37,11 @@ void Generator::setSidebar() {
 
   reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectGeneratorSidebarMaxEnergyLabel"))->text =
     new TextBind<
+    TextBindFunc<power_type_W>,
     TextBindFunc<power_type_W>
-    >("Max: %",
-      TextBindFunc<power_type_W>(getCurrentMaxPower)
+    >("% / %",
+      TextBindFunc<power_type_W>(getCurrentGeneratedPower),
+      TextBindFunc<power_type_W>(getCurrentMaxGeneratedPower)
       );
 }
 #endif

@@ -268,12 +268,12 @@ void FlowGraph<V, D, T>::addRootEdges(int mode) {
       break;
     case 1:
       if (it->_canCharge) {
-        requested = it->_maxCharge;
+        requested = it->_maxCharge + it->_goal;
       }
       break;
     case 2:
       if (it->_canDrain) {
-        requested = it->_maxDrain;
+        requested = it->_maxDrain + it->_goal;
       }
       break;
     }

@@ -4,17 +4,18 @@
 
 class Sensor : public Object {       //Order of serialisation
 private:
-  keyframe<value<power_type_W>> _power;
-  power_type_W _maxPower;
   energy_type_J _tempE;
   list<tuple<time_type_s, energy_type_J, bool>> _pings; //time, energy, eventCrate
   ScriptInstruction* _sensitivity;
   bool _autofire;
 public:
-  Sensor(uint64_t ID) : Object(ID) {}
-  Sensor(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower, uint64_t ID) : Object(relativePos, maxHealth, radius, health, ID) {
-    _power.addFrame(0, 0);
-    _maxPower = maxPower;
+  Sensor(Drone* parentShip, uint64_t ID) :
+    Object(parentShip, ID)
+  {}
+  Sensor(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower) :
+  Object(parentShip, ID, relativePos, maxHealth, radius, health) {
+    maxUseablePowerChange(0, maxPower);
+    requestedPowerChange(0, 0);
     _name = "Sensor";
     ScriptIConstant* sens = new ScriptIConstant();
     sens->_val = new ScriptData();
@@ -26,11 +27,24 @@ public:
 
   int type() { return Type::Sensor; }
 
-  power_type_W getUsedPower(time_type_s time) { return _power.getAt(time)(); }
-  power_type_W getMaxPower(time_type_s time) { return _maxPower; }
+  /*power_type_W getUsedPower(time_type_s time) { return _power.getAt(time)(); }
+  power_type_W getMaxPower(time_type_s time) { return _maxPower; }*/
+
+  virtual power_type_W getDisplayMaxPower(time_type_s time) { ///Max generatable power, max usable, whatever applicable
+    return 0;
+  }
+  virtual power_type_W getDisplayPower(time_type_s time) {
+    return 0;
+  }
+  virtual energy_type_J getDisplayMaxEnergy(time_type_s time) { ///Max stored energy, used in an operation, whatever applicable
+    return 0;
+  }
+  virtual energy_type_J getDisplayEnergy(time_type_s time) {
+    return 0;
+  }
 
   void setTargetPower(time_type_s time, power_type_W val) {
-    _power.addFrame(time, max(min(val, _maxPower), 0.0));
+    requestedPowerChange(time, val);
   }
   void setTargetEnergy(energy_type_J val) {
     _tempE = val;
@@ -44,7 +58,11 @@ public:
 
 
 #ifdef M_SERVER
-  void updateEnergy(time_type_s t);
+  void setTargetPower(time_type_s time, power_type_W val, Game* g) {
+    requestedPowerChange(time, val, g);
+  }
+
+  void energyCallback(time_type_s t);
 
   void getPathVirt(time_type_s time, Path* p);
 
@@ -56,7 +74,7 @@ public:
       return false;
     }
 
-    _maxPower = strTo<power_type_W>(elem->value());
+    maxUseablePowerChange(0, strTo<power_type_W>(elem->value()));
 
     elem = data->first_node("sensitivity");
     if (!elem) {

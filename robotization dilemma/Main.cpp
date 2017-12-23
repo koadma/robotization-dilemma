@@ -97,9 +97,9 @@ int main() {
 
   FlowGraph<Fraction, double, double> f;
 
-  FlowVertex<Fraction, double, double>* v1 = f.addVertex(-10, -10, 0, 100, 50, 0);
+  FlowVertex<Fraction, double, double>* v1 = f.addVertex(-10, 0, 0, 100, 50, 0);
   FlowVertex<Fraction, double, double>* v2 = f.addVertex(0, 20, -30, 100, 50, 0);
-  FlowVertex<Fraction, double, double>* v3 = f.addVertex(10, 0, 50, 100, 50, 0);
+  FlowVertex<Fraction, double, double>* v3 = f.addVertex(10, 0, 0, 100, 50, 0);
 
   f.addEdge(v1, v2, 30);
   f.addEdge(v2, v3, 1);

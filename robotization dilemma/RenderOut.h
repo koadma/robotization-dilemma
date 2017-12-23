@@ -16,9 +16,13 @@ void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d);
 
 void renderNewRound(int id);
 
-power_type_W getCurrentUsedPower();
-power_type_W getCurrentMaxPower();
+power_type_W getCurrentMaxGeneratedPower();
 power_type_W getCurrentGeneratedPower();
+power_type_W getCurrentMaxUseablePower();
+power_type_W getCurrentRequestedPower();
+power_type_W getCurrentUsedPower();
+energy_type_J getCurrentMaxEnergy();
+energy_type_J getCurrentStoredEnergy();
 
 string isSurefire();
 

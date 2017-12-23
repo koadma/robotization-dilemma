@@ -3,6 +3,21 @@
 #include "../../Server/Game.h"
 #endif
 
+Object::Object(Drone* parentShip, uint64_t ID) {
+  _ID = ID;
+  _parentShip = parentShip;
+}
+
+Object::Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health) {
+  _parentShip = parentShip;
+  _relativePos = relativePos;
+  _maxHealth = maxHealth;
+  _health.addFrame(0, health);
+  _radius = radius;
+  _ID = ID;
+  _energySystem = _parentShip->energySystem.addVertex(0, 0, 0, 0);
+}
+
 power_type_W Object::getMaxGeneratedPower(time_type_s time) {
   return _maxGeneratedPower.getAt(time)();
 }
@@ -24,41 +39,76 @@ energy_type_J Object::getMaxEnergy(time_type_s time) {
 energy_type_J Object::getStoredEnergy(time_type_s time) {
   return _energyStored.getAt(time)();
 }
-energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount) {
-  energy_type_J nenergy = _energyStored.getAt(time)() - amount;
-  energy_type_J remain = max(0.0, -nenergy);
-  _energyStored.addFrame(time, max(0.0, nenergy)); //cant go below 0 energy
-  return max(0.0, remain);
-}
-energy_type_J Object::chargeEnergy(time_type_s time, energy_type_J amount) {
-  energy_type_J nenergy = _energyStored.getAt(time)() + amount;
-  energy_type_J extra = nenergy - _maxStorage.getAt(time)();
-  _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
-  return max(0.0, extra);
-}
 void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power) {
   _maxGeneratedPower.addFrame(time, power);
+  _energySystem->_goal = -power;
 }
 void Object::requestedPowerChange(time_type_s time, power_type_W power) {
+  power = min(power, getMaxUseablePower(time));
   _requestedPower.addFrame(time, power);
+  _energySystem->_goal = power;
+}
+void Object::maxUseablePowerChange(time_type_s time, power_type_W power) {
+  _maxUseablePower.addFrame(time, power);
+  requestedPowerChange(time, getRequestedPower(time));
 }
 void Object::energyStoredChange(time_type_s time, energy_type_J energy) {
-  _energyStored.addFrame(time, energy);
+  energy = max(0.0, min(energy, getMaxEnergy(time)));
 }
 void Object::maxStorageChange(time_type_s time, energy_type_J energy) {
   _maxStorage.addFrame(time, energy);
+  energyStoredChange(time, getStoredEnergy(time));
 }
+#ifdef M_SERVER
+energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount, Game* g) {
+  amount = max(0.0, amount);
+  energy_type_J nenergy = _energyStored.getAt(time)() - amount;
+  energy_type_J remain = max(0.0, -nenergy);
+  _energyStored.addFrame(time, max(0.0, nenergy)); //cant go below 0 energy
+  _parentShip->energyUpdate(time, g);
+  return max(0.0, remain);
+}
+energy_type_J Object::chargeEnergy(time_type_s time, energy_type_J amount, Game* g) {
+  amount = max(0.0, amount);
+  energy_type_J nenergy = _energyStored.getAt(time)() + amount;
+  energy_type_J extra = nenergy - _maxStorage.getAt(time)();
+  _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
+  _parentShip->energyUpdate(time, g);
+  return max(0.0, extra);
+}
+void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power, Game* g) {
+  maxGeneratedPowerChange(time, power);
+  _parentShip->energyUpdate(time, g);
+}
+void Object::requestedPowerChange(time_type_s time, power_type_W power, Game* g) {
+  requestedPowerChange(time, power);
+  _parentShip->energyUpdate(time, g);
+}
+void Object::maxUseablePowerChange(time_type_s time, power_type_W power, Game* g) {
+  maxUseablePowerChange(time, power);
+  _parentShip->energyUpdate(time, g);
+}
+void Object::energyStoredChange(time_type_s time, energy_type_J energy, Game* g) {
+  energyStoredChange(time, energy);
+  _parentShip->energyUpdate(time, g);
+}
+void Object::maxStorageChange(time_type_s time, energy_type_J energy, Game* g) {
+  maxStorageChange(time, energy);
+  _parentShip->energyUpdate(time, g);
+}
+#endif
+
 
 Movement Object::getMovement(time_type_s time) {
-  Movement m = parentShip->mov.getAt(time);
+  Movement m = _parentShip->mov.getAt(time);
   m.pos = m.pos + _relativePos;
   m.radius = _radius;
   return m;
 }
 list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
   list< pair<double, pair<Object*, Path*>>> res;
-  auto it = parentShip->mov._frames.begin();
-  while (it != parentShip->mov._frames.end()) {
+  auto it = _parentShip->mov._frames.begin();
+  while (it != _parentShip->mov._frames.end()) {
     Movement m = it->second;
     m.pos += _relativePos;
     m.radius = _radius;
@@ -66,7 +116,7 @@ list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
     for (auto&& itt : times) {
       auto nit = it;
       ++nit;
-      if (it->first <= itt && (nit == parentShip->mov._frames.end() || itt < nit->first)) {
+      if (it->first <= itt && (nit == _parentShip->mov._frames.end() || itt < nit->first)) {
         res.push_back({ itt,{ this, p } });
       }
     }
@@ -160,7 +210,7 @@ list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori,
   p.origintime = 0;
   p.vel = dir;
   Movement m;
-  m.pos = _relativePos /*+ parentShip->mov.pos*/;
+  m.pos = _relativePos /*+ _parentShip->mov.pos*/;
   m.vel = 0;
   m.acc = 0;
   m.gTimeStamp = 0;

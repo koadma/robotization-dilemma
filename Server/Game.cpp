@@ -52,7 +52,7 @@ void Game::removeIntersect(Object* object) {
 void Game::removeIntersect(Drone* drone) {
   auto it = events.begin();
   while (it != events.end()) {
-    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->parentShip == drone) {
+    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->_parentShip == drone) {
       auto it2 = it;
       ++it;
       events.erase(it2);

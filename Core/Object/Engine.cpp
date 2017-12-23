@@ -5,7 +5,7 @@
 
 void Engine::getVStatus(DataElement* data) {
   DataElement* maxe = new DataElement();
-  maxe->_core->fromType<power_type_W>(_maxPower);
+  _maxUseablePower.get(maxe);
   data->addChild(maxe);
 
   DataElement* acce = new DataElement();
@@ -13,13 +13,31 @@ void Engine::getVStatus(DataElement* data) {
   data->addChild(acce);
 }
 void Engine::setVStatus(DataElement* data) {
-  _maxPower = data->_children[0]->_core->toType<float>();
+  _maxUseablePower.set(data->_children[0]);
   _accel.set(data->_children[1]);
 }
 
 void Engine::setTargetAccel(time_type_s time, mpssVec3 acc) {
   _accel.addFrame(time, acc);
-  _energySystem->_goal = acc.sqrlen(); ///TODO: Better energy conversion code; Match in other function
+  _energySystem->_goal = accel2power(acc);
+  #ifdef M_CLIENT
+  auto mit = _parentShip->mov._frames.upper_bound(time);
+  auto aut = _accel.search(time);
+  
+  _parentShip->mov._frames.erase(mit, _parentShip->mov._frames.end());
+  Movement m = _parentShip->mov.getAt(time);
+  m.acc = acc;
+  _parentShip->mov.addFrame(time, m);
+
+  while (aut != _accel._frames.end()) {
+    Movement m = _parentShip->mov.getAt(aut->first);
+    m.acc = aut->second();
+    _parentShip->mov.addFrame(aut->first, m);
+    
+    ++aut;
+  }
+
+  #endif
 }
 void Engine::setComponent(time_type_s time, int c, acc_type_mperss val) {
   mpssVec3 nval = _accel.getAt(time)();
@@ -28,15 +46,19 @@ void Engine::setComponent(time_type_s time, int c, acc_type_mperss val) {
 }
 
 #ifdef M_SERVER
-void Engine::updateEnergy(time_type_s time) {
-  power_type_W energy = _energySystem->_delta;
+void Engine::setTargetAccel(time_type_s time, mpssVec3 acc, Game* g) {
+  setTargetAccel(time, acc);
+  _parentShip->energyUpdate(time, game);
+}
+void Engine::energyCallback(time_type_s time, Game* g) {
+  power_type_W power = _energySystem->_delta;
 
-  mpssVec3 acc = _accel.getAt(time)().norm() * sqrt(energy); ///TODO: Better energy conversion; Match in other function
+  mpssVec3 acc = _accel.getAt(time)().norm() * power2accel(power);
 
-  Movement m = parentShip->mov.getAt(time);
-  m.acc = parentShip->getAccel(time);
+  Movement m = _parentShip->mov.getAt(time);
+  m.acc = _parentShip->getAccel(time);
   m.acc += acc;
-  parentShip->mov.addFrame(time, m);
+  _parentShip->mov.addFrame(time, m);
 }
 #endif
 
@@ -50,7 +72,6 @@ void Engine::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   }
 }
 
-
 #ifdef M_CLIENT
 void Engine::setSidebar() {
   setSidebarElement("html/engine_settings.xml");
@@ -61,14 +82,10 @@ void Engine::setSidebar() {
     TextBindFunc<power_type_W>
     >("% / %",
       TextBindFunc<power_type_W>(getCurrentUsedPower),
-      TextBindFunc<power_type_W>(getCurrentMaxPower)
+      TextBindFunc<power_type_W>(getCurrentMaxUseablePower)
       );
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accel.getAt(timeNow)().x, 2);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputY"))->text = to_string(_accel.getAt(timeNow)().y, 2);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputZ"))->text = to_string(_accel.getAt(timeNow)().z, 2);
 }
-#endif
-
-#ifdef M_SERVER
-
 #endif

@@ -12,7 +12,7 @@ protected:
   keyframe<value<int> > _health;
   distance_type_m _radius;
   string _name;
-  FlowVertex<energy_type_J, power_type_W, time_type_s>* _energySystem;
+  FlowVertex<energy_type_J, Fraction, time_type_s>* _energySystem;
 
   keyframe<value<power_type_W>> _maxGeneratedPower;
   keyframe<value<power_type_W>> _generatedPower;
@@ -22,20 +22,10 @@ protected:
   keyframe<value<energy_type_J>> _maxStorage;
   keyframe<value<energy_type_J>> _energyStored;
 public:
+  Object(Drone* parentShip, uint64_t ID);
+  Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health);
 
-  Object(uint64_t ID) {
-    _ID = ID;
-  }
-
-  Object(mVec3 relativePos, int maxHealth, distance_type_m radius, int health, uint64_t ID) {
-    _relativePos = relativePos;
-    _maxHealth = maxHealth;
-    _health.addFrame(0, health);
-    _radius = radius;
-    _ID = ID;
-  }
-
-  Drone* parentShip;
+  Drone* _parentShip;
 
   uint64_t getId() {
     return _ID;
@@ -54,18 +44,45 @@ public:
   virtual int type() { throw 1; return 0; }
   string name() { return _name; }
   power_type_W getMaxGeneratedPower(time_type_s time);
+  
   power_type_W getGeneratedPower(time_type_s time);
   power_type_W getMaxUseablePower(time_type_s time);
+ 
   power_type_W getRequestedPower(time_type_s time);
+  
   power_type_W getUsedPower(time_type_s time);
   energy_type_J getMaxEnergy(time_type_s time);
+ 
   energy_type_J getStoredEnergy(time_type_s time);
-  energy_type_J useEnergy(time_type_s time, energy_type_J amount);
-  energy_type_J chargeEnergy(time_type_s time, energy_type_J amount);
+
+#ifdef M_SERVER
+  energy_type_J useEnergy(time_type_s time, energy_type_J amount, Game* g);
+  energy_type_J chargeEnergy(time_type_s time, energy_type_J amount, Game* g);
+
+  void maxGeneratedPowerChange(time_type_s time, power_type_W power, Game* g);
+  void maxUseablePowerChange(time_type_s time, power_type_W power, Game* g);
+  void requestedPowerChange(time_type_s time, power_type_W power, Game* g);
+  void maxStorageChange(time_type_s time, energy_type_J energy, Game* g);
+  void energyStoredChange(time_type_s time, energy_type_J energy, Game* g);
+#endif
   void maxGeneratedPowerChange(time_type_s time, power_type_W power);
+  void maxUseablePowerChange(time_type_s time, power_type_W power);
   void requestedPowerChange(time_type_s time, power_type_W power);
-  void energyStoredChange(time_type_s time, energy_type_J energy);
   void maxStorageChange(time_type_s time, energy_type_J energy);
+  void energyStoredChange(time_type_s time, energy_type_J energy);
+
+  virtual power_type_W getDisplayMaxPower(time_type_s time) { ///Max generatable power, max usable, whatever applicable
+    return 0;
+  }
+  virtual power_type_W getDisplayPower(time_type_s time) {
+    return 0;
+  }
+  virtual energy_type_J getDisplayMaxEnergy(time_type_s time) { ///Max stored energy, used in an operation, whatever applicable
+    return 0;
+  }
+  virtual energy_type_J getDisplayEnergy(time_type_s time) {
+    return 0;
+  }
 
   int getHealth(time_type_s time) {
     return _health.getAt(time)();
@@ -98,7 +115,7 @@ public:
 
   bool load(xml_node<>* data);
   virtual bool loadV(xml_node<>* data) { return false; }
-  virtual void updateEnergy(time_type_s t) {}
+  virtual void energyCallback(time_type_s t, Game* g) {}
 #endif
 
   void getStatus(DataElement* data);
