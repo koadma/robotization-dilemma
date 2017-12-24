@@ -229,8 +229,16 @@ void waitForEnter();
 //_Val: value, _Dig: Number of digits
 template <typename T>
 string to_string(T _Val, int _Dig) {
+
   stringstream ss;
-  ss << fixed << std::setprecision(_Dig) << _Val << scientific;
+  if (_Dig == 0) {
+    ss << _Val;
+  }
+  else {
+    ios::fmtflags f(ss.flags());
+    ss << fixed << std::setprecision(_Dig) << std::fixed << _Val << scientific;
+    ss.flags(f);
+  }
   return ss.str();
 }
 
@@ -278,7 +286,7 @@ vector<double> solveQuartic(double &a, double &b, double &c, double &d, double &
 void serialize(string s, unsigned char** data, int& dataLen);
 template <typename T>
 void serialize(T v, unsigned char** data, int& dataLen, int prec = 3) {
-  serialize(to_string(v, prec), data, dataLen);
+  serialize(to_string(v,prec), data, dataLen);
 }
 
 string deserializes(unsigned char* data, int dataLen);

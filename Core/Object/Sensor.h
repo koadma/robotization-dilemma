@@ -17,11 +17,22 @@ public:
     maxUseablePowerChange(-1, maxPower);
     requestedPowerChange(-1, 0);
     _name = "Sensor";
-    ScriptIConstant* sens = new ScriptIConstant();
+    /*ScriptIConstant* sens = new ScriptIConstant();
     sens->_val = new ScriptData();
     sens->_val->type = ScriptData::TNUMERIC;
-    sens->_val->_data.fromType<float>(1);
-    _sensitivity = sens;
+    sens->_val->_data.fromType<float>(1);*/
+    ifstream sensfile("html/sensor_detect.xml");
+    std::stringstream buffer;
+    buffer << sensfile.rdbuf();
+    sensfile.close();
+    xml_document<> doc;
+    std::string content(buffer.str());
+    doc.parse<0>(&content[0]);
+    if (_sensitivity) {
+      delete _sensitivity;
+    }
+    _sensitivity = new ScriptIBlock();
+    _sensitivity->load(doc.first_node("root"));
     _autofire = false;
   }
 
@@ -58,11 +69,9 @@ public:
 
 
 #ifdef M_SERVER
-  void setTargetPower(time_type_s time, power_type_W val, Game* g) {
-    requestedPowerChange(time, val, g);
-  }
+  void setTargetPower(time_type_s time, power_type_W val, Game* g);
 
-  void energyCallback(time_type_s t);
+  void energyCallback(time_type_s t, Game* g);
 
   void getPathVirt(time_type_s time, Path* p);
 

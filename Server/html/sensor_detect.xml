@@ -1,0 +1,117 @@
+<root>
+	<ifelse>
+		<cond>
+			<logic oper="eq">
+				<lhs>
+					<constant type="num">0</constant>
+				</lhs>
+				<rhs>
+					<var var="relEnergy"></var>
+				</rhs>
+			</logic>
+		</cond>
+		<then>
+			<constant type="num">0</constant>
+		</then>
+		<else>
+			<assign>
+				<to>
+					<var var="nrelEnergy">
+					</var>
+				</to>
+				<val>
+					<math oper="*">
+						<lhs>
+							<var var="relEnergy">
+							</var>
+						</lhs>
+						<rhs>
+							<constant type="num">0.01</constant>
+						</rhs>
+					</math>
+				</val>
+			</assign>
+			<assign>
+				<to>
+					<var var="powerVal">
+					</var>
+				</to>
+				<val>
+					<math oper="-">
+						<lhs>
+							<math oper="/">
+								<lhs>
+									<constant type="num">1</constant>
+								</lhs>
+								<rhs>
+									<var var="nrelEnergy"></var>
+								</rhs>
+							</math>
+						</lhs>
+						<rhs>
+							<var var="nrelEnergy"></var>
+						</rhs>
+					</math>
+				</val>
+			</assign>
+			<math oper="*">
+				<lhs>
+					<math oper="*">
+						<lhs>
+							<constant type="num">2</constant>
+						</lhs>
+						<rhs>
+							<math oper="-">
+								<lhs>
+									<constant type="num">1</constant>
+								</lhs>
+								<rhs>
+									<math oper="/">
+										<lhs>
+											<constant type="num">1</constant>
+										</lhs>
+										<rhs>
+											<math oper="+">
+												<lhs>
+													<constant type="num">1</constant>
+												</lhs>
+												<rhs>
+													<var var="relHealth"></var>
+												</rhs>
+											</math>
+											
+										</rhs>
+									</math>
+								</rhs>
+							</math>
+						</rhs>
+					</math>
+				</lhs>
+				<rhs>
+					<math oper="/">
+						<lhs>
+							<constant type="num">1</constant>
+						</lhs>
+						<rhs>
+							<math oper="+">
+								<lhs>
+									<constant type="num">1</constant>
+								</lhs>
+								<rhs>
+									<math oper="^">
+										<lhs>
+											<constant type="num">8</constant>
+										</lhs>
+										<rhs>
+											<var var="powerVal"></var>
+										</rhs>
+									</math>
+								</rhs>
+							</math>
+						</rhs>
+					</math>
+				</rhs>
+			</math>
+		</else>
+	</ifelse>
+</root>

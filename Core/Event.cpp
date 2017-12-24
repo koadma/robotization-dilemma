@@ -115,11 +115,6 @@ void EngineAcc::apply(Game *g) {
 
   g->removeIntersect(_o->_parentShip);
   g->calcIntersect(_o->_parentShip); //recalculate ship related future intersections
-
-  ThermalRadiation ev;
-  ev._o = _o;
-  ev._time = _time;
-  ev.apply(game);
 }
 void EngineAcc::setV(DataElement* data, Game* game) {
   _acc.set(data->_children[0]);
@@ -155,7 +150,7 @@ void ThermalRadiation::apply(Game *g) {
   b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
-  _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
+  //_o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
   g->paths.push_back(b);
   g->calcIntersect(b);

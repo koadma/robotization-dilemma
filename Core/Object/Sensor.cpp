@@ -81,7 +81,11 @@ void Sensor::setSidebar() {
 #endif
 
 #ifdef M_SERVER
-void Sensor::energyCallback(time_type_s time) {
+void Sensor::setTargetPower(time_type_s time, power_type_W val, Game* g) {
+  setTargetPower(time, val);
+  _parentShip->energyUpdate(time, g);
+}
+void Sensor::energyCallback(time_type_s time, Game* g) {
   _usedPower.addFrame(time, double(_energySystem->_delta));
 }
 void Sensor::getPathVirt(time_type_s time, Path* p) {
@@ -103,7 +107,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
     hph->_data.fromType<double>(_health.getAt(time)() / double(_maxHealth));
     ScriptData* epp = new ScriptData();
     epp->type = ScriptData::TNUMERIC;
-    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->energy * _requestedPower.getAt(time)());
+    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->getFlux(time) * _usedPower.getAt(time)() * PI * _radius * _radius * _usedPower.getAt(time)());
     ScriptData* meta = new ScriptData();
     meta->type = ScriptData::TSTRING;
     meta->_data.fromType<string>(reinterpret_cast<Bubble*>(p)->data);
@@ -111,7 +115,9 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
     d->_elems.insert({ "relEnergy", epp });
     d->_elems.insert({ "metaData", meta });
     ScriptData* res = _sensitivity->run(*d);
-    if (ran1() < res->_data.toType<float>()) {
+    float resf = res->_data.toType<float>();
+    cout << "Ch: " << resf << " H:" << hph->_data.toType<double>() << " E:" << epp->_data.toType<double>() << " Eb:" << reinterpret_cast<Bubble*>(p)->getFlux(time) * _usedPower.getAt(time)() * PI * _radius * _radius << " Es:" << _usedPower.getAt(time)() << endl;
+    if (ran1() < resf) {
       cout << "Detected" << endl;
       Sighting* s = new Sighting();
       Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??

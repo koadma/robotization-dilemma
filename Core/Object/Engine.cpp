@@ -52,14 +52,20 @@ void Engine::setTargetAccel(time_type_s time, mpssVec3 acc, Game* g) {
 }
 void Engine::energyCallback(time_type_s time, Game* g) {
   power_type_W power = _energySystem->_delta;
-
+  
   if(_accelRequest.size() && _accelRequest.getFirst() <= time && _accelRequest.getAt(time)().length() > 0.00001) {
     mpssVec3 acc = _accelRequest.getAt(time)().norm() * power2accel(power);
     _accel.addFrame(time, acc);
+    _usedPower.addFrame(time, power);
 
     Movement m = _parentShip->mov.getAt(time);
     m.acc = _parentShip->getAccel(time);
     _parentShip->mov.addFrame(time, m);
+
+    ThermalRadiation ev;
+    ev._o = this;
+    ev._time = time;
+    ev.apply(g);
   }
 }
 #endif

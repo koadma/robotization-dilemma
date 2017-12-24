@@ -177,7 +177,7 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
   Object* go = new ::Generator(this, mix(_ID, 0), { 100,0,0 }, 1000, 100, 1000, 1000000);
   objects.push_back(go);
 
-  Object* so = new ::Sensor(this, mix(_ID, 1), { -100,0,0 }, 1000, 100, 1000, 1000);
+  Object* so = new ::Sensor(this, mix(_ID, 1), { -100,0,0 }, 1000, 100, 1000, 100000);
   objects.push_back(so);
 
   Object* eo = new ::Engine(this, mix(_ID, 2), { 0,173.2f ,0 }, 1000, 100, 1000, 10000);

@@ -541,14 +541,14 @@ ScriptIMath::~ScriptIMath() {
 
 ScriptData* ScriptILogic::run(ScriptData& _args) {
   ScriptData* res1 = _arg1->run(_args);
-  if (res1->type != ScriptData::TBOOLEAN) {
+  if (res1->type != ScriptData::TNUMERIC) {
     throw 1;
     return NULL;
   }
   ScriptData* res2 = NULL;
   if (_oper < 16) {
-    res2 = _arg1->run(_args);
-    if (res2->type != ScriptData::TBOOLEAN) {
+    res2 = _arg2->run(_args);
+    if (res2->type != ScriptData::TNUMERIC) {
       throw 1;
       return NULL;
     }
@@ -820,7 +820,7 @@ void ScriptIBlock::load(xml_node<> *data) {
     }
     if (name == "var") {
       ScriptInstruction* nins = new ScriptIVariable();
-      //nins->load(pElem);
+      nins->load(pElem);
       _instructions.push_back(nins);
     }
     if (name == "index") {
