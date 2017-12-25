@@ -79,8 +79,8 @@ public:
   energy_type_J getStoredEnergy(time_type_s time);
   
 #ifdef M_SERVER
-  void energyUpdate(time_type_s time, Game* g); //To do energy simulations. Callback for energy run out objects
-  void energyCallback(time_type_s, Game* g);
+  energy_type_J energyUpdate(time_type_s time, Game* g, Object* chg = NULL, energy_type_J chgval = 0); //To do energy simulations.
+  void energyCallback(time_type_s, Game* g); // Callback for energy run out objects, or any run of neergy sys
 #endif
 
   int getHealth(time_type_s time);

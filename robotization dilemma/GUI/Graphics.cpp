@@ -5,10 +5,6 @@ Graphics::WinHwnd Graphics::CreateMainWindow(int x, int y, int width, int height
   glutInitWindowSize(width, height);
   glutInitWindowPosition(x, y);
 
-  int argc = 0;
-  char **argv = new char*[0];
-
-  glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 
   glutCreateWindow(caption.c_str());
@@ -311,6 +307,14 @@ Graphics::CanvasHwnd Graphics::createCanvas(WinHwnd id, string lname, Coordiante
 Graphics::CanvasHwnd Graphics::createCanvas(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
   ElemHwnd elem = new Canvas(lname, mincorner, maxcorner, managers);
   return reinterpret_cast<CanvasHwnd>(createElement(id, elem));
+}
+
+Graphics::PlotHwnd Graphics::createPlot(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor) {
+  return createPlot(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor);
+}
+Graphics::PlotHwnd Graphics::createPlot(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor) {
+  ElemHwnd elem = new Plot(lname, mincorner, maxcorner, bg, active, textColor);
+  return reinterpret_cast<PlotHwnd>(createElement(id, elem));
 }
 
 Graphics::PanelHwnd Graphics::createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {

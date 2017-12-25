@@ -123,7 +123,7 @@ public:
   void getMaxFlow();
   void getMaxFlow(FlowVertex<V, D, T>* s, FlowVertex<V, D, T>* t);
 
-  vector<T> goTo(T time);
+  pair<vector<T>, V> goTo(T time, FlowVertex<V, D, T>* chg = NULL, V chgval = V(0));
 
   ~FlowGraph();
 };
@@ -271,13 +271,17 @@ void FlowGraph<V, D, T>::addRootEdges(int mode) {
       if (it->_canCharge) {
         requested = it->_maxCharge;
       }
-      requested += it->_goal - it->_firstDelta;
+      if (it->_goal < D(0)) {
+        requested += it->_goal - it->_firstDelta;
+      }
       break;
     case 2:
       if (it->_canDrain) {
         requested = it->_maxDrain;
       }
-      requested += it->_goal - it->_firstDelta;
+      if (it->_goal > D(0)) {
+        requested += it->_goal - it->_firstDelta;
+      }
       break;
     }
     if (requested > D(0)) {
@@ -296,20 +300,23 @@ void FlowGraph<V, D, T>::clean(bool decrease) {
     auto et = it->_edges.begin();
 
     while (et != it->_edges.end()) {
-      if (!(*et)->_real || (*et)->_flow < D(0)) {
+      if (!(*et)->_real) {
         auto et2 = et;
         ++et;
         it->_edges.erase(et2);
       }
       else {
-        (*et)->_u->_delta -= (*et)->_flow;
-        (*et)->_v->_delta += (*et)->_flow;
+        if((*et)->_flow > D(0)) {
+          (*et)->_u->_delta -= (*et)->_flow;
+          (*et)->_v->_delta += (*et)->_flow;
 
-        (*et)->_totalFlow += (*et)->_flow;
-        if (decrease) {
-          (*et)->_capacity -= (*et)->_flow;
+          (*et)->_totalFlow += (*et)->_flow;
+          if (decrease) {
+            (*et)->_capacity -= (*et)->_flow;
+          }
         }
         (*et)->_flow = D(0);
+        
         ++et;
       }
     }
@@ -375,26 +382,48 @@ void FlowGraph<V, D, T>::getMaxFlow() {
 }
 
 template <typename V, typename D, typename T>
-vector<T> FlowGraph<V, D, T>::goTo(T time) {
+pair<vector<T>, V> FlowGraph<V, D, T>::goTo(T time, FlowVertex<V, D, T>* chg, V chgval) {
   vector<T> endtimes;
+  V leftover = V(0);
   if (time >= _lastUpdate) {
     for (auto&& it : _ver) {
-      it->_canCharge = (it->_val.getAt(time) < V(0.99) * it->_maxVal);
-      it->_canDrain = (V(0.01) * it->_maxVal < it->_val.getAt(time));
+      V val = it->_val.getAt(time);
+      if (chg == it) {
+        val += chgval;
+        val = max(V(0), min(val, it->_maxVal));
+        leftover = val - it->_val.getAt(time);
+      }
+      it->_canCharge = (val < V(0.99) * it->_maxVal);
+      it->_canDrain = (V(0.01) * it->_maxVal < val);
     }
     getMaxFlow();
     for (auto&& it : _ver) {
-      if (it->_delta > D(0)) {
-        endtimes.push_back((it->_maxVal - it->_val.getAt(time)) / V(it->_delta));
+      V nval = it->_val.getAt(time);
+      if (chg == it) {
+        nval += chgval;
+        nval = max(V(0), min(nval, it->_maxVal));
       }
-      if (it->_delta < D(0)) {
-        endtimes.push_back((V(0) - V(it->_val.getAt(time)) / V(it->_delta)));
+      D change = it->_delta - it->_goal;
+      if (!it->_canCharge) {
+        change = min(D(0), change);
       }
-      it->_val.addFrame(time, linear<V,D,T>(it->_val.getAt(time), time, it->_delta));
+      if (!it->_canDrain) {
+        change = max(D(0), change);
+      }
+      if (change > D(0)) {
+        endtimes.push_back((it->_maxVal - nval) / V(change));
+      }
+      if (change < D(0)) {
+        endtimes.push_back((V(0) - nval) / V(change));
+      }
+      
+      
+      it->_val.addFrame(time, linear<V, D, T>(nval, time, change));
+      
     }
     _lastUpdate = time;
   }
-  return endtimes;
+  return make_pair(endtimes, leftover);
 }
 
 template <typename V, typename D, typename T>

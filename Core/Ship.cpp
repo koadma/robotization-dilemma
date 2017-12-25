@@ -183,7 +183,7 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
   Object* eo = new ::Engine(this, mix(_ID, 2), { 0,173.2f ,0 }, 1000, 100, 1000, 10000);
   objects.push_back(eo);
 
-  Object* lo = new ::Laser(this, mix(_ID, 3), { 0,-173.2f ,0 }, 1000, 100, 1000, 1000);
+  Object* lo = new ::Laser(this, mix(_ID, 3), { 0,-173.2f ,0 }, 1000, 100, 1000, 100000);
   objects.push_back(lo);
 
   energySystem.addSymmetricEdge(go->_energySystem, so->_energySystem, 1000000);
@@ -196,17 +196,18 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
 }
 
 #ifdef M_SERVER
-void Drone::energyUpdate(time_type_s time, Game* game) {
-  vector<time_type_s> runOut = energySystem.goTo(time);
+energy_type_J Drone::energyUpdate(time_type_s time, Game* game, Object* chg, energy_type_J chgval) {
+  pair<vector<time_type_s>, energy_type_J> runOut = energySystem.goTo(time, chg->_energySystem, chgval);
   list<Event*> res;
-  sort(runOut.begin(), runOut.end());
-  if (runOut.size()) { //first one is enough, recalc than will give the later ones.
+  sort(runOut.first.begin(), runOut.first.end());
+  if (runOut.first.size()) { //first one is enough, recalc than will give the later ones.
     BatteryDrain* ev = new BatteryDrain();
     ev->_d = this;
-    ev->_time = runOut[0];
+    ev->_time = runOut.first[0];
     game->events.insert(ev);
   }
   energyCallback(time, game);
+  return runOut.second;
 }
 void Drone::energyCallback(time_type_s time, Game* game) {
   for(auto&& it : objects) {

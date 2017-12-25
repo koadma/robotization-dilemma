@@ -176,6 +176,23 @@ void ingameTimeSliderInput(float val) {
   timeNow = val;
 }
 
+void ingameMenuEnergyButton() {
+  Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
+  Graphics::PlotHwnd plt = Graphics::createPlot(win, "plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxStorage), hexToInt("ffff0000")));
+  plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, Fraction, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00")));
+}
+
+void ingameMenuPowerButton() {
+  Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Power info: " + selectedo->name());
+  Graphics::PlotHwnd plt = Graphics::createPlot(win, "plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000")));
+  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_generatedPower), hexToInt("ffffff00")));
+  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxUseablePower), hexToInt("ff0000ff")));
+  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_requestedPower), hexToInt("ffff00ff")));
+  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_usedPower), hexToInt("ff00ffff")));
+}
+
 string getCurrentName() {
   if (selectedo != NULL) {
     return selectedo->name();
@@ -324,8 +341,10 @@ int InitGraphics() {
   Graphics::setName("gameMenuJoinButton", gameMenuJoinButton);
   Graphics::setName("gameMenuBackButton", gameMenuBackButton);
   Graphics::setName("joinMenuInputButton", joinMenuInputButton);
-  Graphics::setName("ingameMenuExitButton", ingameMenuExitButton);
   Graphics::setName("joinMenuInput", joinMenuInput);
+  Graphics::setName("ingameMenuExitButton", ingameMenuExitButton);
+  Graphics::setName("ingameMenuEnergyButton", ingameMenuEnergyButton);
+  Graphics::setName("ingameMenuPowerButton", ingameMenuPowerButton);
   Graphics::setName("ingameMenuCommitButton", ingameMenuCommitButton);
   Graphics::setName("ingameSensorSidebarPowerInput", ingameSensorSidebarPowerInput);
   Graphics::setName("ingameSensorSidebarEnergyInput", ingameSensorSidebarEnergyInput);
@@ -344,6 +363,10 @@ int InitGraphics() {
   Graphics::setName("textValidator", textValidator);
   Graphics::setName("numericalValidator", numericalValidator);
   Graphics::setName("floatValidator", floatValidator);
+
+  int argc = 0;
+  char **argv = new char*[0];
+  glutInit(&argc, argv);
 
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
   objectMenuSubWindow = Graphics::createPanel(objectMainWindow, "objectMenuSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, ElementBackColor);

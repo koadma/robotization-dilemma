@@ -85,8 +85,8 @@ void Sensor::setTargetPower(time_type_s time, power_type_W val, Game* g) {
   setTargetPower(time, val);
   _parentShip->energyUpdate(time, g);
 }
-void Sensor::energyCallback(time_type_s time, Game* g) {
-  _usedPower.addFrame(time, double(_energySystem->_delta));
+void Sensor::energyCallbackV(time_type_s time, Game* g) {
+  
 }
 void Sensor::getPathVirt(time_type_s time, Path* p) {
   if (p->type() == Path::PathTypeBubble) {

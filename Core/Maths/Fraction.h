@@ -16,6 +16,21 @@ public:
 
 	Fraction simplify();
 
+  void get(DataElement* data) {
+    DataElement* ae = new DataElement();
+    ae->_core->fromType<long long>(a);
+    data->addChild(ae);
+
+    DataElement* be = new DataElement();
+    be->_core->fromType<long long>(b);
+    data->addChild(be);
+  }
+  void set(DataElement* data) {
+    a = data->_children[0]->_core->toType<long long>();
+    b = data->_children[1]->_core->toType<long long>();
+  }
+
+
   operator double() const;
 private:
 	int gcd(int x, int y);

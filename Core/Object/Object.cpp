@@ -20,7 +20,6 @@ Object::Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth,
   _maxGeneratedPower.addFrame(-2, 0);
   _requestedPower.addFrame(-2, 0);
   _maxUseablePower.addFrame(-2, 0);
-  _energyStored.addFrame(-2, 0);
   _maxStorage.addFrame(-2, 0);
   _usedPower.addFrame(-2, 0);
   _generatedPower.addFrame(-2, 0);
@@ -45,7 +44,7 @@ energy_type_J Object::getMaxEnergy(time_type_s time) {
   return _maxStorage.getAt(time)();
 }
 energy_type_J Object::getStoredEnergy(time_type_s time) {
-  return _energyStored.getAt(time)();
+  return _energySystem->_val.getAt(time);
 }
 void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power) {
   _maxGeneratedPower.addFrame(time, power);
@@ -69,20 +68,10 @@ void Object::maxStorageChange(time_type_s time, energy_type_J energy) {
 }
 #ifdef M_SERVER
 energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount, Game* g) {
-  amount = max(0.0, amount);
-  energy_type_J nenergy = _energyStored.getAt(time)() - amount;
-  energy_type_J remain = max(0.0, -nenergy);
-  _energyStored.addFrame(time, max(0.0, nenergy)); //cant go below 0 energy
-  _parentShip->energyUpdate(time, g);
-  return max(0.0, remain);
+  return -_parentShip->energyUpdate(time, g, this, -amount);
 }
 energy_type_J Object::chargeEnergy(time_type_s time, energy_type_J amount, Game* g) {
-  amount = max(0.0, amount);
-  energy_type_J nenergy = _energyStored.getAt(time)() + amount;
-  energy_type_J extra = nenergy - _maxStorage.getAt(time)();
-  _energyStored.addFrame(time, min(_maxStorage.getAt(time)(), _energyStored.getAt(time)())); //cant go below 0 energy
-  _parentShip->energyUpdate(time, g);
-  return max(0.0, extra);
+  return _parentShip->energyUpdate(time, g, this, amount);
 }
 void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power, Game* g) {
   maxGeneratedPowerChange(time, power);
@@ -186,7 +175,7 @@ void Object::getStatus(DataElement* data) {
   data->addChild(mse);
 
   DataElement* ese = new DataElement();
-  _energyStored.get(ese);
+  _energySystem->_val.get(ese);
   data->addChild(ese);
 
   DataElement* vire = new DataElement();
@@ -218,7 +207,7 @@ void Object::setStatus(DataElement* data) {
 
   _maxStorage.set(data->_children[12]);
 
-  _energyStored.set(data->_children[13]);
+  _energySystem->_val.set(data->_children[13]);
 
   setVStatus(data->_children[14]);
 }
@@ -281,6 +270,13 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
 #endif
 
 #ifdef M_SERVER
+void Object::energyCallback(time_type_s t, Game* g) {
+  if (_energySystem->_delta > Fraction(0)) {
+    _generatedPower.addFrame(t, 0);
+    _usedPower.addFrame(t, 0);
+  }
+  energyCallbackV(t, g);
+}
 void Object::getPath(time_type_s time, Path* p, Game* g) {
   if ((p->type() == Path::PathTypeShot) && (p->originID != _ID)) {
     _health.addFrame(time,

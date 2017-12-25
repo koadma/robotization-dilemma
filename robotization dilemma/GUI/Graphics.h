@@ -103,15 +103,8 @@ namespace Graphics {
   CanvasHwnd createCanvas(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
   CanvasHwnd createCanvas(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
 
-  template<typename T, typename V, typename U>
-  PlotHwnd createPlot(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, keyframe<T, V, U>* data) {
-    return createPlot(id->myPanel, lname, mincorner, maxcorner, data);
-  }
-  template<typename T, typename V, typename U>
-  PlotHwnd createPlot(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, keyframe<T, V, U>* data) {
-    ElemHwnd elem = new PlotT<T, V, U>(lname, mincorner, maxcorner, data);
-    return reinterpret_cast<PlotHwnd>(createElement(id, elem));
-  }
+  PlotHwnd createPlot(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor);
+  PlotHwnd createPlot(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor);
 
   PanelHwnd createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
   PanelHwnd createPanel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);

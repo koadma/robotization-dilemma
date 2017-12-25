@@ -12,16 +12,14 @@ protected:
   keyframe<value<int> > _health;
   distance_type_m _radius;
   string _name;
-
-
+public:
   keyframe<value<power_type_W>> _maxGeneratedPower;
   keyframe<value<power_type_W>> _generatedPower;
   keyframe<value<power_type_W>> _maxUseablePower;
   keyframe<value<power_type_W>> _requestedPower;
   keyframe<value<power_type_W>> _usedPower;
   keyframe<value<energy_type_J>> _maxStorage;
-  keyframe<value<energy_type_J>> _energyStored;
-public:
+  
   Object(Drone* parentShip, uint64_t ID);
   Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health);
 
@@ -116,7 +114,8 @@ public:
 
   bool load(xml_node<>* data);
   virtual bool loadV(xml_node<>* data) { return false; }
-  virtual void energyCallback(time_type_s t, Game* g) {}
+  virtual void energyCallbackV(time_type_s t, Game* g) {}
+  void energyCallback(time_type_s t, Game* g);
 #endif
 
   void getStatus(DataElement* data);

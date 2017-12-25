@@ -148,24 +148,23 @@ public:
 
   template<typename T>void get(DataElement* data, T val, std::true_type)
   {
-    _val.get(data);
+    val.get(data);
   }
   template<typename T> void get(DataElement* data, T val, std::false_type)
   {
-    //_val.get(data);
     data->_core->fromType<T>(val);
   }
   void get(DataElement* data)
   {
-    DataElement* basee;
+    DataElement* basee = new DataElement();
     get<V>(basee, _val, std::integral_constant<bool, HasGetMethod<V>::Has>());
     data->addChild(basee);
 
-    DataElement* timee;
+    DataElement* timee = new DataElement();
     get<T>(timee, _at, std::integral_constant<bool, HasGetMethod<T>::Has>());
     data->addChild(timee);
 
-    DataElement* chge;
+    DataElement* chge = new DataElement();
     get<dV>(chge, _change, std::integral_constant<bool, HasGetMethod<dV>::Has>());
     data->addChild(chge);
   }

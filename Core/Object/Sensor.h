@@ -71,7 +71,7 @@ public:
 #ifdef M_SERVER
   void setTargetPower(time_type_s time, power_type_W val, Game* g);
 
-  void energyCallback(time_type_s t, Game* g);
+  void energyCallbackV(time_type_s t, Game* g);
 
   void getPathVirt(time_type_s time, Path* p);
 

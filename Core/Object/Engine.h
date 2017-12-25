@@ -39,7 +39,7 @@ public:
   }
 
 #ifdef M_SERVER
-  void energyCallback(time_type_s t, Game* g);
+  void energyCallbackV(time_type_s t, Game* g);
   void setTargetAccel(time_type_s time, mpssVec3 acc, Game* g);
 #endif
 

@@ -11,7 +11,7 @@ void Generator::getVStatus(DataElement* data) {
   data->addChild(maxe);
 
   DataElement* store = new DataElement();
-  _energyStored.get(store);
+  _energySystem->_val.get(store);
   data->addChild(store);
 
   DataElement* mstoe = new DataElement();
@@ -20,7 +20,7 @@ void Generator::getVStatus(DataElement* data) {
 }
 void Generator::setVStatus(DataElement* data) {
   _maxGeneratedPower.set(data->_children[0]);
-  _energyStored.set(data->_children[1]);
+  _energySystem->_val.set(data->_children[1]);
   _maxStorage.set(data->_children[2]);
 }
 void Generator::collectEvents(list<StateChange*> &addTo, time_type_s time) {

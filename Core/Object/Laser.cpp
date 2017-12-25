@@ -70,7 +70,7 @@ void Laser::collectEvents(list<StateChange*> &addTo, time_type_s time) {
 }
 
 #ifdef M_SERVER
-void Laser::energyCallback(time_type_s time, Game* g) {
+void Laser::energyCallbackV(time_type_s time, Game* g) {
   //It is not necessary to stop the battery charge, thats automatic.
 }
 #endif

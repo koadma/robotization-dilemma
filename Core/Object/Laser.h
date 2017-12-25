@@ -47,7 +47,7 @@ public:
   }
 
 #ifdef M_SERVER
-  void energyCallback(time_type_s t, Game* g);
+  void energyCallbackV(time_type_s t, Game* g);
 #endif
 
   void setComponent(int index, scalar_type comp) {
