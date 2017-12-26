@@ -64,4 +64,4 @@ bool operator <= (Fraction lhs, Fraction rhs);
 
 bool operator >= (Fraction lhs, Fraction rhs);
 
-ostream& operator<<(ostream& o, Fraction f);
+//ostream& operator<<(ostream& o, Fraction f);

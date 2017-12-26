@@ -142,8 +142,8 @@ public:
   void set(DataElement* data)
   {
     set<V>(data->_children[0], _val, std::integral_constant<bool, HasSetMethod<V>::Has>());
-    set<T>(data->_children[0], _at, std::integral_constant<bool, HasSetMethod<T>::Has>());
-    set<dV>(data->_children[0], _change, std::integral_constant<bool, HasSetMethod<dV>::Has>());
+    set<T>(data->_children[1], _at, std::integral_constant<bool, HasSetMethod<T>::Has>());
+    set<dV>(data->_children[2], _change, std::integral_constant<bool, HasSetMethod<dV>::Has>());
   }
 
   template<typename T>void get(DataElement* data, T val, std::true_type)

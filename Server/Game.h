@@ -2,7 +2,7 @@
 
 #include "..\Core\Ship.h"
 
-extern class Game;
+class Game;
 
 class Game {
 public:

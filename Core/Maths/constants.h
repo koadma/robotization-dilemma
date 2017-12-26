@@ -1,6 +1,11 @@
 #ifndef __CONSTANTS_H__
 #define __CONSTANTS_H__
 
+//1 Basic info
+//2 Round info
+//4 Round simulation details
+//8 All events
+#define LOG_LVL 31
 
 typedef double time_type_s;
 typedef double energy_type_J;
@@ -14,7 +19,7 @@ typedef double en_flux_type_Jpermm;
 //typedef double en_flux_type_Jy; //1Jy = 10e-26 J/m m
 typedef double mass_density_type_kgpermmm;
 
-const en_flux_type_Jpermm BUBBLE_REMOVE = 10e-7;
+const energy_type_J BUBBLE_REMOVE = 1e-7; //Dont emit
 
 ///!!!!!!!! ######## &&&&&&&&&
 const vel_type_mpers SOL = 3e5; ///TODO FIX 3e8 ######### ######### !!!!!!!!! ERROR &&&&&&&& WARNING !!!!!!!!!
@@ -43,7 +48,7 @@ const time_type_s ROUND_TIME = 2;
 //0.40
 //Converge to 137.035999139
 
-const acc_type_mperss MAX_ACCEL = 250;
+const acc_type_mperss MAX_ACCEL = 100;
 
 
 enum LoginError {
@@ -72,5 +77,8 @@ enum PacketIds {
   PacketCommandHistory = 7,
   PacketShipData = 8,
 };
+
+#define SightingSize 0.02
+#define ShipSize 0.03
 
 #endif

@@ -88,24 +88,26 @@ void Laser::setSidebar() {
       TextBindFunc<string>(isSurefire)
       );
 }
-void Laser::drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time) {
-  for (auto&& it : _shots) {
-    if (time - ROUND_TIME <= get<0>(it) && get<0>(it) <= time + ROUND_TIME) {
-      if (time < get<0>(it)) {
-        glColor3f(0.6f, 0.0f, 0.0f);
+void Laser::drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time, bool full) {
+  if (full) {
+    for (auto&& it : _shots) {
+      if (time - ROUND_TIME <= get<0>(it) && get<0>(it) <= time + ROUND_TIME) {
+        if (time < get<0>(it)) {
+          glColor3f(0.6f, 0.0f, 0.0f);
+        }
+        else {
+          glColor3f(1.0f, 0.0f, 0.0f);
+        }
+        glLineWidth(2.0f);
+        glBegin(GL_LINES);
+        mVec3 p = getMovement(time).pos;
+        glVertex3d(p.x, p.y, p.z);
+        sVec3 dvec = get<2>(it);
+        dvec.norm();
+        dvec *= (get<1>(it) / 100.0f + _radius);
+        glVertex3d(p.x + dvec.x, p.y + dvec.y, p.z + dvec.z);
+        glEnd();
       }
-      else {
-        glColor3f(1.0f, 0.0f, 0.0f);
-      }
-      glLineWidth(2.0f);
-      glBegin(GL_LINES);
-      mVec3 p = getMovement(time).pos;
-      glVertex3d(p.x, p.y, p.z);
-      sVec3 dvec = get<2>(it);
-      dvec.norm();
-      dvec *= (get<1>(it) / 100.0f + _radius);
-      glVertex3d(p.x + dvec.x, p.y + dvec.y, p.z + dvec.z);
-      glEnd();
     }
   }
 }

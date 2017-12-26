@@ -17,6 +17,8 @@ namespace MainGameCanvas {
   int resizeManager(int x, int y);
   int keyManager(unsigned char key, int x, int y, bool in);
   int specialKeyManager(int key, int x, int y, bool in);
+  int keyUpManager(unsigned char key, int x, int y, bool in);
+  int specialKeyUpManager(int key, int x, int y, bool in);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
   int mouseClickManager(int button, int state, int x, int y, bool in);
@@ -38,6 +40,8 @@ namespace MainGameShipCanvas {
   int resizeManager(int x, int y);
   int keyManager(unsigned char key, int x, int y, bool in);
   int specialKeyManager(int key, int x, int y, bool in);
+  int keyUpManager(unsigned char key, int x, int y, bool in);
+  int specialKeyUpManager(int key, int x, int y, bool in);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
   int mouseClickManager(int button, int state, int x, int y, bool in);

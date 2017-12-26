@@ -18,8 +18,8 @@ public:
   Laser(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, energy_type_J maxStorage) :
   Object(parentShip, ID, relativePos, maxHealth, radius, health) {
     _name = "Laser";
-    _energyStored.addFrame(0, 0);
-    _maxStorage.addFrame(0, maxStorage);
+    //energyStoredChange(0, 0);
+    maxStorageChange(-1, maxStorage);
   }
 
   int type() { return Type::Laser; }
@@ -62,11 +62,15 @@ public:
 
   void shoot(time_type_s time) {
     _shots.push_back(make_tuple(time, _tempE, _tempD.norm() * SOL, false));
+    #ifdef M_CLIENT
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarEnergyInput"))->text = "0";
+    setEnergy(0);
+    #endif
   }
 
 #ifdef M_CLIENT
   void setSidebar();
-  void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time);
+  void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time, bool full);
 #endif
 
   void collectEvents(list<StateChange*> &addTo, time_type_s time);

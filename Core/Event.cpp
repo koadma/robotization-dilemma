@@ -77,7 +77,14 @@ void SensorPing::getV(DataElement* data) {
   enee->_core->fromType<energy_type_J>(_energy);
   data->addChild(enee);
 }
-
+int SensorAutofire::type() {
+  return EvTSensorAutofire;
+}
+void SensorAutofire::getV(DataElement* data) {
+  DataElement* afe = new DataElement();
+  afe->_core->fromType<bool>(_autofire);
+  data->addChild(afe);
+}
 
 #ifdef M_SERVER
 void Event::apply(Game *g) {
@@ -89,8 +96,8 @@ void Collision::apply(Game *g) {
   }
 }
 void BatteryDrain::apply(Game *g) {
-  cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
-  _d->energyCallback(_time, g);
+  //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
+  _d->energyUpdate(_time, g);
 }
 void StateChange::apply(Game *g) {
   throw 1;
@@ -174,5 +181,11 @@ void SensorPing::apply(Game *g) {
 }
 void SensorPing::setV(DataElement* data, Game* game) {
   _energy = data->_children[0]->_core->toType<energy_type_J>();
+}
+void SensorAutofire::apply(Game *g) {
+  reinterpret_cast<Sensor*>(_o)->setAutofire(_autofire, _time);
+}
+void SensorAutofire::setV(DataElement* data, Game* game) {
+  _autofire = data->_children[0]->_core->toType<bool>();
 }
 #endif

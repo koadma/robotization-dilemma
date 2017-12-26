@@ -25,6 +25,9 @@ void Game::tryGameStart() {
 }
 void Game::startGame() {
   state = Waiting;
+  for (auto&& it : drones) {
+    it->energyUpdate(0, this);
+  }
   newTurn();
 }
 string Game::addShip(Ship* ship) {

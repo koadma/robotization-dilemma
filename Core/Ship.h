@@ -79,6 +79,7 @@ public:
   energy_type_J getStoredEnergy(time_type_s time);
   
 #ifdef M_SERVER
+  void sightMovement(Movement& m, time_type_s time, Game* g, bool autofire);
   energy_type_J energyUpdate(time_type_s time, Game* g, Object* chg = NULL, energy_type_J chgval = 0); //To do energy simulations.
   void energyCallback(time_type_s, Game* g); // Callback for energy run out objects, or any run of neergy sys
 #endif
@@ -86,7 +87,7 @@ public:
   int getHealth(time_type_s time);
   int getMaxHealth(time_type_s time);
 
-  void sightMovement(Movement& m, time_type_s time, bool autofire);
+  
 
   mpssVec3 getAccel(time_type_s time) {
     mpssVec3 sum = { 0,0,0 };
@@ -145,10 +146,10 @@ public:
      }
   }
 
-  void selectSighting(vec3<double> ori, vec3<double> dir);
+  void selectSighting(vec3<double> ori, vec3<double> dir, double d);
 
   void drawSightings(float camcx, float camcy, float camcz, float d, OpenGLData data);
-  void drawObjects(float camcx, float camcy, float camcz, float d, bool b = false);
+  void drawObjects(float camcx, float camcy, float camcz, float d, bool worldView);
 
   bool packetRecv(DataElement *Data, int Id, NetworkC* thisptr);
 #endif

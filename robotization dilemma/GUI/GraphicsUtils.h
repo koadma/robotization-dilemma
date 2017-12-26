@@ -53,6 +53,8 @@ struct WindowManagers {
   ResizeManager resizeManager;
   KeyManager keyManager;
   SpecialKeyManager specialKeyManager;
+  KeyManager keyUpManager;
+  SpecialKeyManager specialUpKeyManager;
   MouseEntryManager mouseEntryManager;
   MouseMoveManager mouseMoveManager;
   MouseClickManager mouseClickManager;
@@ -64,6 +66,8 @@ struct IWindowManagers {
   IResizeManager resizeManager;//= defaultIResizeManager;
   IKeyManager keyManager;// = defaultIKeyManager;
   ISpecialKeyManager specialKeyManager;//= defaultISpecialKeyManager;
+  IKeyManager keyUpManager;// = defaultIKeyManager;
+  ISpecialKeyManager specialUpKeyManager;//= defaultISpecialKeyManager;
   IMouseEntryManager mouseEntryManager;//= defaultIMouseEntryManager;
   IMouseMoveManager mouseMoveManager;//= defaultIMouseMoveManager;
   IMouseClickManager mouseClickManager;//= defaultIMouseClickManager;

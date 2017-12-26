@@ -24,6 +24,8 @@ public:
   virtual int mouseClicked(int button, int state, int mx, int my);
   virtual int keyPressed(unsigned char key, int mx, int my);
   virtual int specialPressed(int key, int mx, int my);
+  virtual int keyUp(unsigned char key, int mx, int my);
+  virtual int specialUp(int key, int mx, int my);
   virtual int mouseWheel(int a, int b, int mx, int my);
   virtual void render();
   virtual GUIElement* getElementById(string id);

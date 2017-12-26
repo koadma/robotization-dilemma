@@ -13,7 +13,6 @@ public:
   Object(parentShip, ID, relativePos, maxHealth, radius, health) {
     maxGeneratedPowerChange(-1, maxPower);
     _name = "Generator";
-    energyStoredChange(-1, 0);
     maxStorageChange(-1, 0);
   }
   int type();

@@ -141,29 +141,6 @@ int Drone::getMaxHealth(time_type_s time) {
   return sum;
 }
 
-void Drone::sightMovement(Movement& m, time_type_s time, bool _autofire = false) {
-  priority_queue<pair<scalar_type, Sighting*>> dists; //
-  for (auto&& it : sightings) {
-    dists.push({-(it->getAt(time).pos - m.getAt(time).pos).sqrlen() / (m.radius * it->getAt(time).radius), it});
-  }
-  if (dists.size()) {
-    pair<scalar_type, Sighting*> elem = dists.top();
-    if(- elem.first < 1) {
-      elem.second->addFrame(time, m);
-    }
-    else {
-      Sighting* s = new Sighting();;
-      s->addFrame(time, m);
-      sightings.push_back(s);
-    }
-  }
-  else {
-    Sighting* s = new Sighting();
-    s->addFrame(time, m);
-    sightings.push_back(s);
-  }
-}
-
 Ship::Ship(uint32_t _ID, mVec3 _pos) {
   load(_ID, _pos);
 }
@@ -173,6 +150,7 @@ Ship::Ship(uint32_t _ID) {
 
 void Ship::load(uint32_t _ID, mVec3 _pos) {
   energySystem._lastUpdate = -0.01;
+  _droneID = _ID;
 
   Object* go = new ::Generator(this, mix(_ID, 0), { 100,0,0 }, 1000, 100, 1000, 1000000);
   objects.push_back(go);
@@ -196,8 +174,54 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
 }
 
 #ifdef M_SERVER
+void Drone::sightMovement(Movement& m, time_type_s time, Game* g, bool _autofire = false) {
+  priority_queue<pair<scalar_type, Sighting*>> dists; //
+  Sighting* s = NULL;
+  for (auto&& it : sightings) {
+    dists.push({ -(it->getAt(time).pos - m.getAt(time).pos).sqrlen() / (m.radius * it->getAt(time).radius), it });
+  }
+  if (dists.size()) {
+    pair<scalar_type, Sighting*> elem = dists.top();
+    if (-elem.first < 1) {
+      elem.second->addFrame(time, m);
+      s = elem.second;
+    }
+    else {
+      s = new Sighting();
+      s->addFrame(time, m);
+      sightings.push_back(s);
+    }
+  }
+  else {
+    s = new Sighting();
+    s->addFrame(time, m);
+    sightings.push_back(s);
+  }
+  if (_autofire) {
+    for (auto&& it : objects) {
+      if (it->type() == Object::Laser) {
+        Laser* lit = (Laser*)it;
+        sVec3 dir;
+        bool sf = surefire(mov, s->keyframes, time, dir);
+        lit->setDir(dir);
+        lit->setEnergy(100000);
+        lit->shoot(time);
+        LaserShot ev;
+        ev._dir = dir.norm() * SOL;
+        ev._energy = 100000;
+        ev._o = lit;
+        ev._time = time;
+        ev.apply(g);
+      }
+    }
+  }
+}
 energy_type_J Drone::energyUpdate(time_type_s time, Game* game, Object* chg, energy_type_J chgval) {
-  pair<vector<time_type_s>, energy_type_J> runOut = energySystem.goTo(time, chg->_energySystem, chgval);
+  FlowVertex<energy_type_J, Fraction, time_type_s>* vertex = NULL;
+  if(chg != NULL) {
+    vertex = chg->_energySystem;
+  }
+  pair<vector<time_type_s>, energy_type_J> runOut = energySystem.goTo(time, vertex, chgval);
   list<Event*> res;
   sort(runOut.first.begin(), runOut.first.end());
   if (runOut.first.size()) { //first one is enough, recalc than will give the later ones.
@@ -265,6 +289,9 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
           break;
         case Event::Type::EvTSensorPing:
           nObj = new SensorPing();
+          break;
+        case Event::Type::EvTSensorAutofire:
+          nObj = new SensorAutofire();
           break;
         }
         if (nObj != NULL) {
@@ -356,8 +383,10 @@ bool Ship::loadShip(xml_node<>* data) {
     if(o != NULL) {
       objects.push_back(o);
       ++id;
+      return true;
     } else {
       cout << "Unknown class " << name << endl;
+      return false;
     }
   }
 }
@@ -394,26 +423,33 @@ void Ship::drawSightings(float camcx, float camcy, float camcz, float d, OpenGLD
 
   distance_type_m maxD = 0;
 
-  for (auto&& it : sightings) {
+  /*for (auto&& it : sightings) {
     maxD = max(maxD, (it->getAt(timeNow).pos - pos).length());
-  }
+  }*/
 
   for (auto&& it : sightings) {
-    it->drawSighting({camcx, camcy, camcz}, d, SOL, timeNow, maxD, data, it == selecteds);
+    it->drawSighting({camcx, camcy, camcz}, d, SOL, timeNow, /*maxD,*/ data, it == selecteds);
   }
 }
-void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool b) {
-  auto it = objects.begin();
-
-  if(b) {
-    glTranslatef(mov.getAt(timeNow).pos.x, mov.getAt(timeNow).pos.y, mov.getAt(timeNow).pos.z);
-  }
-  while (it != objects.end()) {
-    (*it)->drawObject(camcx, camcy, camcz, d, timeNow);
-    ++it;
-  }
-  if (b) {
-    glTranslatef(-mov.getAt(timeNow).pos.x, -mov.getAt(timeNow).pos.y, -mov.getAt(timeNow).pos.z);
+void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool worldView) {
+  if(worldView) {
+    setColor(hexToInt("ff00ff00"));
+    glLineWidth(2.0);
+    glBegin(GL_LINE_STRIP);
+    glVertex3d(camcx/d, camcy / d, camcz / d);
+    glVertex3d(mov.getAt(timeNow).pos.x/d, camcy / d, mov.getAt(timeNow).pos.z/d);
+    glVertex3d(mov.getAt(timeNow).pos.x/d, mov.getAt(timeNow).pos.y/d, mov.getAt(timeNow).pos.z/d);
+    glEnd();
+    glTranslated(mov.getAt(timeNow).pos.x / d, mov.getAt(timeNow).pos.y / d, mov.getAt(timeNow).pos.z / d);
+    glutSolidSphere(ShipSize, 20,20);
+    glTranslated(-mov.getAt(timeNow).pos.x / d, -mov.getAt(timeNow).pos.y / d,- mov.getAt(timeNow).pos.z / d);
+    for (auto&& it : objects) {
+      it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
+    }
+  } else {
+    for(auto&& it : objects) {
+      it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
+    }
   }
 }
 bool Ship::packetRecv(DataElement *Data, int Id, NetworkC* thisptr) {
@@ -447,7 +483,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkC* thisptr) {
   }
   return 0;
 }
-void Ship::selectSighting(vec3<double> ori, vec3<double> dir) {
+void Ship::selectSighting(vec3<double> ori, vec3<double> dir, double d) {
   list<pair<double, Sighting*>> inters;
 
   Shot p;
@@ -460,6 +496,10 @@ void Ship::selectSighting(vec3<double> ori, vec3<double> dir) {
   while (it != sightings.end()) {
     if((*it)->getFirst() < timeNow) {
       Movement m = (*it)->getAt(timeNow);
+      m.pos.x /= d;
+      m.pos.y /= d;
+      m.pos.z /= d;
+      m.radius = SightingSize;
       m.acc = { 0,0,0 };
       m.vel = { 0,0,0 };
       vector<double> temp = intersectPaths(&m, &p);

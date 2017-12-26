@@ -13,6 +13,7 @@ extern NetworkC *Connection;
 float wrapAngle(float angle);
 void drawPointingVector(float camcx, float camcy, float camcz, float x, float y, float z, int l);
 void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d);
+void drawXZPlane(float camcx, float camcy, float camcz, float d, int n);
 
 void renderNewRound(int id);
 

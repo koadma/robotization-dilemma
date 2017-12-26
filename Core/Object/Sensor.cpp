@@ -30,7 +30,12 @@ void Sensor::getVStatus(DataElement* data) {
 
     pinge->addChild(ne);
   }
+
   data->addChild(pinge);
+
+  DataElement* afe = new DataElement();
+  _autofire.get(afe);
+  data->addChild(afe);
 }
 void Sensor::setVStatus(DataElement* data) {
   _requestedPower.set(data->_children[0]);
@@ -48,6 +53,8 @@ void Sensor::setVStatus(DataElement* data) {
 
     _pings.push_back(nVal);
   }
+
+  _autofire.set(data->_children[3]);
 }
 void Sensor::collectEvents(list<StateChange*> &addTo, time_type_s time) {
   for (auto&& it : _requestedPower._frames) {
@@ -68,6 +75,14 @@ void Sensor::collectEvents(list<StateChange*> &addTo, time_type_s time) {
     }
     get<2>(it) = true;
   }
+
+  for (auto&& it : _autofire._frames) {
+    SensorAutofire* ev = new SensorAutofire();
+    ev->_autofire = it.second();
+    ev->_o = this;
+    ev->_time = it.first;
+    addTo.push_back(ev);
+  }
 }
 
 #ifdef M_CLIENT
@@ -76,7 +91,7 @@ void Sensor::setSidebar() {
 
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectSensorSidebarPowerLabel"))->text = " / " + to_string(getMaxUseablePower(timeNow), 0);
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectSensorSidebarPowerInput"))->text = to_string(getRequestedPower(timeNow), 2);
-  reinterpret_cast<Graphics::CheckboxHwnd>(Graphics::getElementById("objectSensorAutoFireCheckbox"))->checked = _autofire;
+  reinterpret_cast<Graphics::CheckboxHwnd>(Graphics::getElementById("objectSensorAutoFireCheckbox"))->checked = _autofire.getAt(timeNow)();
 }
 #endif
 
@@ -88,7 +103,7 @@ void Sensor::setTargetPower(time_type_s time, power_type_W val, Game* g) {
 void Sensor::energyCallbackV(time_type_s time, Game* g) {
   
 }
-void Sensor::getPathVirt(time_type_s time, Path* p) {
+void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
   if (p->type() == Path::PathTypeBubble) {
     /*float h = _health.getAt(time)() / float(_maxHealth);
     cout << "SENSOR " << _ID << " EN " << reinterpret_cast<Bubble*>(p)->energy << " FROM " << p->originID << endl;
@@ -107,7 +122,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
     hph->_data.fromType<double>(_health.getAt(time)() / double(_maxHealth));
     ScriptData* epp = new ScriptData();
     epp->type = ScriptData::TNUMERIC;
-    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->getFlux(time) * _usedPower.getAt(time)() * PI * _radius * _radius * _usedPower.getAt(time)());
+    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->getFlux(time) * _usedPower.getAt(time)() * PI * _radius * _radius);
     ScriptData* meta = new ScriptData();
     meta->type = ScriptData::TSTRING;
     meta->_data.fromType<string>(reinterpret_cast<Bubble*>(p)->data);
@@ -116,12 +131,12 @@ void Sensor::getPathVirt(time_type_s time, Path* p) {
     d->_elems.insert({ "metaData", meta });
     ScriptData* res = _sensitivity->run(*d);
     float resf = res->_data.toType<float>();
-    cout << "Ch: " << resf << " H:" << hph->_data.toType<double>() << " E:" << epp->_data.toType<double>() << " Eb:" << reinterpret_cast<Bubble*>(p)->getFlux(time) * _usedPower.getAt(time)() * PI * _radius * _radius << " Es:" << _usedPower.getAt(time)() << endl;
+    cout << "Ch: " << resf << " H:" << hph->_data.toType<double>() << " E:" << epp->_data.toType<double>() << " Eb:" << reinterpret_cast<Bubble*>(p)->getFlux(time) * PI * _radius * _radius << " Es:" << _usedPower.getAt(time)() << endl;
     if (ran1() < resf) {
       cout << "Detected" << endl;
       Sighting* s = new Sighting();
       Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
-      _parentShip->sightMovement(m, time, _autofire);
+      _parentShip->sightMovement(m, time, g, _autofire.getAt(time)());
     }
     DeletePtr(res);
     DeletePtr(d);

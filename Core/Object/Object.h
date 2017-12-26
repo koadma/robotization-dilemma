@@ -62,13 +62,13 @@ public:
   void maxUseablePowerChange(time_type_s time, power_type_W power, Game* g);
   void requestedPowerChange(time_type_s time, power_type_W power, Game* g);
   void maxStorageChange(time_type_s time, energy_type_J energy, Game* g);
-  void energyStoredChange(time_type_s time, energy_type_J energy, Game* g);
+  //void energyStoredChange(time_type_s time, energy_type_J energy, Game* g);
 #endif
   void maxGeneratedPowerChange(time_type_s time, power_type_W power);
   void maxUseablePowerChange(time_type_s time, power_type_W power);
   void requestedPowerChange(time_type_s time, power_type_W power);
   void maxStorageChange(time_type_s time, energy_type_J energy);
-  void energyStoredChange(time_type_s time, energy_type_J energy);
+  //void energyStoredChange(time_type_s time, energy_type_J energy);
 
   virtual power_type_W getDisplayMaxPower(time_type_s time) { ///Max generatable power, max usable, whatever applicable
     return 0;
@@ -100,14 +100,14 @@ public:
   list< pair<double, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
   virtual void setSidebarElement(string filename);
   virtual void setSidebar();
-  virtual void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time) {}
-  void drawObject(float camcx, float camcy, float camcz, float d, time_type_s time);
+  virtual void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time, bool worldView) {}
+  void drawObject(float camcx, float camcy, float camcz, float d, time_type_s time, bool worldView);
 #endif
 
   virtual void collectEvents(list<StateChange*> &addTo, time_type_s time);
 
 #ifdef M_SERVER
-  virtual void getPathVirt(time_type_s time, Path* p) {
+  virtual void getPathVirt(time_type_s time, Path* p, Game* g) {
 
   }
   void getPath(time_type_s time, Path* p, Game* g);

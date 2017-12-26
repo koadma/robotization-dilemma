@@ -17,7 +17,8 @@ public:
     EvTLaserShot = 5,
     EvTThermalRadiation = 6,
     EvTBatteryDrain = 7,
-    EvTSensorPing = 8
+    EvTSensorPing = 8,
+    EvTSensorAutofire = 9
   };
   time_type_s _time;
 
@@ -114,6 +115,18 @@ public:
 class SensorPing : public StateChange {
 public:
   energy_type_J _energy;
+
+  int type();
+  void getV(DataElement* data);
+
+#ifdef M_SERVER
+  void apply(Game *g);
+  void setV(DataElement* data, Game* game);
+#endif
+};
+class SensorAutofire : public StateChange {
+public:
+  bool _autofire;
 
   int type();
   void getV(DataElement* data);

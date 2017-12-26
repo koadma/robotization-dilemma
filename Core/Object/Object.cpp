@@ -59,12 +59,12 @@ void Object::maxUseablePowerChange(time_type_s time, power_type_W power) {
   _maxUseablePower.addFrame(time, power);
   requestedPowerChange(time, getRequestedPower(time));
 }
-void Object::energyStoredChange(time_type_s time, energy_type_J energy) {
-  energy = max(0.0, min(energy, getMaxEnergy(time)));
-}
 void Object::maxStorageChange(time_type_s time, energy_type_J energy) {
   _maxStorage.addFrame(time, energy);
-  energyStoredChange(time, getStoredEnergy(time));
+  _energySystem->_maxVal = energy;
+  _energySystem->_maxCharge = 100000;
+  _energySystem->_maxDrain = -100000;
+  //energyStoredChange(time, min(energy, getStoredEnergy(time)));
 }
 #ifdef M_SERVER
 energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount, Game* g) {
@@ -85,10 +85,10 @@ void Object::maxUseablePowerChange(time_type_s time, power_type_W power, Game* g
   maxUseablePowerChange(time, power);
   _parentShip->energyUpdate(time, g);
 }
-void Object::energyStoredChange(time_type_s time, energy_type_J energy, Game* g) {
+/*void Object::energyStoredChange(time_type_s time, energy_type_J energy, Game* g) {
   energyStoredChange(time, energy);
   _parentShip->energyUpdate(time, g);
-}
+}*/
 void Object::maxStorageChange(time_type_s time, energy_type_J energy, Game* g) {
   maxStorageChange(time, energy);
   _parentShip->energyUpdate(time, g);
@@ -260,12 +260,16 @@ list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori,
   }
   return res;
 }
-void Object::drawObject(float camcx, float camcy, float camcz, float d, time_type_s time) {
-  glTranslated(_relativePos.x, _relativePos.y, _relativePos.z);
-  setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth)) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth)));
-  glutSolidSphere(_radius, 20, 20);
-  glTranslated(-_relativePos.x, -_relativePos.y, -_relativePos.z);
-  drawObjectVirt(camcx, camcy, camcz, d, time);
+void Object::drawObject(float camcx, float camcy, float camcz, float d, time_type_s time, bool worldView) {
+  if(worldView) {
+    drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
+  } else {
+    glTranslated(_relativePos.x, _relativePos.y, _relativePos.z);
+    setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth)) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth)));
+    glutSolidSphere(_radius, 20, 20);
+    glTranslated(-_relativePos.x, -_relativePos.y, -_relativePos.z);
+    drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
+  }
 }
 #endif
 
@@ -273,6 +277,10 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
 void Object::energyCallback(time_type_s t, Game* g) {
   if (_energySystem->_delta > Fraction(0)) {
     _generatedPower.addFrame(t, 0);
+    _usedPower.addFrame(t, min(double(_energySystem->_delta),getMaxUseablePower(t)));
+  }
+  if (_energySystem->_delta < Fraction(0)) {
+    _generatedPower.addFrame(t, -double(_energySystem->_delta));
     _usedPower.addFrame(t, 0);
   }
   energyCallbackV(t, g);
@@ -285,7 +293,7 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
         _health.getAt(time)() - int(((Shot*)p)->energy / 50)
         ))); //TODO BETTER
   }
-  if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && ((Bubble*)p)->getFlux(time) > BUBBLE_REMOVE && ((Bubble*)p)->btype != Bubble::Chat) { //Thermal and ping are reflected
+  if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && _radius*_radius*PI*((Bubble*)p)->getFlux(time) > BUBBLE_REMOVE && ((Bubble*)p)->btype != Bubble::Chat) { //Thermal and ping are reflected
     Bubble* b = new Bubble();
     b->btype = ((Bubble*)p)->btype;
     b->emitter = getMovement(time);
@@ -297,7 +305,7 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
     g->calcIntersect(b);
     g->paths.push_back(b);
   }
-  getPathVirt(time, p);
+  getPathVirt(time, p, g);
 }
 bool Object::load(xml_node<>* data) {
   xml_node<>* elem;

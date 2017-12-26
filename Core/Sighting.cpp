@@ -113,8 +113,8 @@ mVec3 Sighting::reCalcPosition(mVec3 position, mVec3 viewCenter, distance_type_m
   return viewCenter + ((position - viewCenter) / maxDist)*5000;
 }
 
-void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, time_type_s time, distance_type_m maxDist, OpenGLData data, bool selected) {
-  //Close
+void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, time_type_s time, /*distance_type_m maxDist,*/ OpenGLData data, bool selected) {
+  /*//Close
 
   if (selected) {
     glLineWidth(3.0f);
@@ -179,6 +179,26 @@ void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, ti
     glVertex3d(transVec.x, transVec.y, transVec.z);
     glVertex3d(transVec.x + deltaVector.x, transVec.y + deltaVector.y, transVec.z + deltaVector.z);
     glEnd();
+  }*/
+
+  if (keyframes.size() && keyframes.getFirst() < time && (time < keyframes.getLast() + ROUND_TIME || selected)) {
+    Movement now = keyframes.getAt(time);
+    glBegin(GL_LINE_STRIP);
+    if (selected) {
+      setColor(0xffff0000);
+      glLineWidth(3.0);
+    }
+    else {
+      setColor(0xffff8080);
+      glLineWidth(1.0);
+    }
+    glVertex3d(viewCenter.x/d, viewCenter.y/d, viewCenter.z/d);
+    glVertex3d(now.pos.x/d, viewCenter.y/d, now.pos.z/d);
+    glVertex3d(now.pos.x/d, now.pos.y/d, now.pos.z/d);
+    glEnd();
+    glTranslated(now.pos.x / d, now.pos.y / d, now.pos.z / d);
+    glutSolidSphere(SightingSize, 20, 20);
+    glTranslated(-now.pos.x / d, -now.pos.y / d, -now.pos.z / d);
   }
 }
 
@@ -194,9 +214,9 @@ result coordinates(mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, acc_type
   //az ellenseg utolso ismert sebessegenek abszolut erteke
   distance_type_m v = vtarget.length();
   //az utolso ismert sebesseg es az s vektor altal bezart szog
-  double cosgamma = dot(svec, vtarget) / (s*v);
+  distance_type_m vcosgamma = dot(svec, vtarget) / (s);
   //az utolso ismert sebesseg alapjan mikorra erne be a hajot egy lezerlovedek
-  double t3 = s*(-v*cosgamma + sqrt(v*v - v*v*cosgamma*cosgamma + SOL*SOL)) / (SOL*SOL - v*v);
+  double t3 = s*(-vcosgamma + sqrt(v*v - vcosgamma*vcosgamma + SOL*SOL)) / (SOL*SOL - v*v);
   result direction(starttarget + vtarget*t3 - startship, true);
   //idoben beerne meg?
   if ((sqrt(d / amax) - tpassed) < t3)

@@ -92,6 +92,36 @@ int Panel::specialPressed(int key, int mx, int my) {
   }
   return state;
 }
+int Panel::keyUp(unsigned char key, int mx, int my) {
+  transformCoordiantes(mx, my);
+
+  auto it = elements.end();
+
+  int state = 0;
+
+  while (it != elements.begin() && !(state & 2)) {
+    --it;
+    if (!(*it)->toDelete) {
+      state |= (*it)->keyUp(key, mx, my);
+    }
+  }
+  return state;
+}
+int Panel::specialUp(int key, int mx, int my) {
+  transformCoordiantes(mx, my);
+
+  auto it = elements.end();
+
+  int state = 0;
+
+  while (it != elements.begin() && !(state & 2)) {
+    --it;
+    if (!(*it)->toDelete) {
+      state |= (*it)->specialUp(key, mx, my);
+    }
+  }
+  return state;
+}
 void Panel::render() {
   auto it = elements.begin();
 

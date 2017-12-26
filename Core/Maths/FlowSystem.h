@@ -130,6 +130,8 @@ public:
 
 template <typename V, typename D, typename T>
 FlowGraph<V, D, T>::FlowGraph() {
+  _lastUpdate = -100; ///TODO: better
+
   _s = new FlowVertex<V, D, T>(0, 0, 0, 0, 0, 0, 0, 0);
   _ver.push_back(_s);
 
@@ -391,7 +393,7 @@ pair<vector<T>, V> FlowGraph<V, D, T>::goTo(T time, FlowVertex<V, D, T>* chg, V 
       if (chg == it) {
         val += chgval;
         val = max(V(0), min(val, it->_maxVal));
-        leftover = val - it->_val.getAt(time);
+        leftover = chgval - val + it->_val.getAt(time);
       }
       it->_canCharge = (val < V(0.99) * it->_maxVal);
       it->_canDrain = (V(0.01) * it->_maxVal < val);
@@ -411,10 +413,10 @@ pair<vector<T>, V> FlowGraph<V, D, T>::goTo(T time, FlowVertex<V, D, T>* chg, V 
         change = max(D(0), change);
       }
       if (change > D(0)) {
-        endtimes.push_back((it->_maxVal - nval) / V(change));
+        endtimes.push_back(time + (it->_maxVal - nval) / V(change));
       }
       if (change < D(0)) {
-        endtimes.push_back((V(0) - nval) / V(change));
+        endtimes.push_back(time + (V(0) - nval) / V(change));
       }
       
       

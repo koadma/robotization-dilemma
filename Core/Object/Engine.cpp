@@ -40,7 +40,7 @@ void Engine::setTargetAccel(time_type_s time, mpssVec3 acc) {
   #endif
 }
 void Engine::setComponent(time_type_s time, int c, acc_type_mperss val) {
-  mpssVec3 nval = _accel.getAt(time)();
+  mpssVec3 nval = _accelRequest.getAt(time)();
   nval[c] = val;
   setTargetAccel(time, nval);
 }
@@ -86,9 +86,11 @@ void Engine::setSidebar() {
   reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectEngineSidebarEnergyLabel"))->text =
     new TextBind<
     TextBindFunc<power_type_W>,
+    TextBindFunc<power_type_W>,
     TextBindFunc<power_type_W>
-    >("% / %",
+    >("% / % / %",
       TextBindFunc<power_type_W>(getCurrentUsedPower),
+      TextBindFunc<power_type_W>(getCurrentRequestedPower),
       TextBindFunc<power_type_W>(getCurrentMaxUseablePower)
       );
   reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectEngineSidebarAccInputX"))->text = to_string(_accelRequest.getAt(timeNow)().x, 2);

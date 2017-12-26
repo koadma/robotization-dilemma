@@ -22,6 +22,8 @@ Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordiante minc, Coo
     glutDisplayFunc(manager.renderManager);
     glutKeyboardFunc(manager.keyManager);
     glutSpecialFunc(manager.specialKeyManager);
+    glutKeyboardUpFunc(manager.keyUpManager);
+    glutSpecialUpFunc(manager.specialUpKeyManager);
     glutEntryFunc(manager.mouseEntryManager);
     glutMotionFunc(manager.mouseMoveManager);
     glutPassiveMotionFunc(manager.mouseMoveManager);
@@ -112,6 +114,16 @@ void Graphics::defaultSpecialKeyManager(int key, int x, int y) {
     glutPostRedisplay();
   }
 }
+void Graphics::defaultKeyUpManager(unsigned char key, int x, int y) {
+  if (1 & elementKeyUpManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+    glutPostRedisplay();
+  }
+}
+void Graphics::defaultSpecialKeyUpManager(int key, int x, int y) {
+  if (1 & elementSpecialUpManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+    glutPostRedisplay();
+  }
+}
 void Graphics::defaultMouseEntryManager(int state) {
   if (1 & elementMouseEnterManager(GetWinHwnd(glutGetWindow()), state)) {
     glutPostRedisplay();
@@ -139,6 +151,8 @@ WindowManagers {
   Graphics::defaultResizeManager,
   Graphics::defaultKeyManager,
   Graphics::defaultSpecialKeyManager,
+  Graphics::defaultKeyUpManager,
+  Graphics::defaultSpecialKeyUpManager,
   Graphics::defaultMouseEntryManager,
   Graphics::defaultMouseMoveManager,
   Graphics::defaultMouseClickManager,
@@ -170,6 +184,14 @@ int Graphics::elementKeyPressManager(WinHwnd id, unsigned char key, int x, int y
 
 int Graphics::elementSpecialPressManager(WinHwnd id, int key, int x, int y) {
   return id->myPanel->specialPressed(key, x, y);
+}
+
+int Graphics::elementKeyUpManager(WinHwnd id, unsigned char key, int x, int y) {
+  return id->myPanel->keyUp(key, x, y);
+}
+
+int Graphics::elementSpecialUpManager(WinHwnd id, int key, int x, int y) {
+  return id->myPanel->specialUp(key, x, y);
 }
 
 void Graphics::elementResizeManager(WinHwnd id, int width, int height) {

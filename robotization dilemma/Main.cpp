@@ -27,6 +27,8 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
             MainGameCanvas::resizeManager,
             MainGameCanvas::keyManager,
             MainGameCanvas::specialKeyManager,
+            MainGameCanvas::keyUpManager,
+            MainGameCanvas::specialKeyUpManager,
             MainGameCanvas::mouseEntryManager,
             MainGameCanvas::mouseMoveManager,
             MainGameCanvas::mouseClickManager,
@@ -43,6 +45,8 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
             MainGameShipCanvas::resizeManager,
             MainGameShipCanvas::keyManager,
             MainGameShipCanvas::specialKeyManager,
+            MainGameShipCanvas::keyUpManager,
+            MainGameShipCanvas::specialKeyUpManager,
             MainGameShipCanvas::mouseEntryManager,
             MainGameShipCanvas::mouseMoveManager,
             MainGameShipCanvas::mouseClickManager,
@@ -96,6 +100,9 @@ int main() {
   setlocale(LC_ALL, "");
   srand(time(NULL));
 
+  InitGraphics();
+
+  /*
   FlowGraph<double, Fraction, double> f;
 
   FlowVertex<double, Fraction, double>* v1 = f.addVertex(-5, 10, -10, 100, 30, -1);
@@ -105,36 +112,37 @@ int main() {
   f.addSymmetricEdge(v1, v2, 30);
   f.addSymmetricEdge(v2, v3, 10);
 
-  for(int i = 0; i < 18; i++) {
+  for(int i = 0; i < 4; i++) {
     f.goTo(i);
-    cout << i << "\t" << v3->_delta << endl;
   }
-  f.goTo(18, v2, 68);
+  f.goTo(4, v2, -100);
+  for (int i = 5; i < 18; i++) {
+    f.goTo(i);
+  }
+  f.goTo(18, v2, 120);
   f.goTo(19);
   v3->_goal = 1;
   for (int i = 20; i < 35; i++) {
     f.goTo(i);
-    cout << i << "\t" << v3->_delta << endl;
   }
   v3->_goal = -5;
   for (int i = 35; i < 61; i++) {
     f.goTo(i);
-    cout << i << "\t" << v3->_delta << endl;
   }
-  InitGraphics();
+  
 
   Graphics::PlotHwnd plt = Graphics::createPlot(objectGameSubWindow, "plot", Coordiante{0, 0}, Coordiante{1, 1}, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
   plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v2->_val), hexToInt("ffff0000")));
-  plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v1->_val), hexToInt("ffffff00")));
+  plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v1->_val), hexToInt("ffffff00")));/*/
 
-  /*vector<string> reConnectData;
+  vector<string> reConnectData;
   if (hasSaveFile(reConnectData)) {
     createReconnectScreen();
     connectServer(reConnectData[0], reConnectData[1], reConnectData[2]);
   }
   else {
     createMainMenu();
-  }*/
+  }// */
 
   glutMainLoop();
 

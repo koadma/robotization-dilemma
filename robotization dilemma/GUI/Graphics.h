@@ -19,6 +19,8 @@ namespace Graphics {
   void defaultResizeManager(int x, int y);
   void defaultKeyManager(unsigned char key, int x, int y);
   void defaultSpecialKeyManager(int key, int x, int y);
+  void defaultKeyUpManager(unsigned char key, int x, int y);
+  void defaultSpecialKeyUpManager(int key, int x, int y);
   void defaultMouseEntryManager(int state);
   void defaultMouseMoveManager(int x, int y);
   void defaultMouseClickManager(int idk, int key, int x, int y);
@@ -73,6 +75,10 @@ namespace Graphics {
   int elementKeyPressManager(WinHwnd id, unsigned char kay, int x, int y);
 
   int elementSpecialPressManager(WinHwnd id, int key, int x, int y);
+  
+  int elementKeyUpManager(WinHwnd id, unsigned char kay, int x, int y);
+
+  int elementSpecialUpManager(WinHwnd id, int key, int x, int y);
 
   void elementResizeManager(WinHwnd id, int width, int height);
 

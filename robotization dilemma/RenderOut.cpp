@@ -85,7 +85,7 @@ void drawPointingVector(float camcx, float camcy, float camcz, float x, float y,
 void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d) {
   glTranslatef(camcx, camcy, camcz);
 
-  glLineWidth(2.0f);
+  glLineWidth(3.0f);
   glBegin(GL_LINES);
   glColor3f(1.0f, 0.0f, 0.0f);
   glVertex3f(0.0f, 0.0f, 0.0f);
@@ -109,6 +109,21 @@ void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d) {
   glEnd();
 
   glTranslatef(-camcx, -camcy, -camcz);
+}
+void drawXZPlane(float camcx, float camcy, float camcz, float d, int n) {
+  glLineWidth(1.0f);
+  glBegin(GL_LINES);
+  setColor(0xff808080);
+
+  for (int i = -n; i <= n; i++) {
+    if(i != 0) {
+      glVertex3f(camcx - n*d, camcy, camcz + i*d);
+      glVertex3f(camcx + n*d, camcy, camcz + i*d);
+      glVertex3f(camcx + i*d, camcy, camcz - n*d);
+      glVertex3f(camcx + i*d, camcy, camcz + n*d);
+    }
+  }
+  glEnd();
 }
 
 void renderNewRound(int id) {

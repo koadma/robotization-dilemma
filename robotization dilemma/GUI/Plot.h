@@ -57,6 +57,8 @@ public:
 class PlotLine {
 public:
   colorargb color;
+  string name;
+  bool enabled;
   virtual int size() {
     return 0;
   }
@@ -72,9 +74,11 @@ template<typename V, typename U=V, typename T=time_type_s>
 class PlotLineVUT : public PlotLine {
 public:
   keyframe<V, U, T>* _data;
-  PlotLineVUT<V, U, T>(keyframe<V, U, T>* data, colorargb lcolor) {
+  PlotLineVUT<V, U, T>(keyframe<V, U, T>* data, colorargb lcolor, string lname) {
    _data = data;
    color = lcolor;
+   name = lname;
+   enabled = true;
   }
   NoTypeIter* first() {
      NoTypeIterVUT<V, U, T>* iter = new NoTypeIterVUT<V,U,T>();
@@ -97,13 +101,15 @@ public:
   list<PlotLine*> plotData;
   double ox, oy; //in plot coords, for center of plot
   double sx, sy; //data / plotwidth
-  
+  int specialState;
+
   Plot(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
     ox = 0;//(frames->getFirst() + frames->getLast())/2.0;
     oy = 0;//(frames->getDoubleAt(frames->getFirst()) +frames->getDoubleAt(frames->getLast()))/2.0;
     sx = 1;//frames->getLast() - frames->getFirst();
     sy = 1;//frames->getDoubleAt(frames->getLast()) - frames->getDoubleAt(frames->getFirst());
+    specialState = 0;
   }
   int mousebuttons;
   int mxold, myold;
@@ -112,6 +118,8 @@ public:
   int mouseClicked(int button, int state, int mx, int my);
   int keyPressed(unsigned char key, int mx, int my);
   int specialPressed(int key, int mx, int my);
+  int keyUp(unsigned char key, int mx, int my);
+  int specialUp(int key, int mx, int my);
   int mouseWheel(int a, int b, int mx, int my);
   void render();
   int get(double ori, double scale, double v, int h);

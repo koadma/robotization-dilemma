@@ -2,7 +2,7 @@
 
 #include "FlowSystem.h"
 
-template<typename T> struct vec3;
+template<typename T> class vec3;
 //typedef vec3<float>           fVec3;
 typedef vec3<int>               iVec3;
 typedef vec3<bool>              bVec3;

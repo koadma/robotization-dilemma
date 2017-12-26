@@ -124,7 +124,7 @@ bool operator>= (Fraction lhs, Fraction rhs) {
   rhs.simplify();
   return (lhs.a*rhs.b >= lhs.b*rhs.a);
 }
-
+/*
 ostream& operator<<(ostream& o, Fraction f) {
 	if (f.a == 0)
 		return o;
@@ -144,7 +144,7 @@ ostream& operator<<(ostream& o, Fraction f) {
 	}
 
 	return o;
-}
+}*/
 
 Fraction Fraction::simplify() {
 	int d = gcd(a, b);

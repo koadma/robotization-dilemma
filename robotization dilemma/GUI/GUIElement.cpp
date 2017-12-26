@@ -46,6 +46,14 @@ int GUIElement::specialPressed(int key, int mx, int my) {
   return 0;
 }
 
+int GUIElement::keyUp(unsigned char key, int mx, int my) {
+  return 0;
+}
+
+int GUIElement::specialUp(int key, int mx, int my) {
+  return 0;
+}
+
 int GUIElement::mouseWheel(int a, int b, int mx, int my) {
   return 0;
 }

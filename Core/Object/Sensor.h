@@ -7,7 +7,7 @@ private:
   energy_type_J _tempE;
   list<tuple<time_type_s, energy_type_J, bool>> _pings; //time, energy, eventCrate
   ScriptInstruction* _sensitivity;
-  bool _autofire;
+  keyframe<value<bool> > _autofire;
 public:
   Sensor(Drone* parentShip, uint64_t ID) :
     Object(parentShip, ID)
@@ -16,6 +16,7 @@ public:
   Object(parentShip, ID, relativePos, maxHealth, radius, health) {
     maxUseablePowerChange(-1, maxPower);
     requestedPowerChange(-1, 0);
+    maxStorageChange(-1, 10000);
     _name = "Sensor";
     /*ScriptIConstant* sens = new ScriptIConstant();
     sens->_val = new ScriptData();
@@ -33,7 +34,7 @@ public:
     }
     _sensitivity = new ScriptIBlock();
     _sensitivity->load(doc.first_node("root"));
-    _autofire = false;
+    _autofire.addFrame(0, 0);
   }
 
   int type() { return Type::Sensor; }
@@ -60,11 +61,15 @@ public:
   void setTargetEnergy(energy_type_J val) {
     _tempE = val;
   }
-  void setAutofire(bool val) {
-    _autofire = val;
+  void setAutofire(bool val, time_type_s time) {
+    _autofire.addFrame(time, val);
   }
   void ping(time_type_s time) {
     _pings.push_back(make_tuple(time, _tempE, false));
+#ifdef M_CLIENT
+    reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectSensorSidebarEnergyInput"))->text = "0";
+    setTargetEnergy(0);
+#endif
   }
 
 
@@ -73,7 +78,7 @@ public:
 
   void energyCallbackV(time_type_s t, Game* g);
 
-  void getPathVirt(time_type_s time, Path* p);
+  void getPathVirt(time_type_s time, Path* p, Game* g);
 
   bool loadV(xml_node<>* data) {
     xml_node<>* elem;

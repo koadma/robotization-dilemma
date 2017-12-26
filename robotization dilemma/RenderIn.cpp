@@ -41,7 +41,7 @@ void ingameSensorSidebarPing() {
 }
 
 void ingameSensorSidebarAutofire(bool checked) {
-  reinterpret_cast<Sensor*>(selectedo)->setAutofire(checked);
+  reinterpret_cast<Sensor*>(selectedo)->setAutofire(checked, timeNow);
 }
 
 void ingameLaserSidebarShoot() {
@@ -177,20 +177,24 @@ void ingameTimeSliderInput(float val) {
 }
 
 void ingameMenuEnergyButton() {
-  Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
-  Graphics::PlotHwnd plt = Graphics::createPlot(win, "plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
-  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxStorage), hexToInt("ffff0000")));
-  plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, Fraction, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00")));
+  if(selectedo != NULL) {
+    Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
+    Graphics::PlotHwnd plt = Graphics::createPlot(win, "plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
+    plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, Fraction, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00"), "storage"));
+  }
 }
 
 void ingameMenuPowerButton() {
-  Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Power info: " + selectedo->name());
-  Graphics::PlotHwnd plt = Graphics::createPlot(win, "plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
-  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000")));
-  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_generatedPower), hexToInt("ffffff00")));
-  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxUseablePower), hexToInt("ff0000ff")));
-  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_requestedPower), hexToInt("ffff00ff")));
-  plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_usedPower), hexToInt("ff00ffff")));
+  if (selectedo != NULL) {
+    Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Power info: " + selectedo->name());
+    Graphics::PlotHwnd plt = Graphics::createPlot(win, "plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000"), "max generated power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_generatedPower), hexToInt("ffffff00"), "generated power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxUseablePower), hexToInt("ff0000ff"), "max useable power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_requestedPower), hexToInt("ffff00ff"), "requested power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_usedPower), hexToInt("ff00ffff"), "used power"));
+  }
 }
 
 string getCurrentName() {
@@ -291,14 +295,14 @@ string isSurefire() {
   if (selecteds != NULL && selectedo != NULL && selectedo->type() == Object::Laser) {
     sVec3 sdir;
     bool b = surefire(ship->mov, selecteds->keyframes, timeNow, sdir);
-    if (b) {
+    //if (b) {
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputX"))->text = to_string(sdir.x);
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputY"))->text = to_string(sdir.y);
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputZ"))->text = to_string(sdir.z);
       reinterpret_cast<Laser*>(selectedo)->setDir(sdir);
-      return "YES";
-    }
-    return "NO";
+      return "Sure!";
+    //}
+    return "Uncertain";
   }
   else {
     return "No sighting selected";

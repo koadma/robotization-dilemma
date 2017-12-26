@@ -15,6 +15,8 @@ public:
   int mouseWheel(int a, int b, int mx, int my);
   int keyPressed(unsigned char key, int mx, int my);
   int specialPressed(int key, int mx, int my);
+  int keyUp(unsigned char key, int mx, int my);
+  int specialUp(int key, int mx, int my);
   void render();
 
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
