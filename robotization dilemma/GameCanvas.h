@@ -10,16 +10,15 @@ namespace MainGameCanvas {
   extern int myold;
   extern int mousebuttons; //left, center, right
 
-  extern GLdouble model_view[16];
-  extern GLdouble projection[16];
-  extern GLint viewport[4];
-  extern vec3<double> cameraEye;
+  extern OpenGLData view;
 
   void normalizeAngles();
   int renderManager(int ax, int ay, int bx, int by);
   int resizeManager(int x, int y);
   int keyManager(unsigned char key, int x, int y, bool in);
   int specialKeyManager(int key, int x, int y, bool in);
+  int keyUpManager(unsigned char key, int x, int y, bool in);
+  int specialKeyUpManager(int key, int x, int y, bool in);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
   int mouseClickManager(int button, int state, int x, int y, bool in);
@@ -34,16 +33,15 @@ namespace MainGameShipCanvas {
   extern int myold;
   extern int mousebuttons; //left, center, right
 
-  extern GLdouble model_view[16];
-  extern GLdouble projection[16];
-  extern GLint viewport[4];
-  extern vec3<double> cameraEye;
+  extern OpenGLData view;
 
   void normalizeAngles();
   int renderManager(int ax, int ay, int bx, int by);
   int resizeManager(int x, int y);
   int keyManager(unsigned char key, int x, int y, bool in);
   int specialKeyManager(int key, int x, int y, bool in);
+  int keyUpManager(unsigned char key, int x, int y, bool in);
+  int specialKeyUpManager(int key, int x, int y, bool in);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
   int mouseClickManager(int button, int state, int x, int y, bool in);

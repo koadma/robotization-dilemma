@@ -18,15 +18,26 @@ void Game::newTurn() {
     ((Ship*)it)->newTurn(turnId);
   }
 }
-void Game::startGame() {
-  state = Waiting;
-  newTurn();
-}
-void Game::addShip(Ship* ship) {
-  drones.push_back(ship);
+void Game::tryGameStart() {
   if (targetPlayerCount == drones.size()) { //reached target number of players
     startGame();
   }
+}
+void Game::startGame() {
+  state = Waiting;
+  for (auto&& it : drones) {
+    it->energyUpdate(0, this);
+  }
+  newTurn();
+}
+string Game::addShip(Ship* ship) {
+  drones.push_back(ship);
+  string nCode;
+  do {
+    nCode = randomHexString(16);
+  } while (shipAuth.count(nCode));
+  shipAuth.insert({nCode, ship});
+  return nCode;
 }
 void Game::removeIntersect(Object* object) {
   auto it = events.begin();
@@ -44,7 +55,7 @@ void Game::removeIntersect(Object* object) {
 void Game::removeIntersect(Drone* drone) {
   auto it = events.begin();
   while (it != events.end()) {
-    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->parentShip == drone) {
+    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->_parentShip == drone) {
       auto it2 = it;
       ++it;
       events.erase(it2);

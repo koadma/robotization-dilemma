@@ -10,6 +10,8 @@ void ingameMenuExitButton();
 
 void joinMenuInput(string inp);
 
+void connectServer(string ip, string port, string code);
+
 void joinMenuInputButton();
 
 void gameMenuJoinButton();
@@ -20,4 +22,4 @@ void mainMenuExitButton();
 
 void bindLabels();
 
-int InitWindow();
+int InitGraphics();

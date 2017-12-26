@@ -19,35 +19,59 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Core\Bubble.h" />
-    <ClInclude Include="..\Core\constants.h" />
-    <ClInclude Include="..\Core\Fraction.h" />
-    <ClInclude Include="..\Core\helperFunctions.h" />
-    <ClInclude Include="..\Core\Keyframe.h" />
-    <ClInclude Include="..\Core\Network.h" />
-    <ClInclude Include="..\Core\NetworkData.h" />
-    <ClInclude Include="..\Core\Point.h" />
-    <ClInclude Include="..\Core\Polynomial.h" />
-    <ClInclude Include="..\Core\Ship.h" />
-    <ClInclude Include="..\Core\Sighting.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="WinManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Core\Bubble.cpp" />
-    <ClCompile Include="..\Core\Fraction.cpp" />
-    <ClCompile Include="..\Core\helperFunctions.cpp" />
-    <ClCompile Include="..\Core\Keyframe.cpp" />
-    <ClCompile Include="..\Core\Network.cpp" />
-    <ClCompile Include="..\Core\NetworkData.cpp" />
-    <ClCompile Include="..\Core\Point.cpp" />
-    <ClCompile Include="..\Core\Polynomial.cpp" />
+    <ClCompile Include="..\Core\Event.cpp" />
+    <ClCompile Include="..\Core\Maths\Fraction.cpp" />
+    <ClCompile Include="..\Core\Maths\helperFunctions.cpp" />
+    <ClCompile Include="..\Core\Maths\Keyframe.cpp" />
+    <ClCompile Include="..\Core\Maths\Point.cpp" />
+    <ClCompile Include="..\Core\Maths\Polynomial.cpp" />
+    <ClCompile Include="..\Core\Network\Network.cpp" />
+    <ClCompile Include="..\Core\Network\NetworkData.cpp" />
+    <ClCompile Include="..\Core\Object\Battery.cpp" />
+    <ClCompile Include="..\Core\Object\Computer.cpp" />
+    <ClCompile Include="..\Core\Object\Engine.cpp" />
+    <ClCompile Include="..\Core\Object\Generator.cpp" />
+    <ClCompile Include="..\Core\Object\Hangar.cpp" />
+    <ClCompile Include="..\Core\Object\Laser.cpp" />
+    <ClCompile Include="..\Core\Object\Object.cpp" />
+    <ClCompile Include="..\Core\Object\Sensor.cpp" />
+    <ClCompile Include="..\Core\Path\Bubble.cpp" />
+    <ClCompile Include="..\Core\Path\Movement.cpp" />
+    <ClCompile Include="..\Core\Path\Path.cpp" />
+    <ClCompile Include="..\Core\Path\Shot.cpp" />
+    <ClCompile Include="..\Core\Scripts\Scripts.cpp" />
     <ClCompile Include="..\Core\Ship.cpp" />
     <ClCompile Include="..\Core\Sighting.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="WinManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Core\Event.h" />
+    <ClInclude Include="..\Core\Maths\constants.h" />
+    <ClInclude Include="..\Core\Maths\Fraction.h" />
+    <ClInclude Include="..\Core\Maths\helperFunctions.h" />
+    <ClInclude Include="..\Core\Maths\Keyframe.h" />
+    <ClInclude Include="..\Core\Maths\Point.h" />
+    <ClInclude Include="..\Core\Maths\Polynomial.h" />
+    <ClInclude Include="..\Core\Network\Network.h" />
+    <ClInclude Include="..\Core\Network\NetworkData.h" />
+    <ClInclude Include="..\Core\Object\Battery.h" />
+    <ClInclude Include="..\Core\Object\Computer.h" />
+    <ClInclude Include="..\Core\Object\Engine.h" />
+    <ClInclude Include="..\Core\Object\Generator.h" />
+    <ClInclude Include="..\Core\Object\Hangar.h" />
+    <ClInclude Include="..\Core\Object\Laser.h" />
+    <ClInclude Include="..\Core\Object\Object.h" />
+    <ClInclude Include="..\Core\Object\Sensor.h" />
+    <ClInclude Include="..\Core\Path\Bubble.h" />
+    <ClInclude Include="..\Core\Path\Movement.h" />
+    <ClInclude Include="..\Core\Path\Path.h" />
+    <ClInclude Include="..\Core\Path\Shot.h" />
+    <ClInclude Include="..\Core\Scripts\Scripts.h" />
+    <ClInclude Include="..\Core\Ship.h" />
+    <ClInclude Include="..\Core\Sighting.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{74475862-5789-4265-A647-096AC8B5A65C}</ProjectGuid>

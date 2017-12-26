@@ -1,9 +1,8 @@
-#ifndef __GAME_H__
-#define __GAME_H__
+#pragma once
 
-#include "WinManager.h"
+#include "..\Core\Ship.h"
 
-extern class Game;
+class Game;
 
 class Game {
 public:
@@ -14,6 +13,7 @@ public:
   mutex lock;
   int targetPlayerCount;
   int waitingFor;
+  map<string, Ship*> shipAuth;
   list<Drone*> drones;
   list<Path*> paths;
 
@@ -39,8 +39,9 @@ public:
   int state = Joining;
   void moveMade();
   void newTurn();
+  void tryGameStart();
   void startGame();
-  void addShip(Ship* ship);
+  string addShip(Ship* ship);
   void removeIntersect(Object* object);
   void removeIntersect(Drone* drone);
   void removeIntersect(Path* path);
@@ -53,5 +54,3 @@ public:
 };
 
 extern Game* game;
-
-#endif
