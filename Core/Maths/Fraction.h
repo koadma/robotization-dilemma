@@ -9,7 +9,8 @@ public:
 	Fraction();
 	Fraction(long long a);
 	Fraction(long long a, long long b);
-	Fraction(string s);
+	//Fraction(double d);
+  Fraction(string s);
 
   Fraction & operator +=(Fraction rhs);
   Fraction & operator -=(Fraction rhs);
@@ -32,6 +33,7 @@ public:
 
 
   operator double() const;
+  string toStr(int prec);
 private:
 	int gcd(int x, int y);
 };
@@ -63,5 +65,7 @@ bool operator > (Fraction lhs, Fraction rhs);
 bool operator <= (Fraction lhs, Fraction rhs);
 
 bool operator >= (Fraction lhs, Fraction rhs);
+
+Fraction approx(string s);
 
 //ostream& operator<<(ostream& o, Fraction f);

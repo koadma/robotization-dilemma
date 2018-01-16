@@ -112,8 +112,8 @@ public:
   }
   void getPath(time_type_s time, Path* p, Game* g);
 
-  bool load(xml_node<>* data);
-  virtual bool loadV(xml_node<>* data) { return false; }
+  bool load(xml_node<>* data, time_type_s time);
+  virtual bool loadV(xml_node<>* data, time_type_s time) { return false; }
   virtual void energyCallbackV(time_type_s t, Game* g) {}
   void energyCallback(time_type_s t, Game* g);
 #endif

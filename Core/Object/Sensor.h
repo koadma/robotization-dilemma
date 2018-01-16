@@ -80,15 +80,8 @@ public:
 
   void getPathVirt(time_type_s time, Path* p, Game* g);
 
-  bool loadV(xml_node<>* data) {
+  bool loadV(xml_node<>* data, time_type_s time) {
     xml_node<>* elem;
-
-    elem = data->first_node("max_power");
-    if (!elem) {
-      return false;
-    }
-
-    maxUseablePowerChange(0, strTo<power_type_W>(elem->value()));
 
     elem = data->first_node("sensitivity");
     if (!elem) {

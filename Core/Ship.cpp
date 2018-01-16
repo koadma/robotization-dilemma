@@ -343,6 +343,8 @@ bool Ship::loadShip(string filename) {
   return loadShip(doc.first_node("ship"));
 }
 bool Ship::loadShip(xml_node<>* data) {
+  time_type_s loadTime = -1;
+
   xml_node<>* elem;
 
   elem = data->first_node("shipclass");
@@ -364,19 +366,19 @@ bool Ship::loadShip(xml_node<>* data) {
     Object* o = NULL;
     if (name == "generator") {
       o = new Generator(this, id);
-      if (!o->load(pElem)) {
+      if (!o->load(pElem, loadTime)) {
         return false;
       }
     }
     if (name == "sensor") {
       o = new Sensor(this, id);
-      if (!o->load(pElem)) {
+      if (!o->load(pElem, loadTime)) {
         return false;
       }
     }
     if (name == "engine") {
       o = new Engine(this, id);
-      if (!o->load(pElem)) {
+      if (!o->load(pElem, loadTime)) {
         return false;
       }
     }

@@ -164,6 +164,15 @@ int main(int argc, char** argv)
   cout << sizeof(Path) << endl;
   cout << sizeof(long double) << endl;*/
 
+  cout << "Fraction test" << endl;
+
+  /*while (true) {
+    string a;
+    cin >> a;
+    Fraction app = approx(a);
+    cout << app.a << "/" << app.b << endl;
+  }*/
+
   ran1(-time(0));
 
   shipStarts = randstartpos(100000.0);
