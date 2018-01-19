@@ -3,7 +3,7 @@
 int ControlSetting::keyPressed(unsigned char key, int mx, int my) {
   if (active) {
     selected.fromNormal(key);
-    input(selected);
+    input(selected, id);
     return 1;
   }
   return 0;
@@ -12,7 +12,7 @@ int ControlSetting::keyPressed(unsigned char key, int mx, int my) {
 int ControlSetting::specialPressed(int key, int mx, int my) {
   if (active) {
     selected.fromSpecial(key);
-    input(selected);
+    input(selected, id);
     return 1;
   }
   return 0;

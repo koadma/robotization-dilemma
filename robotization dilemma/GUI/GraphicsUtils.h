@@ -31,7 +31,7 @@ struct key {
       return string(1, char(keycode));
     }
     if (97 <= keycode && keycode <= 122) { //lowercase prints as upper
-      return string(1,char(keycode - 'a' + 'A'));
+      return string(1, char(keycode - 'a' + 'A'));
     }
     if (123 <= keycode && keycode <= 126) { //special
       return string(1, char(keycode));
@@ -166,7 +166,7 @@ struct key {
 typedef void(*ClickCallback)();
 typedef void(*CheckCallback)(bool);
 typedef void(*TextInputFunc)(string);
-typedef void(*ControlInputFunc)(key);
+typedef void(*ControlInputFunc)(key, int);
 typedef void(*SliderInputFunc)(float);
 typedef bool(*TextValidatorFunc)(string, int, unsigned char);
 

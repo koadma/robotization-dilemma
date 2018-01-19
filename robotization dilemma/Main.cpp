@@ -145,7 +145,7 @@ int main() {
 
   //Graphics::ControlHwnd ctrl = Graphics::createControlHwnd(objectGameSubWindow, "ctrltest", Coordiante{ 0.5, 0.5, -50, -15 }, Coordiante{ 0.5, 0.5, 50, 15 }, hexToInt("ff070918"), hexToInt("ff190077"), hexToInt("ff838fa1"), key{0}, testKey);
   
-  
+  /*
   vector<string> reConnectData;
   if (hasSaveFile(reConnectData)) {
     createReconnectScreen();
@@ -154,6 +154,12 @@ int main() {
   else {
     createMainMenu();
   }// */
+
+  loadKeybinds("html/keybinds.cfg");
+
+  Graphics::TableHwnd table = Graphics::createTable("asd", {0,0}, {1, 1}, 0);
+  createSettings(table);
+  Graphics::addElement(objectGameSubWindow, table);
 
   glutMainLoop();
 

@@ -16,6 +16,13 @@ Zero<float>    floatZero;
 Zero<double>  doubleZero;
 Zero<string>  stringZero;
 
+void replaceChar(string& str, char ch1, char ch2) {
+  for (int i = 0; i < str.length(); ++i) {
+    if (str[i] == ch1)
+      str[i] = ch2;
+  }
+}
+
 void solve2(float a, float b, float c, float sol[2], int& numOfSol)
 {
   if (a == 0)

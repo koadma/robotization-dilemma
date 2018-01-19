@@ -30,3 +30,5 @@ string isSurefire();
 void createMainMenu();
 
 void createReconnectScreen();
+
+void createSettings(Graphics::TableHwnd& table);

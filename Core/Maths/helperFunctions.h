@@ -217,6 +217,9 @@ TextBind<
 //         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
 ///####################################################///
 
+//String replace
+void replaceChar(string& str, char ch1, char ch2);
+
 //Function for solving quadratic equations.
 void solve2(float a, float b, float c, float sol[2], int& numOfSol);
 

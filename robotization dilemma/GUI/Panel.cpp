@@ -47,7 +47,7 @@ int Panel::mouseClicked(int button, int state, int mx, int my) {
   }
   return bstate;
 }
-int Panel::mouseWheel(int delta, int state, int mx, int my) {
+int Panel::mouseWheel(int state, int delta, int mx, int my) {
   transformCoordiantes(mx, my);
 
   auto it = elements.end();
@@ -57,7 +57,7 @@ int Panel::mouseWheel(int delta, int state, int mx, int my) {
   while (it != elements.begin() && !(bstate & 2)) {
     --it;
     if (!(*it)->toDelete) {
-      bstate |= (*it)->mouseWheel(delta, state, mx, my);
+      bstate |= (*it)->mouseWheel(state, delta, mx, my);
     }
   }
   return bstate;

@@ -230,10 +230,10 @@ Graphics::ButtonHwnd Graphics::createButton(xml_node<> *me) {
     reinterpret_cast<ClickCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
-Graphics::CheckboxHwnd Graphics::createCheckbox(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
+Graphics::CheckboxHwnd Graphics::createCheckbox(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
   return new Checkbox(lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
 }
-Graphics::CheckboxHwnd Graphics::createCheckbox(  xml_node<> *me) {
+Graphics::CheckboxHwnd Graphics::createCheckbox(xml_node<> *me) {
   return createCheckbox(
     me->first_attribute("id")->value(),
     Coordiante{
@@ -254,10 +254,10 @@ Graphics::CheckboxHwnd Graphics::createCheckbox(  xml_node<> *me) {
     reinterpret_cast<CheckCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
-Graphics::LabelHwnd Graphics::createLabel(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+Graphics::LabelHwnd Graphics::createLabel(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
   return new Label(lname, mincorner, maxcorner, bg, active, textColor, text, align);
 }
-Graphics::LabelHwnd Graphics::createLabel(  xml_node<> *me) {
+Graphics::LabelHwnd Graphics::createLabel(xml_node<> *me) {
   return createLabel(
     me->first_attribute("id")->value(),
     Coordiante{
@@ -278,10 +278,10 @@ Graphics::LabelHwnd Graphics::createLabel(  xml_node<> *me) {
     strTo<int>(me->first_attribute("align")->value()));
 }
 
-Graphics::TextInputHwnd Graphics::createTextInput(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
+Graphics::TextInputHwnd Graphics::createTextInput(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
   return new TextInput(lname, mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
 }
-Graphics::TextInputHwnd Graphics::createTextInput(  xml_node<> *me) {
+Graphics::TextInputHwnd Graphics::createTextInput(xml_node<> *me) {
   return createTextInput(
     me->first_attribute("id")->value(),
     Coordiante{
@@ -303,10 +303,10 @@ Graphics::TextInputHwnd Graphics::createTextInput(  xml_node<> *me) {
     reinterpret_cast<TextValidatorFunc>(funcs[me->first_attribute("validatorfunc")->value()]));
 }
 
-Graphics::ControlHwnd Graphics::createControl(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, key selected, ControlInputFunc inputCallback) {
-  return new ControlSetting(lname, mincorner, maxcorner, bg, active, textColor, selected, inputCallback);
+Graphics::ControlHwnd Graphics::createControl(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, key selected, int id, ControlInputFunc inputCallback) {
+  return new ControlSetting(lname, mincorner, maxcorner, bg, active, textColor, selected, id, inputCallback);
 }
-Graphics::ControlHwnd Graphics::createControl(  xml_node<> *me) {
+Graphics::ControlHwnd Graphics::createControl(xml_node<> *me) {
   return createControl(
     me->first_attribute("id")->value(),
     Coordiante{
@@ -324,6 +324,7 @@ Graphics::ControlHwnd Graphics::createControl(  xml_node<> *me) {
     hexToInt(me->first_attribute("activecolor")->value()),
     hexToInt(me->first_attribute("textcolor")->value()),
     key{strTo<int>(me->value())},
+    strTo<int>(me->first_attribute("id")->value()),
     reinterpret_cast<ControlInputFunc>(funcs[me->first_attribute("inputfunc")->value()]));
 }
 

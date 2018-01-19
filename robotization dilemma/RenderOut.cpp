@@ -140,3 +140,17 @@ void createMainMenu() {
 void createReconnectScreen() {
   Graphics::setElements(objectMenuSubWindow, "html/reconnect_screen.xml");
 }
+
+void createSettings(Graphics::TableHwnd& table) {
+  table->deleteElements(false);
+  int i = 0;
+  for (auto&& it : keybinds) {
+    Graphics::TablerowHwnd row  = Graphics::createTableRow("objectKeybindRow"   + to_string(i), Coordiante{ 0, 0, 0, 0 }, Coordiante{ 1, 0, 0, 20 }, hexToInt("ff070918"));
+    Graphics::LabelHwnd    name = Graphics::createLabel   ("objectKeybindLabel" + to_string(i), Coordiante{ 0, 0, 0, 0 }, Coordiante{ 0.9f, 0, -30, 20 }, hexToInt("ff070918"), hexToInt("ff190077"), hexToInt("ff838fa1"), it.second, 1);
+    Graphics::ControlHwnd  ctrl = Graphics::createControl ("objectKeybindInput" + to_string(i), Coordiante{ 0.9f, 0, -30, 0 }, Coordiante{ 1, 0, 0, 20 }, hexToInt("ff070918"), hexToInt("ff190077"), hexToInt("ff838fa1"), it.first, i, keybindReply);
+    Graphics::addElement(row, name);
+    Graphics::addElement(row, ctrl);
+    Graphics::addElement(table, row);
+    ++i;
+  }
+}
