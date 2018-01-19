@@ -164,9 +164,9 @@ int main(int argc, char** argv)
   cout << sizeof(Path) << endl;
   cout << sizeof(long double) << endl;*/
 
-  cout << "Fraction test" << endl;
+  /*cout << "Fraction test" << endl;
 
-  /*while (true) {
+  while (true) {
     string a;
     cin >> a;
     Fraction app = approx(a);

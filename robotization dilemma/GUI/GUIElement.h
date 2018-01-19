@@ -19,6 +19,7 @@ public:
   GUIElement(string name, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
   virtual bool isIn(int mx, int my);
   virtual void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
+  virtual void getRect();
   virtual int mouseEnter(int state);
   virtual int mouseMoved(int mx, int my);
   virtual int mouseClicked(int button, int state, int mx, int my);

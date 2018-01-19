@@ -50,6 +50,7 @@
     <ClCompile Include="GUI\Canvas.cpp" />
     <ClCompile Include="GUI\Checkbox.cpp" />
     <ClCompile Include="GUI\Container.cpp" />
+    <ClCompile Include="GUI\ControlSetting.cpp" />
     <ClCompile Include="GUI\Graphics.cpp" />
     <ClCompile Include="GUI\GraphicsUtils.cpp" />
     <ClCompile Include="GUI\GUIElement.cpp" />
@@ -97,6 +98,7 @@
     <ClInclude Include="GUI\Canvas.h" />
     <ClInclude Include="GUI\Checkbox.h" />
     <ClInclude Include="GUI\Container.h" />
+    <ClInclude Include="GUI\ControlSetting.h" />
     <ClInclude Include="GUI\Graphics.h" />
     <ClInclude Include="GUI\GraphicsUtils.h" />
     <ClInclude Include="GUI\GUIElement.h" />

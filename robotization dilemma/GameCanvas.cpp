@@ -162,16 +162,20 @@ int MainGameCanvas::resizeManager(int x, int y) {
 int MainGameCanvas::keyManager(unsigned char key, int x, int y, bool in) {
   if(in) {
     if (key == 'w') {
-      camtheta += 0.2;
+      camtheta += 0.05;
+      normalizeAngles();
     }
     if (key == 'a') {
-      camphi += 0.2;
+      camphi += 0.05;
+      normalizeAngles();
     }
     if (key == 's') {
-      camtheta -= 0.2;
+      camtheta -= 0.05;
+      normalizeAngles();
     }
     if (key == 'd') {
-      camphi -= 0.2;
+      camphi -= 0.05;
+      normalizeAngles();
     }
     if (key == 'c') {
       mVec3 m = ship->mov.getAt(timeNow).pos;
@@ -427,16 +431,20 @@ int MainGameShipCanvas::resizeManager(int x, int y) {
 int MainGameShipCanvas::keyManager(unsigned char key, int x, int y, bool in) {
   if (in) {
     if (key == 'w') {
-      camtheta += 0.2;
+      camtheta += 0.05;
+      normalizeAngles();
     }
     if (key == 'a') {
-      camphi += 0.2;
+      camphi += 0.05;
+      normalizeAngles();
     }
     if (key == 's') {
-      camtheta -= 0.2;
+      camtheta -= 0.05;
+      normalizeAngles();
     }
     if (key == 'd') {
-      camphi -= 0.2;
+      camphi -= 0.05;
+      normalizeAngles();
     }
     //glutPostRedisplay();
     return 3;

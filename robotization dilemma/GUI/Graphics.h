@@ -10,6 +10,8 @@
 #include "Plot.h"
 #include "Slider.h"
 #include "Container.h"
+#include "Table.h"
+#include "ControlSetting.h"
 
 using namespace std;
 
@@ -54,6 +56,9 @@ namespace Graphics {
   typedef Plot* PlotHwnd;
   typedef Slider* SliderHwnd;
   typedef Checkbox* CheckboxHwnd;
+  typedef ControlSetting* ControlHwnd;
+  typedef Table* TableHwnd;
+  typedef TableRow* TablerowHwnd;
   typedef Graphics::GWindow* WinHwnd;
 
   WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
@@ -90,45 +95,49 @@ namespace Graphics {
     funcs[name] = reinterpret_cast<void(*)()>(func);
   }
 
-  ButtonHwnd createButton(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
-  ButtonHwnd createButton(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
-  ButtonHwnd createButton(PanelHwnd id, xml_node<> *me);
+  ButtonHwnd createButton(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback);
+  ButtonHwnd createButton(  xml_node<> *me);
 
-  CheckboxHwnd createCheckbox(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback);
-  CheckboxHwnd createCheckbox(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback);
-  CheckboxHwnd createCheckbox(PanelHwnd id, xml_node<> *me);
+  CheckboxHwnd createCheckbox(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback);
+  CheckboxHwnd createCheckbox(  xml_node<> *me);
   
-  LabelHwnd createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
-  LabelHwnd createLabel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
-  LabelHwnd createLabel(PanelHwnd id, xml_node<> *me);
+  LabelHwnd createLabel(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
+  LabelHwnd createLabel(  xml_node<> *me);
 
-  TextInputHwnd createTextInput(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
-  TextInputHwnd createTextInput(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
-  TextInputHwnd createTextInput(PanelHwnd id, xml_node<> *me);
+  TextInputHwnd createTextInput(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
+  TextInputHwnd createTextInput(  xml_node<> *me);
 
-  CanvasHwnd createCanvas(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
-  CanvasHwnd createCanvas(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
+  ControlHwnd createControl(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, key selected, ControlInputFunc inputCallback);
+  ControlHwnd createControl(  xml_node<> *me);
 
-  PlotHwnd createPlot(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor);
-  PlotHwnd createPlot(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor);
+  CanvasHwnd createCanvas(  string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers);
 
-  PanelHwnd createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
-  PanelHwnd createPanel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
-  PanelHwnd createPanel(PanelHwnd id, xml_node<> *me);
+  PlotHwnd createPlot(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor);
 
-  ContainerHwnd createContainer(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
-  ContainerHwnd createContainer(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
-  ContainerHwnd createContainer(PanelHwnd id, xml_node<> *me);
+  PanelHwnd createPanel(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  PanelHwnd createPanel(  xml_node<> *me);
 
-  SliderHwnd createSlider(WinHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
-  SliderHwnd createSlider(PanelHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
-  SliderHwnd createSlider(PanelHwnd id, xml_node<> *me);
+  ContainerHwnd createContainer(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  ContainerHwnd createContainer(  xml_node<> *me);
 
-  LabelBindHwnd createLabelBind(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center);
-  LabelBindHwnd createLabelBind(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center);
-  LabelBindHwnd createLabelBind(PanelHwnd id, xml_node<> *me);
+  SliderHwnd createSlider(  string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback);
+  SliderHwnd createSlider(  xml_node<> *me);
 
-  ElemHwnd createElement(PanelHwnd id, ElemHwnd elem);
+  LabelBindHwnd createLabelBind(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center);
+  LabelBindHwnd createLabelBind(xml_node<> *me);
+
+  TableHwnd createTable(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  TableHwnd createTable( xml_node<> *me);
+
+  TablerowHwnd createTableRow(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  TablerowHwnd createTableRow(xml_node<> *me);
+
+  ElemHwnd addElement(WinHwnd id, ElemHwnd elem);
+  ElemHwnd addElement(PanelHwnd id, ElemHwnd elem);
+  ElemHwnd addElement(TableHwnd id, TablerowHwnd elem);
+  ElemHwnd addElement(TablerowHwnd id, ElemHwnd elem);
+
+  ElemHwnd createElement(xml_node<> *me);
 
   void deleteElement(ElemHwnd elemId);
 
@@ -136,7 +145,10 @@ namespace Graphics {
 
   void deleteElements(WinHwnd winId);
 
+  void setElements(WinHwnd winId, xml_node<> *data);
   void setElements(PanelHwnd id, xml_node<> *data);
+  void setElements(TableHwnd id, xml_node<> *data);
+  void setElements(TablerowHwnd id, xml_node<> *data);
 
   void setElements(PanelHwnd id, string filename);
 

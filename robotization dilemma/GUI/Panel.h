@@ -20,6 +20,7 @@ public:
   void render();
 
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
+  void getRect();
 
   void deleteElements(bool hard);
 

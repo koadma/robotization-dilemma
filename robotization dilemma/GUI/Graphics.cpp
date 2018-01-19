@@ -206,16 +206,11 @@ void Graphics::elementRenderManager(WinHwnd id) {
   id->myPanel->render();
 }
 
-Graphics::ButtonHwnd Graphics::createButton(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback) {
-  return createButton(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, text, clickCallback);
+Graphics::ButtonHwnd Graphics::createButton(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback) {
+  return new Button(lname, mincorner, maxcorner, bg, active, textColor, text, clickCallback);
 }
-Graphics::ButtonHwnd Graphics::createButton(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, ClickCallback clickCallback) {
-  ElemHwnd elem = new Button(lname, mincorner, maxcorner, bg, active, textColor, text, clickCallback);
-  return reinterpret_cast<ButtonHwnd>(createElement(id, elem));
-}
-Graphics::ButtonHwnd Graphics::createButton(PanelHwnd id, xml_node<> *me) {
+Graphics::ButtonHwnd Graphics::createButton(xml_node<> *me) {
   return createButton(
-    id,
     me->first_attribute("id")->value(),
     Coordiante {
       strTo<float>(me->first_attribute("minrelx")->value()),
@@ -235,16 +230,11 @@ Graphics::ButtonHwnd Graphics::createButton(PanelHwnd id, xml_node<> *me) {
     reinterpret_cast<ClickCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
-Graphics::CheckboxHwnd Graphics::createCheckbox(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
-  return createCheckbox(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
+Graphics::CheckboxHwnd Graphics::createCheckbox(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
+  return new Checkbox(lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
 }
-Graphics::CheckboxHwnd Graphics::createCheckbox(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
-  ElemHwnd elem = new Checkbox(lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
-  return reinterpret_cast<CheckboxHwnd>(createElement(id, elem));
-}
-Graphics::CheckboxHwnd Graphics::createCheckbox(PanelHwnd id, xml_node<> *me) {
+Graphics::CheckboxHwnd Graphics::createCheckbox(  xml_node<> *me) {
   return createCheckbox(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
     strTo<float>(me->first_attribute("minrelx")->value()),
@@ -264,16 +254,11 @@ Graphics::CheckboxHwnd Graphics::createCheckbox(PanelHwnd id, xml_node<> *me) {
     reinterpret_cast<CheckCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
-Graphics::LabelHwnd Graphics::createLabel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
-  return createLabel(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, text, align);
+Graphics::LabelHwnd Graphics::createLabel(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+  return new Label(lname, mincorner, maxcorner, bg, active, textColor, text, align);
 }
-Graphics::LabelHwnd Graphics::createLabel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
-  ElemHwnd elem = new Label(lname, mincorner, maxcorner, bg, active, textColor, text, align);
-  return reinterpret_cast<LabelHwnd>(createElement(id, elem));
-}
-Graphics::LabelHwnd Graphics::createLabel(PanelHwnd id, xml_node<> *me) {
+Graphics::LabelHwnd Graphics::createLabel(  xml_node<> *me) {
   return createLabel(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
     strTo<float>(me->first_attribute("minrelx")->value()),
@@ -293,16 +278,11 @@ Graphics::LabelHwnd Graphics::createLabel(PanelHwnd id, xml_node<> *me) {
     strTo<int>(me->first_attribute("align")->value()));
 }
 
-Graphics::TextInputHwnd Graphics::createTextInput(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
-  return createTextInput(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
+Graphics::TextInputHwnd Graphics::createTextInput(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
+  return new TextInput(lname, mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
 }
-Graphics::TextInputHwnd Graphics::createTextInput(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
-  ElemHwnd elem = new TextInput(lname, mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
-  return reinterpret_cast<TextInputHwnd>(createElement(id, elem));
-}
-Graphics::TextInputHwnd Graphics::createTextInput(PanelHwnd id, xml_node<> *me) {
+Graphics::TextInputHwnd Graphics::createTextInput(  xml_node<> *me) {
   return createTextInput(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
     strTo<float>(me->first_attribute("minrelx")->value()),
@@ -323,32 +303,43 @@ Graphics::TextInputHwnd Graphics::createTextInput(PanelHwnd id, xml_node<> *me) 
     reinterpret_cast<TextValidatorFunc>(funcs[me->first_attribute("validatorfunc")->value()]));
 }
 
-Graphics::CanvasHwnd Graphics::createCanvas(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
-  return createCanvas(id->myPanel, lname, mincorner, maxcorner, managers);
+Graphics::ControlHwnd Graphics::createControl(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, key selected, ControlInputFunc inputCallback) {
+  return new ControlSetting(lname, mincorner, maxcorner, bg, active, textColor, selected, inputCallback);
 }
-Graphics::CanvasHwnd Graphics::createCanvas(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
-  ElemHwnd elem = new Canvas(lname, mincorner, maxcorner, managers);
-  return reinterpret_cast<CanvasHwnd>(createElement(id, elem));
+Graphics::ControlHwnd Graphics::createControl(  xml_node<> *me) {
+  return createControl(
+    me->first_attribute("id")->value(),
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    key{strTo<int>(me->value())},
+    reinterpret_cast<ControlInputFunc>(funcs[me->first_attribute("inputfunc")->value()]));
 }
 
-Graphics::PlotHwnd Graphics::createPlot(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor) {
-  return createPlot(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor);
-}
-Graphics::PlotHwnd Graphics::createPlot(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor) {
-  ElemHwnd elem = new Plot(lname, mincorner, maxcorner, bg, active, textColor);
-  return reinterpret_cast<PlotHwnd>(createElement(id, elem));
+Graphics::CanvasHwnd Graphics::createCanvas(  string lname, Coordiante mincorner, Coordiante maxcorner, IWindowManagers managers) {
+  return new Canvas(lname, mincorner, maxcorner, managers);
 }
 
-Graphics::PanelHwnd Graphics::createPanel(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
-  return createPanel(id->myPanel, lname, mincorner, maxcorner, bg);
+Graphics::PlotHwnd Graphics::createPlot(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor) {
+  return new Plot(lname, mincorner, maxcorner, bg, active, textColor);
 }
-Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
-  ElemHwnd elem = new Panel(lname, mincorner, maxcorner, bg);
-  return reinterpret_cast<PanelHwnd>(createElement(id, elem));
+
+Graphics::PanelHwnd Graphics::createPanel(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
+  return new Panel(lname, mincorner, maxcorner, bg);
 }
-Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, xml_node<> *me) {
+Graphics::PanelHwnd Graphics::createPanel(  xml_node<> *me) {
   PanelHwnd p = createPanel(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
     strTo<float>(me->first_attribute("minrelx")->value()),
@@ -368,16 +359,59 @@ Graphics::PanelHwnd Graphics::createPanel(PanelHwnd id, xml_node<> *me) {
   return p;
 }
 
-Graphics::ContainerHwnd Graphics::createContainer(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
-  return createContainer(id->myPanel, lname, mincorner, maxcorner, bg);
+Graphics::TableHwnd Graphics::createTable(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
+  return new Table(lname, mincorner, maxcorner, bg);
 }
-Graphics::ContainerHwnd Graphics::createContainer(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
-  ElemHwnd elem = new Container(lname, mincorner, maxcorner, bg);
-  return reinterpret_cast<ContainerHwnd>(createElement(id, elem));
+Graphics::TableHwnd Graphics::createTable(  xml_node<> *me) {
+  TableHwnd p = createTable(
+    me->first_attribute("id")->value(),
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()));
+
+  setElements(p, me);
+
+  return p;
 }
-Graphics::ContainerHwnd Graphics::createContainer(PanelHwnd id, xml_node<> *me) {
+
+Graphics::TablerowHwnd Graphics::createTableRow(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
+  return new TableRow(lname, mincorner, maxcorner, bg);
+}
+Graphics::TablerowHwnd Graphics::createTableRow(  xml_node<> *me) {
+  TablerowHwnd p = createTableRow(
+    me->first_attribute("id")->value(),
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()));
+
+  setElements(p, me);
+
+  return p;
+}
+
+Graphics::ContainerHwnd Graphics::createContainer(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg) {
+  return new Container(lname, mincorner, maxcorner, bg);
+}
+Graphics::ContainerHwnd Graphics::createContainer(  xml_node<> *me) {
   ContainerHwnd p = createContainer(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
     strTo<float>(me->first_attribute("minrelx")->value()),
@@ -395,16 +429,11 @@ Graphics::ContainerHwnd Graphics::createContainer(PanelHwnd id, xml_node<> *me) 
   return p;
 }
 
-Graphics::SliderHwnd Graphics::createSlider(WinHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
-return createSlider(id->myPanel, name, mincorner, maxcorner, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
+Graphics::SliderHwnd Graphics::createSlider(  string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
+return new Slider(name, mincorner, maxcorner, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
 }
-Graphics::SliderHwnd Graphics::createSlider(PanelHwnd id, string name, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
-ElemHwnd elem = new Slider(name, mincorner, maxcorner, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
-  return reinterpret_cast<SliderHwnd>(createElement(id, elem));
-}
-Graphics::SliderHwnd Graphics::createSlider(PanelHwnd id, xml_node<> *me) {
+Graphics::SliderHwnd Graphics::createSlider(  xml_node<> *me) {
   SliderHwnd p = createSlider(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
       strTo<float>(me->first_attribute("minrelx")->value()),
@@ -431,16 +460,11 @@ Graphics::SliderHwnd Graphics::createSlider(PanelHwnd id, xml_node<> *me) {
   return p;
 }
 
-Graphics::LabelBindHwnd Graphics::createLabelBind(WinHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center) {
-  return createLabelBind(id->myPanel, lname, mincorner, maxcorner, bg, active, textColor, center);
+Graphics::LabelBindHwnd Graphics::createLabelBind(  string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center) {
+  return new LabelBind(lname, mincorner, maxcorner, bg, active, textColor, center);
 }
-Graphics::LabelBindHwnd Graphics::createLabelBind(PanelHwnd id, string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center) {
-  ElemHwnd elem = new LabelBind(lname, mincorner, maxcorner, bg, active, textColor, center);
-  return reinterpret_cast<LabelBindHwnd>(createElement(id, elem));
-}
-Graphics::LabelBindHwnd Graphics::createLabelBind(PanelHwnd id, xml_node<> *me) {
+Graphics::LabelBindHwnd Graphics::createLabelBind(  xml_node<> *me) {
   return createLabelBind(
-    id,
     me->first_attribute("id")->value(),
     Coordiante{
     strTo<float>(me->first_attribute("minrelx")->value()),
@@ -463,10 +487,61 @@ void Graphics::deleteElements(WinHwnd id) {
   deleteElements(id->myPanel);
 }
 
-Graphics::ElemHwnd Graphics::createElement(PanelHwnd id, ElemHwnd elem) {
+Graphics::ElemHwnd Graphics::addElement(WinHwnd id, ElemHwnd elem) {
+  return addElement(id->myPanel, elem);
+}
+Graphics::ElemHwnd Graphics::addElement(PanelHwnd id, ElemHwnd elem) {
   id->elements.push_back(elem);
-  Graphics::elementResizeManager(id, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+  id->getRect();
   return elem;
+}
+Graphics::ElemHwnd Graphics::addElement(TableHwnd id, TablerowHwnd elem) {
+  id->data.push_back(elem);
+  id->getRect();
+  return elem;
+}
+Graphics::ElemHwnd Graphics::addElement(TablerowHwnd id, ElemHwnd elem) {
+  id->data.push_back(elem);
+  id->getRect();
+  return elem;
+}
+
+Graphics::ElemHwnd Graphics::createElement(xml_node<> *me) {
+  string name = me->name();
+  if (name == "button") {
+    return createButton(me);
+  }
+  else if (name == "checkbox") {
+    return createCheckbox(me);
+  }
+  else if (name == "label" || name == "text") {
+    return createLabel(me);
+  }
+  else if (name == "labelbind" || name == "textbind") {
+    return createLabelBind(me);
+  }
+  else if (name == "container") {
+    return createContainer(me);
+  }
+  else if (name == "textinput" || name == "input") {
+    return createTextInput(me);
+  }
+  else if (name == "panel" || name == "div") {
+    return createPanel(me);
+  }
+  else if (name == "slider") {
+    return createSlider(me);
+  }
+  else if (name == "config") {
+    return createControl(me);
+  }
+  else if (name == "table") {
+    return createTable(me);
+  }
+  else {
+    throw 1;
+    return NULL;
+  }
 }
 
 void Graphics::deleteElement(ElemHwnd elem) {
@@ -480,35 +555,7 @@ void Graphics::deleteElements(PanelHwnd id) {
 void Graphics::setElements(PanelHwnd id, xml_node<> *data) {
   for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling())
   {
-    string name = pElem->name();
-    if (name == "button") {
-      createButton(id, pElem);
-    }
-    else if (name == "checkbox") {
-      createCheckbox(id, pElem);
-    }
-    else if (name == "label" || name == "text") {
-      createLabel(id, pElem);
-    }
-    else if (name == "labelbind" || name == "textbind") {
-      createLabelBind(id, pElem);
-    }
-    else if (name == "container") {
-      createContainer(id, pElem);
-    }
-    else if (name == "textinput" || name == "input") {
-      createTextInput(id, pElem);
-    }
-    else if (name == "panel" || name == "div") {
-      createPanel(id, pElem);
-    }
-    else if (name == "slider") {
-      createSlider(id, pElem);
-    }
-    else {
-      throw 1;
-      return;
-    }
+    addElement(id, createElement(pElem));
   }
   return;
 }
@@ -528,6 +575,23 @@ void Graphics::setElements(PanelHwnd id, string filename) {
   setElements(id, doc.first_node("body"));
 
   defaultResizeManager(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+  glutPostRedisplay();
+}
+
+void Graphics::setElements(TableHwnd id, xml_node<> *data) {
+  for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling())
+  {
+    string name = pElem->name();
+    if (name == "tr") {
+      addElement(id, createTableRow(pElem));
+    }
+  }
+}
+void Graphics::setElements(TablerowHwnd id, xml_node<> *data) {
+  for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling())
+  {
+    addElement(id, createElement(pElem));
+  }
 }
 
 Graphics::ElemHwnd Graphics::getElementById(Graphics::PanelHwnd pId, string id) {

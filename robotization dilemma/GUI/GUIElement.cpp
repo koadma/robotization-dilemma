@@ -18,6 +18,10 @@ void GUIElement::getRect(int winWidth, int winHeight, int offsetX, int offsetY) 
   cby = offsetY + maxcorner.GetY(winHeight);
 }
 
+void GUIElement::getRect() {
+
+}
+
 bool GUIElement::isIn(int mx, int my) {
   //getRect(winWidth, winHeight);
   if ((cax  <= mx) && (mx <= cbx ) && (cay <= my) && (my <= cby)) {

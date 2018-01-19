@@ -162,6 +162,9 @@
     <ClCompile Include="GUI\Plot.cpp">
       <Filter>Code\Libraries\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\ControlSetting.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUI\Button.h">
@@ -297,6 +300,9 @@
       <Filter>Code\Framework</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Plot.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ControlSetting.h">
       <Filter>Code\Libraries\GUI</Filter>
     </ClInclude>
   </ItemGroup>

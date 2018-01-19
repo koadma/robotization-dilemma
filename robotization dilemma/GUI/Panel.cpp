@@ -149,6 +149,10 @@ void Panel::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
   cbx = offsetX + maxcorner.GetX(winWidth);
   cby = offsetY + maxcorner.GetY(winHeight);
 
+  getRect();
+}
+
+void Panel::getRect() {
   auto it = elements.begin();
 
   while (it != elements.end()) {

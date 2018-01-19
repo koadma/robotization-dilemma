@@ -18,7 +18,6 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
         Graphics::setElements(objectGameSubWindow, "html/game_screen.xml");
 
         objectMainGameCanvas = Graphics::createCanvas(
-          reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectMainGameCanvasContainer")),
           "objectMainGameCanvas",
           Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f },
           Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f },
@@ -35,8 +34,10 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
             MainGameCanvas::mouseWheelManager
           }
         );
+        Graphics::addElement(
+          reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectMainGameCanvasContainer")),
+          objectMainGameCanvas);
         objectMainGameShipCanvas = Graphics::createCanvas(
-          reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectMainGameShipCanvasContainer")),
           "objectMainGameShipCanvas",
           Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f },
           Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f },
@@ -53,6 +54,9 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
             MainGameShipCanvas::mouseWheelManager
            }
         );
+        Graphics::addElement(
+          reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectMainGameShipCanvasContainer")),
+          objectMainGameShipCanvas);
 
         bindLabels();
 
@@ -96,6 +100,10 @@ bool hasSaveFile(vector<string>& data) {
   return true;
 }
 
+void testKey(key k) {
+  cout << k.keycode << " " << k.toName() << endl;
+}
+
 int main() {
   setlocale(LC_ALL, "");
   srand(time(NULL));
@@ -133,8 +141,11 @@ int main() {
 
   Graphics::PlotHwnd plt = Graphics::createPlot(objectGameSubWindow, "plot", Coordiante{0, 0}, Coordiante{1, 1}, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
   plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v2->_val), hexToInt("ffff0000")));
-  plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v1->_val), hexToInt("ffffff00")));/*/
+  plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v1->_val), hexToInt("ffffff00")));// */
 
+  //Graphics::ControlHwnd ctrl = Graphics::createControlHwnd(objectGameSubWindow, "ctrltest", Coordiante{ 0.5, 0.5, -50, -15 }, Coordiante{ 0.5, 0.5, 50, 15 }, hexToInt("ff070918"), hexToInt("ff190077"), hexToInt("ff838fa1"), key{0}, testKey);
+  
+  
   vector<string> reConnectData;
   if (hasSaveFile(reConnectData)) {
     createReconnectScreen();

@@ -12,14 +12,18 @@ void TableRow::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
   cbx = offsetX + maxcorner.GetX(winWidth);
   cby = offsetY + maxcorner.GetY(winHeight);
 
-  int n = 0;
+  getRect();
+}
+
+void TableRow::getRect() {
+  int chx = 0;
 
   auto it = data.begin();
 
   while (it != data.end()) {
-    (*it)->getRect((cbx - cax) / data.size(), cby - cay, cax + n / float(data.size()) * (cbx - cax), cay);
+    (*it)->getRect(cbx - cax, cby - cay, chx, cay);
+    chx = (*it)->cby;
     ++it;
-    ++n;
   }
 }
 
@@ -39,15 +43,17 @@ void Table::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
   cbx = offsetX + maxcorner.GetX(winWidth);
   cby = offsetY + maxcorner.GetY(winHeight);
 
-  float chy = height.GetY(cby - cay);
+  getRect();
+}
 
-  int n = 0;
+void Table::getRect() {
+  int chy = cay - scroll;
 
   auto it = data.begin();
-  
+
   while (it != data.end()) {
-    (*it)->getRect(cbx - cax, chy, cax, cay + n*chy - scroll);
+    (*it)->getRect(cbx - cax, cby - cay, cax, chy);
+    chy = (*it)->cby;
     ++it;
-    ++n;
   }
 }

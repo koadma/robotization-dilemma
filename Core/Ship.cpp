@@ -419,6 +419,7 @@ void Ship::newTurn(int id) {
   lastEvtTime = (id - 1) * ROUND_TIME;
   renderNewRound(id);
   timeNow = ROUND_TIME*(id - 1);
+  glutPostRedisplay();
 }
 void Ship::drawSightings(float camcx, float camcy, float camcz, float d, OpenGLData data) {
   mVec3 pos = mov.getAt(timeNow).pos;

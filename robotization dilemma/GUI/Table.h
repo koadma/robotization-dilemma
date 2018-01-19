@@ -6,27 +6,23 @@
 class TableRow : public GUIElement {
 public:
   list<GUIElement*> data;
-  int align;
-  TableRow(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, int lalign) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
-    align = lalign;
+  TableRow(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg) :
+    GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
   }
   void render();
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
+  void getRect();
 };
 
 class Table : public GUIElement {
 public:
   list<TableRow*> data;
-  int align;
-  Coordiante height;
   //float chy;
   float scroll;
-  Table(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, int lalign, Coordiante lheight) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
-    align = lalign;
-    height = lheight;
+  Table(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg) :
+    GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
   }
   void render();
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
+  void getRect();
 };
