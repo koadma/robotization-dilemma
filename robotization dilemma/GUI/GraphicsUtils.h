@@ -105,7 +105,7 @@ struct key {
     case GLUT_KEY_PAGE_UP:
       return "PGUP";
       break;
-      //Repeat
+      ///Repeat
 
       //Arrow
     case GLUT_KEY_LEFT:

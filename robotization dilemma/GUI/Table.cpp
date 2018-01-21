@@ -183,7 +183,8 @@ GUIElement* TableRow::getElementById(string id) {
 }
 
 void Table::render() {
-  glViewport(cax, cay, cbx - cax, cby - cay);
+  glEnable(GL_SCISSOR_TEST);
+  glScissor(cax, cay, cbx - cax, cby - cay);
 
   auto it = data.begin();
 
@@ -205,6 +206,14 @@ void Table::render() {
 
   }
 
+  glBegin(GL_QUADS);
+  setColor(activeColor);
+  glVertex2d(cbx - 15, sba);
+  glVertex2d(cbx - 5, sba);
+  glVertex2d(cbx - 5, sbb);
+  glVertex2d(cbx - 15, sbb);
+  glEnd();
+
   Graphics::resetViewport();
 }
 
@@ -218,14 +227,44 @@ void Table::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
 }
 
 void Table::getRect() {
-  int chy = cay - scroll;
+  if(data.size()) {
+    
 
-  auto it = data.end();
+    height = 0;
 
-  while (it != data.begin()) {
-    --it;
-    (*it)->getRect(cbx - cax, cby - cay, cax, chy);
-    chy = (*it)->cby;
+    for (auto&& it : data) {
+      height += it->getHeight(cby - cay);
+    }
+    int minscroll = cby - cay - height; //lower most
+    if (scroll < minscroll) {
+      scroll = minscroll;
+    }
+    int maxscroll = 0; //upper most
+    if (scroll > maxscroll) {
+      scroll = maxscroll;
+    }
+    
+    int chy = cby - scroll;
+
+    for (auto&& it : data) {
+      it->getRect(cbx - cax - 20, cby - cay, cax, chy - it->getHeight(cby - cay));
+      chy = it->cay;
+    }
+
+    if(maxscroll != minscroll) {
+      sbb = cby - 5 + ((cby - cay - 10) * scroll)/(height);
+      sba = cby - 5 + ((cby - cay - 10) * (cay - cby + scroll)) / height;
+    }
+    else {
+      sba = (cay + cby) / 2;
+      sbb = (cay + cby) / 2;
+    }
+
+    if (sbb - sba < 10) {
+      int sbc = (sba + sbb) / 2;
+      sba = sbc - 5;
+      sbb = sbc + 5;
+    }
   }
 }
 
@@ -288,7 +327,7 @@ int Table::mouseClicked(int button, int state, int mx, int my) {
 }
 int Table::mouseWheel(int state, int delta, int mx, int my) {
   if (isIn(mx, my)) {
-    scroll += 10 * delta;
+    scroll += 30 * delta;
     getRect();
     return 1;
   }

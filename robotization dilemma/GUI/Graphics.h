@@ -126,7 +126,7 @@ namespace Graphics {
   LabelBindHwnd createLabelBind(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, int center);
   LabelBindHwnd createLabelBind(xml_node<> *me);
 
-  TableHwnd createTable(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);
+  TableHwnd createTable(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active);
   TableHwnd createTable( xml_node<> *me);
 
   TablerowHwnd createTableRow(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg);

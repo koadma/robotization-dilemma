@@ -75,3 +75,15 @@ GUIElement* GUIElement::getElementById(string id) {
   }
 }
 
+int GUIElement::getWidth() {
+  return cbx - cax;
+}
+int GUIElement::getWidth(int winWidth) {
+  return maxcorner.GetX(winWidth) - mincorner.GetX(winWidth);
+}
+int GUIElement::getHeight() {
+  return cby - cay;
+}
+int GUIElement::getHeight(int winHeight) {
+  return maxcorner.GetY(winHeight) - mincorner.GetY(winHeight);
+}

@@ -20,6 +20,8 @@ void mainMenuPlayButton();
 
 void mainMenuExitButton();
 
+void settingsMenuInput(key nkey, int id);
+
 void bindLabels();
 
 int InitGraphics();

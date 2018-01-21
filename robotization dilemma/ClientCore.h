@@ -12,4 +12,5 @@ extern vector<pair<key, string>> keybinds; //key, display name
 
 void keybindReply(key nkey, int id);
 
-void loadKeybinds(string filename);
+void loadKeybinds(string filename = "html/keybinds.cfg");
+void saveKeybinds(string filename = "html/keybinds.cfg");

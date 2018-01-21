@@ -15,7 +15,7 @@
 		callback = "ffaMenuNewGameButton"
 	>Start New FFA</button>
 	<button
-		id = "objectFFAMenuLoadGameButton"
+		id = "objectFFAMenuJoinGameButton"
 		minrelx = "0.3"
 		minrely = "0.5"
 		minabsx = "5.0"
@@ -27,8 +27,8 @@
 		bgcolor = "ff070918"
 		activecolor = "ff190077"
 		textcolor = "ff838fa1"
-		callback = "ffaMenuLoadGameButton"
-	>Load Saved FFA</button>
+		callback = "ffaMenuJoinGameButton"
+	>Join FFA Server</button>
 	<button
 		id = "objectFFAMenuBackButton"
 		minrelx = "0.3"

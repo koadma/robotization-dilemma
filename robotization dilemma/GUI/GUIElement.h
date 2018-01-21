@@ -29,5 +29,9 @@ public:
   virtual int specialUp(int key, int mx, int my);
   virtual int mouseWheel(int a, int b, int mx, int my);
   virtual void render();
+  virtual int getWidth();
+  virtual int getWidth(int winWidth);
+  virtual int getHeight();
+  virtual int getHeight(int winHeight);
   virtual GUIElement* getElementById(string id);
 };

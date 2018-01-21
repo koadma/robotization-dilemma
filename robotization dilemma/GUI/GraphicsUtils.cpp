@@ -65,6 +65,7 @@ int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in) {
 
 void Graphics::resetViewport() {
   glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+  glScissor(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 
   //glGetIntegerv(GL_VIEWPORT, arr);
   glDisable(GL_DEPTH_TEST);

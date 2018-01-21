@@ -30,3 +30,20 @@ void loadKeybinds(string filename) {
 
   binds.close();
 }
+
+void saveKeybinds(string filename) {
+  ofstream binds;
+  binds.open(filename);
+
+  int id = 0;
+  for(auto&& it : keybinds) {
+    string name = it.second;
+    replaceChar(name, ' ', '_');
+
+    binds << id << " " << name << " " << it.first.keycode << endl;
+
+    id++;
+  }
+
+  binds.close();
+}
