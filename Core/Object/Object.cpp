@@ -22,6 +22,7 @@ Object::Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth,
   _maxUseablePower.addFrame(-2, 0);
   _maxStorage.addFrame(-2, 0);
   _usedPower.addFrame(-2, 0);
+  _selfUsedPower.addFrame(-2, 0);
   _generatedPower.addFrame(-2, 0);
 }
 
@@ -39,6 +40,9 @@ power_type_W Object::getRequestedPower(time_type_s time) {
 }
 power_type_W Object::getUsedPower(time_type_s time) {
   return _usedPower.getAt(time)();
+}
+power_type_W Object::getSelfUsedPower(time_type_s time) {
+  return _selfUsedPower.getAt(time)();
 }
 energy_type_J Object::getMaxEnergy(time_type_s time) {
   return _maxStorage.getAt(time)();
@@ -170,6 +174,10 @@ void Object::getStatus(DataElement* data) {
   _usedPower.get(upe);
   data->addChild(upe);
 
+  DataElement* supe = new DataElement();
+  _selfUsedPower.get(supe);
+  data->addChild(supe);
+
   DataElement* mse = new DataElement();
   _maxStorage.get(mse);
   data->addChild(mse);
@@ -205,11 +213,13 @@ void Object::setStatus(DataElement* data) {
 
   _usedPower.set(data->_children[11]);
 
-  _maxStorage.set(data->_children[12]);
+  _selfUsedPower.set(data->_children[12]);
 
-  _energySystem->_val.set(data->_children[13]);
+  _maxStorage.set(data->_children[13]);
 
-  setVStatus(data->_children[14]);
+  _energySystem->_val.set(data->_children[14]);
+
+  setVStatus(data->_children[15]);
 }
 
 void Object::getVStatus(DataElement* data) {
@@ -277,24 +287,30 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
 void Object::energyCallback(time_type_s t, Game* g) {
   if (_energySystem->_delta > Fraction(0)) {
     _generatedPower.addFrame(t, 0);
-    _usedPower.addFrame(t, min(double(_energySystem->_delta),getMaxUseablePower(t)));
+    _usedPower.addFrame(t, double(_energySystem->_delta));
+    _selfUsedPower.addFrame(t, double(_energySystem->_firstDelta));
   }
   if (_energySystem->_delta < Fraction(0)) {
     _generatedPower.addFrame(t, -double(_energySystem->_delta));
     _usedPower.addFrame(t, 0);
+    _selfUsedPower.addFrame(t, 0);
   }
   energyCallbackV(t, g);
 }
 void Object::getPath(time_type_s time, Path* p, Game* g) {
   if ((p->type() == Path::PathTypeShot) && (p->originID != _ID)) {
+    Shot* ps = (Shot*)p;
     _health.addFrame(time,
       value<int>(max(
         0,
-        _health.getAt(time)() - int(((Shot*)p)->energy / 50)
+        _health.getAt(time)() - int(ps->energy / 50)
         ))); //TODO BETTER
+    ps->energy -= 10000;
+    ps->energy = max(0, ps->energy);
   }
   if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && _radius*_radius*PI*((Bubble*)p)->getFlux(time) > BUBBLE_REMOVE && ((Bubble*)p)->btype != Bubble::Chat) { //Thermal and ping are reflected
     Bubble* b = new Bubble();
+    b->constrains.push_back(Bubble::constrain(Bubble::constrain::include, {1, 0, 0}, -2)); //Include all directions
     b->btype = ((Bubble*)p)->btype;
     b->emitter = getMovement(time);
     b->energy = _radius*_radius*PI*((Bubble*)p)->getFlux(time);

@@ -122,7 +122,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
     hph->_data.fromType<double>(_health.getAt(time)() / double(_maxHealth));
     ScriptData* epp = new ScriptData();
     epp->type = ScriptData::TNUMERIC;
-    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->getFlux(time) * _usedPower.getAt(time)() * PI * _radius * _radius);
+    epp->_data.fromType<double>(reinterpret_cast<Bubble*>(p)->getFlux(time) * _selfUsedPower.getAt(time)() * PI * _radius * _radius);
     ScriptData* meta = new ScriptData();
     meta->type = ScriptData::TSTRING;
     meta->_data.fromType<string>(reinterpret_cast<Bubble*>(p)->data);
@@ -131,7 +131,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
     d->_elems.insert({ "metaData", meta });
     ScriptData* res = _sensitivity->run(*d);
     float resf = res->_data.toType<float>();
-    cout << "Ch: " << resf << " H:" << hph->_data.toType<double>() << " E:" << epp->_data.toType<double>() << " Eb:" << reinterpret_cast<Bubble*>(p)->getFlux(time) * PI * _radius * _radius << " Es:" << _usedPower.getAt(time)() << endl;
+    cout << "Ch: " << resf << " H:" << hph->_data.toType<double>() << " E:" << epp->_data.toType<double>() << " Eb:" << reinterpret_cast<Bubble*>(p)->getFlux(time) * PI * _radius * _radius << " Es:" << _selfUsedPower.getAt(time)() << endl;
     if (ran1() < resf) {
       cout << "Detected" << endl;
       Sighting* s = new Sighting();

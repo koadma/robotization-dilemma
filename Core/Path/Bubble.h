@@ -10,16 +10,47 @@ public:
     Thermal = 2,
     Chat = 3
   };
+
+  class constrain {
+  private:
+    bool _include;
+    sVec3 _dir;
+    double _cosphi;
+  public:
+    enum {
+      include = true,
+      exclude = false
+    };
+    void verify(bool& current, sVec3 toVerify) {
+      toVerify.norm();
+      bool in = dot(toVerify, _dir) >= _cosphi;
+      //If should be included and is in -> its current
+
+      //If it was current, to exclude, and not in -> its in
+      //If it was current, to include, and not in -> its in
+      //Sum: If it was current, and not in -> its in;
+      current = (_include and in) or (current and not in);
+    }
+    constrain(bool sign, sVec3 dir, double cosphi) : _include(sign), _dir(dir.norm()), _cosphi(cosphi) { }
+  };
   mVec3 origin;
   time_type_s gEmissionTime;
   Movement emitter;
   energy_type_J energy = 1.0f;
   string data = "";
+  vector<constrain> constrains;
   en_flux_type_Jpermm getFlux(time_type_s t) {
     if (t <= gEmissionTime) {
       return 0;
     }
     return energy / (4 * PI * (SOL * (t - gEmissionTime)) * (SOL * (t - gEmissionTime)));
+  }
+  bool verify(time_type_s time, mVec3 pos) {
+    bool in = false;
+    for (auto&& it : constrains) {
+      it.verify(in, pos - origin);
+    }
+    return in;
   }
   Type btype;
   int etype() {

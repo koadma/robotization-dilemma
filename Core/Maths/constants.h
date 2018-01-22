@@ -43,9 +43,9 @@ const time_type_s ROUND_TIME = 2;
 #define ElementBackColor 0xff030014
 
 #define VersionA 0
-#define VersionB 4
+#define VersionB 5
 #define VersionC 0
-//0.40
+//0.50
 //Converge to 137.035999139
 
 const acc_type_mperss MAX_ACCEL = 100;
@@ -76,6 +76,18 @@ enum PacketIds {
   PacketSensor = 6,
   PacketCommandHistory = 7,
   PacketShipData = 8,
+};
+
+enum KeyConfigID {
+  KeyCameraUp = 0,
+  KeyCameraLeft = 1,
+  KeyCameraDown = 2,
+  KeyCameraRight = 3,
+  KeyCenterWorld = 4,
+  KeyCenterShip = 5,
+  KeyCenterSighting = 6,
+  KeyPlotZoomX = 7,
+  KeyPlotZoomY = 8
 };
 
 #define SightingSize 0.02

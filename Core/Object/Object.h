@@ -18,6 +18,7 @@ public:
   keyframe<value<power_type_W>> _maxUseablePower;
   keyframe<value<power_type_W>> _requestedPower;
   keyframe<value<power_type_W>> _usedPower;
+  keyframe<value<power_type_W>> _selfUsedPower; //Not for battery charge
   keyframe<value<energy_type_J>> _maxStorage;
   
   Object(Drone* parentShip, uint64_t ID);
@@ -50,6 +51,7 @@ public:
   power_type_W getRequestedPower(time_type_s time);
   
   power_type_W getUsedPower(time_type_s time);
+  power_type_W getSelfUsedPower(time_type_s time);
   energy_type_J getMaxEnergy(time_type_s time);
  
   energy_type_J getStoredEnergy(time_type_s time);
