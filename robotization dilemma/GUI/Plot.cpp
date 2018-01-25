@@ -20,30 +20,20 @@ int Plot::mouseMoved(int mx, int my) {
   return 1;
 }
 
-int Plot::mouseClicked(int button, int state, int mx, int my) {
-  if (isIn(mx, my)) {
-    mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
-    mousebuttons ^= (state ^ 1) << button;
-  }
-  else {
-    mousebuttons = 0;
-  }
-  if (button == 0 && state == 0) { //left, down, click
-    int n = 0;
-    for (auto&& dit : plotData) {
-      double offset = 75 + (cbx - cax - 75) * double(n) / plotData.size(); //75 from line 96
-      if(offset + 10 <= mx && mx <= offset + 30 && 5 <= my && my <= 15) {
-        dit->enabled = !dit->enabled;
-        return 1;
-      }
-      n++;
+int Plot::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+  if (evt._key._type == key::type_wheel) { //Zoom
+    if (!down.count(keybinds[KeyPlotZoomX].first)) {
+      ox += ((cbx + cax) / 2.0 - mx)*(pow(1.1, -evt._key._keycode) - 1)*sx;
+      sx *= pow(1.1, -evt._key._keycode);
     }
-  }
-  return 0;
-}
 
-int Plot::keyPressed(unsigned char key, int mx, int my) {
-  if (key == 'r') {
+    if (!down.count(keybinds[KeyPlotZoomY].first)) {
+      oy += ((cby + cay) / 2.0 - my)*(pow(1.1, -evt._key._keycode) - 1)*sy;
+      sy *= pow(1.1, -evt._key._keycode);
+    }
+    return 1;
+  }
+  if (evt._key == keybinds[KeyPlotReset].first) { //Reset
     double nsx, nsy;
     nsx = nsy = max(sx, sy);
     ox += ((cbx + cax) / 2.0 - mx)*(nsx - sx);
@@ -52,44 +42,21 @@ int Plot::keyPressed(unsigned char key, int mx, int my) {
     sy = nsy;
     return 1;
   }
+  if (evt._key._type == key::type_mouse) { //Mouse
+    if (evt._key._keycode == 0 && evt._type == gui_event::evt_pressed) { //left, down
+      int n = 0;
+      for (auto&& dit : plotData) {
+        double offset = 75 + (cbx - cax - 75) * double(n) / plotData.size();
+        if (offset + 10 <= mx && mx <= offset + 30 && 5 <= my && my <= 15) {
+          dit->enabled = !dit->enabled;
+          return 1;
+        }
+        n++;
+      }
+    }
+  }
+
   return 0;
-}
-
-int Plot::specialPressed(int key, int mx, int my) {
-  if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R) {
-    specialState |= 1;
-  }
-  if (key == GLUT_KEY_CTRL_L || key == GLUT_KEY_CTRL_R) {
-    specialState |= 2;
-  }
-  return 0;
-}
-
-int Plot::keyUp(unsigned char key, int mx, int my) {
-  return 0;
-}
-
-int Plot::specialUp(int key, int mx, int my) {
-  if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R) {
-    specialState &= 2;
-  }
-  if (key == GLUT_KEY_CTRL_L || key == GLUT_KEY_CTRL_R) {
-    specialState &= 1;
-  }
-  return 0;
-}
-
-int Plot::mouseWheel(int a, int b, int mx, int my) {
-  if(!(specialState & 1)) {
-    ox += ((cbx + cax) / 2.0 - mx)*(pow(1.1, -b) - 1)*sx;
-    sx *= pow(1.1, -b);
-  }
-
-  if (!(specialState & 2)) {
-    oy += ((cby + cay) / 2.0 - my)*(pow(1.1, -b) - 1)*sy;
-    sy *= pow(1.1, -b);
-  }
-  return 1;
 }
 
 void Plot::render() {

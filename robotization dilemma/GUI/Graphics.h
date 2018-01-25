@@ -43,7 +43,7 @@ namespace Graphics {
   extern map<int, GWindow*> windows;
 
   extern map<string, void(*)()> funcs;
-
+  extern set<key> keysdown;
 
   typedef GUIElement* ElemHwnd;
   typedef Panel* PanelHwnd;
@@ -73,17 +73,7 @@ namespace Graphics {
 
   int elementMouseMoveManager(WinHwnd id, int x, int y);
 
-  int elementMouseClickManager(WinHwnd id, int button, int state, int x, int y);
-
-  int elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y);
-
-  int elementKeyPressManager(WinHwnd id, unsigned char kay, int x, int y);
-
-  int elementSpecialPressManager(WinHwnd id, int key, int x, int y);
-  
-  int elementKeyUpManager(WinHwnd id, unsigned char kay, int x, int y);
-
-  int elementSpecialUpManager(WinHwnd id, int key, int x, int y);
+  int elementGUIEventManager(WinHwnd id, gui_event evt, int mx, int my, set<key>& down);
 
   void elementResizeManager(WinHwnd id, int width, int height);
 

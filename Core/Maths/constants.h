@@ -87,7 +87,8 @@ enum KeyConfigID {
   KeyCenterShip = 5,
   KeyCenterSighting = 6,
   KeyPlotZoomX = 7,
-  KeyPlotZoomY = 8
+  KeyPlotZoomY = 8,
+  KeyPlotReset = 9
 };
 
 #define SightingSize 0.02

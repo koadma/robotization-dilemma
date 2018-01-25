@@ -24,8 +24,8 @@ int Button::mouseMoved(int mx, int my) {
   return oactive xor active; //if state changed
 }
 
-int Button::mouseClicked(int button, int state, int mx, int my) {
-  if (isIn(mx, my) && state == 0 && button == 0) { //click, left
+int Button::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+  if (isIn(mx, my) && evt._key._type == key::type_mouse && evt._type == gui_event::evt_pressed && evt._key._keycode == 0) { //mouse, click, left
     clickCallback();
     return 3;
   }

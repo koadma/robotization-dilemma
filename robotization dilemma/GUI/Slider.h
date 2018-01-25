@@ -5,7 +5,7 @@
 class Slider : public GUIElement {
 private:
   void mouseAt(int x, int y);
-  int mousebuttons = 0;
+  bool mdown = false;
 public:
   string text;
   SliderInputFunc clickCallback;
@@ -25,6 +25,6 @@ public:
   }
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
-  int mouseClicked(int button, int state, int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
   void render();
 };

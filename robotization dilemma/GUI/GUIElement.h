@@ -22,12 +22,7 @@ public:
   virtual void getRect();
   virtual int mouseEnter(int state);
   virtual int mouseMoved(int mx, int my);
-  virtual int mouseClicked(int button, int state, int mx, int my);
-  virtual int keyPressed(unsigned char key, int mx, int my);
-  virtual int specialPressed(int key, int mx, int my);
-  virtual int keyUp(unsigned char key, int mx, int my);
-  virtual int specialUp(int key, int mx, int my);
-  virtual int mouseWheel(int a, int b, int mx, int my);
+  virtual int guiEvent(gui_event evt, int mx, int my, set<key>& down);
   virtual void render();
   virtual int getWidth();
   virtual int getWidth(int winWidth);

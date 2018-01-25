@@ -1,58 +1,57 @@
 #include "TextInput.h"
 
-int TextInput::keyPressed(unsigned char key, int mx, int my) {
-  if (active) {
-    if(key == '\b' && text.length() && cursor > 0) {
-      text.erase(cursor - 1, 1);
-      cursor--;
-      return 1;
+int TextInput::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+  if (evt._key._type == key::type_mouse) {
+    bool oactive = active;
+    if (evt._type == gui_event::evt_pressed && evt._key._keycode == 0) { //click, left
+      active = isIn(mx, my);
     }
-    if (key == 127 && text.length() && cursor < text.size()) {
-      text.erase(cursor, 1);
-      return 1;
+    if (oactive xor active) {
+      if (active) {
+        cursor = text.size();
+      }
+      if (!active) {
+        cursor = -1;
+        input(text);
+      }
     }
-    if (key == '\n' || key == '\r') {
-      input(text);
-      return 3;
-    }
-    if (validator(text, cursor, key)) {
-      text.insert(cursor, 1, key);
-      cursor++;
-      return 1;
-    }
+    return oactive xor active;
   }
-  return 0;
-}
 
-int TextInput::specialPressed(int key, int mx, int my) {
   if (active) {
-    if (key == 100) {
-      cursor = max(0, cursor-1);
-      return 1;
+    if(evt._key._type == key::type_special && evt._type == gui_event::evt_pressed) {
+      if (evt._key._keycode == GLUT_KEY_LEFT) {
+        cursor = max(0, cursor - 1);
+        return 1;
+      }
+      if (evt._key._keycode == GLUT_KEY_LEFT) {
+        cursor = min(int(text.size()), cursor + 1);
+        return 1;
+      }
     }
-    if (key == 102) {
-      cursor = min(int(text.size()), cursor + 1);
-      return 1;
+    if (evt._key._type == key::type_key && evt._type == gui_event::evt_pressed) {
+      if (evt._key._keycode == '\b' && text.length() && cursor > 0) {
+        text.erase(cursor - 1, 1);
+        cursor--;
+        return 1;
+      }
+      if (evt._key._keycode == 127 && text.length() && cursor < text.size()) {
+        text.erase(cursor, 1);
+        return 1;
+      }
+      if (evt._key._keycode == '\n' || evt._key._keycode == '\r') {
+        input(text);
+        return 3;
+      }
+      if (validator(text, cursor, evt._key._keycode)) {
+        text.insert(cursor, 1, evt._key._keycode);
+        cursor++;
+        return 1;
+      }
     }
   }
-  return 0;
-}
 
-int TextInput::mouseClicked(int button, int state, int mx, int my) {
-  bool oactive = active;
-  if(state == 0 && button == 0) { //click, left
-    active = isIn(mx, my);
-  }
-  if(oactive xor active) {
-    if (active) {
-      cursor = text.size();
-    }
-    if (!active) {
-      cursor = -1;
-      input(text);
-    }
-  }
-  return oactive xor active;
+  return 0;
 }
 
 void TextInput::render() {

@@ -15,14 +15,9 @@ namespace MainGameCanvas {
   void normalizeAngles();
   int renderManager(int ax, int ay, int bx, int by);
   int resizeManager(int x, int y);
-  int keyManager(unsigned char key, int x, int y, bool in);
-  int specialKeyManager(int key, int x, int y, bool in);
-  int keyUpManager(unsigned char key, int x, int y, bool in);
-  int specialKeyUpManager(int key, int x, int y, bool in);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
-  int mouseClickManager(int button, int state, int x, int y, bool in);
-  int mouseWheelManager(int idk, int key, int x, int y, bool in);
+  int guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in);
 }
 
 namespace MainGameShipCanvas {
@@ -38,12 +33,7 @@ namespace MainGameShipCanvas {
   void normalizeAngles();
   int renderManager(int ax, int ay, int bx, int by);
   int resizeManager(int x, int y);
-  int keyManager(unsigned char key, int x, int y, bool in);
-  int specialKeyManager(int key, int x, int y, bool in);
-  int keyUpManager(unsigned char key, int x, int y, bool in);
-  int specialKeyUpManager(int key, int x, int y, bool in);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
-  int mouseClickManager(int button, int state, int x, int y, bool in);
-  int mouseWheelManager(int idk, int key, int x, int y, bool in);
+  int guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in);
 }

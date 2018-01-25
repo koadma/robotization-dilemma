@@ -15,8 +15,6 @@ public:
     validator = lvalidator;
     cursor = -1;
   }
-  int keyPressed(unsigned char key, int mx, int my);
-  int specialPressed(int key, int mx, int my);
-  int mouseClicked(int button, int state, int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
   void render();
 };

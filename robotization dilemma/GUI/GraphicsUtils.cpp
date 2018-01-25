@@ -1,5 +1,50 @@
 #include "GraphicsUtils.h"
 
+
+bool operator==(const key& lhs, const key& rhs) {
+  return (lhs._type == rhs._type) & (lhs._keycode == rhs._keycode);
+}
+
+bool operator<(const key& lhs, const key& rhs) {
+  if (lhs._type < rhs._type) {
+    return true;
+  }
+  if ((lhs._type == rhs._type) && (lhs._keycode < rhs._keycode)) {
+    return true;
+  }
+  return false;
+}
+
+bool operator<=(const key& lhs, const key& rhs) {
+  if (lhs._type <= rhs._type) {
+    return true;
+  }
+  if ((lhs._type == rhs._type) && (lhs._keycode <= rhs._keycode)) {
+    return true;
+  }
+  return false;
+}
+
+bool operator>(const key& lhs, const key& rhs) {
+  if (lhs._type > rhs._type) {
+    return true;
+  }
+  if ((lhs._type == rhs._type) && (lhs._keycode > rhs._keycode)) {
+    return true;
+  }
+  return false;
+}
+
+bool operator>=(const key& lhs, const key& rhs) {
+  if (lhs._type >= rhs._type) {
+    return true;
+  }
+  if ((lhs._type == rhs._type) && (lhs._keycode >= rhs._keycode)) {
+    return true;
+  }
+  return false;
+}
+
 static void shapesPrintf(int row, int col, const char *fmt, ...)
 {
   static char buf[256];
@@ -44,22 +89,13 @@ int defaultIRenderManager(int ax, int ay, int bx, int by) {
 int defaultIResizeManager(int x, int y) {
   return 0;
 }
-int defaultIKeyManager(unsigned char key, int x, int y, bool in) {
-  return 0;
-}
-int defaultISpecialKeyManager(int key, int x, int y, bool in) {
+int defaultIGUIEventManager(gui_event evt, int x, int y, set<key>& down) {
   return 0;
 }
 int defaultIMouseEntryManager(int state) {
   return 0;
 }
 int defaultIMouseMoveManager(int x, int y) {
-  return 0;
-}
-int defaultIMouseClickManager(int idk, int key, int x, int y, bool in) {
-  return 0;
-}
-int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in) {
   return 0;
 }
 

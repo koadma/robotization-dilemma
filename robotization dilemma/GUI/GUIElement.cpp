@@ -38,27 +38,7 @@ int GUIElement::mouseMoved(int mx, int my) {
   return 0;
 }
 
-int GUIElement::mouseClicked(int button, int state, int mx, int my) {
-  return 0;
-}
-
-int GUIElement::keyPressed(unsigned char key, int mx, int my) {
-  return 0;
-}
-
-int GUIElement::specialPressed(int key, int mx, int my) {
-  return 0;
-}
-
-int GUIElement::keyUp(unsigned char key, int mx, int my) {
-  return 0;
-}
-
-int GUIElement::specialUp(int key, int mx, int my) {
-  return 0;
-}
-
-int GUIElement::mouseWheel(int a, int b, int mx, int my) {
+int GUIElement::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
   return 0;
 }
 

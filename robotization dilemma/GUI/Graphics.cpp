@@ -20,6 +20,7 @@ Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordiante minc, Coo
   if(id != -1) {
     glutReshapeFunc(manager.resizeManager);
     glutDisplayFunc(manager.renderManager);
+    
     glutKeyboardFunc(manager.keyManager);
     glutSpecialFunc(manager.specialKeyManager);
     glutKeyboardUpFunc(manager.keyUpManager);
@@ -104,23 +105,49 @@ void Graphics::defaultResizeManager(int x, int y) {
 
   elementResizeManager(h, width, height);
 }
-void Graphics::defaultKeyManager(unsigned char key, int x, int y) {
-  if (1 & elementKeyPressManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+void Graphics::defaultKeyManager(unsigned char keyc, int x, int y) {
+  key keyd;
+  keyd.fromKey(keyc);
+
+  if (!keysdown.count(keyd)) { //If new key, down
+    keysdown.insert(keyd);
+    if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_down), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
+      glutPostRedisplay();
+    }
+  }
+  //Always pressed
+  if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_pressed), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
 }
-void Graphics::defaultSpecialKeyManager(int key, int x, int y) {
-  if (1 & elementSpecialPressManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+void Graphics::defaultSpecialKeyManager(int keyc, int x, int y) {
+  key keyd;
+  keyd.fromSpecial(keyc);
+
+  if (!keysdown.count(keyd)) { //If new key, down
+    keysdown.insert(keyd);
+    if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_down), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
+      glutPostRedisplay();
+    }
+  }
+  //Always pressed
+  if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_pressed), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
 }
-void Graphics::defaultKeyUpManager(unsigned char key, int x, int y) {
-  if (1 & elementKeyUpManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+void Graphics::defaultKeyUpManager(unsigned char keyc, int x, int y) {
+  key keyd;
+  keyd.fromKey(keyc);
+  keysdown.erase(keyd);
+  if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_up), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
 }
-void Graphics::defaultSpecialKeyUpManager(int key, int x, int y) {
-  if (1 & elementSpecialUpManager(GetWinHwnd(glutGetWindow()), key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+void Graphics::defaultSpecialKeyUpManager(int keyc, int x, int y) {
+  key keyd;
+  keyd.fromSpecial(keyc);
+  keysdown.erase(keyd);
+  if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_up), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
 }
@@ -135,12 +162,31 @@ void Graphics::defaultMouseMoveManager(int x, int y) {
   }
 }
 void Graphics::defaultMouseClickManager(int button, int state, int x, int y) {
-  if (1 & elementMouseClickManager(GetWinHwnd(glutGetWindow()), button, state, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
-    glutPostRedisplay();
+  key keyd;
+  keyd.fromMouse(button);
+  if (state == 0) { //Down
+    if (!keysdown.count(keyd)) { //If new key, down
+      keysdown.insert(keyd);
+      if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_down), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
+        glutPostRedisplay();
+      }
+    }
+    //Always pressed
+    if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_pressed), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
+      glutPostRedisplay();
+    }
+  }
+  if (state == 1) { //Up
+    keysdown.erase(keyd);
+    if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_up), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
+      glutPostRedisplay();
+    }
   }
 }
-void Graphics::defaultMouseWheelManager(int idk, int key, int x, int y) {
-  if (1 & elementMouseWheelManager(GetWinHwnd(glutGetWindow()), idk, key, x, glutGet(GLUT_WINDOW_HEIGHT) - y)) {
+void Graphics::defaultMouseWheelManager(int state, int delta, int x, int y) {
+  key keyd;
+  keyd.fromWheel(delta);
+  if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_none), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
 }
@@ -160,6 +206,7 @@ WindowManagers {
 };
 map<int, Graphics::GWindow*> Graphics::windows;
 map<string, void(*)()> Graphics::funcs;
+set<key> Graphics::keysdown;
 
 int Graphics::elementMouseEnterManager(WinHwnd id, int mstate) {
   return id->myPanel->mouseEnter(mstate);
@@ -169,29 +216,8 @@ int Graphics::elementMouseMoveManager(WinHwnd id, int x, int y) {
   return id->myPanel->mouseMoved(x, y);
 }
 
-int Graphics::elementMouseClickManager(WinHwnd id, int button, int state, int x, int y) {
-  //cout << button << " " << state << " " << x << " " << y << endl;
-  return id->myPanel->mouseClicked(button, state, x, y);
-}
-
-int Graphics::elementMouseWheelManager(WinHwnd id, int a, int b, int x, int y) {
-  return id->myPanel->mouseWheel(a, b, x, y);
-}
-
-int Graphics::elementKeyPressManager(WinHwnd id, unsigned char key, int x, int y) {
-  return id->myPanel->keyPressed(key, x, y);
-}
-
-int Graphics::elementSpecialPressManager(WinHwnd id, int key, int x, int y) {
-  return id->myPanel->specialPressed(key, x, y);
-}
-
-int Graphics::elementKeyUpManager(WinHwnd id, unsigned char key, int x, int y) {
-  return id->myPanel->keyUp(key, x, y);
-}
-
-int Graphics::elementSpecialUpManager(WinHwnd id, int key, int x, int y) {
-  return id->myPanel->specialUp(key, x, y);
+int Graphics::elementGUIEventManager(WinHwnd id, gui_event evt, int mx, int my, set<key>& down) {
+  return id->myPanel->guiEvent(evt, mx, my, down);
 }
 
 void Graphics::elementResizeManager(WinHwnd id, int width, int height) {
@@ -323,7 +349,7 @@ Graphics::ControlHwnd Graphics::createControl(xml_node<> *me) {
     hexToInt(me->first_attribute("bgcolor")->value()),
     hexToInt(me->first_attribute("activecolor")->value()),
     hexToInt(me->first_attribute("textcolor")->value()),
-    key{strTo<int>(me->value())},
+    key(me->value()),
     strTo<int>(me->first_attribute("id")->value()),
     reinterpret_cast<ControlInputFunc>(funcs[me->first_attribute("inputfunc")->value()]));
 }

@@ -12,37 +12,36 @@ int Slider::mouseEnter(int state) {
 }
 int Slider::mouseMoved(int mx, int my) {
   bool oactive = active;
-  if (active && (mousebuttons & 1)) {
+  if (active && mdown) {
     mouseAt(mx, my);
   }
-  else {
-    active = false;
-    //clickCallback(val);
-  }
 
-  return (mousebuttons & 1) | (oactive xor active); //if state changed
+  return mdown | (oactive xor active); //if state changed
 }
 
-int Slider::mouseClicked(int button, int state, int mx, int my) {
+int Slider::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
   bool oactive = active;
+  cout << evt.toName() << endl;
 
-  if (isIn(mx, my)) {
-    active = true;
-    mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
-    mousebuttons ^= (state ^ 1) << button;
-    if (mousebuttons & 1) {
-      mouseAt(mx, my);
+  if (evt._key._type == key::type_mouse) {
+    if (evt._key._keycode == 0) {
+      if (evt._type == gui_event::evt_up) {
+        mdown = false;
+        active = false;
+      }
+      if(isIn(mx, my)) {
+        if (evt._type == gui_event::evt_down) {
+          mdown = true;
+          active = true;
+          mouseAt(mx, my);
+        }
+      }
+      else {
+        mdown = false;
+        active = false;
+      }
+      return 1;
     }
-  }
-  else {
-    mousebuttons = 0;
-    active = false;
-    //clickCallback(val);
-  }
-
-  if (state == 0 && button == 1) {
-    mouseAt(mx, my);
-    return 1;
   }
   return oactive xor active; //rerender if changed
 }

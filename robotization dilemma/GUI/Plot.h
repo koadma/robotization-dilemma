@@ -101,7 +101,6 @@ public:
   list<PlotLine*> plotData;
   double ox, oy; //in plot coords, for center of plot
   double sx, sy; //data / plotwidth
-  int specialState;
 
   Plot(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
@@ -109,18 +108,12 @@ public:
     oy = 0;//(frames->getDoubleAt(frames->getFirst()) +frames->getDoubleAt(frames->getLast()))/2.0;
     sx = 1;//frames->getLast() - frames->getFirst();
     sy = 1;//frames->getDoubleAt(frames->getLast()) - frames->getDoubleAt(frames->getFirst());
-    specialState = 0;
   }
   int mousebuttons;
   int mxold, myold;
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
-  int mouseClicked(int button, int state, int mx, int my);
-  int keyPressed(unsigned char key, int mx, int my);
-  int specialPressed(int key, int mx, int my);
-  int keyUp(unsigned char key, int mx, int my);
-  int specialUp(int key, int mx, int my);
-  int mouseWheel(int a, int b, int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
   void render();
   int get(double ori, double scale, double v, int h);
 };

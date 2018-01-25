@@ -8,20 +8,8 @@ int Canvas::mouseMoved(int mx, int my) {
   return managers.mouseMoveManager(mx, my);
 }
 
-int Canvas::mouseClicked(int button, int state, int mx, int my) {
-  return managers.mouseClickManager(button, state, mx, my, isIn(mx, my));
-}
-
-int Canvas::keyPressed(unsigned char key, int mx, int my) {
-  return managers.keyManager(key, mx, my, isIn(mx, my));
-}
-
-int Canvas::specialPressed(int key, int mx, int my) {
-  return managers.specialKeyManager(key, mx, my, isIn(mx, my));
-}
-
-int Canvas::mouseWheel(int a, int b, int mx, int my) {
-  return managers.mouseWheelManager(a, b, mx, my, isIn(mx, my));
+int Canvas::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+  return managers.guiEventManager(evt, mx, my, down, isIn(mx, my));
 }
 
 void Canvas::render() {

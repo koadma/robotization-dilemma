@@ -9,34 +9,44 @@ using namespace std;
 typedef uint32_t colorargb;
 
 struct key {
-  int keycode;
-  bool isNormal() {
-    return keycode < 256;
+  enum type {
+    type_key = 0,
+    type_special = 1,
+    type_mouse = 2,
+    type_wheel = 3
+  };
+  int _type;
+  int _keycode;
+  bool isKey() {
+    return _type == type_key;
   }
-  char toNormal() {
-    assert(isNormal());
-    return keycode;
-  }
-  int toSpecial() {
-    return keycode >> 8;
-  }
-  void fromNormal(unsigned char key) {
-    keycode = key;
+  void fromKey(unsigned char key) {
+    _keycode = key;
+    _type = type_key;
   }
   void fromSpecial(int key) {
-    keycode = key << 8;
+    _keycode = key;
+    _type = type_special;
   }
-  string toName() {
-    if (33 <= keycode && keycode <= 96) { //puncutation, uppercase
-      return string(1, char(keycode));
+  void fromMouse(int button) {
+    _keycode = button;
+    _type = type_mouse;
+  }
+  void fromWheel(int delta) {
+    _keycode = delta;
+    _type = type_wheel;
+  }
+  string toKeyName() {
+    if (33 <= _keycode && _keycode <= 96) { //puncutation, uppercase
+      return string(1, char(_keycode));
     }
-    if (97 <= keycode && keycode <= 122) { //lowercase prints as upper
-      return string(1, char(keycode - 'a' + 'A'));
+    if (97 <= _keycode && _keycode <= 122) { //lowercase prints as upper
+      return string(1, char(_keycode - 'a' + 'A'));
     }
-    if (123 <= keycode && keycode <= 126) { //special
-      return string(1, char(keycode));
+    if (123 <= _keycode && _keycode <= 126) { //special
+      return string(1, char(_keycode));
     }
-    switch (keycode) {
+    switch (_keycode) {
     case ' ':
       return "SPACE";
       break;
@@ -57,7 +67,9 @@ struct key {
       return "ESC";
       break;
     }
-    switch (toSpecial()) {
+  }
+  string toSpecialName() {
+    switch (_keycode) {
       //Function keys
     case GLUT_KEY_SHIFT_L:
       return "LSHIFT";
@@ -159,7 +171,95 @@ struct key {
       return "F12";
       break;
     }
-    return "ERROR" + to_string(keycode);
+    return "ERROR" + to_string(_keycode);
+  }
+  string toMouseName() {
+    switch (_keycode) {
+      case 0:
+        return "LBUTTON";
+        break;
+      case 1:
+        return "MBUTTON";
+        break;
+      case 2:
+        return "RBUTTON";
+        break;
+    }
+  }
+  string toWheelName() {
+    return to_string(_keycode);
+  }
+  string toName() {
+    switch (_type) {
+    case type_key:
+      return toKeyName();
+      break;
+    case type_special:
+      return toSpecialName();
+      break;
+    case type_mouse:
+      return toMouseName();
+      break;
+    case type_wheel:
+      return toWheelName();
+      break;
+    }
+    return "T ERROR" + to_string(_type);
+  }
+
+  key(int keycode, int type) {
+    _keycode = keycode;
+    _type = type;
+  }
+  key(string keycode) {
+    vector<string> spliced = tokenize(keycode, ' ');
+    _keycode = strTo<int>(spliced[0]);
+    _type = strTo<int>(spliced[1]);
+  }
+  key() {
+    _keycode = 0;
+    _type = type_key;
+  }
+};
+
+bool operator==(const key& lhs, const key& rhs);
+
+bool operator<(const key& lhs, const key& rhs);
+
+bool operator<=(const key& lhs, const key& rhs);
+
+bool operator>(const key& lhs, const key& rhs);
+
+bool operator>=(const key& lhs, const key& rhs);
+
+struct gui_event {
+  key _key;
+  enum type {
+    evt_none = 0,
+    evt_down = 1,
+    evt_pressed = 2,
+    evt_up = 3
+  };
+  type _type;
+  string toName() {
+    switch (_type) {
+    case evt_none:
+      return _key.toName();
+      break;
+    case evt_down:
+      return _key.toName() + " DOWN";
+      break;
+    case evt_pressed:
+      return _key.toName() + " PRESS";
+      break;
+    case evt_up:
+      return _key.toName() + " UP";
+      break;
+    }
+  }
+  gui_event(key key, type type) {
+    _key = key;
+    _type = type;
   }
 };
 
@@ -172,30 +272,25 @@ typedef bool(*TextValidatorFunc)(string, int, unsigned char);
 
 typedef void(*RenderManager)();
 typedef void(*ResizeManager)(int x, int y);
+typedef void(*GUIEventManager)(gui_event evt, int x, int y, set<key>& down);
 typedef void(*KeyManager)(unsigned char key, int x, int y);
 typedef void(*SpecialKeyManager)(int key, int x, int y);
-typedef void(*MouseEntryManager)(int state);
-typedef void(*MouseMoveManager)(int x, int y);
 typedef void(*MouseClickManager)(int idk, int key, int x, int y);
 typedef void(*MouseWheelManager)(int idk, int key, int x, int y);
+typedef void(*MouseEntryManager)(int state);
+typedef void(*MouseMoveManager)(int x, int y);
 
 typedef int(*IRenderManager)(int ax, int ay, int bx, int by);
 typedef int(*IResizeManager)(int x, int y);
-typedef int(*IKeyManager)(unsigned char key, int x, int y, bool in);
-typedef int(*ISpecialKeyManager)(int key, int x, int y, bool in);
+typedef int(*IGUIEventManager)(gui_event evt, int x, int y, set<key>& down, bool in);
 typedef int(*IMouseEntryManager)(int state);
 typedef int(*IMouseMoveManager)(int x, int y);
-typedef int(*IMouseClickManager)(int idk, int key, int x, int y, bool in);
-typedef int(*IMouseWheelManager)(int idk, int key, int x, int y, bool in);
 
 int defaultIRenderManager(int ax, int ay, int bx, int by);
 int defaultIResizeManager(int x, int y);
-int defaultIKeyManager(unsigned char key, int x, int y, bool in);
-int defaultISpecialKeyManager(int key, int x, int y, bool in);
+int defaultIGUIEventManager(gui_event evt, int x, int y, set<key>& down);
 int defaultIMouseEntryManager(int state);
 int defaultIMouseMoveManager(int x, int y);
-int defaultIMouseClickManager(int idk, int key, int x, int y, bool in);
-int defaultIMouseWheelManager(int idk, int key, int x, int y, bool in);
 
 struct OpenGLData {
   GLdouble model_view[16];
@@ -220,14 +315,9 @@ struct WindowManagers {
 struct IWindowManagers {
   IRenderManager renderManager         ;//= defaultIRenderManager;
   IResizeManager resizeManager;//= defaultIResizeManager;
-  IKeyManager keyManager;// = defaultIKeyManager;
-  ISpecialKeyManager specialKeyManager;//= defaultISpecialKeyManager;
-  IKeyManager keyUpManager;// = defaultIKeyManager;
-  ISpecialKeyManager specialUpKeyManager;//= defaultISpecialKeyManager;
+  IGUIEventManager guiEventManager;// = defaultIKeyManager;
   IMouseEntryManager mouseEntryManager;//= defaultIMouseEntryManager;
   IMouseMoveManager mouseMoveManager;//= defaultIMouseMoveManager;
-  IMouseClickManager mouseClickManager;//= defaultIMouseClickManager;
-  IMouseWheelManager mouseWheelManager;//= defaultIMouseWheelManager;
 };
 
 //extern map<int, Graphics::WindowData> Graphics::windows;

@@ -16,16 +16,17 @@ void loadKeybinds(string filename) {
 
   int id;
   string display;
-  int val;
+  int valt;
+  int valv;
 
-  while (binds >> id >> display >> val) {
+  while (binds >> id >> display >> valt >> valv) {
     replaceChar(display, '_', ' ');
 
     if (keybinds.size() <= id) {
       keybinds.resize(id + 1);
     }
 
-    keybinds[id] = {key{val}, display};
+    keybinds[id] = {key(valv, valt), display};
   }
 
   binds.close();
@@ -40,7 +41,7 @@ void saveKeybinds(string filename) {
     string name = it.second;
     replaceChar(name, ' ', '_');
 
-    binds << id << " " << name << " " << it.first.keycode << endl;
+    binds << id << " " << name << " " << it.first._type << " " << it.first._keycode << endl;
 
     id++;
   }

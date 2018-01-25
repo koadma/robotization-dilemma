@@ -24,14 +24,9 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
           IWindowManagers{
             MainGameCanvas::renderManager,
             MainGameCanvas::resizeManager,
-            MainGameCanvas::keyManager,
-            MainGameCanvas::specialKeyManager,
-            MainGameCanvas::keyUpManager,
-            MainGameCanvas::specialKeyUpManager,
+            MainGameCanvas::guiEventManager,
             MainGameCanvas::mouseEntryManager,
             MainGameCanvas::mouseMoveManager,
-            MainGameCanvas::mouseClickManager,
-            MainGameCanvas::mouseWheelManager
           }
         );
         Graphics::addElement(
@@ -44,14 +39,9 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
           IWindowManagers{
             MainGameShipCanvas::renderManager,
             MainGameShipCanvas::resizeManager,
-            MainGameShipCanvas::keyManager,
-            MainGameShipCanvas::specialKeyManager,
-            MainGameShipCanvas::keyUpManager,
-            MainGameShipCanvas::specialKeyUpManager,
+            MainGameShipCanvas::guiEventManager,
             MainGameShipCanvas::mouseEntryManager,
-            MainGameShipCanvas::mouseMoveManager,
-            MainGameShipCanvas::mouseClickManager,
-            MainGameShipCanvas::mouseWheelManager
+            MainGameShipCanvas::mouseMoveManager
            }
         );
         Graphics::addElement(
@@ -101,7 +91,7 @@ bool hasSaveFile(vector<string>& data) {
 }
 
 void testKey(key k) {
-  cout << k.keycode << " " << k.toName() << endl;
+  cout << k._keycode << " " << k.toName() << endl;
 }
 
 int main() {

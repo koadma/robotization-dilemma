@@ -21,43 +21,13 @@ int Container::mouseMoved(int mx, int my) {
 
   return bstate;
 }
-int Container::mouseClicked(int button, int state, int mx, int my) {
-  int bstate = 0;
-
-  if (element != NULL) {
-    bstate = element->mouseClicked(button, state, mx, my);
-  }
-
-  return bstate;
-}
-int Container::mouseWheel(int delta, int state, int mx, int my) {
-  //cout << delta << "\t" << state << endl;
-  int bstate = 0;
-
-  if (element != NULL) {
-    bstate = element->mouseWheel(delta, state, mx, my);
-  }
-  
-  return bstate;
-}
-int Container::keyPressed(unsigned char key, int mx, int my) {
-  //cout << key;
-  int bstate = 0;
-
-  if (element != NULL) {
-    bstate = element->keyPressed(key, mx, my);
-  }
-
-  return bstate;
-}
-int Container::specialPressed(int key, int mx, int my) {
+int Container::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
   //cout << key << endl;
 
   int bstate = 0;
 
   if (element != NULL) {
-    bstate = element->specialPressed(key, mx, my);
-    
+    bstate = element->guiEvent(evt, mx, my, down);
   }
   return bstate;
 }

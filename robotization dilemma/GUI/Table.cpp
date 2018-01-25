@@ -69,24 +69,8 @@ int TableRow::mouseMoved(int mx, int my) {
   }
   return state;
 }
-int TableRow::mouseClicked(int button, int state, int mx, int my) {
-  auto it = data.end();
 
-  int bstate = 0;
-
-  while (it != data.begin() && !(bstate & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      bstate |= (*it)->mouseClicked(button, state, mx, my);
-    }
-  }
-  return bstate;
-}
-int TableRow::mouseWheel(int state, int delta, int mx, int my) {
-  return 0;
-}
-int TableRow::keyPressed(unsigned char key, int mx, int my) {
-
+int TableRow::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
   auto it = data.end();
 
   int state = 0;
@@ -94,51 +78,12 @@ int TableRow::keyPressed(unsigned char key, int mx, int my) {
   while (it != data.begin() && !(state & 2)) {
     --it;
     if (!(*it)->toDelete) {
-      state |= (*it)->keyPressed(key, mx, my);
+      state |= (*it)->guiEvent(evt, mx, my, down);
     }
   }
   return state;
 }
-int TableRow::specialPressed(int key, int mx, int my) {
 
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->specialPressed(key, mx, my);
-    }
-  }
-  return state;
-}
-int TableRow::keyUp(unsigned char key, int mx, int my) {
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->keyUp(key, mx, my);
-    }
-  }
-  return state;
-}
-int TableRow::specialUp(int key, int mx, int my) {
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->specialUp(key, mx, my);
-    }
-  }
-  return state;
-}
 
 void TableRow::deleteElements(bool hard) {
   auto it = data.begin();
@@ -268,6 +213,34 @@ void Table::getRect() {
   }
 }
 
+int Table::mouseEnter(int state) {
+  auto it = data.end();
+
+  int bstate = 0;
+
+  while (it != data.begin() && !(state & 2)) {
+    --it;
+    if (!(*it)->toDelete) {
+      bstate |= (*it)->mouseEnter(state);
+    }
+  }
+  return bstate;
+}
+
+int Table::mouseMoved(int mx, int my) {
+  auto it = data.end();
+
+  int state = 0;
+
+  while (it != data.begin() && !(state & 2)) {
+    --it;
+    if (!(*it)->toDelete) {
+      state |= (*it)->mouseMoved(mx, my);
+    }
+  }
+  return state;
+}
+
 void Table::deleteElements(bool hard) {
   auto it = data.begin();
   while (it != data.end()) {
@@ -286,117 +259,27 @@ void Table::deleteElements(bool hard) {
   }
 }
 
-int Table::mouseEnter(int state) {
-  auto it = data.end();
-  
-  int bstate = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      bstate |= (*it)->mouseEnter(state);
+int Table::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+  if (evt._key._type == key::type_wheel) {
+    if (isIn(mx, my)) {
+      scroll += 30 * evt._key._keycode;
+      getRect();
+      return 1;
     }
-  }
-  return bstate;
-}
-int Table::mouseMoved(int mx, int my) {
-  auto it = data.end();
+    return 0;
+  } else {
+    auto it = data.end();
 
-  int state = 0;
+    int state = 0;
 
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->mouseMoved(mx, my);
+    while (it != data.begin() && !(state & 2)) {
+      --it;
+      if (!(*it)->toDelete) {
+        state |= (*it)->guiEvent(evt, mx, my, down);
+      }
     }
+    return state;
   }
-  return state;
-}
-int Table::mouseClicked(int button, int state, int mx, int my) {
-  auto it = data.end();
-
-  int bstate = 0;
-
-  while (it != data.begin() && !(bstate & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      bstate |= (*it)->mouseClicked(button, state, mx, my);
-    }
-  }
-  return bstate;
-}
-int Table::mouseWheel(int state, int delta, int mx, int my) {
-  if (isIn(mx, my)) {
-    scroll += 30 * delta;
-    getRect();
-    return 1;
-  }
-  return 0;
-  /*auto it = data.end();
-
-  int bstate = 0;
-
-  while (it != data.begin() && !(bstate & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      bstate |= (*it)->mouseWheel(delta, state, mx, my);
-    }
-  }
-  return bstate;*/
-}
-int Table::keyPressed(unsigned char key, int mx, int my) {
-
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->keyPressed(key, mx, my);
-    }
-  }
-  return state;
-}
-int Table::specialPressed(int key, int mx, int my) {
-
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->specialPressed(key, mx, my);
-    }
-  }
-  return state;
-}
-int Table::keyUp(unsigned char key, int mx, int my) {
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->keyUp(key, mx, my);
-    }
-  }
-  return state;
-}
-int Table::specialUp(int key, int mx, int my) {
-  auto it = data.end();
-
-  int state = 0;
-
-  while (it != data.begin() && !(state & 2)) {
-    --it;
-    if (!(*it)->toDelete) {
-      state |= (*it)->specialUp(key, mx, my);
-    }
-  }
-  return state;
 }
 
 GUIElement* Table::getElementById(string id) {

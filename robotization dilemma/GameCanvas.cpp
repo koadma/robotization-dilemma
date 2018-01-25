@@ -159,57 +159,6 @@ int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
 int MainGameCanvas::resizeManager(int x, int y) {
   return 0;
 }
-int MainGameCanvas::keyManager(unsigned char key, int x, int y, bool in) {
-  if(in) {
-    if (key == 'w') {
-      camtheta += 0.05;
-      normalizeAngles();
-    }
-    if (key == 'a') {
-      camphi += 0.05;
-      normalizeAngles();
-    }
-    if (key == 's') {
-      camtheta -= 0.05;
-      normalizeAngles();
-    }
-    if (key == 'd') {
-      camphi -= 0.05;
-      normalizeAngles();
-    }
-    if (key == 'c') {
-      mVec3 m = ship->mov.getAt(timeNow).pos;
-      camcx = m.x;
-      camcy = m.y;
-      camcz = m.z;
-    }
-    if (key == 'o') {
-      camcx = 0;
-      camcy = 0;
-      camcz = 0;
-    }
-    if (key == 'v' && selecteds) {
-      mVec3 m = selecteds->getAt(timeNow).pos;
-      camcx = m.x;
-      camcy = m.y;
-      camcz = m.z;
-    }
-    //glutPostRedisplay();
-    return 3;
-  }
-  else {
-    return 0;
-  }
-}
-int MainGameCanvas::specialKeyManager(int key, int x, int y, bool in) {
-  return 0;
-}
-int MainGameCanvas::keyUpManager(unsigned char key, int x, int y, bool in) {
-  return 0;
-}
-int MainGameCanvas::specialKeyUpManager(int key, int x, int y, bool in) {
-  return 0;
-}
 int MainGameCanvas::mouseEntryManager(int state) {
   mousebuttons = 0;
   return 0;
@@ -237,16 +186,24 @@ int MainGameCanvas::mouseMoveManager(int x, int y) {
   myold = y;
   return res;
 }
-int MainGameCanvas::mouseClickManager(int button, int state, int x, int y, bool in) {
-  if(in) {
-    mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
-    mousebuttons ^= (state ^ 1) << button;
-    if (button == 0 && state == 0) { //left down
+
+int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in) {
+  if (evt._key._type == key::type_wheel) {
+    if (in) {
+      d *= 1.0f - (float(evt._key._keycode) / 15.0f);
+      d = max(d, 1.0f);
+      return 1;
+    }
+  }
+  if(evt._key._type == key::type_mouse) {
+    if (in) {
+      mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
+      mousebuttons ^= (evt._type == gui_event::evt_down) << evt._key._keycode;
       GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
 
       // get 3D coordinates based on window coordinates
 
-      gluUnProject(x, y, 0,
+      gluUnProject(mx, my, 0,
         view.model_view, view.projection, view.viewport,
         &pos3D_ax, &pos3D_ay, &pos3D_az);
 
@@ -254,19 +211,53 @@ int MainGameCanvas::mouseClickManager(int button, int state, int x, int y, bool 
       vec3<double> raydir = rayori - view.cameraEye;
 
       ship->selectSighting(rayori, raydir, d);
+
+    } else {
+      mousebuttons = 0;
     }
   }
-  else {
-    mousebuttons = 0;
-  }
-  //cout << mousebuttons << endl;
-  return 0;
-}
-int MainGameCanvas::mouseWheelManager(int idk, int key, int x, int y, bool in) {
-  if(in) {
-    d *= 1.0f - (float(key) / 15.0f);
-    d = max(d, 1.0f);
-    return 1;
+  if (in) {
+    if (evt._key == keybinds[KeyCameraUp].first) {
+      camtheta += 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCameraLeft].first) {
+      camphi += 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCameraDown].first) {
+      camtheta -= 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCameraRight].first) {
+      camphi -= 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCenterShip].first) {
+      mVec3 m = ship->mov.getAt(timeNow).pos;
+      camcx = m.x;
+      camcy = m.y;
+      camcz = m.z;
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCenterWorld].first) {
+      camcx = 0;
+      camcy = 0;
+      camcz = 0;
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCenterSighting].first && selecteds) {
+      mVec3 m = selecteds->getAt(timeNow).pos;
+      camcx = m.x;
+      camcy = m.y;
+      camcz = m.z;
+      return 1;
+    }
+    //glutPostRedisplay();
   }
   return 0;
 }
@@ -428,40 +419,6 @@ int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
 int MainGameShipCanvas::resizeManager(int x, int y) {
   return 0;
 }
-int MainGameShipCanvas::keyManager(unsigned char key, int x, int y, bool in) {
-  if (in) {
-    if (key == 'w') {
-      camtheta += 0.05;
-      normalizeAngles();
-    }
-    if (key == 'a') {
-      camphi += 0.05;
-      normalizeAngles();
-    }
-    if (key == 's') {
-      camtheta -= 0.05;
-      normalizeAngles();
-    }
-    if (key == 'd') {
-      camphi -= 0.05;
-      normalizeAngles();
-    }
-    //glutPostRedisplay();
-    return 3;
-  }
-  else {
-    return 0;
-  }
-}
-int MainGameShipCanvas::specialKeyManager(int key, int x, int y, bool in) {
-  return 0;
-}
-int MainGameShipCanvas::keyUpManager(unsigned char key, int x, int y, bool in) {
-  return 0;
-}
-int MainGameShipCanvas::specialKeyUpManager(int key, int x, int y, bool in) {
-  return 0;
-}
 int MainGameShipCanvas::mouseEntryManager(int state) {
   mousebuttons = 0;
   return 0;
@@ -489,35 +446,66 @@ int MainGameShipCanvas::mouseMoveManager(int x, int y) {
   myold = y;
   return res;
 }
-int MainGameShipCanvas::mouseClickManager(int button, int state, int x, int y, bool in) {
-  if (in) {
-    mousebuttons ^= mousebuttons & (1 << button); //remove bit for button;
-    mousebuttons ^= (state ^ 1) << button;
-    if (button == 0 && state == 0) { //left down
-      GLdouble pos3D_ax, pos3D_ay, pos3D_az;
+
+int MainGameShipCanvas::guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in) {
+  if (evt._key._type == key::type_wheel) {
+    if (in) {
+      d *= 1.0f - (float(evt._key._keycode) / 15.0f);
+      d = max(d, 1.0f);
+      return 1;
+    }
+    return 0;
+  }
+  if (evt._key._type == key::type_mouse) {
+    if (in) {
+      mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
+      mousebuttons ^= (evt._type == gui_event::evt_down) << evt._key._keycode;
+      GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
 
       // get 3D coordinates based on window coordinates
 
-      gluUnProject(x, y, 0.01,
+      gluUnProject(mx, my, 0,
         view.model_view, view.projection, view.viewport,
         &pos3D_ax, &pos3D_ay, &pos3D_az);
 
-      vec3<double> rayori = {pos3D_ax, pos3D_ay, pos3D_az};
+      vec3<double> rayori = { pos3D_ax, pos3D_ay, pos3D_az };
       vec3<double> raydir = rayori - view.cameraEye;
 
       ship->setSidebar(rayori, raydir);
+
+      return 1;
+    }
+    else {
+      mousebuttons = 0;
     }
   }
-  else {
-    mousebuttons = 0;
-  }
-  return 0;
-}
-int MainGameShipCanvas::mouseWheelManager(int idk, int key, int x, int y, bool in) {
   if (in) {
-    d *= 1.0f - (float(key) / 15.0f);
-    d = max(d, 1.0f);
-    return 1;
+    if (evt._key == keybinds[KeyCameraUp].first) {
+      camtheta += 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCameraLeft].first) {
+      camphi += 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCameraDown].first) {
+      camtheta -= 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCameraRight].first) {
+      camphi -= 0.05;
+      normalizeAngles();
+      return 1;
+    }
+    if (evt._key == keybinds[KeyCenterWorld].first) {
+      camcx = 0;
+      camcy = 0;
+      camcz = 0;
+      return 1;
+    }
   }
   return 0;
 }

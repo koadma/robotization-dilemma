@@ -11,10 +11,7 @@ public:
   void transformCoordiantes(int &mx, int &my);
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
-  int mouseClicked(int button, int state, int mx, int my);
-  int mouseWheel(int a, int b, int mx, int my);
-  int keyPressed(unsigned char key, int mx, int my);
-  int specialPressed(int key, int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
   void render();
 
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
