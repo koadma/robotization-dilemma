@@ -83,11 +83,14 @@ public:
 template<typename T>
 class TextBindVar : public TextBindBase<T> {
 public:
-  T* _val;
+  const T* _val;
   TextBindVar<T>() {
 
   }
   TextBindVar<T>(T* val) {
+    _val = val;
+  }
+  TextBindVar<T>(const T* val) {
     _val = val;
   }
   const T get() {

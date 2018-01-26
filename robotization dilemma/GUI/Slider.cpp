@@ -19,7 +19,7 @@ int Slider::mouseMoved(int mx, int my) {
   return mdown | (oactive xor active); //if state changed
 }
 
-int Slider::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int Slider::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   bool oactive = active;
   cout << evt.toName() << endl;
 

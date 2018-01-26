@@ -38,7 +38,7 @@ int GUIElement::mouseMoved(int mx, int my) {
   return 0;
 }
 
-int GUIElement::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int GUIElement::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   return 0;
 }
 

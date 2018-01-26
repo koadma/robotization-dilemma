@@ -1,6 +1,6 @@
 #include "ControlSetting.h"
 
-int ControlSetting::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int ControlSetting::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   bool oactive = active;
   if(evt._key._type == key::type_mouse) { //mouse
     if(evt._type == gui_event::evt_pressed && evt._key._keycode == 0) { //click, left

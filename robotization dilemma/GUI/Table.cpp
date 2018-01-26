@@ -70,7 +70,7 @@ int TableRow::mouseMoved(int mx, int my) {
   return state;
 }
 
-int TableRow::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int TableRow::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   auto it = data.end();
 
   int state = 0;
@@ -259,7 +259,7 @@ void Table::deleteElements(bool hard) {
   }
 }
 
-int Table::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int Table::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   if (evt._key._type == key::type_wheel) {
     if (isIn(mx, my)) {
       scroll += 30 * evt._key._keycode;

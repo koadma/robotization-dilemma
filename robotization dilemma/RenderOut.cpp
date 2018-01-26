@@ -134,6 +134,18 @@ void renderNewRound(int id) {
 
 void createMainMenu() {
   Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectMainMenuVersion"))->text =
+    new TextBind<
+    TextBindVar<int>,
+    TextBindVar<int>,
+    TextBindVar<int>
+    >("%.%.%",
+      TextBindVar<int>(&VersionA),
+      TextBindVar<int>(&VersionB),
+      TextBindVar<int>(&VersionC)
+      );
+
   Graphics::deleteElements(objectGameSubWindow);
 }
 

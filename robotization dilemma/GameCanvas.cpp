@@ -160,7 +160,7 @@ int MainGameCanvas::resizeManager(int x, int y) {
   return 0;
 }
 int MainGameCanvas::mouseEntryManager(int state) {
-  mousebuttons = 0;
+  //mousebuttons = 0;
   return 0;
 }
 int MainGameCanvas::mouseMoveManager(int x, int y) {
@@ -187,7 +187,8 @@ int MainGameCanvas::mouseMoveManager(int x, int y) {
   return res;
 }
 
-int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in) {
+int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_location>& down, Canvas* me) {
+  bool in = me->isIn(mx, my);
   if (evt._key._type == key::type_wheel) {
     if (in) {
       d *= 1.0f - (float(evt._key._keycode) / 15.0f);
@@ -198,59 +199,62 @@ int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key>& dow
   if(evt._key._type == key::type_mouse) {
     if (in) {
       mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
-      mousebuttons ^= (evt._type == gui_event::evt_down) << evt._key._keycode;
-      GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
+      mousebuttons ^= ((evt._type == gui_event::evt_down) | (evt._type == gui_event::evt_pressed)) << evt._key._keycode;
+      cout << mousebuttons << endl;
+      if(evt._key._keycode == 0 && evt._type == gui_event::evt_down) {
+        GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
 
-      // get 3D coordinates based on window coordinates
+        // get 3D coordinates based on window coordinates
 
-      gluUnProject(mx, my, 0,
-        view.model_view, view.projection, view.viewport,
-        &pos3D_ax, &pos3D_ay, &pos3D_az);
+        gluUnProject(mx, my, 0,
+          view.model_view, view.projection, view.viewport,
+          &pos3D_ax, &pos3D_ay, &pos3D_az);
 
-      vec3<double> rayori = { pos3D_ax, pos3D_ay, pos3D_az };
-      vec3<double> raydir = rayori - view.cameraEye;
+        vec3<double> rayori = { pos3D_ax, pos3D_ay, pos3D_az };
+        vec3<double> raydir = rayori - view.cameraEye;
 
-      ship->selectSighting(rayori, raydir, d);
+        ship->selectSighting(rayori, raydir, d);
+      }
 
     } else {
       mousebuttons = 0;
     }
   }
   if (in) {
-    if (evt._key == keybinds[KeyCameraUp].first) {
+    if (checkKey(KeyCameraUp, evt._key)) {
       camtheta += 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCameraLeft].first) {
+    if (checkKey(KeyCameraLeft, evt._key)) {
       camphi += 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCameraDown].first) {
+    if (checkKey(KeyCameraDown, evt._key)) {
       camtheta -= 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCameraRight].first) {
+    if (checkKey(KeyCameraRight, evt._key)) {
       camphi -= 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCenterShip].first) {
+    if (checkKey(KeyCenterShip, evt._key)) {
       mVec3 m = ship->mov.getAt(timeNow).pos;
       camcx = m.x;
       camcy = m.y;
       camcz = m.z;
       return 1;
     }
-    if (evt._key == keybinds[KeyCenterWorld].first) {
+    if (checkKey(KeyCenterWorld, evt._key)) {
       camcx = 0;
       camcy = 0;
       camcz = 0;
       return 1;
     }
-    if (evt._key == keybinds[KeyCenterSighting].first && selecteds) {
+    if (checkKey(KeyCenterSighting, evt._key) && selecteds) {
       mVec3 m = selecteds->getAt(timeNow).pos;
       camcx = m.x;
       camcy = m.y;
@@ -447,7 +451,8 @@ int MainGameShipCanvas::mouseMoveManager(int x, int y) {
   return res;
 }
 
-int MainGameShipCanvas::guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in) {
+int MainGameShipCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_location>& down, Canvas* me) {
+  bool in = me->isIn(mx, my);
   if (evt._key._type == key::type_wheel) {
     if (in) {
       d *= 1.0f - (float(evt._key._keycode) / 15.0f);
@@ -459,48 +464,51 @@ int MainGameShipCanvas::guiEventManager(gui_event evt, int mx, int my, set<key>&
   if (evt._key._type == key::type_mouse) {
     if (in) {
       mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
-      mousebuttons ^= (evt._type == gui_event::evt_down) << evt._key._keycode;
-      GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
+      mousebuttons ^= ((evt._type == gui_event::evt_down) | (evt._type == gui_event::evt_pressed)) << evt._key._keycode;
+      cout << mousebuttons << endl;
+      if (evt._key._keycode == 0 && evt._type == gui_event::evt_down) {
+        GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
 
-      // get 3D coordinates based on window coordinates
+        // get 3D coordinates based on window coordinates
 
-      gluUnProject(mx, my, 0,
-        view.model_view, view.projection, view.viewport,
-        &pos3D_ax, &pos3D_ay, &pos3D_az);
+        gluUnProject(mx, my, 0,
+          view.model_view, view.projection, view.viewport,
+          &pos3D_ax, &pos3D_ay, &pos3D_az);
 
-      vec3<double> rayori = { pos3D_ax, pos3D_ay, pos3D_az };
-      vec3<double> raydir = rayori - view.cameraEye;
+        vec3<double> rayori = { pos3D_ax, pos3D_ay, pos3D_az };
+        vec3<double> raydir = rayori - view.cameraEye;
 
-      ship->setSidebar(rayori, raydir);
+        ship->setSidebar(rayori, raydir);
 
-      return 1;
+        return 1;
+      }
     }
     else {
       mousebuttons = 0;
     }
   }
   if (in) {
-    if (evt._key == keybinds[KeyCameraUp].first) {
+    if (checkKey(KeyCameraUp, evt._key)) {
       camtheta += 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCameraLeft].first) {
+    if (checkKey(KeyCameraLeft, evt._key)) {
       camphi += 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCameraDown].first) {
+    if (checkKey(KeyCameraDown, evt._key)) {
       camtheta -= 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCameraRight].first) {
+    if (checkKey(KeyCameraRight, evt._key)) {
       camphi -= 0.05;
       normalizeAngles();
       return 1;
     }
-    if (evt._key == keybinds[KeyCenterWorld].first) {
+    if (checkKey(KeyCenterWorld, evt._key)) {
       camcx = 0;
       camcy = 0;
       camcz = 0;

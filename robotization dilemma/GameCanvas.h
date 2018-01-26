@@ -17,7 +17,7 @@ namespace MainGameCanvas {
   int resizeManager(int x, int y);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
-  int guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in);
+  int guiEventManager(gui_event evt, int mx, int my, set<key_location>& down, Canvas* me);
 }
 
 namespace MainGameShipCanvas {
@@ -35,5 +35,5 @@ namespace MainGameShipCanvas {
   int resizeManager(int x, int y);
   int mouseEntryManager(int state);
   int mouseMoveManager(int x, int y);
-  int guiEventManager(gui_event evt, int mx, int my, set<key>& down, bool in);
+  int guiEventManager(gui_event evt, int mx, int my, set<key_location>& down, Canvas* me);
 }

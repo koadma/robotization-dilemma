@@ -11,6 +11,7 @@
 #include "Slider.h"
 #include "Container.h"
 #include "Table.h"
+#include "Image.h"
 #include "ControlSetting.h"
 
 using namespace std;
@@ -43,7 +44,7 @@ namespace Graphics {
   extern map<int, GWindow*> windows;
 
   extern map<string, void(*)()> funcs;
-  extern set<key> keysdown;
+  extern set<key_location> keysdown;
 
   typedef GUIElement* ElemHwnd;
   typedef Panel* PanelHwnd;
@@ -59,6 +60,7 @@ namespace Graphics {
   typedef ControlSetting* ControlHwnd;
   typedef Table* TableHwnd;
   typedef TableRow* TablerowHwnd;
+  typedef Image* ImageHwnd;
   typedef Graphics::GWindow* WinHwnd;
 
   WinHwnd CreateMainWindow(int x = 40, int y = 40, int width = 640, int height = 480, string caption = "", WindowManagers managers = defaultWindowManagers);
@@ -73,7 +75,7 @@ namespace Graphics {
 
   int elementMouseMoveManager(WinHwnd id, int x, int y);
 
-  int elementGUIEventManager(WinHwnd id, gui_event evt, int mx, int my, set<key>& down);
+  int elementGUIEventManager(WinHwnd id, gui_event evt, int mx, int my, set<key_location>& down);
 
   void elementResizeManager(WinHwnd id, int width, int height);
 
@@ -93,6 +95,9 @@ namespace Graphics {
   
   LabelHwnd createLabel(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
   LabelHwnd createLabel(xml_node<> *me);
+
+  ImageHwnd createImage(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text);
+  ImageHwnd createImage(xml_node<> *me);
 
   TextInputHwnd createTextInput(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);
   TextInputHwnd createTextInput(xml_node<> *me);

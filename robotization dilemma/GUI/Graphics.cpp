@@ -106,9 +106,9 @@ void Graphics::defaultResizeManager(int x, int y) {
   elementResizeManager(h, width, height);
 }
 void Graphics::defaultKeyManager(unsigned char keyc, int x, int y) {
-  key keyd;
+  key_location keyd;
   keyd.fromKey(keyc);
-
+  keyd.setLocation(x, y);
   if (!keysdown.count(keyd)) { //If new key, down
     keysdown.insert(keyd);
     if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_down), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
@@ -121,9 +121,9 @@ void Graphics::defaultKeyManager(unsigned char keyc, int x, int y) {
   }
 }
 void Graphics::defaultSpecialKeyManager(int keyc, int x, int y) {
-  key keyd;
+  key_location keyd;
   keyd.fromSpecial(keyc);
-
+  keyd.setLocation(x, y);
   if (!keysdown.count(keyd)) { //If new key, down
     keysdown.insert(keyd);
     if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_down), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
@@ -136,16 +136,18 @@ void Graphics::defaultSpecialKeyManager(int keyc, int x, int y) {
   }
 }
 void Graphics::defaultKeyUpManager(unsigned char keyc, int x, int y) {
-  key keyd;
+  key_location keyd;
   keyd.fromKey(keyc);
+  keyd.setLocation(x, y);
   keysdown.erase(keyd);
   if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_up), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
 }
 void Graphics::defaultSpecialKeyUpManager(int keyc, int x, int y) {
-  key keyd;
+  key_location keyd;
   keyd.fromSpecial(keyc);
+  keyd.setLocation(x, y);
   keysdown.erase(keyd);
   if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_up), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
@@ -162,8 +164,9 @@ void Graphics::defaultMouseMoveManager(int x, int y) {
   }
 }
 void Graphics::defaultMouseClickManager(int button, int state, int x, int y) {
-  key keyd;
+  key_location keyd;
   keyd.fromMouse(button);
+  keyd.setLocation(x, y);
   if (state == 0) { //Down
     if (!keysdown.count(keyd)) { //If new key, down
       keysdown.insert(keyd);
@@ -184,8 +187,9 @@ void Graphics::defaultMouseClickManager(int button, int state, int x, int y) {
   }
 }
 void Graphics::defaultMouseWheelManager(int state, int delta, int x, int y) {
-  key keyd;
+  key_location keyd;
   keyd.fromWheel(delta);
+  keyd.setLocation(x, y);
   if (1 & elementGUIEventManager(GetWinHwnd(glutGetWindow()), gui_event(keyd, gui_event::evt_none), x, glutGet(GLUT_WINDOW_HEIGHT) - y, keysdown)) {
     glutPostRedisplay();
   }
@@ -206,7 +210,7 @@ WindowManagers {
 };
 map<int, Graphics::GWindow*> Graphics::windows;
 map<string, void(*)()> Graphics::funcs;
-set<key> Graphics::keysdown;
+set<key_location> Graphics::keysdown;
 
 int Graphics::elementMouseEnterManager(WinHwnd id, int mstate) {
   return id->myPanel->mouseEnter(mstate);
@@ -216,7 +220,7 @@ int Graphics::elementMouseMoveManager(WinHwnd id, int x, int y) {
   return id->myPanel->mouseMoved(x, y);
 }
 
-int Graphics::elementGUIEventManager(WinHwnd id, gui_event evt, int mx, int my, set<key>& down) {
+int Graphics::elementGUIEventManager(WinHwnd id, gui_event evt, int mx, int my, set<key_location>& down) {
   return id->myPanel->guiEvent(evt, mx, my, down);
 }
 
@@ -302,6 +306,29 @@ Graphics::LabelHwnd Graphics::createLabel(xml_node<> *me) {
     hexToInt(me->first_attribute("textcolor")->value()),
     me->value(),
     strTo<int>(me->first_attribute("align")->value()));
+}
+
+Graphics::ImageHwnd Graphics::createImage(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text) {
+  return new Image(lname, mincorner, maxcorner, bg, active, textColor, text);
+}
+Graphics::ImageHwnd Graphics::createImage(xml_node<> *me) {
+  return createImage(
+    me->first_attribute("id")->value(),
+    Coordiante{
+    strTo<float>(me->first_attribute("minrelx")->value()),
+    strTo<float>(me->first_attribute("minrely")->value()),
+    strTo<float>(me->first_attribute("minabsx")->value()),
+    strTo<float>(me->first_attribute("minabsy")->value()),
+  }, Coordiante{
+    strTo<float>(me->first_attribute("maxrelx")->value()),
+    strTo<float>(me->first_attribute("maxrely")->value()),
+    strTo<float>(me->first_attribute("maxabsx")->value()),
+    strTo<float>(me->first_attribute("maxabsy")->value()),
+  },
+    hexToInt(me->first_attribute("bgcolor")->value()),
+    hexToInt(me->first_attribute("activecolor")->value()),
+    hexToInt(me->first_attribute("textcolor")->value()),
+    me->value());
 }
 
 Graphics::TextInputHwnd Graphics::createTextInput(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
@@ -565,6 +592,9 @@ Graphics::ElemHwnd Graphics::createElement(xml_node<> *me) {
   }
   else if (name == "table") {
     return createTable(me);
+  }
+  else if (name == "image") {
+    return createImage(me);
   }
   else {
     throw 1;

@@ -1,6 +1,6 @@
 #include "TextInput.h"
 
-int TextInput::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int TextInput::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   if (evt._key._type == key::type_mouse) {
     bool oactive = active;
     if (evt._type == gui_event::evt_pressed && evt._key._keycode == 0) { //click, left

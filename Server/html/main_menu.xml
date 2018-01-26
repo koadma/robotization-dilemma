@@ -1,4 +1,18 @@
 <body>
+	<image
+		id = "objectMainMenuLogoImage"
+		minrelx = "0.1"
+		minrely = "0.7"
+		minabsx = "0.0"
+		minabsy = "0.0"
+		maxrelx = "0.9"
+		maxrely = "0.9"
+		maxabsx = "0.0"
+		maxabsy = "0.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+	>html/logo.png</image>
 	<button
 		id = "objectMainMenuStoryModePlayButton"
 		minrelx = "0.3"
@@ -59,4 +73,19 @@
 		textcolor = "ff838fa1"
 		callback = "mainMenuExitButton"
 	>Exit</button>
+	<labelbind
+		id = "objectMainMenuVersion"
+		minrelx = "1.0"
+		minrely = "0.0"
+		minabsx = "-95.0"
+		minabsy = "5.0"
+		maxrelx = "1.0"
+		maxrely = "0.0"
+		maxabsx = "-5.0"
+		maxabsy = "35.0"
+		bgcolor = "ff070918"
+		activecolor = "ff190077"
+		textcolor = "ff838fa1"
+		align = "1"
+	>ERROR</labelbind>
 </body>

@@ -42,11 +42,9 @@ const time_type_s ROUND_TIME = 2;
 #define ElementTextColor 0xff838FA1
 #define ElementBackColor 0xff030014
 
-#define VersionA 0
-#define VersionB 5
-#define VersionC 0
-//0.50
-//Converge to 137.035999139
+const int VersionA = 0;
+const int VersionB = 5;
+const int VersionC = 0;
 
 const acc_type_mperss MAX_ACCEL = 100;
 

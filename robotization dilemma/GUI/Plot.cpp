@@ -20,20 +20,20 @@ int Plot::mouseMoved(int mx, int my) {
   return 1;
 }
 
-int Plot::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int Plot::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   if (evt._key._type == key::type_wheel) { //Zoom
-    if (!down.count(keybinds[KeyPlotZoomX].first)) {
+    if (!isDown(down, KeyPlotZoomX)) {
       ox += ((cbx + cax) / 2.0 - mx)*(pow(1.1, -evt._key._keycode) - 1)*sx;
       sx *= pow(1.1, -evt._key._keycode);
     }
 
-    if (!down.count(keybinds[KeyPlotZoomY].first)) {
+    if (!isDown(down, KeyPlotZoomY)) {
       oy += ((cby + cay) / 2.0 - my)*(pow(1.1, -evt._key._keycode) - 1)*sy;
       sy *= pow(1.1, -evt._key._keycode);
     }
     return 1;
   }
-  if (evt._key == keybinds[KeyPlotReset].first) { //Reset
+  if (checkKey(KeyPlotReset, evt._key)) { //Reset
     double nsx, nsy;
     nsx = nsy = max(sx, sy);
     ox += ((cbx + cax) / 2.0 - mx)*(nsx - sx);

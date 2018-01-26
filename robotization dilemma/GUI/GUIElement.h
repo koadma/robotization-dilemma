@@ -22,7 +22,7 @@ public:
   virtual void getRect();
   virtual int mouseEnter(int state);
   virtual int mouseMoved(int mx, int my);
-  virtual int guiEvent(gui_event evt, int mx, int my, set<key>& down);
+  virtual int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
   virtual void render();
   virtual int getWidth();
   virtual int getWidth(int winWidth);

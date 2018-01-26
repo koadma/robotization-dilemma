@@ -48,3 +48,20 @@ void saveKeybinds(string filename) {
 
   binds.close();
 }
+
+bool checkKey(int id, key toTest) {
+  return keybinds[id].first == toTest;
+}
+bool checkKey(int id, key_location toTest) {
+  return keybinds[id].first == toTest;
+}
+
+bool isDown(set<key_location>& down, int toTestId) {
+  return isDown(down, keybinds[toTestId].first);
+}
+bool isDown(set<key_location>& down, key toTest) {
+  return isDown(down, key_location(toTest));
+}
+bool isDown(set<key_location>& down, key_location toTest) {
+  return down.count(toTest);
+}

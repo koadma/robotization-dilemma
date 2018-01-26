@@ -8,8 +8,8 @@ int Canvas::mouseMoved(int mx, int my) {
   return managers.mouseMoveManager(mx, my);
 }
 
-int Canvas::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
-  return managers.guiEventManager(evt, mx, my, down, isIn(mx, my));
+int Canvas::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return managers.guiEventManager(evt, mx, my, down, this);
 }
 
 void Canvas::render() {

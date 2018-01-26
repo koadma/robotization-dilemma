@@ -13,6 +13,6 @@ public:
     input = linput;
     id = lid;
   }
-  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
   void render();
 };

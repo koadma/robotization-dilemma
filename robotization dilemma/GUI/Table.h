@@ -14,7 +14,7 @@ public:
   void getRect();
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
-  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
 
   void deleteElements(bool hard);
 
@@ -36,7 +36,7 @@ public:
   void getRect();
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
-  int guiEvent(gui_event evt, int mx, int my, set<key>& down);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
 
   void deleteElements(bool hard);
 

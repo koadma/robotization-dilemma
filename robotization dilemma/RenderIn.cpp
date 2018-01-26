@@ -1,6 +1,5 @@
 #include "RenderIn.h"
 
-//Main
 void mainMenuStoryModePlayButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
 }
@@ -24,7 +23,7 @@ void storyMenuLoadButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
 }
 void storyMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 
 //Main / Story / New
@@ -49,7 +48,7 @@ void ffaMenuJoinGameButton() {
   Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
 }
 void ffaMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 
 //Main / FFA / Game
@@ -115,7 +114,7 @@ void settingsMenuInput(key nkey, int id) {
   keybindReply(nkey, id);
 }
 void settingsMenuBackButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
   saveKeybinds();
 }
 

@@ -21,7 +21,7 @@ int Container::mouseMoved(int mx, int my) {
 
   return bstate;
 }
-int Container::guiEvent(gui_event evt, int mx, int my, set<key>& down) {
+int Container::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   //cout << key << endl;
 
   int bstate = 0;
