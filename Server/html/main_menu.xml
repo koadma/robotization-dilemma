@@ -9,9 +9,7 @@
 		maxrely = "0.9"
 		maxabsx = "0.0"
 		maxabsy = "0.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
+		align = "1"
 	>html/logo.png</image>
 	<button
 		id = "objectMainMenuStoryModePlayButton"
@@ -23,9 +21,6 @@
 		maxrely = "0.7"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "mainMenuStoryModePlayButton"
 	>Play Story Mode</button>
 	<button
@@ -38,9 +33,6 @@
 		maxrely = "0.6"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "mainMenuFFAPlayButton"
 	>Play FFA</button>
 	<button
@@ -53,9 +45,6 @@
 		maxrely = "0.5"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "mainMenuSettingsButton"
 	>Settings</button>
 	<button
@@ -68,9 +57,6 @@
 		maxrely = "0.4"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "mainMenuExitButton"
 	>Exit</button>
 	<labelbind
@@ -83,9 +69,6 @@
 		maxrely = "0.0"
 		maxabsx = "-5.0"
 		maxabsy = "35.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>ERROR</labelbind>
 </body>

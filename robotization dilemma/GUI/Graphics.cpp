@@ -17,6 +17,8 @@ Graphics::WinHwnd Graphics::CreateMainWindow(int x, int y, int width, int height
 }
 
 Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordiante minc, Coordiante maxc, WindowManagers manager) {
+  colorargb bgcolor = getColor("win", "bgcolor");
+  
   if(id != -1) {
     glutReshapeFunc(manager.resizeManager);
     glutDisplayFunc(manager.renderManager);
@@ -33,12 +35,12 @@ Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordiante minc, Coo
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
-    glClearColor(((ElementBackColor && 0xff) >> 0)/255.0, ((ElementBackColor && 0xff00) >> 8) / 255.0, ((ElementBackColor && 0xff0000) >> 16) / 255.0, 1);
+    glClearColor(((bgcolor & 0xff0000) >> 16)/255.0, ((bgcolor & 0xff00) >> 8) / 255.0, ((bgcolor & 0xff) >> 0) / 255.0, 1);
    }
 
   GWindow* data = new GWindow;
   
-  PanelHwnd panel = new Panel("", Coordiante{ 0,0,0,0 }, Coordiante{ 1,1,0,0 }, ElementBackColor);
+  PanelHwnd panel = new Panel("", Coordiante{ 0,0,0,0 }, Coordiante{ 1,1,0,0 }, bgcolor);
 
   data->id = id;
   data->parent = parent;
@@ -253,9 +255,9 @@ Graphics::ButtonHwnd Graphics::createButton(xml_node<> *me) {
       strTo<float>(me->first_attribute("maxabsx")->value()),
       strTo<float>(me->first_attribute("maxabsy")->value()),
     },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
+    getColor(me, "button", "bgcolor"),
+    getColor(me, "button", "activecolor"),
+    getColor(me, "button", "textcolor"),
     me->value(),
     reinterpret_cast<ClickCallback>(funcs[me->first_attribute("callback")->value()]));
 }
@@ -277,9 +279,9 @@ Graphics::CheckboxHwnd Graphics::createCheckbox(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
+    getColor(me, "checkbox", "bgcolor"),
+    getColor(me, "checkbox", "activecolor"),
+    getColor(me, "checkbox", "textcolor"),
     strTo<bool>(me->value()),
     reinterpret_cast<CheckCallback>(funcs[me->first_attribute("callback")->value()]));
 }
@@ -301,15 +303,15 @@ Graphics::LabelHwnd Graphics::createLabel(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
+    getColor(me, "label", "bgcolor"),
+    getColor(me, "label", "activecolor"),
+    getColor(me, "label", "textcolor"),
     me->value(),
     strTo<int>(me->first_attribute("align")->value()));
 }
 
-Graphics::ImageHwnd Graphics::createImage(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text) {
-  return new Image(lname, mincorner, maxcorner, bg, active, textColor, text);
+Graphics::ImageHwnd Graphics::createImage(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+  return new Image(lname, mincorner, maxcorner, bg, active, textColor, text, align);
 }
 Graphics::ImageHwnd Graphics::createImage(xml_node<> *me) {
   return createImage(
@@ -325,10 +327,11 @@ Graphics::ImageHwnd Graphics::createImage(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
-    me->value());
+    getColor(me, "image", "bgcolor"),
+    getColor(me, "image", "activecolor"),
+    getColor(me, "image", "textcolor"),
+    me->value(),
+    strTo<int>(me->first_attribute("align")->value()));
 }
 
 Graphics::TextInputHwnd Graphics::createTextInput(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
@@ -348,9 +351,9 @@ Graphics::TextInputHwnd Graphics::createTextInput(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
+    getColor(me, "input", "bgcolor"),
+    getColor(me, "input", "activecolor"),
+    getColor(me, "input", "textcolor"),
     me->value(),
     reinterpret_cast<TextInputFunc>(funcs[me->first_attribute("inputfunc")->value()]),
     reinterpret_cast<TextValidatorFunc>(funcs[me->first_attribute("validatorfunc")->value()]));
@@ -373,9 +376,9 @@ Graphics::ControlHwnd Graphics::createControl(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
+    getColor(me, "control", "bgcolor"),
+    getColor(me, "control", "activecolor"),
+    getColor(me, "control", "textcolor"),
     key(me->value()),
     strTo<int>(me->first_attribute("id")->value()),
     reinterpret_cast<ControlInputFunc>(funcs[me->first_attribute("inputfunc")->value()]));
@@ -406,7 +409,7 @@ Graphics::PanelHwnd Graphics::createPanel(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()));
+    getColor(me, "panel", "bgcolor"));
 
   setElements(p, me);
 
@@ -430,8 +433,8 @@ Graphics::TableHwnd Graphics::createTable(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()));
+    getColor(me, "table", "bgcolor"),
+    getColor(me, "table", "activecolor"));
 
   setElements(p, me);
 
@@ -455,7 +458,7 @@ Graphics::TablerowHwnd Graphics::createTableRow(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()));
+    getColor(me, "tablerow", "bgcolor"));
 
   setElements(p, me);
 
@@ -479,7 +482,7 @@ Graphics::ContainerHwnd Graphics::createContainer(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()));
+    getColor(me, "container", "bgcolor"));
 
   return p;
 }
@@ -502,10 +505,10 @@ Graphics::SliderHwnd Graphics::createSlider(xml_node<> *me) {
       strTo<float>(me->first_attribute("maxabsx")->value()),
       strTo<float>(me->first_attribute("maxabsy")->value()),
     },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
-    hexToInt(me->first_attribute("pulledcolor")->value()),
+    getColor(me, "slider", "bgcolor"),
+    getColor(me, "slider", "activecolor"),
+    getColor(me, "slider", "textcolor"),
+    getColor(me, "slider", "dragcolor"),
     strTo<float>(me->first_attribute("minvalue")->value()),
     strTo<float>(me->first_attribute("maxvalue")->value()),
     strTo<float>(me->first_attribute("startvalue")->value()),
@@ -532,9 +535,9 @@ Graphics::LabelBindHwnd Graphics::createLabelBind(xml_node<> *me) {
     strTo<float>(me->first_attribute("maxabsx")->value()),
     strTo<float>(me->first_attribute("maxabsy")->value()),
   },
-    hexToInt(me->first_attribute("bgcolor")->value()),
-    hexToInt(me->first_attribute("activecolor")->value()),
-    hexToInt(me->first_attribute("textcolor")->value()),
+    getColor(me, "lablebind", "bgcolor"),
+    getColor(me, "lablebind", "activecolor"),
+    getColor(me, "lablebind", "textcolor"),
     strTo<int>(me->first_attribute("align")->value()));
 }
 

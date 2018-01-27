@@ -1,4 +1,4 @@
-#include "RenderIn.h"
+#include "GameCanvas.h"
 
 void mainMenuStoryModePlayButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
@@ -20,7 +20,7 @@ void storyMenuNewButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/newsingle_menu.xml");
 }
 void storyMenuLoadButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 void storyMenuBackButton() {
   createMainMenu();
@@ -28,13 +28,13 @@ void storyMenuBackButton() {
 
 //Main / Story / New
 void newSingleMenu3PlayerButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 void newSingleMenu4PlayerButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 void newSingleMenu5PlayerButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 void newSingleMenuBackButton() {
 	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
@@ -42,7 +42,7 @@ void newSingleMenuBackButton() {
 
 //Main / FFA
 void ffaMenuNewGameButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/main_menu.xml");
+  createMainMenu();
 }
 void ffaMenuJoinGameButton() {
   Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
@@ -198,6 +198,10 @@ void ingameLaserSidebarShoot() {
   reinterpret_cast<Laser*>(selectedo)->shoot(timeNow);
 }
 
+float getCurrentZoom() {
+  return MainGameCanvas::d / 10;
+}
+
 string getCurrentName() {
   if (selectedo != NULL) {
     return selectedo->name();
@@ -311,6 +315,13 @@ string isSurefire() {
 }
 
 void bindLabels() {
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectMainGameCanvasScale"))->text =
+    new TextBind<
+    TextBindFunc<float>
+    >("1 : %m",
+      TextBindFunc<float>(getCurrentZoom)
+      );
+
   reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectSidebarName"))->text =
     new TextBind<
     TextBindFunc<string>
@@ -401,9 +412,9 @@ int InitGraphics() {
 
   //Subwindows
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
-  objectMenuSubWindow = Graphics::createPanel("objectMenuSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, ElementBackColor);
+  objectMenuSubWindow = Graphics::createPanel("objectMenuSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, getColor("div", "bgcolor"));
   Graphics::addElement(objectMainWindow, objectMenuSubWindow);
-  objectGameSubWindow = Graphics::createPanel("objectGameSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, ElementBackColor);
+  objectGameSubWindow = Graphics::createPanel("objectGameSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, getColor("div", "bgcolor"));
   Graphics::addElement(objectMainWindow, objectGameSubWindow);
   return 0;
 }

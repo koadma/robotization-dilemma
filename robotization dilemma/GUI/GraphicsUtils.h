@@ -8,6 +8,14 @@ using namespace std;
 
 typedef uint32_t colorargb;
 
+extern map<string, map<string, colorargb>> colors;
+
+colorargb getColor(string object, string key);
+colorargb getColor(string val);
+colorargb getColor(xml_node<>* me, string elem, string key);
+
+void loadColors(string filename = "html/colors.cfg");
+
 class Canvas;
 
 bool operator==(const key& lhs, const key& rhs);

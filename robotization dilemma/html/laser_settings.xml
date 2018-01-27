@@ -9,9 +9,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		inputfunc = "ingameLaserSidebarEnergyInput"
 		validatorfunc = "floatValidator"
 	>0</input>
@@ -25,9 +22,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-55.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>x</label>
 	<label
@@ -40,9 +34,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-55.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>y</label>
 	<label
@@ -55,9 +46,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-55.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>z</label>
 	<input
@@ -70,9 +58,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-105.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		inputfunc = "ingameLaserSidebarDirInputX"
 		validatorfunc = "floatValidator"
 	>0</input>
@@ -86,9 +71,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-105.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		inputfunc = "ingameLaserSidebarDirInputY"
 		validatorfunc = "floatValidator"
 	>0</input>
@@ -102,9 +84,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-105.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		inputfunc = "ingameLaserSidebarDirInputZ"
 		validatorfunc = "floatValidator"
 	>0</input>
@@ -118,9 +97,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-155.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>ERROR</labelbind>
 	<button
@@ -133,9 +109,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-205.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "ingameLaserSidebarShoot"
 	>Shoot</button>
 </body>

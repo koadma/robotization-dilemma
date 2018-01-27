@@ -9,10 +9,6 @@
 		maxrely = "1.0"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
-		pulledcolor = "ffff0000"
 		minvalue = "0"
 		maxvalue = "2"
 		startvalue = "0"
@@ -29,8 +25,19 @@
 		maxrely = "1.0"
 		maxabsx = "-150.0"
 		maxabsy = "-30.0"
-		bgcolor = "ff070918"
 	></div>
+	<labelbind
+		id = "objectMainGameCanvasScale"
+		minrelx = "0.9"
+		minrely = "0.0"
+		minabsx = "-245.0"
+		minabsy = "5.0"
+		maxrelx = "0.9"
+		maxrely = "0.0"
+		maxabsx = "-155.0"
+		maxabsy = "45.0"
+		align = "1"
+	>ERROR</labelbind>
 	<div
 		id = "objectMainGameShipCanvasContainer"
 		minrelx = "0.9"
@@ -41,7 +48,6 @@
 		maxrely = "0.5"
 		maxabsx = "0.0"
 		maxabsy = "0.0"
-		bgcolor = "ff070918"
 	></div>
 	<div
 		id = "objectMainGameMenuSidebar"
@@ -53,7 +59,6 @@
 		maxrely = "1.0"
 		maxabsx = "0.0"
 		maxabsy = "-30.0"
-		bgcolor = "ff070918"
 	>
 		<button
 			id = "objectMainGameExitButton"
@@ -65,9 +70,6 @@
 			maxrely = "1.0"
 			maxabsx = "-5.0"
 			maxabsy = "-5.0"
-			bgcolor = "ff070918"
-			activecolor = "ff190077"
-			textcolor = "ff838fa1"
 			callback = "ingameMenuExitButton"
 		>Exit to menu</button>
 		<button
@@ -80,9 +82,6 @@
 			maxrely = "1.0"
 			maxabsx = "-5.0"
 			maxabsy = "-5.0"
-			bgcolor = "ff070918"
-			activecolor = "ff190077"
-			textcolor = "ff838fa1"
 			callback = "ingameMenuCommitButton"
 		>Commit</button>
 		<labelbind
@@ -95,9 +94,6 @@
 			maxrely = "1.0"
 			maxabsx = "-5.0"
 			maxabsy = "-55.0"
-			bgcolor = "ff070918"
-			activecolor = "ff190077"
-			textcolor = "ff838fa1"
 			align = "1"
 		>ERROR</labelbind>
 		<labelbind
@@ -110,9 +106,6 @@
 			maxrely = "1.0"
 			maxabsx = "-5.0"
 			maxabsy = "-85.0"
-			bgcolor = "ff070918"
-			activecolor = "ff190077"
-			textcolor = "ff838fa1"
 			align = "1"
 		>ERROR</labelbind>
 		<button
@@ -125,9 +118,6 @@
 			maxrely = "1.0"
 			maxabsx = "-5.0"
 			maxabsy = "-115.0"
-			bgcolor = "ff070918"
-			activecolor = "ff190077"
-			textcolor = "ff838fa1"
 			callback = "ingameMenuEnergyButton"
 		>Energy log</button>
 		<button
@@ -140,9 +130,6 @@
 			maxrely = "1.0"
 			maxabsx = "-5.0"
 			maxabsy = "-115.0"
-			bgcolor = "ff070918"
-			activecolor = "ff190077"
-			textcolor = "ff838fa1"
 			callback = "ingameMenuPowerButton"
 		>Power log</button>
 		<div
@@ -154,9 +141,7 @@
 			maxrelx = "1.0"
 			maxrely = "1.0"
 			maxabsx = "0.0"
-			maxabsy = "-140.0"
-			bgcolor = "ff070918">
+			maxabsy = "-140.0">
 		</div>
 	</div>
-
 </body>

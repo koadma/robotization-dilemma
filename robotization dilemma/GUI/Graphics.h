@@ -96,7 +96,7 @@ namespace Graphics {
   LabelHwnd createLabel(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int center);
   LabelHwnd createLabel(xml_node<> *me);
 
-  ImageHwnd createImage(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text);
+  ImageHwnd createImage(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align);
   ImageHwnd createImage(xml_node<> *me);
 
   TextInputHwnd createTextInput(string lname, Coordiante mincorner, Coordiante maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator = *textValidator);

@@ -37,14 +37,14 @@ const time_type_s ROUND_TIME = 2;
 
 #define E           2.71828182845904523536028747135266249775724709369995
 
-#define ElementBaseColor 0xff070918
-#define ElementActiveColor 0xff190077
-#define ElementTextColor 0xff838FA1
-#define ElementBackColor 0xff030014
+constexpr long double operator"" _deg(long double deg)
+{
+  return deg*3.141592 / 180;
+}
 
 const int VersionA = 0;
 const int VersionB = 5;
-const int VersionC = 0;
+const int VersionC = 1;
 
 const acc_type_mperss MAX_ACCEL = 100;
 

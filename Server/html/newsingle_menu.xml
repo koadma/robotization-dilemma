@@ -9,9 +9,6 @@
 		maxrely = "0.8"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>Choose Campaign Mode</label>
 	<button
@@ -24,9 +21,6 @@
 		maxrely = "0.7"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "newSingleMenu3PlayerButton"
 	>3 Player Story</button>
 	<button
@@ -39,9 +33,6 @@
 		maxrely = "0.6"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "newSingleMenu4PlayerButton"
 	>4 Player Story</button>
 	<button
@@ -54,9 +45,6 @@
 		maxrely = "0.5"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "newSingleMenu5PlayerButton"
 	>5 Player Story</button>
 	<button
@@ -69,9 +57,6 @@
 		maxrely = "0.4"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "newSingleMenuBackButton"
 	>Back</button>
 </body>

@@ -99,7 +99,8 @@ int main() {
   srand(time(NULL));
 
   loadKeybinds();
-  
+  loadColors();
+
   InitGraphics();
 
   /*
@@ -143,9 +144,8 @@ int main() {
   else {
     createMainMenu();
   }
-
+  glutPostRedisplay();
   glutMainLoop();
-
 }
 
 int CALLBACK WinMain(

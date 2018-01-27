@@ -9,9 +9,6 @@
 		maxrely = "0.6"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>Ip</label>
 	<input
@@ -24,9 +21,6 @@
 		maxrely = "0.5"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		inputfunc = "joinMenuInput"
 		validatorfunc = "textValidator"
 	>127.0.0.1</input>
@@ -40,9 +34,6 @@
 		maxrely = "0.6"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		align = "1"
 	>Port</label>
 	<input
@@ -55,9 +46,6 @@
 		maxrely = "0.5"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		inputfunc = "joinMenuInput"
 		validatorfunc = "numericalValidator"
 	>1111</input>
@@ -71,9 +59,6 @@
 		maxrely = "0.5"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "joinMenuInputButton"
 	>Ok</button>
 	<button
@@ -86,9 +71,6 @@
 		maxrely = "0.4"
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
-		bgcolor = "ff070918"
-		activecolor = "ff190077"
-		textcolor = "ff838fa1"
 		callback = "joinMenuBackButton"
 	>Back</button>
 </body>

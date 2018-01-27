@@ -150,7 +150,7 @@ void LaserShot::setV(DataElement* data, Game* game) {
 }
 void ThermalRadiation::apply(Game *g) {
   Bubble* b = new Bubble();
-  b->constrains.push_back(Bubble::constrain(Bubble::constrain::include, { 1, 0, 0 }, -2)); //Include all directions
+  b->constrains.push_back(Bubble::constrain(Bubble::constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Include all directions
   b->btype = Bubble::Thermal;
   b->emitter = _o->getMovement(_time);
   b->energy = _o->getUsedPower(_time);

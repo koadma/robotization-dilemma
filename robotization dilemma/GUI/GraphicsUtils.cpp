@@ -3,6 +3,48 @@
 #include "../stb_image.h"
 #undef STB_IMAGE_IMPLEMENTATION
 
+map<string, map<string, colorargb>> colors; //type, elem
+
+colorargb getColor(string object, string key) {
+  auto it = colors[key];
+  if (it.count(object)) {
+    return it[object];
+  }
+  if (it.count("*")) {
+    return it["*"];
+  }
+  cout << "[GUI]\t[Colors]\t[Warning]\tUndefined color key " << object << " " << key << endl;
+  return 0;
+}
+colorargb getColor(string val) {
+  if (val[0] == '#') {
+    return hexToInt(val);
+  }
+  else {
+    vector<string> tokens = tokenize(val, '_');
+    return colors[tokens[0]][tokens[1]];
+  }
+}
+colorargb getColor(xml_node<>* me, string elem, string key) {
+  xml_attribute<>* att = me->first_attribute(key.c_str());
+  if (att) {
+    return getColor(att->value());
+  }
+  return getColor(elem, key);
+}
+
+void loadColors(string filename) {
+  ifstream cols(filename);
+  string type;
+  string elem;
+  string col;
+  while (cols.good()) {
+    cols >> elem >> type >> col;
+    colors[type][elem] = getColor(col);
+  }
+}
+
+
 bool key::isKey() {
   return _type == type_key;
 }
@@ -402,7 +444,7 @@ void renderBitmapString(float x, float y, string text, colorargb color, bool cen
 
 GLuint png_texture_load(string filename, int& w, int& h) {
   int comp;
-  unsigned char* image = stbi_load(filename.c_str(), &w, &h, &comp, STBI_rgb);
+  unsigned char* image = stbi_load(filename.c_str(), &w, &h, &comp, STBI_rgb_alpha);
 
   if (image == nullptr)
     throw(std::string("Failed to load texture"));
@@ -417,7 +459,7 @@ GLuint png_texture_load(string filename, int& w, int& h) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   if (comp == 3)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGB , GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
   else if (comp == 4)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 

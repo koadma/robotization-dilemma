@@ -21,7 +21,6 @@ int Slider::mouseMoved(int mx, int my) {
 
 int Slider::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   bool oactive = active;
-  cout << evt.toName() << endl;
 
   if (evt._key._type == key::type_mouse) {
     if (evt._key._keycode == 0) {

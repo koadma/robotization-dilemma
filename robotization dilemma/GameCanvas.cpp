@@ -19,7 +19,6 @@ void MainGameCanvas::normalizeAngles() {
     camtheta = -HALF_PI + 0.01;
   }
   camphi = wrapAngle(camphi + PI) - PI; //between -180 and 180
-                                        //cout << camphi << " " << camtheta << endl;
 }
 int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
 
@@ -200,7 +199,6 @@ int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_locat
     if (in) {
       mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
       mousebuttons ^= ((evt._type == gui_event::evt_down) | (evt._type == gui_event::evt_pressed)) << evt._key._keycode;
-      cout << mousebuttons << endl;
       if(evt._key._keycode == 0 && evt._type == gui_event::evt_down) {
         GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
 
@@ -284,7 +282,6 @@ void MainGameShipCanvas::normalizeAngles() {
     camtheta = -HALF_PI;
   }
   camphi = wrapAngle(camphi + PI) - PI; //between -180 and 180
-                                        //cout << camphi << " " << camtheta << endl;
 }
 int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
 
@@ -465,7 +462,6 @@ int MainGameShipCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_l
     if (in) {
       mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
       mousebuttons ^= ((evt._type == gui_event::evt_down) | (evt._type == gui_event::evt_pressed)) << evt._key._keycode;
-      cout << mousebuttons << endl;
       if (evt._key._keycode == 0 && evt._type == gui_event::evt_down) {
         GLdouble pos3D_ax = 0, pos3D_ay = 0, pos3D_az = 0;
 
