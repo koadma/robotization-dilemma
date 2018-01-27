@@ -232,6 +232,15 @@ int getCurrentMaxHealth() {
   return 0;
 }
 
+float getCurrent(bool vel, int index) {
+  if (vel) {
+    return ship->mov.getAt(timeNow).vel[index];
+  }
+  else {
+    return ship->mov.getAt(timeNow).pos[index];
+  }
+}
+
 power_type_W getCurrentMaxGeneratedPower() {
   if (selectedo != NULL) {
     return selectedo->getMaxGeneratedPower(timeNow);
@@ -321,7 +330,26 @@ void bindLabels() {
     >("1 : %m",
       TextBindFunc<float>(getCurrentZoom)
       );
-
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectMainGameShipLocation"))->text =
+    new TextBind<
+    TextBindFunc<float, bool, int>,
+    TextBindFunc<float, bool, int>,
+    TextBindFunc<float, bool, int>
+    >("Pos X: %, Y: %, Z: %",
+      TextBindFunc<float, bool, int>(getCurrent, false, 0),
+      TextBindFunc<float, bool, int>(getCurrent, false, 1),
+      TextBindFunc<float, bool, int>(getCurrent, false, 2)
+      );
+  reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectMainGameShipVelocity"))->text =
+    new TextBind<
+    TextBindFunc<float, bool, int>,
+    TextBindFunc<float, bool, int>,
+    TextBindFunc<float, bool, int>
+    >("Vel X: %, Y: %, Z: %",
+      TextBindFunc<float, bool, int>(getCurrent, true, 0),
+      TextBindFunc<float, bool, int>(getCurrent, true, 1),
+      TextBindFunc<float, bool, int>(getCurrent, true, 2)
+      );
   reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectSidebarName"))->text =
     new TextBind<
     TextBindFunc<string>

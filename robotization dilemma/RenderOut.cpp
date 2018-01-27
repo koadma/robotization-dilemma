@@ -140,7 +140,7 @@ void createMainMenu() {
     TextBindVar<int>,
     TextBindVar<int>,
     TextBindVar<int>
-    >("%.%.%",
+    >("V%.%.%",
       TextBindVar<int>(&VersionA),
       TextBindVar<int>(&VersionB),
       TextBindVar<int>(&VersionC)

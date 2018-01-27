@@ -38,6 +38,30 @@
 		maxabsy = "45.0"
 		align = "1"
 	>ERROR</labelbind>
+	<labelbind
+		id = "objectMainGameShipLocation"
+		minrelx = "0.0"
+		minrely = "0.0"
+		minabsx = "5.0"
+		minabsy = "45.0"
+		maxrelx = "0.0"
+		maxrely = "0.0"
+		maxabsx = "245.0"
+		maxabsy = "75.0"
+		align = "0"
+	>ERROR</labelbind>
+	<labelbind
+		id = "objectMainGameShipVelocity"
+		minrelx = "0.0"
+		minrely = "0.0"
+		minabsx = "5.0"
+		minabsy = "5.0"
+		maxrelx = "0.0"
+		maxrely = "0.0"
+		maxabsx = "245.0"
+		maxabsy = "35.0"
+		align = "0"
+	>ERROR</labelbind>
 	<div
 		id = "objectMainGameShipCanvasContainer"
 		minrelx = "0.9"

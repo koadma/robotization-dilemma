@@ -44,7 +44,7 @@ constexpr long double operator"" _deg(long double deg)
 
 const int VersionA = 0;
 const int VersionB = 5;
-const int VersionC = 1;
+const int VersionC = 2;
 
 const acc_type_mperss MAX_ACCEL = 100;
 
