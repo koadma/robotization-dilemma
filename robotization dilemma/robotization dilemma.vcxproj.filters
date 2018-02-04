@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Code">
+      <UniqueIdentifier>{d66bffac-f639-43cf-a6d3-676d5b4289e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries">
+      <UniqueIdentifier>{84df28ba-3a81-4ab3-a039-251beb514796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\GUI">
+      <UniqueIdentifier>{9391fbe4-7bce-4e79-b72a-c07c74b221e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\Maths">
+      <UniqueIdentifier>{ce2e52a3-2697-4943-9e00-b8fa6ffc079e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\Network">
+      <UniqueIdentifier>{ac0ece5f-ff31-42be-81ba-9cc8141a31c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Framework">
+      <UniqueIdentifier>{4cafe0d7-470e-4d3c-b32d-cea9d69654b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\EM">
+      <UniqueIdentifier>{b1d30ae4-92e3-4da2-bd01-2947cad4a46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Objects">
+      <UniqueIdentifier>{f731ef97-4023-4cae-bc4a-dd79dffef8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Libraries\Scripts">
+      <UniqueIdentifier>{f9b98839-2b1b-4107-805f-1faaba05afe2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GUI\Button.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Canvas.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Container.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Graphics.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\GraphicsUtils.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\GUIElement.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Label.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\LabelBind.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Panel.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Slider.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Table.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TextInput.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Fraction.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\helperFunctions.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Keyframe.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Point.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\Polynomial.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Network\Network.cpp">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Network\NetworkData.cpp">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Battery.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Computer.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Engine.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Generator.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Hangar.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Laser.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Object.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Object\Sensor.cpp">
+      <Filter>Code\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Bubble.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Movement.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Path.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Path\Shot.cpp">
+      <Filter>Code\EM</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientCore.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCanvas.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderIn.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderOut.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Ship.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Sighting.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Event.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Scripts\Scripts.cpp">
+      <Filter>Code\Libraries\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Checkbox.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\FlowSystem.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Resources.cpp">
+      <Filter>Code\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Plot.cpp">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GUI\Button.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Canvas.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Container.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Graphics.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\GraphicsUtils.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\GUIElement.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Label.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\LabelBind.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Panel.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Slider.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Table.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TextInput.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\constants.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Fraction.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\helperFunctions.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Keyframe.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Point.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\Polynomial.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Network\Network.h">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Network\NetworkData.h">
+      <Filter>Code\Libraries\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Battery.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Computer.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Engine.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Generator.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Hangar.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Laser.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Object.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Object\Sensor.h">
+      <Filter>Code\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Bubble.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Movement.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Path.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Path\Shot.h">
+      <Filter>Code\EM</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientCore.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCanvas.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Main.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderIn.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderOut.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Ship.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Sighting.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Event.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Scripts\Scripts.h">
+      <Filter>Code\Libraries\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Checkbox.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\FlowSystem.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Resources.h">
+      <Filter>Code\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Plot.h">
+      <Filter>Code\Libraries\GUI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

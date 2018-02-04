@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "robotization dilemma", "robotization dilemma\robotization dilemma.vcxproj", "{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{74475862-5789-4265-A647-096AC8B5A65C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B9ED662C-07E6-4FCD-9AEB-C074185A0355}"
+	ProjectSection(SolutionItems) = preProject
+		Core\Bubble.cpp = Core\Bubble.cpp
+		Core\Bubble.h = Core\Bubble.h
+		Core\constants.h = Core\constants.h
+		Core\Fraction.cpp = Core\Fraction.cpp
+		Core\Fraction.h = Core\Fraction.h
+		Core\helperFunctions.cpp = Core\helperFunctions.cpp
+		Core\helperFunctions.h = Core\helperFunctions.h
+		Core\Keyframe.cpp = Core\Keyframe.cpp
+		Core\Keyframe.h = Core\Keyframe.h
+		Core\Network.cpp = Core\Network.cpp
+		Core\Network.h = Core\Network.h
+		Core\NetworkData.cpp = Core\NetworkData.cpp
+		Core\NetworkData.h = Core\NetworkData.h
+		Core\Point.cpp = Core\Point.cpp
+		Core\Point.h = Core\Point.h
+		Core\Polynomial.cpp = Core\Polynomial.cpp
+		Core\Polynomial.h = Core\Polynomial.h
+		Core\Ship.cpp = Core\Ship.cpp
+		Core\Ship.h = Core\Ship.h
+		Core\Sighting.cpp = Core\Sighting.cpp
+		Core\Sighting.h = Core\Sighting.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{2879DE20-1A27-42F7-94B9-62E669F5F1F1}"
+	ProjectSection(SolutionItems) = preProject
+		robotization dilemma\html\engine_settings.html = robotization dilemma\html\engine_settings.html
+		robotization dilemma\html\ffa_menu.html = robotization dilemma\html\ffa_menu.html
+		robotization dilemma\html\game_menu.html = robotization dilemma\html\game_menu.html
+		robotization dilemma\html\game_screen.html = robotization dilemma\html\game_screen.html
+		robotization dilemma\html\generator_settings.html = robotization dilemma\html\generator_settings.html
+		robotization dilemma\html\join_menu.html = robotization dilemma\html\join_menu.html
+		robotization dilemma\html\laser_settings.html = robotization dilemma\html\laser_settings.html
+		robotization dilemma\html\main_menu.html = robotization dilemma\html\main_menu.html
+		robotization dilemma\html\newsingle_menu.html = robotization dilemma\html\newsingle_menu.html
+		robotization dilemma\html\sensor_settings.html = robotization dilemma\html\sensor_settings.html
+		robotization dilemma\html\ship_settings.html = robotization dilemma\html\ship_settings.html
+		robotization dilemma\html\story_menu.html = robotization dilemma\html\story_menu.html
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Debug|x64.ActiveCfg = Debug|x64
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Debug|x64.Build.0 = Debug|x64
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Debug|x86.ActiveCfg = Debug|Win32
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Debug|x86.Build.0 = Debug|Win32
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Release|x64.ActiveCfg = Release|x64
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Release|x64.Build.0 = Release|x64
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Release|x86.ActiveCfg = Release|Win32
+		{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}.Release|x86.Build.0 = Release|Win32
+		{74475862-5789-4265-A647-096AC8B5A65C}.Debug|x64.ActiveCfg = Debug|x64
+		{74475862-5789-4265-A647-096AC8B5A65C}.Debug|x64.Build.0 = Debug|x64
+		{74475862-5789-4265-A647-096AC8B5A65C}.Debug|x86.ActiveCfg = Debug|Win32
+		{74475862-5789-4265-A647-096AC8B5A65C}.Debug|x86.Build.0 = Debug|Win32
+		{74475862-5789-4265-A647-096AC8B5A65C}.Release|x64.ActiveCfg = Release|x64
+		{74475862-5789-4265-A647-096AC8B5A65C}.Release|x64.Build.0 = Release|x64
+		{74475862-5789-4265-A647-096AC8B5A65C}.Release|x86.ActiveCfg = Release|Win32
+		{74475862-5789-4265-A647-096AC8B5A65C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
