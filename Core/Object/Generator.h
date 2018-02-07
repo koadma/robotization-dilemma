@@ -9,12 +9,6 @@ public:
   Generator(Drone* parentShip, uint64_t ID) :
     Object(parentShip, ID)
   {}
-  Generator(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, float radius, int health, float maxPower) :
-  Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    maxGeneratedPowerChange(-1, maxPower);
-    _name = "Generator";
-    maxStorageChange(-1, 0);
-  }
   int type();
 
   power_type_W getDisplayMaxPower(time_type_s time) { ///Max generatable power, max usable, whatever applicable

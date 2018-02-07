@@ -6,7 +6,7 @@ template<typename T> class Polynomial;
 
 typedef Polynomial<int> PolynomialI;
 typedef Polynomial<float> PolynomialF;
-typedef Polynomial<double> PolynomialD;
+typedef Polynomial<long double> PolynomialD;
 //typedef Polynomial<Fraction> PolynomialR;
 
 
@@ -49,37 +49,237 @@ public:
   }
 
   T at(T val) {
-    float val = 0;
-    for (int i = 0; i < this->Coefficient.size(); i++) {
-      val += this->Coefficient[i] * pow(value, i);
+    T value = Coefficient[degree];
+    for (int i = degree-1; i >= 0; i--) {
+      value = val * value + Coefficient[i];
     }
-    return val
+    return value;
   }
   Polynomial<T> derivative() {
     Polynomial<T> d(degree-1);;
-    for (int i = 1; i <= d; ++i) {
+    for (int i = 1; i <= degree; ++i) {
       d.Coefficient[i-1] = i * Coefficient[i];
     }
+    return d;
+  }
+  Polynomial<T> eliminateRoot(T root)
+  {
+    Polynomial<T> temp(Coefficient);
+    vector<T> coeffs(temp.degree, 0);
+
+    for (int i = this->degree; i >= 1; i--)
+    {
+      coeffs[i - 1] = temp.Coefficient[i];
+      temp.Coefficient[i - 1] = temp.Coefficient[i - 1] + root*temp.Coefficient[i];
+      temp.Coefficient[i] = 0;
+    }
+
+    return Polynomial<T>(coeffs);
   }
 
   vector<T> solve() {
-    if (degree > 4) {
-      throw 1;
+    if (degree > 2) {
+      return solveInterval();
     }
-    if (degree == 4) {
+    /*if (degree == 4) {
       return solveQuartic(Coefficient[4], Coefficient[3], Coefficient[2], Coefficient[1], Coefficient[0]);
     }
     if (degree == 3) {
       return solveCubic(Coefficient[3], Coefficient[2], Coefficient[1], Coefficient[0]);
-    }
+    }*/
     if (degree == 2) {
-      return solveQuadratic(Coefficient[2], Coefficient[1], Coefficient[0]);
+      return solveQuadratic<T>(Coefficient[2], Coefficient[1], Coefficient[0]);
     }
     if (degree == 1) {
       return {- Coefficient[0] / Coefficient[1]};
     }
   }
+  
 
+  T find_0_to_deg_1_max()
+  {
+    T A = abs(this->Coefficient[0]);
+    for (int i = 0; i < this->degree; i++)
+    {
+      if (A < abs(this->Coefficient[i]))
+      {
+        A = abs(this->Coefficient[i]);
+      }
+    }
+    return A;
+  }
+  T find_1_to_deg_max()
+  {
+    T B = abs(this->Coefficient[1]);
+    for (int i = 1; i <= this->degree; i++)
+    {
+      if (B < abs(this->Coefficient[i]))
+      {
+        B = abs(this->Coefficient[i]);
+      }
+    }
+    return B;
+  }
+  vector<T> solveNewton() {
+    Polynomial<T> mec = *this;
+    bool inside = true;
+    vector<T> roots;
+    int numoftries, tries = 0;
+    double A, B, max, min, x, valofmin, valofmax, valofminneg, valofmaxneg, valofx, root;
+
+    while (mec.degree > 1 && tries<MaxTries)
+    {
+      A = mec.find_0_to_deg_1_max();
+      B = mec.find_1_to_deg_max();
+      min = 1 / (1 + B / abs(mec.Coefficient[0]));
+      max = 1 + A / abs(mec.Coefficient[mec.degree]);
+
+      valofmin = mec.at(min);
+      valofmax = mec.at(max);
+      valofminneg = mec.at(-min);
+      valofmaxneg = mec.at(-max);
+
+      Polynomial<T> derivative = mec.derivative();
+
+      if (abs(valofmin) < SolvePrec)
+      {
+        root = min;
+      }
+      else if (abs(valofmax) < SolvePrec)
+      {
+        root = max;
+      }
+      else if (abs(valofminneg) < SolvePrec)
+      {
+        root = -min;
+      }
+      else if (abs(valofmaxneg) < SolvePrec)
+      {
+        root = -max;
+      }
+      else
+      {
+
+        tries = 0;
+
+        do
+        {
+
+          numoftries = 0;
+
+          do
+          {
+            x = (max - min)*ran1() + min;
+          } while (abs(derivative.at(x)) < 0.001);
+
+          while ((abs(mec.at(x)) > SolvePrec) && inside)
+          {
+            x = x - mec.at(x) / derivative.at(x);
+            numoftries++;
+            if (numoftries > 1000)
+            {
+              inside = false;
+            }
+          }
+
+          if (inside = true)
+          {
+            numoftries = 0;
+            root = x;
+          }
+          else
+          {
+            inside = true;
+            numoftries = 0;
+
+            do
+            {
+              x = (-max + min)*ran1() - min;
+            } while (abs(derivative.at(x)) > 0.001);
+
+            while ((abs(mec.at(x)) > SolvePrec) && inside)
+            {
+              x = x - mec.at(x) / derivative.at(x);
+              numoftries++;
+              if (numoftries > 1000)
+              {
+                inside = false;
+              }
+            }
+
+            if (inside = true)
+            {
+              numoftries = 0;
+              root = x;
+            }
+
+          }
+
+          tries++;
+
+        } while ((abs(mec.at(root)) > SolvePrec) && tries<MaxTries);
+
+      }
+
+      if (tries < MaxTries)
+      {
+        roots.push_back(root);
+        mec = mec.eliminateRoot(root);
+      }
+
+    }
+
+    if (tries < MaxTries)
+    {
+      roots.push_back(-mec.Coefficient[0] / mec.Coefficient[1]);
+    }
+    return roots;
+  }
+
+  vector<T> solveInterval() {
+    vector<T> roots;
+
+    T RoucheBound = 2 + find_0_to_deg_1_max()/abs(Coefficient[degree]);
+    T intervalmin = -RoucheBound;
+    T intervalmax = RoucheBound;
+
+    vector<T> inflex = derivative().solve();
+    inflex.push_back(intervalmin);
+    inflex.push_back(intervalmax);
+
+    sort(inflex.begin(), inflex.end());
+
+    auto it = inflex.begin();
+    auto nit = it;
+    ++nit;
+    
+    while (nit != inflex.end()) {
+      if (at(*it) * at(*nit) <= 0) { //Oppsite sign, search
+        T min = *it;
+        T max = *nit;
+        T mid = (min + max) / 2;
+        while ((max - min) > SolvePrec) {
+          if (at(min) * at(mid) <= 0) { 
+            max = mid;
+          }
+          else {
+            min = mid;
+          }
+          mid = (min + max) / 2;
+        }
+        roots.push_back(mid);
+        it = nit;
+        ++nit;
+      }
+      else {
+        if (abs(at(*nit)) < SolvePrec) {
+          roots.push_back(*nit);
+        }
+        ++nit;
+      }
+    }
+    return roots;
+  }
 };
 
 template<typename T> Polynomial<T> operator+ (Polynomial<T> lhs, Polynomial<T> rhs) {
@@ -149,8 +349,8 @@ template<typename T> pair<Polynomial<T>, Polynomial<T>> PolyDiv(Polynomial<T> lh
     p = make_pair(Polynomial<T>(), lhs);
   }
   else {
-    Polynomial q(Fraction(1), lhs.degree - rhs.degree);
-    Polynomial nlhs = (lhs - q*(rhs*(lhs.Coefficient[lhs.degree] / rhs.Coefficient[rhs.degree]))).Trim();
+    Polynomial<T> q(T(1), lhs.degree - rhs.degree);
+    Polynomial<T> nlhs = (lhs - q*(rhs*(lhs.Coefficient[lhs.degree] / rhs.Coefficient[rhs.degree]))).Trim();
     p = PolyDiv(nlhs, rhs);
     p.first = p.first + Polynomial<T>(lhs.Coefficient[lhs.degree] / rhs.Coefficient[rhs.degree], lhs.degree - rhs.degree);
   }

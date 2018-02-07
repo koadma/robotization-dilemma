@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Maths/Polynomial.h"
+#include "../Scripts/Scripts.h"
 
 class Path {
 public:
@@ -17,17 +17,11 @@ public:
     EqnTypeImplicit = 2,
     EqnTypeUndefined = 3
   };
-  virtual int type() {
-    return PathTypePath;
-  }
-  virtual int etype() {
-    return EqnTypeUndefined;
-  }
-  virtual Eqnsys getEquations(bool b) {//approximate
-    throw 1;
-    return Eqnsys();
-  }
-  virtual bool verify(time_type_s time, mVec3 pos) {
-    return true;
-  }
+  virtual int type();
+  virtual int etype();
+  virtual Eqnsys getEquations(bool b);
+  virtual bool verify(time_type_s time, mVec3 pos);
+  virtual vector<time_type_s> intersect(Path* other);
 };
+
+vector<double> intersectPaths(Path* lhs, Path* rhs);

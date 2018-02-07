@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Fraction.h"
+#include "Polynomial.h"
 
 //typedef int FlowType;
 
@@ -102,7 +102,7 @@ public:
 
   FlowVertex<V, D, T>* getFirstOverflow();
   
-  void updateReverseFlow(FlowEdge<V, D, T>* i, T flow);
+  void updateReverseFlow(FlowEdge<V, D, T>* i, D flow);
 
   bool push(FlowVertex<V, D, T>* u);
 
@@ -192,7 +192,7 @@ FlowVertex<V, D, T>* FlowGraph<V, D, T>::getFirstOverflow()
 
 // Update reverse flow for flow added on ith Edge
 template <typename V, typename D, typename T>
-void FlowGraph<V, D, T>::updateReverseFlow(FlowEdge<V, D, T>* i, T flow)
+void FlowGraph<V, D, T>::updateReverseFlow(FlowEdge<V, D, T>* i, D flow)
 {
   FlowVertex<V, D, T>* u = i->_v;
   FlowVertex<V, D, T>* v = i->_u;

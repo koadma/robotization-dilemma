@@ -28,6 +28,9 @@
     <Filter Include="Code\Libraries\Scripts">
       <UniqueIdentifier>{f9b98839-2b1b-4107-805f-1faaba05afe2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Libraries\Maths\BigNumber">
+      <UniqueIdentifier>{a550c39b-43a8-4621-98dc-7e5e7cca6666}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI\Button.cpp">
@@ -167,6 +170,24 @@
     </ClCompile>
     <ClCompile Include="GUI\Image.cpp">
       <Filter>Code\Libraries\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignum.cpp">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignumf.cpp">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignums.cpp">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Ctty.cpp">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Exarray.cpp">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\Maths\BigFloat.cpp">
+      <Filter>Code\Libraries\Maths</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,5 +332,57 @@
     <ClInclude Include="GUI\Image.h">
       <Filter>Code\Libraries\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignum.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignumf.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignums.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbnl.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cios.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Ctty.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exarray.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exdebug.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exstring.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exthread.h">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Maths\BigFloat.h">
+      <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Core\Maths\BigNumberLibrary\Cbignumf.inl">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </None>
+    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl.inl">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </None>
+    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl64.inl">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Core\Maths\BigNumberLibrary\Cbignum.txt">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </Text>
+    <Text Include="..\Core\Maths\BigNumberLibrary\Exarray.txt">
+      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    </Text>
   </ItemGroup>
 </Project>

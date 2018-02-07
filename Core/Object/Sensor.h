@@ -12,31 +12,7 @@ public:
   Sensor(Drone* parentShip, uint64_t ID) :
     Object(parentShip, ID)
   {}
-  Sensor(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower) :
-  Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    maxUseablePowerChange(-1, maxPower);
-    requestedPowerChange(-1, 0);
-    maxStorageChange(-1, 10000);
-    _name = "Sensor";
-    /*ScriptIConstant* sens = new ScriptIConstant();
-    sens->_val = new ScriptData();
-    sens->_val->type = ScriptData::TNUMERIC;
-    sens->_val->_data.fromType<float>(1);*/
-    ifstream sensfile("html/sensor_detect.xml");
-    std::stringstream buffer;
-    buffer << sensfile.rdbuf();
-    sensfile.close();
-    xml_document<> doc;
-    std::string content(buffer.str());
-    doc.parse<0>(&content[0]);
-    if (_sensitivity) {
-      delete _sensitivity;
-    }
-    _sensitivity = new ScriptIBlock();
-    _sensitivity->load(doc.first_node("root"));
-    _autofire.addFrame(0, 0);
-  }
-
+ 
   int type() { return Type::Sensor; }
 
   /*power_type_W getUsedPower(time_type_s time) { return _power.getAt(time)(); }

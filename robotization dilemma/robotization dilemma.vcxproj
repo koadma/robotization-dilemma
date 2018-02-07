@@ -20,6 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\Event.cpp" />
+    <ClCompile Include="..\Core\Maths\BigFloat.cpp" />
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignum.cpp" />
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignumf.cpp" />
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignums.cpp" />
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Ctty.cpp" />
+    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Exarray.cpp" />
     <ClCompile Include="..\Core\Maths\FlowSystem.cpp" />
     <ClCompile Include="..\Core\Maths\Fraction.cpp" />
     <ClCompile Include="..\Core\Maths\helperFunctions.cpp" />
@@ -68,6 +74,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Core\Event.h" />
+    <ClInclude Include="..\Core\Maths\BigFloat.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignum.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignumf.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignums.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbnl.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cios.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Ctty.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exarray.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exdebug.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exstring.h" />
+    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exthread.h" />
     <ClInclude Include="..\Core\Maths\constants.h" />
     <ClInclude Include="..\Core\Maths\FlowSystem.h" />
     <ClInclude Include="..\Core\Maths\Fraction.h" />
@@ -114,6 +131,15 @@
     <ClInclude Include="Main.h" />
     <ClInclude Include="RenderIn.h" />
     <ClInclude Include="RenderOut.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Core\Maths\BigNumberLibrary\Cbignumf.inl" />
+    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl.inl" />
+    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl64.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Core\Maths\BigNumberLibrary\Cbignum.txt" />
+    <Text Include="..\Core\Maths\BigNumberLibrary\Exarray.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DFC3EC97-FCA7-42F2-818A-036A335AEA7F}</ProjectGuid>

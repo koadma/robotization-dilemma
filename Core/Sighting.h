@@ -9,27 +9,7 @@
 #include "../robotization dilemma/RenderOut.h"
 #endif
 
-vector<double> intersectPaths(Path* lhs, Path* rhs);
-
 //typedef keyframe<unpoint<Movement*>> Sighting;
-
-/*
-class Sighting {
-public:
-  keyframe<unpoint<Movement*>> keyframes;
-  int getLastSmaller(time_type_s t);
-  Movement estimatePos(time_type_s t, vel_type_mpers maxVelocity);
-
-#ifdef M_CLIENT
-  void drawSighting(float camcx, float camcy, float camcz, float d, vel_type_mpers maxVel);
-#endif
-
-  void getSighting(DataElement* data);
-  void setSighting(DataElement* data);
-
-  ~Sighting();
-};*/
-
 
 class Sighting {
 public:
@@ -38,9 +18,6 @@ public:
     keyframes.addFrame(_time, _val);
   }
 
- /* typename set<pair<time_type_s, Movement> >::iterator search(time_type_s& _time) {
-    keyframes.search(_time);
-  }*/
   time_type_s getFirst() {
     return keyframes.getFirst();
   }
@@ -52,6 +29,24 @@ public:
   }
   void set(DataElement* data) {
     keyframes.set(data);
+  }
+  vector<time_type_s> intersect(Path* p) {
+    vector<time_type_s> intersects;
+    if(keyframes.size()) {
+      auto it = keyframes._frames.begin();
+      auto nit = it;
+      while (it != keyframes._frames.end()) {
+        ++nit;
+        vector<time_type_s> temp = intersectPaths(&it->second, p);
+        for (auto && tit : temp) {
+          if ((it == keyframes._frames.begin() || it->first <= tit) && (nit == keyframes._frames.end() || tit <= nit->first)) {
+            intersects.push_back(tit);
+          }
+        }
+        ++it;
+      }
+    }
+    return intersects;
   }
 
 #ifdef M_CLIENT

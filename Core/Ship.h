@@ -22,7 +22,6 @@ public:
   list<Sighting*> sightings;
 
   FlowGraph<energy_type_J, Fraction, time_type_s> energySystem;
-
   enum ShipClass {
     SCError = 0,
     SCTerrainCruiser = 1,
@@ -79,15 +78,13 @@ public:
   energy_type_J getStoredEnergy(time_type_s time);
   
 #ifdef M_SERVER
-  void sightMovement(Movement& m, time_type_s time, Game* g, bool autofire);
+  Sighting* sightMovement(Movement& m, time_type_s time, Game* g, bool autofire);
   energy_type_J energyUpdate(time_type_s time, Game* g, Object* chg = NULL, energy_type_J chgval = 0); //To do energy simulations.
   void energyCallback(time_type_s, Game* g); // Callback for energy run out objects, or any run of neergy sys
 #endif
 
   int getHealth(time_type_s time);
-  int getMaxHealth(time_type_s time);
-
-  
+  int getMaxHealth(time_type_s time); 
 
   mpssVec3 getAccel(time_type_s time) {
     mpssVec3 sum = { 0,0,0 };
@@ -101,6 +98,7 @@ class Ship : public Drone {
 private:
   bool canMove = false; //is the player open to moving / are we waiting for a move.
 public:
+  string code;
   Ship(uint32_t _ID, mVec3 _pos);
   Ship(uint32_t _ID);
   

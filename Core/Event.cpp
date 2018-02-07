@@ -15,6 +15,9 @@ int BatteryDrain::type() {
 int StateChange::type() {
   return EvTStateChange;
 }
+int SensorDetect::type() {
+  return EvTSensorDetect;
+}
 void StateChange::getV(DataElement* data) {
 
 }
@@ -99,6 +102,10 @@ void BatteryDrain::apply(Game *g) {
   //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
   _d->energyUpdate(_time, g);
 }
+void SensorDetect::apply(Game *g) {
+  //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
+  _d->energyUpdate(_time, g);
+}
 void StateChange::apply(Game *g) {
   throw 1;
 }
@@ -120,8 +127,7 @@ void EngineAcc::apply(Game *g) {
 
   _o->_parentShip->energyUpdate(_time, g); //recalculate ship energy info
 
-  g->removeIntersect(_o->_parentShip);
-  g->calcIntersect(_o->_parentShip); //recalculate ship related future intersections
+  g->recalcIntersects(_o->_parentShip);
 }
 void EngineAcc::setV(DataElement* data, Game* game) {
   _acc.set(data->_children[0]);
@@ -140,8 +146,7 @@ void LaserShot::apply(Game *g) {
   s->origintime = _time;
   s->vel = _dir;
 
-  g->paths.push_back(s);
-  g->calcIntersect(s);
+  g->add(s);
 }
 void LaserShot::setV(DataElement* data, Game* game) {
   _dir.set(data->_children[0]);
@@ -150,36 +155,32 @@ void LaserShot::setV(DataElement* data, Game* game) {
 }
 void ThermalRadiation::apply(Game *g) {
   Bubble* b = new Bubble();
-  b->constrains.push_back(Bubble::constrain(Bubble::constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Include all directions
-  b->btype = Bubble::Thermal;
+  b->constrains.push_back(constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Include all directions
+  b->bsource = Bubble_Thermal;
   b->emitter = _o->getMovement(_time);
   b->energy = _o->getUsedPower(_time);
   b->gEmissionTime = _time;
-  b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
   //_o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
-  g->paths.push_back(b);
-  g->calcIntersect(b);
+  g->add(b);
 }
 void ThermalRadiation::setV(DataElement* data, Game* game) {
 
 }
 void SensorPing::apply(Game *g) {
   Bubble* b = new Bubble();
-  b->constrains.push_back(Bubble::constrain(Bubble::constrain::include, { 1, 0, 0 }, -2)); //Include all directions
-  b->btype = Bubble::Ping;
+  b->constrains.push_back(constrain(constrain::include, { 1, 0, 0 }, -2)); //Include all directions
+  b->bsource = Bubble_Ping;
   b->emitter = _o->getMovement(_time);
   b->energy = _energy - _o->useEnergy(_time, _energy, g);
   b->gEmissionTime = _time;
-  b->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   b->originID = _o->getId();
 
   _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
-  g->paths.push_back(b);
-  g->calcIntersect(b);
+  g->add(b);
 }
 void SensorPing::setV(DataElement* data, Game* game) {
   _energy = data->_children[0]->_core->toType<energy_type_J>();

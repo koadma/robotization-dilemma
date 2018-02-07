@@ -24,7 +24,7 @@ int TextInput::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) 
         cursor = max(0, cursor - 1);
         return 1;
       }
-      if (evt._key._keycode == GLUT_KEY_LEFT) {
+      if (evt._key._keycode == GLUT_KEY_RIGHT) {
         cursor = min(int(text.size()), cursor + 1);
         return 1;
       }

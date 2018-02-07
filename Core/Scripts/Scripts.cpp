@@ -1,6 +1,6 @@
 #include "Scripts.h"
 
-//In:
+/*//In:
 //Root: NUMERIC number to convert
 //Out:
 //Root: STRING result
@@ -70,7 +70,7 @@ ScriptData* ScriptApiFunctions::num_rand(ScriptData& _args) {
   double b = _args._elems["b"]->_data.toType<double>();
   res->_data.fromType<double>(a + (b - a)*ran1());
   return res;
-}
+}*/
 
 ScriptData::ScriptData() {
   _instances = 1;
@@ -90,12 +90,37 @@ ScriptData::ScriptData() {
   return nval;
 }*/
 void ScriptData::CopyContent(ScriptData* _from) {
-  type = _from->type;
-  _data._len = _from->_data._len;
-  delete _data._data;
-  _data._data = new unsigned char[_data._len];
-  for (size_t i = 0; i < _data._len; i++) {
-    _data._data[i] = _from->_data._data[i];
+  if (_data != NULL) {
+    delete _data;
+    _data = NULL;
+  }
+  switch (_from->_data->type())
+  {
+  case ScriptDataBase::TNULL:
+    _data = NULL;
+    break;
+  case ScriptDataBase::TNUMERIC:
+    _data = new ScriptDataNumber(((ScriptDataNumber*)_from->_data)->_num);
+    break;
+  case ScriptDataBase::TSTRING:
+    _data = new ScriptDataString(((ScriptDataString*)_from->_data)->_str);
+    break;
+  case ScriptDataBase::TCHAR:
+    _data = new ScriptDataChar(((ScriptDataChar*)_from->_data)->_chr);
+    break;
+  case ScriptDataBase::TBOOLEAN:
+    _data = new ScriptDataBool(((ScriptDataBool*)_from->_data)->_bl);
+    break;
+  case ScriptDataBase::TARRAY:
+    _data = NULL;
+    break;
+  case ScriptDataBase::TVECTOR:
+    _data = new ScriptDataVector(((ScriptDataVector*)_from->_data)->_vec);
+    break;
+  default:
+    throw 1;
+    _data = NULL;
+    break;
   }
   while (_elems.size()) {
     DeletePtr(_elems.begin()->second);
@@ -108,6 +133,7 @@ void ScriptData::CopyContent(ScriptData* _from) {
   }
 }
 ScriptData::~ScriptData() {
+  delete _data;
   if (_instances != 0) {
     throw 1;
   }
@@ -147,8 +173,8 @@ void ScriptInstruction::load(xml_node<> *data) {
 
 ScriptData* ScriptIIfElse::run(ScriptData& _args) {
   ScriptData* condition = _condition->run(_args);
-  if (condition->type == ScriptData::TBOOLEAN) {
-    if (condition->_data.toType<bool>()) {
+  if (condition->_data->type() == ScriptDataBase::TBOOLEAN) {
+    if (((ScriptDataBool*)condition->_data)->_bl) {
       DeletePtr(condition);
       return _then->run(_args);
     }
@@ -166,8 +192,7 @@ void ScriptIIfElse::load(xml_node<> *data) {
   }
   else {
     ScriptIConstant* _false = new ScriptIConstant();
-    _false->_val->type = ScriptData::TBOOLEAN;
-    _false->_val->_data.fromType<bool>(false);
+    _false->_val->_data = new ScriptDataBool(false);
     condition->_instructions.push_back(_false);
   }
 
@@ -206,16 +231,14 @@ ScriptIIfElse::~ScriptIIfElse() {
 
 ScriptData* ScriptILoop::run(ScriptData& _args) {
   ScriptData* condition = _condition->run(_args);
-  if (condition->type == ScriptData::TBOOLEAN) {
-    while (condition->type == ScriptData::TBOOLEAN && condition->_data.toType<bool>()) {
-      ScriptData* insres = _code->run(_args);
-      if (insres != NULL) {
-        DeletePtr(condition);
-        return insres;
-      }
+  while (condition->_data->type() == ScriptDataBase::TBOOLEAN && ((ScriptDataBool*)condition->_data)->_bl) {
+    ScriptData* insres = _code->run(_args);
+    if (insres != NULL) {
       DeletePtr(condition);
-      condition = _condition->run(_args);
+      return insres;
     }
+    DeletePtr(condition);
+    condition = _condition->run(_args);
   }
   DeletePtr(condition);
   return NULL;
@@ -228,8 +251,7 @@ void ScriptILoop::load(xml_node<> *data) {
   }
   else {
     ScriptIConstant* _false = new ScriptIConstant();
-    _false->_val->type = ScriptData::TBOOLEAN;
-    _false->_val->_data.fromType<bool>(false);
+    _false->_val->_data = new ScriptDataBool(false);
     condition->_instructions.push_back(_false);
   }
 
@@ -318,20 +340,16 @@ void ScriptIConstant::load(xml_node<> *data) {
   _val = new ScriptData();
   string type = data->first_attribute("type")->value();
   if (type == "num") {
-    _val->type = ScriptData::TNUMERIC;
-    _val->_data.fromType<double>(strTo<double>(data->value()));
+    _val->_data = new ScriptDataNumber(strTo<double>(data->value()));
   }
   if (type == "bool") {
-    _val->type = ScriptData::TBOOLEAN;
-    _val->_data.fromType<bool>(strTo<bool>(data->value()));
+    _val->_data = new ScriptDataBool(strTo<bool>(data->value()));
   }
   if (type == "str") {
-    _val->type = ScriptData::TSTRING;
-    _val->_data.fromType<string>(data->value());
+    _val->_data = new ScriptDataString(strTo<string>(data->value()));
   }
   if (type == "char") {
-    _val->type = ScriptData::TCHAR;
-    _val->_data.fromType<string>(data->value());
+    _val->_data = new ScriptDataChar(strTo<char>(data->value()));
   }
 }
 ScriptIConstant::~ScriptIConstant() {
@@ -340,14 +358,14 @@ ScriptIConstant::~ScriptIConstant() {
 
 ScriptData* ScriptIMath::run(ScriptData& _args) {
   ScriptData* res1 = _arg1->run(_args);
-  if (res1->type != ScriptData::TNUMERIC) {
+  if (res1->_data->type() != ScriptDataBase::TNUMERIC) {
     throw 1;
     return NULL;
   }
   ScriptData* res2 = NULL;
   if (_oper < 16) {
     res2 = _arg2->run(_args);
-    if (res2->type != ScriptData::TNUMERIC) {
+    if (res2->_data->type() != ScriptDataBase::TNUMERIC) {
       throw 1;
       return NULL;
     }
@@ -355,88 +373,67 @@ ScriptData* ScriptIMath::run(ScriptData& _args) {
   ScriptData* s = new ScriptData();
   switch (_oper) {
   case PLUS:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(res1->_data.toType<double>() + res2->_data.toType<double>());
+    s->_data = new ScriptDataNumber(((ScriptDataNumber*)(res1->_data))->_num + ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case MINUS:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(res1->_data.toType<double>() - res2->_data.toType<double>());
+    s->_data = new ScriptDataNumber(((ScriptDataNumber*)(res1->_data))->_num - ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case MULTI:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(res1->_data.toType<double>() * res2->_data.toType<double>());
+    s->_data = new ScriptDataNumber(((ScriptDataNumber*)(res1->_data))->_num * ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case DIV:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(res1->_data.toType<double>() / res2->_data.toType<double>());
+    s->_data = new ScriptDataNumber(((ScriptDataNumber*)(res1->_data))->_num / ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case POW:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(pow(res1->_data.toType<double>(), res2->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(pow(((ScriptDataNumber*)(res1->_data))->_num , ((ScriptDataNumber*)(res2->_data))->_num));
     break;
   case LOG:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(log(res1->_data.toType<double>()) / log(res2->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(log(((ScriptDataNumber*)(res1->_data))->_num) + log(((ScriptDataNumber*)(res2->_data))->_num));
     break;
   case MOD:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(fmodf(res1->_data.toType<double>(), res2->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(modulo(((ScriptDataNumber*)(res1->_data))->_num, ((ScriptDataNumber*)(res2->_data))->_num));
     break;
   case ATAN2:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(atan2(res1->_data.toType<double>(), res2->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(atan2(((ScriptDataNumber*)(res1->_data))->_num, ((ScriptDataNumber*)(res2->_data))->_num));
     break;
   case L:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(res1->_data.toType<double>() < res2->_data.toType<double>());
+    s->_data = new ScriptDataBool(((ScriptDataNumber*)(res1->_data))->_num < ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case LEQ:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(res1->_data.toType<double>() <= res2->_data.toType<double>());
+    s->_data = new ScriptDataBool(((ScriptDataNumber*)(res1->_data))->_num <= ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case EQ:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(res1->_data.toType<double>() == res2->_data.toType<double>());
+    s->_data = new ScriptDataBool(((ScriptDataNumber*)(res1->_data))->_num == ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case NEQ:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(res1->_data.toType<double>() != res2->_data.toType<double>());
+    s->_data = new ScriptDataBool(((ScriptDataNumber*)(res1->_data))->_num != ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case GEQ:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(res1->_data.toType<double>() >= res2->_data.toType<double>());
+    s->_data = new ScriptDataBool(((ScriptDataNumber*)(res1->_data))->_num >= ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case G:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(res1->_data.toType<double>() > res2->_data.toType<double>());
+    s->_data = new ScriptDataBool(((ScriptDataNumber*)(res1->_data))->_num > ((ScriptDataNumber*)(res2->_data))->_num);
     break;
   case SQRT:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(sqrt(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(sqrt(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   case SIN:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(sin(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(sin(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   case COS:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(cos(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(cos(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   case TAN:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(tan(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(tan(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   case ASIN:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(asin(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(asin(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   case ACOS:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(acos(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(acos(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   case ATAN:
-    s->type = ScriptData::TNUMERIC;
-    s->_data.fromType<double>(atan(res1->_data.toType<double>()));
+    s->_data = new ScriptDataNumber(atan(((ScriptDataNumber*)(res1->_data))->_num));
     break;
   }
   DeletePtr(res1);
@@ -541,14 +538,14 @@ ScriptIMath::~ScriptIMath() {
 
 ScriptData* ScriptILogic::run(ScriptData& _args) {
   ScriptData* res1 = _arg1->run(_args);
-  if (res1->type != ScriptData::TNUMERIC) {
+  if (res1->_data->type() != ScriptDataBase::TBOOLEAN) {
     throw 1;
     return NULL;
   }
   ScriptData* res2 = NULL;
   if (_oper < 16) {
     res2 = _arg2->run(_args);
-    if (res2->type != ScriptData::TNUMERIC) {
+    if (res2->_data->type() != ScriptDataBase::TBOOLEAN) {
       throw 1;
       return NULL;
     }
@@ -556,40 +553,31 @@ ScriptData* ScriptILogic::run(ScriptData& _args) {
   ScriptData* s = new ScriptData();
   switch (_oper) {
   case EQ:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>((res1->_data.toType<bool>() == res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(((ScriptDataBool*)(res1->_data))->_bl == ((ScriptDataBool*)(res2->_data))->_bl);
     break;
   case NEQ:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(!(res1->_data.toType<bool>() == res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(((ScriptDataBool*)(res1->_data))->_bl != ((ScriptDataBool*)(res2->_data))->_bl);
     break;
   case AND:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>((res1->_data.toType<bool>() & res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(((ScriptDataBool*)(res1->_data))->_bl & ((ScriptDataBool*)(res2->_data))->_bl);
     break;
   case NAND:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(!(res1->_data.toType<bool>() & res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(!(((ScriptDataBool*)(res1->_data))->_bl & ((ScriptDataBool*)(res2->_data))->_bl));
     break;
   case OR:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>((res1->_data.toType<bool>() | res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(((ScriptDataBool*)(res1->_data))->_bl | ((ScriptDataBool*)(res2->_data))->_bl);
     break;
   case NOR:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(!(res1->_data.toType<bool>() | res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(!(((ScriptDataBool*)(res1->_data))->_bl | ((ScriptDataBool*)(res2->_data))->_bl));
     break;
   case XOR:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>((res1->_data.toType<bool>() ^ res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(((ScriptDataBool*)(res1->_data))->_bl ^ ((ScriptDataBool*)(res2->_data))->_bl);
     break;
   case NXOR:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(!(res1->_data.toType<bool>() ^ res2->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(!(((ScriptDataBool*)(res1->_data))->_bl ^ ((ScriptDataBool*)(res2->_data))->_bl));
     break;
   case NOT:
-    s->type = ScriptData::TBOOLEAN;
-    s->_data.fromType<bool>(!(res1->_data.toType<bool>()));
+    s->_data = new ScriptDataBool(!((ScriptDataBool*)(res1->_data))->_bl);
     break;
   }
   DeletePtr(res1);
@@ -673,7 +661,7 @@ ScriptIVariable::~ScriptIVariable() {
 ScriptData* ScriptIIndex::run(ScriptData& _args) {
   ScriptData* ind = _ind->run(_args);
   ScriptData* arg = _arg->run(_args);
-  string index = ind->_data.toType<string>();
+  string index = ind->_data->getString();
   ScriptData* res;
   if (arg->_elems.count(index) == 0) {
     arg->_elems[index] = new ScriptData();

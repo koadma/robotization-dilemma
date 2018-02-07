@@ -1,14 +1,12 @@
 #pragma once
 
 #include "../../rapidxml/rapidxml.hpp"
-#include "../Network/Network.h"
+#include "../Maths/FlowSystem.h"
 
 using namespace rapidxml;
 
-class ScriptData {
+class ScriptDataBase {
 public:
-  map<string, ScriptData*> _elems;
-  DataPair _data;
   enum VarType {
     TNULL = 0, //Nothing
     TNUMERIC = 1,
@@ -16,18 +14,97 @@ public:
     TCHAR = 3,
     TBOOLEAN = 4,
     TARRAY = 5,
-    TVECTOR = 6,
-    TDATA = 7
+    TVECTOR = 6
   };
+  virtual VarType type() {
+    throw 1;
+    return TNULL;
+  }
+  virtual string getString() {
+    throw 1;
+    return "0";
+  }
+};
+
+class ScriptDataNumber : public ScriptDataBase {
+public:
+  double _num;
+  ScriptDataNumber(double num) {
+    _num = num;
+  }
+  virtual VarType type() {
+    return TNUMERIC;
+  }
+  string getString() {
+    return to_string(_num);
+  }
+};
+
+class ScriptDataString : public ScriptDataBase {
+public:
+  string _str;
+  ScriptDataString(string str) {
+    _str = str;
+  }
+  virtual VarType type() {
+    return TSTRING;
+  }
+  string getString() {
+    return _str;
+  }
+};
+class ScriptDataChar : public ScriptDataBase {
+public:
+  char _chr;
+  ScriptDataChar(char chr) {
+    _chr = chr;
+  }
+  virtual VarType type() {
+    return TCHAR;
+  }
+  string getString() {
+    return "" + _chr;
+  }
+};
+class ScriptDataBool : public ScriptDataBase {
+public:
+  bool _bl;
+  ScriptDataBool(bool bl) {
+    _bl = bl;
+  }
+  virtual VarType type() {
+    return TBOOLEAN;
+  }
+  string getString() {
+    return (_bl)?"1":"0";
+  }
+};
+
+class ScriptDataVector : public ScriptDataBase {
+public:
+  fVec3 _vec;
+  ScriptDataVector(fVec3 vec) {
+    _vec = vec;
+  }
+  virtual VarType type() {
+    return TVECTOR;
+  }
+  string getString() {
+    return to_string(_vec.x) + ";" + to_string(_vec.y) + ";" + to_string(_vec.z);
+  }
+};
+
+class ScriptData {
+public:
+  map<string, ScriptData*> _elems;
+  ScriptDataBase* _data;
   size_t _instances;
-  VarType type;
   ScriptData();
-  //ScriptData* copy();
   void CopyContent(ScriptData* _from);
   ~ScriptData();
 };
 
-namespace ScriptApiFunctions {
+/*namespace ScriptApiFunctions {
   //In:
   //Root: NUMERIC number to convert
   //Out:
@@ -65,7 +142,7 @@ namespace ScriptApiFunctions {
   //Out:
   //r NUMERIC
   ScriptData* num_rand(ScriptData& _args);
-}
+}*/
 
 ScriptData* CopyPtr(ScriptData* _in);
 bool DeletePtr(ScriptData* _in);

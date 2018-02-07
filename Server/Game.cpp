@@ -30,15 +30,22 @@ void Game::startGame() {
   }
   newTurn();
 }
-string Game::addShip(Ship* ship) {
-  drones.push_back(ship);
-  string nCode;
-  do {
-    nCode = randomHexString(16);
-  } while (shipAuth.count(nCode));
-  shipAuth.insert({nCode, ship});
-  return nCode;
+
+void Game::remove(Path* path) {
+  auto it = events.begin();
+
+  while (it != events.end()) {
+    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
+      auto it2 = it;
+      ++it;
+      events.erase(it2);
+    }
+    else {
+      ++it;
+    }
+  }
 }
+
 void Game::removeIntersect(Object* object) {
   auto it = events.begin();
   while (it != events.end()) {
@@ -79,6 +86,7 @@ void Game::removeIntersect(Path* path) {
     }
   }
 }
+
 void Game::calcIntersect(Object* object) {
   for (auto&& itb : paths) {
     list< pair<double, pair<Object*, Path*>>> inters = object->intersect(itb);
@@ -110,10 +118,49 @@ void Game::calcIntersect(Path* path) {
     ++its;
   }
 }
+
+Ship* Game::addShip() {
+  int nid = drones.size();
+  Ship* ship = new Ship(nid, shipStarts[nid]);
+  drones.push_back(ship);
+  string nCode;
+  do {
+    nCode = randomHexString(16);
+  } while (shipAuth.count(nCode));
+  shipAuth.insert({nCode, ship});
+  return ship;
+}
+Drone* Game::addDrone(mVec3 pos) {
+///TODO: Fix
+  int nid = drones.size();
+  Drone* drone = new Drone();
+  drones.push_back(drone);
+  return drone;
+}
+void Game::add(Path* path) {
+  calcIntersect(path);
+  paths.push_back(path);
+}
+void Game::add(Event* evt) {
+  events.insert(evt);
+}
+
 void Game::recalcIntersects() {
   for (auto&& it : drones) {
     calcIntersect(it);
   }
+}
+void Game::recalcIntersects(Drone* drone) {
+  removeIntersect(drone);
+  calcIntersect(drone);
+}
+void Game::recalcIntersects(Object* object) {
+  removeIntersect(object);
+  calcIntersect(object);
+}
+void Game::recalcIntersects(Path* path) {
+  removeIntersect(path);
+  calcIntersect(path);
 }
 void Game::simulate(float from, float till) {
   //recalcIntersects();

@@ -52,3 +52,37 @@ public:
 
   ~Movement();
 };
+
+class constrain {
+private:
+  bool _include;
+  sVec3 _dir;
+  double _cosphi;
+public:
+  enum {
+    include = true,
+    exclude = false
+  };
+  void verify(bool& current, sVec3 toVerify) {
+    toVerify.norm();
+    bool in = dot(toVerify, _dir) >= _cosphi;
+    //If should be included and is in -> its current
+
+    //If it was current, to exclude, and not in -> its in
+    //If it was current, to include, and not in -> its in
+    //Sum: If it was current, and not in -> its in;
+    current = (_include and in) or (current and not in);
+  }
+  constrain(bool sign, sVec3 dir, double cosphi) : _include(sign), _dir(dir.norm()), _cosphi(cosphi) { }
+};
+
+enum BubbleSource {
+  Bubble_Ping = 1,
+  Bubble_Thermal = 2,
+  Bubble_Chat = 3
+};
+enum BubbleType {
+  Bubble_Start = 1,
+  Bubble_Pulse = 0,
+  Bubble_End = -1
+};

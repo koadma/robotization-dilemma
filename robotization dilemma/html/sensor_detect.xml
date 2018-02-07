@@ -1,14 +1,14 @@
 <root>
 	<ifelse>
 		<cond>
-			<logic oper="eq">
+			<math oper="eq">
 				<lhs>
 					<constant type="num">0</constant>
 				</lhs>
 				<rhs>
 					<var var="relEnergy"></var>
 				</rhs>
-			</logic>
+			</math>
 		</cond>
 		<then>
 			<constant type="num">0</constant>
@@ -26,7 +26,7 @@
 							</var>
 						</lhs>
 						<rhs>
-							<constant type="num">10000000</constant>
+							<constant type="num">100000</constant>
 						</rhs>
 					</math>
 				</val>

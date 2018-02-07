@@ -5,20 +5,31 @@
 class Game;
 
 class Game {
-public:
-  Game(int count) {
-    targetPlayerCount = count;
-  }
   int turnId;
   mutex lock;
   int targetPlayerCount;
   int waitingFor;
-  map<string, Ship*> shipAuth;
+
   list<Drone*> drones;
   list<Path*> paths;
+  vector<mVec3> shipStarts;
 
-  //set<pair<double, pair<Object*, Path*> > > intersects;
   multiset<Event*, EventSort> events;
+  
+  void removeIntersect(Object* object);
+  void removeIntersect(Drone* drone);
+  void removeIntersect(Path* path);
+
+  void calcIntersect(Object* object);
+  void calcIntersect(Drone* drone);
+  void calcIntersect(Path* path);
+public:
+  map<string, Ship*> shipAuth;
+
+  Game(int count) {
+    targetPlayerCount = count;
+    shipStarts = randstartpos(1 * SOL);
+  }
 
   Object* getObject(uint64_t oid) {
     Object* o = NULL;
@@ -41,15 +52,18 @@ public:
   void newTurn();
   void tryGameStart();
   void startGame();
-  string addShip(Ship* ship);
-  void removeIntersect(Object* object);
-  void removeIntersect(Drone* drone);
-  void removeIntersect(Path* path);
- 
-  void calcIntersect(Object* object);
-  void calcIntersect(Drone* drone);
-  void calcIntersect(Path* path);
+
+  void add(Path* path);
+  void add(Event* evt);
+  Drone* addDrone(mVec3 pos);
+  Ship* addShip();
+
+  void remove(Path* path);
+
   void recalcIntersects();
+  void recalcIntersects(Drone* drone);
+  void recalcIntersects(Object* object);
+  void recalcIntersects(Path* path);
   void simulate(float from, float till);
 };
 

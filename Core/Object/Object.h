@@ -8,10 +8,13 @@ class Object {
 protected:
   uint64_t _ID;
   mVec3 _relativePos;
-  int _maxHealth;
-  keyframe<value<int> > _health;
   distance_type_m _radius;
   string _name;
+  int _maxHealth;
+  keyframe<value<int> > _health;
+#ifdef M_SERVER
+  Bubble* _selfBubble = NULL; //used to store current continous bubble
+#endif
 public:
   keyframe<value<power_type_W>> _maxGeneratedPower;
   keyframe<value<power_type_W>> _generatedPower;
@@ -22,7 +25,6 @@ public:
   keyframe<value<energy_type_J>> _maxStorage;
   
   Object(Drone* parentShip, uint64_t ID);
-  Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health);
 
   Drone* _parentShip;
   FlowVertex<energy_type_J, Fraction, time_type_s>* _energySystem;
@@ -57,6 +59,8 @@ public:
   energy_type_J getStoredEnergy(time_type_s time);
 
 #ifdef M_SERVER
+  void changeSelfBubble(Bubble* newSelf, Game* g);
+
   energy_type_J useEnergy(time_type_s time, energy_type_J amount, Game* g);
   energy_type_J chargeEnergy(time_type_s time, energy_type_J amount, Game* g);
 

@@ -1,7 +1,5 @@
 #include "Main.h"
 
-vector<mVec3> shipStarts;
-
 NetworkS* newClientBind;
 thread* newClientThread;
 
@@ -59,14 +57,10 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
   if(ship == NULL) {
     int loginState = checkLogin(data, id);
     if (loginState == LoginErrorOk) { //If can join
-      int sid = game->drones.size();
-
-      Ship* newShip = new Ship(sid, shipStarts[sid]);
+      Ship* newShip = game->addShip();
 
       newShip->connectedClient = thisptr;
       thisptr->ConnectedShip = newShip;
-
-      string code = game->addShip(newShip);
 
       DataElement* de = new DataElement();
 
@@ -75,16 +69,16 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
       de->addChild(state);
 
       DataElement* ide = new DataElement();
-      ide->_core->fromType<uint64_t>(sid);
+      ide->_core->fromType<uint64_t>(ship->_droneID);
       de->addChild(ide);
 
       DataElement* codee = new DataElement();
-      codee->_core->fromType<string>(code);
+      codee->_core->fromType<string>(ship->code);
       de->addChild(codee);
 
       thisptr->SendData(de, PacketLogin);
 
-      cout << "Client " << code << " accepted!" << endl;
+      cout << "Client " << ship->code << " accepted!" << endl;
 
       game->tryGameStart();
 
@@ -154,50 +148,11 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
 }
 
 int main(int argc, char** argv)
-{
-  /*cout << sizeof(NetworkC) << endl;
-  cout << sizeof(NetworkS) << endl;
-  cout << sizeof(Ship) << endl;
-  cout << sizeof(Sighting) << endl;
-  cout << sizeof(Object) << endl;
-  cout << sizeof(Movement) << endl;
-  cout << sizeof(Path) << endl;
-  cout << sizeof(long double) << endl;*/
-
-  /*cout << "Fraction test" << endl;
-
-  while (true) {
-    string a;
-    cin >> a;
-    Fraction app = approx(a);
-    cout << app.a << "/" << app.b << endl;
-  }*/
-
+{  
   ran1(-time(0));
-
-  shipStarts = randstartpos(100000.0);
 
   game = new Game(2);
   detachCreateClientBind(); //Begin accepting clients
-
-  /*ScriptIBlock root;
-
-  ScriptData* d;
-
-  std::ifstream file("prog.prg");
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  file.close();
-
-  xml_document<> doc;
-  std::string content(buffer.str());
-  doc.parse<0>(&content[0]);
-
-  root.load(doc.first_node("root"));
-  d = new ScriptData();
-  DeletePtr(root.run(*d));
-  DeletePtr(d);
-  */
 
   int n;
   cin >> n;

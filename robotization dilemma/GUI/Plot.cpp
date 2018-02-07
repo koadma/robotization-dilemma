@@ -42,6 +42,14 @@ int Plot::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
     sy = nsy;
     return 1;
   }
+  if (evt._key._type == key::type_mouse) {
+    if (isIn(mx, my)) {
+      mousebuttons ^= mousebuttons & (1 << evt._key._keycode); //remove bit for button;
+      mousebuttons ^= ((evt._type == gui_event::evt_down) | (evt._type == gui_event::evt_pressed)) << evt._key._keycode;
+    } else {
+      mousebuttons = 0;
+    }
+  }
   if (evt._key._type == key::type_mouse) { //Mouse
     if (evt._key._keycode == 0 && evt._type == gui_event::evt_pressed) { //left, down
       int n = 0;

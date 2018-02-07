@@ -18,7 +18,8 @@ public:
     EvTThermalRadiation = 6,
     EvTBatteryDrain = 7,
     EvTSensorPing = 8,
-    EvTSensorAutofire = 9
+    EvTSensorAutofire = 9,
+    EvTSensorDetect = 10,
   };
   time_type_s _time;
 
@@ -50,6 +51,17 @@ public:
   void apply(Game *g);
 #endif
 
+};
+class SensorDetect : public Event {
+public:
+  Sensor* _o;
+  Path* _what;
+
+  int type();
+
+#ifdef M_SERVER
+  void apply(Game *g);
+#endif
 };
 class StateChange : public Event {
 public:
@@ -136,7 +148,6 @@ public:
   void setV(DataElement* data, Game* game);
 #endif
 };
-
 
 struct EventSort {
   bool operator ()(const Event* lhs, const Event* rhs) const

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <ciso646> //defines and, or, not for visual studio, does nothing elsewhere.
+#include "BigNumberLibrary/Cbignums.h"
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
@@ -283,11 +284,173 @@ int hexToInt(string& str, int s);
 
 int hexToInt(string str);
 
-vector<double> solveQuadratic(double &a, double &b, double &c);
+template <typename T>
+vector<T> solveQuadratic(T &a, T &b, T &c)
+{
+  if (a == 0.0 || abs(a / b) < 1.0e-6)
+  {
+    if (abs(b) < 1.0e-4)
+      return vector<T>{};
+    else
+    {
+      return vector<T>{-c / b};
+    }
+  }
+
+  double discriminant = b * b - 4.0 * a * c;
+  if (discriminant >= 0.0)
+  {
+    discriminant = sqrt(discriminant);
+    return vector<T>{(b + discriminant) * -0.5 / a, (b - discriminant) * -0.5 / a};
+  }
+
+  return vector<T>{};
+}
 //----------------------------------------------------------------------------
-vector<double> solveCubic(double &a, double &b, double &c, double &d);
+template <typename T>
+vector<T> solveCubic(T &a, T &b, T &c, T &d)
+{
+  if (a == 0.0/* || abs(a / b) < 1.0e-6*/)
+    return solveQuadratic(b, c, d);
+
+  double B = b / a, C = c / a, D = d / a;
+
+  T Q = (B*B - C*3.0) / 9.0, QQQ = Q*Q*Q;
+  T R = (2.0*B*B*B - 9.0*B*C + 27.0*D) / 54.0, RR = R*R;
+
+  // 3 real roots
+  if (RR<QQQ)
+  {
+    /* This sqrt and division is safe, since RR >= 0, so QQQ > RR,    */
+    /* so QQQ > 0.  The acos is also safe, since RR/QQQ < 1, and      */
+    /* thus R/sqrt(QQQ) < 1.                                     */
+    T theta = acos(R / sqrt(QQQ));
+    /* This sqrt is safe, since QQQ >= 0, and thus Q >= 0             */
+    T r1, r2, r3;
+    r1 = r2 = r3 = -2.0*sqrt(Q);
+    r1 *= cos(theta / 3.0);
+    r2 *= cos((theta + 2 * PI) / 3.0);
+    r3 *= cos((theta - 2 * PI) / 3.0);
+
+    r1 -= B / 3.0;
+    r2 -= B / 3.0;
+    r3 -= B / 3.0;
+
+    return vector<T>{r1, r2, r3};
+  }
+  // 1 real root
+  else
+  {
+    T A2 = -pow(fabs(R) + sqrt(RR - QQQ), 1.0 / 3.0);
+
+    float r = 0;
+    if (A2 != 0.0) {
+      if (R<0.0) A2 = -A2;
+      r = A2 + Q / A2;
+    }
+    r -= B / 3.0;
+    return vector<T>{r};
+  }
+}
 //----------------------------------------------------------------------------
-vector<double> solveQuartic(double &a, double &b, double &c, double &d, double &e);
+template <typename T>
+vector<T> solveQuartic(T &a, T &b, T &c, T &d, T &e)
+{
+  // When a or (a and b) are magnitudes of order smaller than C,D,E
+  // just ignore them entirely. 
+  if (a == 0 || abs(a / b) < 1.0e-6 || abs(a / c) < 1.0e-6)
+    return solveCubic(b, c, d, e);
+
+  // Uses Ferrari's Method
+  T aa = a*a, aaa = aa*a, bb = b*b, bbb = bb*b;
+  T p = -3.0*bb / (8.0*aa) + c / a, pp = p * p;
+  T q = bbb / (8.0*aaa) - b*c / (2.0*aa) + d / a;
+  T r = -3.0*bbb*b / (256.0*aaa*a) + c*bb / (16.0*aaa) - b*d / (4.0*aa) + e / a;
+
+  if (q == 0.0)
+  {
+    vector<T> res;
+    if (pp - 4.0*r >= 0) {
+      if ((-p + sqrt(pp - 4.0*r)) >= 0) {
+        res.push_back(b / (-4.0*a) + sqrt(0.5 * (-p + sqrt(pp - 4.0*r))));
+        res.push_back(b / (-4.0*a) - sqrt(0.5 * (-p + sqrt(pp - 4.0*r))));
+      }
+      if ((-p - sqrt(pp - 4.0*r)) >= 0) {
+        res.push_back(b / (-4.0*a) + sqrt(0.5 * (-p - sqrt(pp - 4.0*r))));
+        res.push_back(b / (-4.0*a) - sqrt(0.5 * (-p - sqrt(pp - 4.0*r))));
+      }
+    }
+    return res;
+  }
+  else
+  {
+    vector<T> res;
+
+    //solve 0 = beta^2 - 8z(z^2+alpha z+alpha^2/4-gamma)
+    //0 = -beta^2/8 + z^3 + alpha z^2 + z alpha^2/4-z gamma
+
+    T ca = 8;
+    T cb = 8 * p;
+    T cc = 2 * pp - 8 * r;
+    T cd = -q*q;
+
+    vector<T> cres = solveCubic(ca, cb, cc, cd);
+
+    T m = cres[0];
+    for (int i = 1; i < cres.size(); i++) {
+      m = max(m, cres[i]);
+    }
+
+    if (m >= 0) {
+      vector<T> tempres;
+
+      T ta = 1;
+      T tb = sqrt(2 * m);
+      T tc = p / 2.0 + m - q / (2 * sqrt(2 * m));
+
+      tempres = solveQuadratic(ta, tb, tc);
+
+      for (int i = 0; i < tempres.size(); i++) {
+        res.push_back(tempres[i] - b / (4.0*a));
+      }
+
+      ta = 1;
+      tb = -sqrt(2 * m);
+      tc = p / 2.0 + m + q / (2 * sqrt(2 * m));
+
+      tempres = solveQuadratic(ta, tb, tc);
+
+      for (int i = 0; i < tempres.size(); i++) {
+        res.push_back(tempres[i] - b / (4.0*a));
+      }
+    }
+    else {
+      cout << "ERROR" << endl;
+    }
+    //fine derivative correction
+    vector<T> corres;
+    for (int i = 0; i < res.size(); i++) {
+      T vali = 1;
+      T deri = 1;
+      int corr = 0;
+      do {
+        vali = a*res[i] * res[i] * res[i] * res[i] + b*res[i] * res[i] * res[i] + c*res[i] * res[i] + d*res[i] + e;
+        deri = 4 * a* res[i] * res[i] * res[i] + 3 * b* res[i] * res[i] + 2 * c* res[i] + d;
+        if (fabs(deri) > 1e-3) {
+          res[i] -= vali / deri;
+        }
+        ++corr;
+      } while (corr < 50 && fabs(vali / deri) > 0.1);
+      if (corr < 50) {
+        corres.push_back(res[i]);
+      }
+      else {
+        cout << "ROOT REMOVED";
+      }
+    }
+    return corres;
+  }
+}
 
 void serialize(string s, unsigned char** data, int& dataLen);
 template <typename T>
@@ -307,6 +470,11 @@ T deserializeT(unsigned char* data, int dataLen) {
 string randomHexString(size_t length);
 
 double ran1(long int nseed = 0);
+
+template <typename T>
+T modulo(T& lhs, T& rhs) {
+  return fmod((fmod(lhs,rhs)+rhs),rhs);
+}
 
 uint64_t mix(uint64_t a, uint64_t b);
 uint32_t low(uint64_t a);

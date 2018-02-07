@@ -10,15 +10,8 @@ public:
   Engine(Drone* parentShip, uint64_t ID) :
   Object(parentShip, ID)
   {}
-  Engine(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, power_type_W maxPower) :
-  Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    maxUseablePowerChange(-1, maxPower);
-    _name = "Engine";
-  }
 
   int type() { return Type::Engine; }
-  //power_type_W getUsedPower(time_type_s time) { return _accel.getAt(time)().sqrlen(); }
-  //power_type_W getMaxPower(time_type_s time) { return _maxPower; }
 
   power_type_W getDisplayMaxPower(time_type_s time) {
     return _maxUseablePower.getAt(time)();

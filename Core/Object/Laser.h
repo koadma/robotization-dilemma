@@ -15,12 +15,6 @@ public:
   Laser(Drone* parentShip, uint64_t ID) :
     Object(parentShip, ID)
   {}
-  Laser(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health, energy_type_J maxStorage) :
-  Object(parentShip, ID, relativePos, maxHealth, radius, health) {
-    _name = "Laser";
-    //energyStoredChange(0, 0);
-    maxStorageChange(-1, maxStorage);
-  }
 
   int type() { return Type::Laser; }
 

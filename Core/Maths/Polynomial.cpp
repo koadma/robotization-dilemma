@@ -2,7 +2,7 @@
 /*
 template<typename T> Polynomial<T>::Polynomial() {
 	this->degree = 0;
-	this->Coefficient = vector<Fraction>(0);
+	this->Coefficient = vector<Fraction(0);
 }
 
 template<typename T> Polynomial<T>::Polynomial(int d) {
@@ -118,14 +118,14 @@ template<typename T> bool operator<= (Polynomial<T> lhs, Polynomial<T> rhs) {
 
 
 template<typename T> istream& operator>>(istream& i, Polynomial<T> &p) {
-	stack<Fraction> s;
+	stack<Fraction s;
 	string h;
 	char c = ' ';
 	while (c != '\n') {
 
 		i.get(c);
 		if (c == ' ' || c == '\n') {
-			s.push(Fraction(h));
+			s.push(Fractionh));
 			h.clear();
 		}
 		else {
@@ -163,7 +163,7 @@ template<typename T> pair<Polynomial<T>, Polynomial<T>> PolyDiv(Polynomial<T> lh
 		p = make_pair(Polynomial(), lhs);
 	}
 	else {
-		Polynomial q(Fraction(1), lhs.degree - rhs.degree);
+		Polynomial q(Fraction1), lhs.degree - rhs.degree);
 		Polynomial nlhs = (lhs - q*(rhs*(lhs.Coefficient[lhs.degree] / rhs.Coefficient[rhs.degree]))).Trim();
 		p = PolyDiv(nlhs, rhs);
 		p.first = p.first + Polynomial(lhs.Coefficient[lhs.degree] / rhs.Coefficient[rhs.degree], lhs.degree - rhs.degree);
@@ -173,7 +173,7 @@ template<typename T> pair<Polynomial<T>, Polynomial<T>> PolyDiv(Polynomial<T> lh
 
 template<typename T> Polynomial<T> Polynomial<T>::Trim() {
 	Polynomial p = *this;
-	while (p.Coefficient.size() > 0 && p.Coefficient[p.Coefficient.size() - 1] == Fraction(0)) {
+	while (p.Coefficient.size() > 0 && p.Coefficient[p.Coefficient.size() - 1] == Fraction0)) {
 		p.degree--;
 		p.Coefficient.resize(p.Coefficient.size() - 1);
 

@@ -152,16 +152,16 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
   energySystem._lastUpdate = -0.01;
   _droneID = _ID;
 
-  Object* go = new ::Generator(this, mix(_ID, 0), { 100,0,0 }, 1000, 100, 1000, 1000000);
+  Object* go = new ::Generator(this, mix(_ID, 0));//, { 100,0,0 }, 1000, 100, 1000, 1000000);
   objects.push_back(go);
 
-  Object* so = new ::Sensor(this, mix(_ID, 1), { -100,0,0 }, 1000, 100, 1000, 100000);
+  Object* so = new ::Sensor(this, mix(_ID, 1));//, { -100,0,0 }, 1000, 100, 1000, 100000);
   objects.push_back(so);
 
-  Object* eo = new ::Engine(this, mix(_ID, 2), { 0,173.2f ,0 }, 1000, 100, 1000, 10000);
+  Object* eo = new ::Engine(this, mix(_ID, 2));//, { 0,173.2f ,0 }, 1000, 100, 1000, 10000);
   objects.push_back(eo);
 
-  Object* lo = new ::Laser(this, mix(_ID, 3), { 0,-173.2f ,0 }, 1000, 100, 1000, 100000);
+  Object* lo = new ::Laser(this, mix(_ID, 3));//, { 0,-173.2f ,0 }, 1000, 100, 1000, 100000);
   objects.push_back(lo);
 
   energySystem.addSymmetricEdge(go->_energySystem, so->_energySystem, 1000000);
@@ -174,12 +174,12 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
 }
 
 #ifdef M_SERVER
-void Drone::sightMovement(Movement& m, time_type_s time, Game* g, bool _autofire = false) {
-  priority_queue<pair<scalar_type, Sighting*>> dists; //
+Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, bool _autofire = false) {
   Sighting* s = NULL;
-  for (auto&& it : sightings) {
-    dists.push({ -(it->getAt(time).pos - m.getAt(time).pos).sqrlen() / (m.radius * it->getAt(time).radius), it });
-  }
+  vector<pair<distance_type_m, Sighting*>> intersects;
+
+
+
   if (dists.size()) {
     pair<scalar_type, Sighting*> elem = dists.top();
     if (-elem.first < 1) {
@@ -215,6 +215,7 @@ void Drone::sightMovement(Movement& m, time_type_s time, Game* g, bool _autofire
       }
     }
   }
+  return s;
 }
 energy_type_J Drone::energyUpdate(time_type_s time, Game* game, Object* chg, energy_type_J chgval) {
   FlowVertex<energy_type_J, Fraction, time_type_s>* vertex = NULL;
@@ -228,7 +229,7 @@ energy_type_J Drone::energyUpdate(time_type_s time, Game* game, Object* chg, ene
     BatteryDrain* ev = new BatteryDrain();
     ev->_d = this;
     ev->_time = runOut.first[0];
-    game->events.insert(ev);
+    game->add(ev);
   }
   energyCallback(time, game);
   return runOut.second;
@@ -296,7 +297,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
         }
         if (nObj != NULL) {
           nObj->set(it, game);
-          game->events.insert(nObj);
+          game->add(nObj);
         }
         else {
           cout << __FILE__ << " " << __LINE__ << ": Wrong type " << typ << endl;
@@ -577,22 +578,22 @@ void Ship::setStatus(DataElement* data) {
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Sensor:
-      nObj = new Sensor(this, 0, fVec3(), 0, 0, 0, 0);
+      nObj = new Sensor(this, 0);
       break;
     case Object::Type::Computer:
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Generator:
-      nObj = new Generator(this, 0, fVec3(), 0, 0, 0, 0);
+      nObj = new Generator(this, 0);
       break;
     case Object::Type::Storage:
       //nObj = new Shield(fVec3(), 0, 0, 0, 0);
       break;
     case Object::Type::Engine:
-      nObj = new Engine(this, 0, fVec3(), 0, 0, 0, 0);
+      nObj = new Engine(this, 0);
       break;
     case Object::Type::Laser:
-      nObj = new Laser(this, 0, fVec3(), 0, 0, 0, 0);
+      nObj = new Laser(this, 0);
       break;
     }
     if(nObj != NULL) {

@@ -97,44 +97,41 @@ void testKey(key k) {
 int main() {
   setlocale(LC_ALL, "");
   srand(time(NULL));
+  ran1(time(NULL));
+
+  /*for (int i = 0; i<10000000; i++) {
+    if (!(i % 100000)) {
+      cout << i << endl;
+    }
+    PolynomialD poly(vector<long double>({1}));
+    double s1 = ran1() * 0.1 - 3;
+    poly = poly * PolynomialD(vector<long double>{-s1, 1 });
+    double s2 = ran1() * 0.1 - 3;
+    poly = poly * PolynomialD(vector<long double>{-s2, 1 });
+    double frs = ran1() * 10 - 5;
+    double fval = ran1() * 10 + 1;
+    poly = poly * PolynomialD(vector<long double>{ frs*frs+fval, -2 * frs, 1});
+    vector<long double> roots = poly.solveNewton();
+    bool ok1 = false;
+    bool ok2 = false;
+    for(int r = 0; r < roots.size(); r++) {
+      if (roots[r] - 0.0001 <= s1 && s1 <= roots[r] + 0.0001) {
+        ok1 = true;
+      }
+      if (roots[r] - 0.0001 <= s2 && s2 <= roots[r] + 0.0001) {
+        ok2 = true;
+      }
+    }
+    if (!(ok1 && ok2)) {
+      cout << "MISS" << roots.size() << '\t' << s1 << '\t' << s2 << '\t' << frs << '\t' << fval << endl;
+      poly.solveNewton();
+    }
+  }*/
 
   loadKeybinds();
   loadColors();
 
   InitGraphics();
-
-  /*
-  FlowGraph<double, Fraction, double> f;
-
-  FlowVertex<double, Fraction, double>* v1 = f.addVertex(-5, 10, -10, 100, 30, -1);
-  FlowVertex<double, Fraction, double>* v2 = f.addVertex(0, 20, -30, 100, 50, -1);
-  FlowVertex<double, Fraction, double>* v3 = f.addVertex(10, 0, 0, 0, 0, 0);
-
-  f.addSymmetricEdge(v1, v2, 30);
-  f.addSymmetricEdge(v2, v3, 10);
-
-  for(int i = 0; i < 4; i++) {
-    f.goTo(i);
-  }
-  f.goTo(4, v2, -100);
-  for (int i = 5; i < 18; i++) {
-    f.goTo(i);
-  }
-  f.goTo(18, v2, 120);
-  f.goTo(19);
-  v3->_goal = 1;
-  for (int i = 20; i < 35; i++) {
-    f.goTo(i);
-  }
-  v3->_goal = -5;
-  for (int i = 35; i < 61; i++) {
-    f.goTo(i);
-  }
-  
-
-  Graphics::PlotHwnd plt = Graphics::createPlot(objectGameSubWindow, "plot", Coordiante{0, 0}, Coordiante{1, 1}, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
-  plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v2->_val), hexToInt("ffff0000")));
-  plt->plotData.push_back(new PlotLineVUT<linear<double, Fraction, double>, double, double>(&(v1->_val), hexToInt("ffffff00")));// */
 
   vector<string> reConnectData;
   if (hasSaveFile(reConnectData)) {

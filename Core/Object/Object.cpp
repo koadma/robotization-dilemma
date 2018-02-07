@@ -6,17 +6,7 @@
 Object::Object(Drone* parentShip, uint64_t ID) {
   _ID = ID;
   _parentShip = parentShip;
-}
-
-Object::Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth, distance_type_m radius, int health) {
-  _parentShip = parentShip;
-  _relativePos = relativePos;
-  _maxHealth = maxHealth;
-  _health.addFrame(0, health);
-  _radius = radius;
-  _ID = ID;
-  _energySystem = _parentShip->energySystem.addVertex(0, 0, 0, 0);
-
+  
   _maxGeneratedPower.addFrame(-2, 0);
   _requestedPower.addFrame(-2, 0);
   _maxUseablePower.addFrame(-2, 0);
@@ -24,6 +14,8 @@ Object::Object(Drone* parentShip, uint64_t ID, mVec3 relativePos, int maxHealth,
   _usedPower.addFrame(-2, 0);
   _selfUsedPower.addFrame(-2, 0);
   _generatedPower.addFrame(-2, 0);
+
+  _energySystem=_parentShip->energySystem.addVertex(0, 0, 0, 0, 0, -1);
 }
 
 power_type_W Object::getMaxGeneratedPower(time_type_s time) {
@@ -71,6 +63,21 @@ void Object::maxStorageChange(time_type_s time, energy_type_J energy) {
   //energyStoredChange(time, min(energy, getStoredEnergy(time)));
 }
 #ifdef M_SERVER
+void Object::changeSelfBubble(Bubble* newSelf, Game* g) {
+  if (_selfBubble) {
+    Bubble* selfend = new Bubble(*_selfBubble);
+    if (selfend->btype == BubbleType::Bubble_Start) {
+      selfend->btype = BubbleType::Bubble_End;
+      selfend->other = _selfBubble;
+      _selfBubble->other = selfend;
+      g->add(selfend);
+    }
+    else {
+      throw 1;
+    }
+  }
+  _selfBubble = newSelf;
+}
 energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount, Game* g) {
   return -_parentShip->energyUpdate(time, g, this, -amount);
 }
@@ -113,7 +120,7 @@ list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
     Movement m = it->second;
     m.pos += _relativePos;
     m.radius = _radius;
-    vector<double> times = intersectPaths(p, &m);
+    vector<double> times = p->intersect(&m);
     for (auto&& itt : times) {
       auto nit = it;
       ++nit;
@@ -308,18 +315,16 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
     ps->energy -= 10000;
     ps->energy = max(0, ps->energy);
   }
-  if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && _radius*_radius*PI*((Bubble*)p)->getFlux(time) > BUBBLE_REMOVE && ((Bubble*)p)->btype != Bubble::Chat) { //Thermal and ping are reflected
+  if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && _radius*_radius*PI*((Bubble*)p)->getFlux(time, getMovement(time).pos) > BUBBLE_REMOVE && ((Bubble*)p)->bsource != Bubble_Chat) { //Thermal and ping are reflected
     Bubble* b = new Bubble();
-    b->constrains.push_back(Bubble::constrain(Bubble::constrain::include, {1, 0, 0}, -2)); //Include all directions
-    b->btype = ((Bubble*)p)->btype;
+    b->constrains.push_back(constrain(constrain::include, {1, 0, 0}, -2)); //Include all directions
+    b->bsource = ((Bubble*)p)->bsource;
     b->emitter = getMovement(time);
-    b->energy = _radius*_radius*PI*((Bubble*)p)->getFlux(time);
+    b->energy = _radius*_radius*PI*((Bubble*)p)->getFlux(time, getMovement(time).pos);
     b->gEmissionTime = time;
-    b->origin = getMovement(time).pos;
     b->originID = _ID;
 
-    g->calcIntersect(b);
-    g->paths.push_back(b);
+    g->add(b);
   }
   getPathVirt(time, p, g);
 }
