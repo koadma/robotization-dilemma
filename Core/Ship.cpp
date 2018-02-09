@@ -174,14 +174,20 @@ void Ship::load(uint32_t _ID, mVec3 _pos) {
 }
 
 #ifdef M_SERVER
-Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, bool _autofire = false) {
+Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, BubbleType type, bool _autofire) {
   Sighting* s = NULL;
-  vector<pair<distance_type_m, Sighting*>> intersects;
+  priority_queue<pair<distance_type_m, Sighting*>> intersects;
 
+  for (auto&& it : sightings) {
+    pair<distance_type_m, bool> res = it->closest(&m);
+    if(res.second) {
+      intersects.push({ res.first,it });
+    }
+      
+  }
 
-
-  if (dists.size()) {
-    pair<scalar_type, Sighting*> elem = dists.top();
+  if (intersects.size()) {
+    pair<distance_type_m, Sighting*> elem = intersects.top();
     if (-elem.first < 1) {
       elem.second->addFrame(time, m);
       s = elem.second;

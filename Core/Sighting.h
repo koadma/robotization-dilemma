@@ -30,23 +30,27 @@ public:
   void set(DataElement* data) {
     keyframes.set(data);
   }
-  vector<time_type_s> intersect(Path* p) {
-    vector<time_type_s> intersects;
+  pair<distance_type_m, bool> closest(Movement* p) {
+    priority_queue<distance_type_m, vector<distance_type_m>, greater<distance_type_m>> intersects;
     if(keyframes.size()) {
       auto it = keyframes._frames.begin();
       auto nit = it;
       while (it != keyframes._frames.end()) {
         ++nit;
-        vector<time_type_s> temp = intersectPaths(&it->second, p);
+        vector<time_type_s> temp = intersectPaths(&it->second, p, true);
         for (auto && tit : temp) {
           if ((it == keyframes._frames.begin() || it->first <= tit) && (nit == keyframes._frames.end() || tit <= nit->first)) {
-            intersects.push_back(tit);
+            intersects.push((p->getAt(tit).pos - it->second.getAt(tit).pos).length());
           }
+          intersects.push((p->getAt(it->first).pos - it->second.getAt(it->first).pos).length());
         }
         ++it;
       }
     }
-    return intersects;
+    if(intersects.size()) {
+      return{ intersects.top(), true };
+    }
+    return {0, false};
   }
 
 #ifdef M_CLIENT

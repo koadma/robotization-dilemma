@@ -5,6 +5,7 @@
 class Object;
 class Drone;
 class Game;
+class Sensor;
 
 class Event {
 public:

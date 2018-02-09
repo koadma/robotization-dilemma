@@ -17,7 +17,7 @@ vector<time_type_s> Path::intersect(Path* other) {
   return intersectPaths(this, other);
 }
 
-vector<double> intersectPaths(Path* lhs, Path* rhs) {
+vector<double> intersectPaths(Path* lhs, Path* rhs, bool closest) {
   Eqnsys impleq; //
   Eqnsys expleq; //
   if (lhs->etype() == Path::EqnTypeExplicit && rhs->etype() == Path::EqnTypeExplicit) {
@@ -62,6 +62,8 @@ vector<double> intersectPaths(Path* lhs, Path* rhs) {
       ++it;
     }
   }
-
+  if (closest) {
+    return {impleq.eqns.begin()->second.getPolynomial('t').minimize()};
+  }
   return impleq.eqns.begin()->second.getPolynomial('t').solve();
 }

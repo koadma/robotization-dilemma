@@ -155,14 +155,15 @@ void Sensor::detectCallback(time_type_s time, Path* p, Game* g) {
     if(b->btype == Bubble_Start) {
       if(b->other == NULL || b->other->gEmissionTime > time) {
         Movement m = b->emitter;
-        _parentShip->sightMovement(m, time, g, _autofire.getAt(time)());
+        _parentShip->sightMovement(m, time, g, Bubble_Start, _autofire.getAt(time)());
       }
     }
     if (b->btype == Bubble_End) {
-      if () {
+      if (true) {
         Movement m = b->emitter;
-        _parentShip->sightMovement(m, time, g, _autofire.getAt(time)());
+        _parentShip->sightMovement(m, time, g, Bubble_End, _autofire.getAt(time)());
       }
     }
   }
+}
 #endif

@@ -94,7 +94,26 @@ public:
       return {- Coefficient[0] / Coefficient[1]};
     }
   }
-  
+  T minimize() { //not counting lim +- infty
+    vector<T> ders = derivative().solve();
+    T res = 0;
+    for (auto&& it : ders) {
+      if (at(it) < at(res)) {
+        res = it;
+      }
+    }
+    return res;
+  }
+  T maximize() { //not counting lim +- infty
+    vector<T> ders = derivative().solve();
+    T res = 0;
+    for (auto&& it : ders) {
+      if (at(it) > at(res)) {
+        res = it;
+      }
+    }
+    return res;
+  }
 
   T find_0_to_deg_1_max()
   {

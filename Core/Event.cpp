@@ -104,7 +104,7 @@ void BatteryDrain::apply(Game *g) {
 }
 void SensorDetect::apply(Game *g) {
   //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
-  _d->energyUpdate(_time, g);
+  _o->detectCallback(_time, _what, g);
 }
 void StateChange::apply(Game *g) {
   throw 1;

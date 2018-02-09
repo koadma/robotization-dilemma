@@ -56,6 +56,8 @@ public:
 
   void getPathVirt(time_type_s time, Path* p, Game* g);
 
+  void detectCallback(time_type_s time, Path* p, Game* g);
+
   bool loadV(xml_node<>* data, time_type_s time) {
     xml_node<>* elem;
 
