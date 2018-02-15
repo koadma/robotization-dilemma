@@ -1,5 +1,7 @@
 #pragma once
 
+#define SCRIPTS_GUI
+#include "../../Core/Scripts/Scripts.h"
 #include "Button.h"
 #include "Checkbox.h"
 #include "TextInput.h"
@@ -13,8 +15,6 @@
 #include "Table.h"
 #include "Image.h"
 #include "ControlSetting.h"
-
-using namespace std;
 
 namespace Graphics {
   

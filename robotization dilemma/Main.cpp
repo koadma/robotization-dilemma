@@ -5,6 +5,7 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
     switch (id) {
     case PacketLogin:
       if (data->_children[0]->_core->toType<int>() == LoginErrorOk) {
+
         Connection->ConnectedShip = ship = new Ship(data->_children[1]->_core->toType<uint64_t>());
         
         ofstream last("lastserver.dat");
@@ -78,11 +79,11 @@ bool hasSaveFile(vector<string>& data) {
   if (!i.good()) {
     return false;
   }
-  i >> port;
+  getline(i, port);
   if (!i.good()) {
     return false;
   }
-  i >> code;
+  getline(i, code);
   i.close();
   
   data = {ip, port, code};
@@ -134,7 +135,7 @@ int main() {
   InitGraphics();
 
   vector<string> reConnectData;
-  if (hasSaveFile(reConnectData)) {
+  if (hasSaveFile(reConnectData) && reConnectData[2] != "") {
     createReconnectScreen();
     connectServer(reConnectData[0], reConnectData[1], reConnectData[2]);
   }

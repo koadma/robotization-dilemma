@@ -10,7 +10,7 @@ protected:
   mVec3 _relativePos;
   distance_type_m _radius;
   string _name;
-  int _maxHealth;
+  keyframe<value<int> > _maxHealth;
   keyframe<value<int> > _health;
 #ifdef M_SERVER
   Bubble* _selfBubble = NULL; //used to store current continous bubble
@@ -93,7 +93,7 @@ public:
     return _health.getAt(time)();
   }
   int getMaxHealth(time_type_s time) {
-    return _maxHealth;
+    return _maxHealth.getAt(time)();
   }
 
   virtual mpssVec3 getAccel(time_type_s time) {
@@ -118,6 +118,7 @@ public:
   }
   void getPath(time_type_s time, Path* p, Game* g);
 
+  bool loadEnergy(xml_node<>* data, time_type_s time);
   bool load(xml_node<>* data, time_type_s time);
   virtual bool loadV(xml_node<>* data, time_type_s time) { return false; }
   virtual void energyCallbackV(time_type_s t, Game* g) {}

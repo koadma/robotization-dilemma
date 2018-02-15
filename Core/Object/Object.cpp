@@ -142,7 +142,7 @@ void Object::getStatus(DataElement* data) {
   data->addChild(rele);
 
   DataElement* maxe = new DataElement();
-  maxe->_core->fromType<int>(_maxHealth);
+  _maxHealth.get(maxe);
   data->addChild(maxe);
 
   DataElement* hele = new DataElement();
@@ -200,7 +200,7 @@ void Object::getStatus(DataElement* data) {
 void Object::setStatus(DataElement* data) {
   _relativePos.set(data->_children[1]);
 
-  _maxHealth = data->_children[2]->_core->toType<int>();
+  _maxHealth.set(data->_children[2]);
 
   _health.set(data->_children[3]);
 
@@ -282,7 +282,7 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
     drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
   } else {
     glTranslated(_relativePos.x, _relativePos.y, _relativePos.z);
-    setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth)) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth)));
+    setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth.getAt(time)())) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth.getAt(time)())));
     glutSolidSphere(_radius, 20, 20);
     glTranslated(-_relativePos.x, -_relativePos.y, -_relativePos.z);
     drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
@@ -328,61 +328,85 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
   }
   getPathVirt(time, p, g);
 }
+bool Object::loadEnergy(xml_node<>* data, time_type_s time) {
+  maxStorageChange(time, 0);
+  _energySystem->_maxCharge = 0;
+  _energySystem->_maxDrain = 0;
+  maxUseablePowerChange(time, 0);
+  maxGeneratedPowerChange(time, 0);
+
+  if(data) {
+    xml_node<>* elem;
+    elem = data->first_node("max_storage");
+    if (elem) {
+      maxStorageChange(time, strTo<energy_type_J>(elem->value()));
+    }
+
+    elem = data->first_node("max_charge");
+    if (elem) {
+      _energySystem->_maxCharge = Fraction(strTo<power_type_W>(elem->value())).abs();
+    }
+
+    elem = data->first_node("max_drain");
+    if (elem) {
+      _energySystem->_maxDrain = -(Fraction(strTo<power_type_W>(elem->value())).abs());
+    }
+
+    elem = data->first_node("max_useable_power");
+    if (elem) {
+      maxUseablePowerChange(time, strTo<power_type_W>(elem->value()));
+    }
+
+    elem = data->first_node("max_generated_power");
+    if (elem) {
+      maxGeneratedPowerChange(time, -strTo<power_type_W>(elem->value()));
+    }
+  }
+  return true;
+}
 bool Object::load(xml_node<>* data, time_type_s time) {
   xml_node<>* elem;
 
-  elem = data->first_node("health");
+  elem = data->first_node("name");
   if (!elem) {
     return false;
   }
-  _health._frames.clear();
-  _health.addFrame(0, strTo<int>(elem->value()));
+  _name = elem->value();
+
+  elem = data->first_node("radius");
+  if (!elem) {
+    return false;
+  }
+  _radius = strTo<distance_type_m>(elem->value());
+
+  elem = data->first_node("pos");
+  if (!elem) {
+    return false;
+  }
+  else {
+    _relativePos.load(elem);
+  }
 
   elem = data->first_node("max_health");
   if (!elem) {
     return false;
   }
+  _maxHealth._frames.clear();
+  _maxHealth.addFrame(time, strTo<int>(elem->value()));
+
+  elem = data->first_node("health");
   _health._frames.clear();
-  _health.addFrame(0, strTo<int>(elem->value()));
-
-  elem = data->first_node("max_storage");
-  _maxStorage._frames.clear();
   if (!elem) {
-    maxStorageChange(0, 0);
-  } else {
-    maxStorageChange(0, strTo<energy_type_J>(elem->value()));
+    _health.addFrame(time, _maxHealth.getAt(time));
+  } else {  
+    _health.addFrame(time, strTo<int>(elem->value()));
   }
 
-  elem = data->first_node("max_charge");
-  if (!elem) {
-    _energySystem->_maxCharge = 0;
-  } else {
-    _energySystem->_maxCharge = Fraction(strTo<power_type_W>(elem->value()));
+  elem = data->first_node("energy");
+  if (!loadEnergy(elem, time)) {
+    return false;
   }
-
-  elem = data->first_node("max_drain");
-  if (!elem) {
-    _energySystem->_maxDrain = 0;
-  } else {
-    _energySystem->_maxDrain = -Fraction(strTo<power_type_W>(elem->value()));
-  }
-
-  elem = data->first_node("max_useable_power");
-  if (!elem) {
-    maxUseablePowerChange(time, 0);
-  }
-  else {
-    maxUseablePowerChange(time, strTo<power_type_W>(elem->value()));
-  }
-
-  elem = data->first_node("max_generated_power");
-  if (!elem) {
-    maxGeneratedPowerChange(time, 0);
-  }
-  else {
-    maxGeneratedPowerChange(time, -strTo<power_type_W>(elem->value()));
-  }
-
-
+  
+  return loadV(data, time);
 }
 #endif

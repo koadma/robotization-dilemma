@@ -99,10 +99,11 @@ private:
   bool canMove = false; //is the player open to moving / are we waiting for a move.
 public:
   string code;
-  Ship(uint32_t _ID, mVec3 _pos);
   Ship(uint32_t _ID);
+  Ship(uint32_t _ID, mVec3 _pos, string filename);
+  Ship(uint32_t _ID, string filename);
   
-  void load(uint32_t _ID, mVec3 _pos);
+  void load(uint32_t _ID, mVec3 _pos, string filename);
 
 #ifdef M_SERVER
   NetworkS* connectedClient;

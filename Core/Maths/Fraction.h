@@ -83,7 +83,7 @@ public:
     return *this;
   }
   Fraction& operator+=(const int& rhs) {
-    cBigNumber na = a + b*rhs;
+    cBigNumber na = a + b*cBigNumber(rhs);
     cBigNumber nb = b;
     a = na;
     b = nb;
@@ -91,7 +91,7 @@ public:
     return *this;
   }
   Fraction& operator-=(const int& rhs) {
-    cBigNumber na = a - b*rhs;
+    cBigNumber na = a - b*cBigNumber(rhs);
     cBigNumber nb = b;
     a = na;
     b = nb;
@@ -99,7 +99,7 @@ public:
     return *this;
   }
   Fraction& operator*=(const int& rhs) {
-    cBigNumber na = a*rhs;
+    cBigNumber na = a*cBigNumber(rhs);
     cBigNumber nb = b;
     a = na;
     b = nb;
@@ -108,7 +108,7 @@ public:
   }
   Fraction& operator/=(const int& rhs) {
     cBigNumber na = a;
-    cBigNumber nb = b*rhs;
+    cBigNumber nb = b*cBigNumber(rhs);
     a = na;
     b = nb;
     simplify();
@@ -119,6 +119,8 @@ public:
 
   double operator()() const;
   operator double() const;
+
+  Fraction& abs();
 
   string toStr(int prec);
 

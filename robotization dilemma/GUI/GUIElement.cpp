@@ -16,6 +16,8 @@ void GUIElement::getRect(int winWidth, int winHeight, int offsetX, int offsetY) 
   cay = offsetY + mincorner.GetY(winHeight);
   cbx = offsetX + maxcorner.GetX(winWidth);
   cby = offsetY + maxcorner.GetY(winHeight);
+
+  getRect();
 }
 
 void GUIElement::getRect() {

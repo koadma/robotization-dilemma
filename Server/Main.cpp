@@ -42,13 +42,13 @@ int checkLogin(DataElement* data, int id) {
       return LoginErrorGameFull;
     }
   }
-  if (data->_children.size() >= 4 && data->_children[3]->_core->toType<string>().length()) {
-    if(game->shipAuth.count(data->_children[3]->_core->toType<string>())) {
-      return LoginErrorTryRejoin;
+  if (data->_children.size() >= 4) {
+    if (data->_children[3]->_core->toType<string>().length()) {
+      if(game->shipAuth.count(data->_children[3]->_core->toType<string>())) {
+        return LoginErrorTryRejoin;
+      }
     }
-    else {
-      return LoginErrorInvalidAuth;
-    }
+    return LoginErrorInvalidAuth;
   }
   return LoginErrorOk;
 }
@@ -69,16 +69,16 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
       de->addChild(state);
 
       DataElement* ide = new DataElement();
-      ide->_core->fromType<uint64_t>(ship->_droneID);
+      ide->_core->fromType<uint64_t>(newShip->_droneID);
       de->addChild(ide);
 
       DataElement* codee = new DataElement();
-      codee->_core->fromType<string>(ship->code);
+      codee->_core->fromType<string>(newShip->code);
       de->addChild(codee);
 
       thisptr->SendData(de, PacketLogin);
 
-      cout << "Client " << ship->code << " accepted!" << endl;
+      cout << "Client " << newShip->code << " accepted!" << endl;
 
       game->tryGameStart();
 

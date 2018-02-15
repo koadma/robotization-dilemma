@@ -75,7 +75,9 @@ public:
     _maxVal = maxVal;
     _val.addFrame(startTime, linear<V, D, T>{startVal, startTime});
   }
+  bool load(xml_node<>* me) {
 
+  }
   ~FlowVertex() {
     while (_edges.size()) {
       delete *(_edges.begin());

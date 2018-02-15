@@ -2,8 +2,6 @@
 
 #include "GraphicsUtils.h"
 
-using namespace std;
-
 class GUIElement {
 public:
   string name;

@@ -118,7 +118,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
     }*/
     ScriptData* d = new ScriptData();
     ScriptData* hph = new ScriptData();
-    hph->_data = new ScriptDataNumber(_health.getAt(time)() / double(_maxHealth));
+    hph->_data = new ScriptDataNumber(_health.getAt(time)() / double(_maxHealth.getAt(time)()));
     ScriptData* epp = new ScriptData();
     epp->_data = new ScriptDataNumber(reinterpret_cast<Bubble*>(p)->getFlux(time, getMovement(time).pos) * _selfUsedPower.getAt(time)() * PI * _radius * _radius);
     ScriptData* meta = new ScriptData();

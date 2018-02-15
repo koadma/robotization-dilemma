@@ -17,6 +17,7 @@
 #include <locale>
 #include <map>
 #include <mutex>
+#include "../../rapidxml/rapidxml.hpp"
 #include <set>
 #include <sstream>
 #include <string>
@@ -24,6 +25,10 @@
 #include <queue>
 #include <utility>
 #include <vector>
+
+using namespace rapidxml;
+using namespace std;
+typedef uint32_t colorargb;
 
 
 //----------------random number generator from numerical recipies ran1()--------
@@ -43,7 +48,6 @@
 #include <crtdbg.h>
 #endif
 
-using namespace std;
 
 template <typename T>
 class Zero {

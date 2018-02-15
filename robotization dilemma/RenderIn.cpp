@@ -98,9 +98,11 @@ void connectServer(string ip, string port, string code) {
     ce->_core->fromType<int>(VersionC);
     data->addChild(ce);
 
-    DataElement* codee = new DataElement();
-    codee->_core->fromType<string>(code);
-    data->addChild(codee);
+    if(code != "") {
+      DataElement* codee = new DataElement();
+      codee->_core->fromType<string>(code);
+      data->addChild(codee);
+    }
 
     Connection->SendData(data, PacketLogin);
   }
@@ -233,12 +235,15 @@ int getCurrentMaxHealth() {
 }
 
 float getCurrent(bool vel, int index) {
-  if (vel) {
-    return ship->mov.getAt(timeNow).vel[index];
+  if(ship->mov.size()) {
+    if (vel) {
+      return ship->mov.getAt(timeNow).vel[index];
+    }
+    else {
+      return ship->mov.getAt(timeNow).pos[index];
+    }
   }
-  else {
-    return ship->mov.getAt(timeNow).pos[index];
-  }
+  return 0;
 }
 
 power_type_W getCurrentMaxGeneratedPower() {

@@ -313,7 +313,7 @@ ScriptIAssign::~ScriptIAssign() {
   delete _to;
 }
 
-ScriptData* ScriptICopy::run(ScriptData& _args) {
+/*ScriptData* ScriptICopy::run(ScriptData& _args) {
   if (_args._elems.count(_to)) {
     DeletePtr(_args._elems[_to]);
   }
@@ -326,7 +326,7 @@ void ScriptICopy::load(xml_node<> *data) {
   _from = data->first_attribute("from")->value();
 }
 ScriptICopy::~ScriptICopy() {
-}
+}*/
 
 ScriptData* ScriptIConstant::run(ScriptData& _args) {
   ScriptData* res = new ScriptData();
@@ -786,11 +786,11 @@ void ScriptIBlock::load(xml_node<> *data) {
       nins->load(pElem);
       _instructions.push_back(nins);
     }
-    if (name == "copy") {
+    /*if (name == "copy") {
       ScriptInstruction* nins = new ScriptICopy();
       nins->load(pElem);
       _instructions.push_back(nins);
-    }
+    }*/
     if (name == "constant") {
       ScriptInstruction* nins = new ScriptIConstant();
       nins->load(pElem);
@@ -839,3 +839,251 @@ ScriptIBlock::~ScriptIBlock() {
     _instructions.erase(_instructions.begin());
   }
 }
+
+#ifdef SCRIPT_GUI
+
+void ScriptGUI::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
+  cax = offsetX + mincorner.GetX(winWidth);
+  cay = offsetY + mincorner.GetY(winHeight);
+  cbx = offsetX + maxcorner.GetX(winWidth);
+  cby = offsetY + maxcorner.GetY(winHeight);
+
+  getRect(offsetX, offsetY);
+}
+void ScriptGUI::getRect(int offsetX, int offsetY) {
+  code->getRect(offsetX, offsetY);
+}
+int ScriptGUI::mouseEnter(int state) {
+  code->mouseEnter(state);
+}
+int ScriptGUI::mouseMoved(int mx, int my) {
+  code->mouseMoved(mx, my);
+}
+int ScriptGUI::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  code->guiEvent(evt, mx, my, down);
+}
+void ScriptGUI::render() {
+  code->render(this, 1);
+}
+
+void ScriptGUIBase::getRect(int lcax, int lcby) {
+
+}
+int ScriptGUIBase::mouseEnter(int state) {
+
+}
+int ScriptGUIBase::mouseMoved(int mx, int my) {
+
+}
+int ScriptGUIBase::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+
+}
+void ScriptGUIBase::render(ScriptGUI* base, int depth) {
+
+}
+
+void ScriptInstruction::getRect(int offsetX, int offsetY) {
+
+}
+void ScriptIIfElse::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  if (_condition != NULL) {
+    _condition->getRect(cbx + 5, cby + 5);
+    cby = _condition->cby + 5;
+    cbx = max(cbx, _condition->cbx + 5);
+  }
+  if (_then != NULL) {
+    _then->getRect(cbx + 5, cby + 5);
+    cby = _then->cby + 5;
+    cbx = max(cbx, _then->cbx + 5);
+  }
+  if (_else != NULL) {
+    _else->getRect(cbx + 5, cby + 5);
+    cby = _else->cby + 5;
+    cbx = max(cbx, _else->cbx + 5);
+  }
+
+  cby = offsetY;
+}
+void ScriptILoop::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  if (_condition != NULL) {
+    _condition->getRect(cbx + 5, cby + 5);
+    cby = _condition->cby + 5;
+    cbx = max(cbx, _condition->cbx + 5);
+  }
+  if (_code != NULL) {
+    _code->getRect(cbx + 5, cby + 5);
+    cby = _code->cby + 5;
+    cbx = max(cbx, _code->cbx + 5);
+  }
+}
+void ScriptIAssign::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  if (_val != NULL) {
+    _val->getRect(cbx + 5, cby + 5);
+    cbx = _val->cbx + 5;
+    cby = max(cby, _val->cby + 5);
+  }
+  if (_to != NULL) {
+    _to->getRect(cbx + 5, cby + 5);
+    cbx = _to->cbx + 5;
+    cby = max(cby, _to->cby + 5);
+  }
+}
+/*void ScriptICopy::getRect(int offsetX, int offsetY) {
+  cax = offsetX;
+  cay = offsetY;
+  if (_from != NULL) {
+    _from->getRect(cax + 5, cay + 5);
+    cax = _from->cbx + 5;
+    cby = max(cby, _from->cby + 5);
+  }
+  if (_to != NULL) {
+    _to->getRect(cax + 5, cay + 5);
+    cax = _to->cbx + 5;
+    cby = max(cby, _to->cby + 5);
+  }
+}*/
+void ScriptIConstant::getRect(int offsetX, int offsetY) {
+  cax = offsetX;
+  cay = offsetY;
+  cbx = cax + 100;
+  cby = cay + 15;
+}
+void ScriptIMath::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  if (_arg1 != NULL) {
+    _arg1->getRect(cbx + 5, cby + 5);
+    cby = _arg1->cby + 5;
+    cbx = max(cbx, _arg1->cbx + 5);
+  }
+  if (_arg2 != NULL) {
+    _arg2->getRect(cbx + 5, cby + 5);
+    cby = _arg2->cby + 5;
+    cbx = max(cbx, _arg2->cbx + 5);
+  }
+}
+void ScriptILogic::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  if (_arg1 != NULL) {
+    _arg1->getRect(cbx + 5, cby + 5);
+    cby = _arg1->cby + 5;
+    cbx = max(cbx, _arg1->cbx + 5);
+  }
+  if (_arg2 != NULL) {
+    _arg2->getRect(cbx + 5, cby + 5);
+    cby = _arg2->cby + 5;
+    cbx = max(cbx, _arg2->cbx + 5);
+  }
+}
+void ScriptIVariable::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  cbx = cax + 100;
+  cby = cay + 15;
+}
+void ScriptIIndex::getRect(int offsetX, int offsetY) {
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  if (_arg != NULL) {
+    _arg->getRect(cbx + 5, cby + 5);
+    cbx = _arg->cbx + 5;
+    cby = max(cby, _arg->cby + 5);
+  }
+  if (_ind != NULL) {
+    _ind->getRect(cbx + 5, cby + 5);
+    cbx = _ind->cbx + 5;
+    cby = max(cby, _ind->cby + 5);
+  }
+}
+void ScriptIFunctionCall::getRect(int offsetX, int offsetY) {
+  //getRect();
+}
+void ScriptIBlock::getRect(int offsetX, int offsetY) {
+  //getRect();
+  cax = cbx = offsetX;
+  cay = cby = offsetY;
+  for(auto&& it : _instructions) {
+    it->getRect(cbx + 5, cby + 5);
+    cby = it->cby + 5;
+    cbx = max(cbx, it->cbx + 5);
+  }
+}
+
+void ScriptInstruction::render(ScriptGUI* base, int depth) {
+  throw 1;
+}
+void ScriptGUIBase::renderBg(ScriptGUI* base, int depth) {
+  if (depth % 2) {
+    setColor(base->bgcolor_odd);
+  }
+  else {
+    setColor(base->bgcolor_even);
+  }
+  glVertex2d(cax, cay);
+  glVertex2d(cbx, cay);
+  glVertex2d(cbx, cby);
+  glVertex2d(cax, cby);
+  glEnd();
+}
+void ScriptIIfElse::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+
+  _condition->render(base, depth + 1);
+  _then->render(base, depth + 1);
+  _else->render(base, depth + 1);
+}
+void ScriptILoop::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+
+  _condition->render(base, depth + 1);
+  _code->render(base, depth + 1);
+}
+void ScriptIAssign::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+
+  _val->render(base, depth + 1);
+  _to->render(base, depth + 1);
+}
+void ScriptIConstant::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+}
+void ScriptIMath::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+
+  _arg1->render(base, depth + 1);
+  if(_arg2 != NULL) {
+    _arg2->render(base, depth + 1);
+  }
+}
+void ScriptILogic::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+
+  _arg1->render(base, depth + 1);
+  if (_arg2 != NULL) {
+    _arg2->render(base, depth + 1);
+  }
+}
+void ScriptIVariable::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+}
+void ScriptIIndex::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
+
+  _arg->render(base, depth + 1);
+  _ind->render(base, depth + 1);
+}
+void ScriptIFunctionCall::render(ScriptGUI* base, int depth) {
+
+}
+void ScriptIBlock::render(ScriptGUI* base, int depth) {
+
+}
+
+#endif

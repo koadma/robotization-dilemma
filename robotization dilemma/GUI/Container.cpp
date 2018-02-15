@@ -13,23 +13,41 @@ int Container::mouseEnter(int state) {
   return bstate;
 }
 int Container::mouseMoved(int mx, int my) {
-  int bstate = 0;
 
-  if (element != NULL) {
-    bstate = element->mouseMoved(mx, my);
+  int bstate = 0;
+  if(mid) {
+    ox -= mx - mxo;
+    oy -= my - myo;
+    if (element != NULL) {
+      element->getRect(cbx - cax - ox, cby - cay - oy, cax, cay);
+    }
+    bstate = 1;
+  } else {
+    if (element != NULL) {
+      bstate = element->mouseMoved(mx, my);
+    }
   }
+  mxo = mx;
+  myo = my;
 
   return bstate;
 }
 int Container::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
-  //cout << key << endl;
-
   int bstate = 0;
-
-  if (element != NULL) {
-    bstate = element->guiEvent(evt, mx, my, down);
+  if (evt._key._type == evt._key.type_mouse && evt._key._keycode == GLUT_MIDDLE_BUTTON) {
+    if (evt._type == evt.evt_down) {
+      mid = true;
+    }
+    if (evt._type == evt.evt_up) {
+      mid = false;
+    }
   }
-  return bstate;
+  else {
+    if (element != NULL) {
+      bstate = element->guiEvent(evt, mx, my, down);
+    }
+    return bstate;
+  }
 }
 void Container::render() {
   if(element != NULL) {
@@ -49,7 +67,7 @@ void Container::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
   cby = offsetY + maxcorner.GetY(winHeight);
 
   if (element != NULL) {
-    element->getRect(cbx - cax, cby - cay, cax, cay);
+    element->getRect(cbx - cax - ox, cby - cay - oy, cax, cay);
   }
 }
 

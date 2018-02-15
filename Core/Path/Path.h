@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef M_CLIENT
+#include "../../robotization dilemma/RenderOut.h"
+#endif
+#ifdef M_SERVER
 #include "../Scripts/Scripts.h"
+#endif
 
 class Path {
 public:

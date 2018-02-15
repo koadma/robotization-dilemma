@@ -193,6 +193,12 @@ public:
     y = data->_children[1]->_core->toType<T>();
     z = data->_children[2]->_core->toType<T>();
   }
+
+  void load(xml_node<> *me) {
+    x = strTo<T>(me->first_node("x")->value());
+    y = strTo<T>(me->first_node("y")->value());
+    z = strTo<T>(me->first_node("z")->value());
+  }
 };
 
 inline bool band(bVec3 v) { return v.x && v.y && v.z; }

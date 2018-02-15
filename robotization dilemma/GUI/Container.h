@@ -4,7 +4,12 @@
 
 class Container : public GUIElement {
 public:
-  GUIElement* element; 
+  GUIElement* element;
+  int ox;
+  int oy;
+  int mxo;
+  int myo;
+  bool mid = false;
   Container(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
   }

@@ -199,6 +199,7 @@ public:
       } else {
         cout << "Asked " << _time << ", no frames" << endl;
       }
+      _CrtDbgBreak();
       return U();
     }
   }

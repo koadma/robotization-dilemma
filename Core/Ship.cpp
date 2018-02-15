@@ -141,32 +141,75 @@ int Drone::getMaxHealth(time_type_s time) {
   return sum;
 }
 
-Ship::Ship(uint32_t _ID, mVec3 _pos) {
-  load(_ID, _pos);
-}
 Ship::Ship(uint32_t _ID) {
-  load(_ID, { 0,0,0 });
+  _droneID = _ID;
+}
+Ship::Ship(uint32_t _ID, mVec3 _pos, string filename) {
+  load(_ID, _pos, filename);
+}
+Ship::Ship(uint32_t _ID, string filename) {
+  load(_ID, { 0,0,0 }, filename);
 }
 
-void Ship::load(uint32_t _ID, mVec3 _pos) {
+void Ship::load(uint32_t _ID, mVec3 _pos, string filename) {
   energySystem._lastUpdate = -0.01;
   _droneID = _ID;
 
-  Object* go = new ::Generator(this, mix(_ID, 0));//, { 100,0,0 }, 1000, 100, 1000, 1000000);
-  objects.push_back(go);
+  xml_document<> doc;
+  std::ifstream file(filename + "objects.xml");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  file.close();
+  std::string content(buffer.str());
+  doc.parse<0>(&content[0]);
+  xml_node<> *data = doc.first_node("ship");
 
-  Object* so = new ::Sensor(this, mix(_ID, 1));//, { -100,0,0 }, 1000, 100, 1000, 100000);
-  objects.push_back(so);
+  int id = 0;
 
-  Object* eo = new ::Engine(this, mix(_ID, 2));//, { 0,173.2f ,0 }, 1000, 100, 1000, 10000);
-  objects.push_back(eo);
+  for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling()) {
 
-  Object* lo = new ::Laser(this, mix(_ID, 3));//, { 0,-173.2f ,0 }, 1000, 100, 1000, 100000);
-  objects.push_back(lo);
+    /*Object* go = new ::Generator(this, mix(_ID, 0));//, { 100,0,0 }, 1000, 100, 1000, 1000000);
+    objects.push_back(go);
 
-  energySystem.addSymmetricEdge(go->_energySystem, so->_energySystem, 1000000);
+    Object* so = new ::Sensor(this, mix(_ID, 1));//, { -100,0,0 }, 1000, 100, 1000, 100000);
+    objects.push_back(so);
+
+    Object* eo = new ::Engine(this, mix(_ID, 2));//, { 0,173.2f ,0 }, 1000, 100, 1000, 10000);
+    objects.push_back(eo);
+
+    Object* lo = new ::Laser(this, mix(_ID, 3));//, { 0,-173.2f ,0 }, 1000, 100, 1000, 100000);
+    objects.push_back(lo);*/
+
+    string s = pElem->name();
+    Object* no = NULL;
+
+    if(s == "Generator") {
+      no = new ::Generator(this, mix(_ID, id));
+    }
+    if (s == "Sensor") {
+      no = new ::Sensor(this, mix(_ID, id));
+    }
+    if (s == "Engine") {
+      no = new ::Engine(this, mix(_ID, id));
+    }
+    if (s == "Laser") {
+      no = new ::Laser(this, mix(_ID, id));
+    }
+#ifdef M_SERVER
+    if(no != NULL) {
+      if (no->load(pElem, 0)) {
+        ++id;
+        objects.push_back(no);
+      } else {
+        delete no;
+      }
+    }
+#endif
+  }
+
+  /*energySystem.addSymmetricEdge(go->_energySystem, so->_energySystem, 1000000);
   energySystem.addSymmetricEdge(go->_energySystem, eo->_energySystem, 1000000);
-  energySystem.addSymmetricEdge(go->_energySystem, lo->_energySystem, 1000000);
+  energySystem.addSymmetricEdge(go->_energySystem, lo->_energySystem, 1000000);*/
 
   Movement m;
   m.pos = _pos;
@@ -183,7 +226,6 @@ Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, BubbleTyp
     if(res.second) {
       intersects.push({ res.first,it });
     }
-      
   }
 
   if (intersects.size()) {
@@ -371,25 +413,22 @@ bool Ship::loadShip(xml_node<>* data) {
   for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling()) {
     string name = pElem->name();
     Object* o = NULL;
-    if (name == "generator") {
+    if (name == "Generator") {
       o = new Generator(this, id);
-      if (!o->load(pElem, loadTime)) {
-        return false;
-      }
     }
-    if (name == "sensor") {
+    if (name == "Sensor") {
       o = new Sensor(this, id);
-      if (!o->load(pElem, loadTime)) {
-        return false;
-      }
     }
-    if (name == "engine") {
+    if (name == "Engine") {
       o = new Engine(this, id);
-      if (!o->load(pElem, loadTime)) {
-        return false;
-      }
+    }
+    if (name == "Laser") {
+      o = new Laser(this, id);
     }
     if(o != NULL) {
+      if (!o->load(pElem, loadTime)) {
+        return false;
+      }
       objects.push_back(o);
       ++id;
       return true;
@@ -429,36 +468,40 @@ void Ship::newTurn(int id) {
   glutPostRedisplay();
 }
 void Ship::drawSightings(float camcx, float camcy, float camcz, float d, OpenGLData data) {
-  mVec3 pos = mov.getAt(timeNow).pos;
+  if(sightings.size()) {
+    mVec3 pos = mov.getAt(timeNow).pos;
 
-  distance_type_m maxD = 0;
+    distance_type_m maxD = 0;
 
-  /*for (auto&& it : sightings) {
+    /*for (auto&& it : sightings) {
     maxD = max(maxD, (it->getAt(timeNow).pos - pos).length());
-  }*/
+    }*/
 
-  for (auto&& it : sightings) {
-    it->drawSighting({camcx, camcy, camcz}, d, SOL, timeNow, /*maxD,*/ data, it == selecteds);
+    for (auto&& it : sightings) {
+      it->drawSighting({ camcx, camcy, camcz }, d, SOL, timeNow, /*maxD,*/ data, it == selecteds);
+    }
   }
 }
 void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool worldView) {
-  if(worldView) {
-    setColor(hexToInt("ff00ff00"));
-    glLineWidth(2.0);
-    glBegin(GL_LINE_STRIP);
-    glVertex3d(camcx/d, camcy / d, camcz / d);
-    glVertex3d(mov.getAt(timeNow).pos.x/d, camcy / d, mov.getAt(timeNow).pos.z/d);
-    glVertex3d(mov.getAt(timeNow).pos.x/d, mov.getAt(timeNow).pos.y/d, mov.getAt(timeNow).pos.z/d);
-    glEnd();
-    glTranslated(mov.getAt(timeNow).pos.x / d, mov.getAt(timeNow).pos.y / d, mov.getAt(timeNow).pos.z / d);
-    glutSolidSphere(ShipSize, 20,20);
-    glTranslated(-mov.getAt(timeNow).pos.x / d, -mov.getAt(timeNow).pos.y / d,- mov.getAt(timeNow).pos.z / d);
-    for (auto&& it : objects) {
-      it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
-    }
-  } else {
-    for(auto&& it : objects) {
-      it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
+  if(mov.size()) {
+    if(worldView) {
+      setColor(hexToInt("ff00ff00"));
+      glLineWidth(2.0);
+      glBegin(GL_LINE_STRIP);
+      glVertex3d(camcx/d, camcy / d, camcz / d);
+      glVertex3d(mov.getAt(timeNow).pos.x/d, camcy / d, mov.getAt(timeNow).pos.z/d);
+      glVertex3d(mov.getAt(timeNow).pos.x/d, mov.getAt(timeNow).pos.y/d, mov.getAt(timeNow).pos.z/d);
+      glEnd();
+      glTranslated(mov.getAt(timeNow).pos.x / d, mov.getAt(timeNow).pos.y / d, mov.getAt(timeNow).pos.z / d);
+      glutSolidSphere(ShipSize, 20,20);
+      glTranslated(-mov.getAt(timeNow).pos.x / d, -mov.getAt(timeNow).pos.y / d,- mov.getAt(timeNow).pos.z / d);
+      for (auto&& it : objects) {
+        it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
+      }
+    } else {
+      for(auto&& it : objects) {
+        it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
+      }
     }
   }
 }

@@ -4,10 +4,6 @@
 #include "../ClientCore.h"
 #include "../stb_image.h"
 
-using namespace std;
-
-typedef uint32_t colorargb;
-
 extern map<string, map<string, colorargb>> colors;
 
 colorargb getColor(string object, string key);

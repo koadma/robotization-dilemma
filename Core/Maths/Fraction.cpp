@@ -120,6 +120,12 @@ Fraction::operator double() const {
   return d;
 }
 
+Fraction& Fraction::abs() {
+  a = a.abs();
+  b = b.abs();
+  return *this;
+}
+
 string Fraction::toStr(int prec) {
   cBigNumber na = a;
   cBigNumber nb = b;
@@ -142,12 +148,18 @@ string Fraction::toStr(int prec) {
 bool approxEqual(Fraction a, Fraction b, int prec) {
   Fraction pm(5, 10); //0.5
 
+  //cout << pm.a << "/" << pm.b << endl;
+
+  //cout << cBigNumber(10).pow(prec) << " " << cBigNumber(10).pow(-prec) << endl;
+
   if (prec < 0) {
-    pm.b *= pow(10, -prec);
+    pm.b *= cBigNumber(10).pow(-prec);
   }
   if (prec > 0) {
-    pm.a *= pow(10, prec);
+    pm.a *= cBigNumber(10).pow(prec);
   }
+
+  //cout << pm.a << "/" << pm.b << endl;
 
   return (a - pm <= b && b<a + pm);
 }

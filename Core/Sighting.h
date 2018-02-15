@@ -1,13 +1,9 @@
 #pragma once
 
-#ifdef M_SERVER
 #include "../Core/Path/Bubble.h"
 #include "../Core/Path/Shot.h"
 #include "../Core/Path/Movement.h"
-#endif
-#ifdef M_CLIENT
-#include "../robotization dilemma/RenderOut.h"
-#endif
+
 
 //typedef keyframe<unpoint<Movement*>> Sighting;
 

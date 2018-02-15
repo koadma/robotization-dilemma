@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../../rapidxml/rapidxml.hpp"
-#include "../Maths/FlowSystem.h"
 
-using namespace rapidxml;
+#ifdef SCRIPTS_GUI
+#include "../../robotization dilemma/GUI/GUIElement.h"
+#else
+#include "../Maths/FlowSystem.h"
+#endif
 
 class ScriptDataBase {
 public:
@@ -151,13 +153,60 @@ typedef ScriptData*(*APICall)(ScriptData&);
 
 extern map<string, APICall> apiMap;
 
-class ScriptInstruction {
+class ScriptIBlock;
+class gui_event;
+class key_location;
+class GUIElement;
+
+#ifdef SCRIPT_GUI
+class ScriptGUI : public GUIElement {
 public:
+  colorargb bgcolor_even;
+  colorargb bgcolor_odd;
+  ScriptIBlock* code;
+
+  void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render();
+};
+
+class ScriptGUIBase {
+public:
+  int cax, cay, cbx, cby;
+
+  virtual void getRect(int lcax, int lcay);
+  virtual int mouseEnter(int state);
+  virtual int mouseMoved(int mx, int my);
+  virtual int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  virtual void renderBg(ScriptGUI* base, int depth);
+  virtual void render(ScriptGUI* base, int depth);
+};
+#endif
+
+class ScriptInstruction
+#ifdef SCRIPT_GUI
+: public ScriptGUIBase
+#endif
+{
+public:
+  ScriptInstruction() {
+
+  }
   virtual ScriptData* run(ScriptData& _args);
   virtual void load(xml_node<> *data);
   virtual ~ScriptInstruction() {
     //throw 1;
   }
+#ifdef SCRIPT_GUI
+  virtual void getRect(int offsetX, int offsetY);
+  virtual int mouseEnter(int state);
+  virtual int mouseMoved(int mx, int my);
+  virtual int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  virtual void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIIfElse : public ScriptInstruction {
@@ -168,6 +217,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIIfElse();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptILoop : public ScriptInstruction {
@@ -177,6 +233,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptILoop();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIAssign : public ScriptInstruction {
@@ -186,16 +249,30 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIAssign();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
-class ScriptICopy : public ScriptInstruction {
+/*class ScriptICopy : public ScriptInstruction {
 public:
   string _to;
   string _from;
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptICopy();
-};
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
+};*/
 
 class ScriptIConstant : public ScriptInstruction {
 public:
@@ -203,6 +280,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIConstant();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIMath : public ScriptInstruction {
@@ -236,6 +320,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIMath();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptILogic : public ScriptInstruction {
@@ -257,6 +348,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptILogic();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIVariable : public ScriptInstruction {
@@ -265,6 +363,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIVariable();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIIndex : public ScriptInstruction {
@@ -274,6 +379,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIIndex();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIFunctionCall : public ScriptInstruction {
@@ -283,6 +395,13 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIFunctionCall();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIAPICall : public ScriptInstruction {
@@ -291,6 +410,13 @@ public:
   list<pair<string, ScriptInstruction*>> _arguments;
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };
 
 class ScriptIBlock : public ScriptInstruction {
@@ -299,4 +425,11 @@ public:
   ScriptData* run(ScriptData& _args);
   void load(xml_node<> *data);
   ~ScriptIBlock();
+#ifdef SCRIPT_GUI
+  void getRect(int offsetX, int offsetY);
+  int mouseEnter(int state);
+  int mouseMoved(int mx, int my);
+  int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
+  void render(ScriptGUI* base, int depth);
+#endif
 };

@@ -121,7 +121,7 @@ void Game::calcIntersect(Path* path) {
 
 Ship* Game::addShip() {
   int nid = drones.size();
-  Ship* ship = new Ship(nid, shipStarts[nid]);
+  Ship* ship = new Ship(nid, shipStarts[nid], "html/Ships/Test/");
   drones.push_back(ship);
   string nCode;
   do {
