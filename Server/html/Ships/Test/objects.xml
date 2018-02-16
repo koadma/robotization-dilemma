@@ -652,6 +652,7 @@
 			<max_charge>100000</max_charge>
 			<max_useable_power>100000</max_useable_power>
 		</energy>
+		<sensitivity>html/sensor_detect.xml</sensitivity>
 		
 		<maxjammingdensity></maxjammingdensity>
 		<maxconsumption></maxconsumption>

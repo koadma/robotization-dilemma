@@ -28,10 +28,6 @@ void Laser::getVStatus(DataElement* data) {
   }
   data->addChild(shote);
 
-  DataElement* store = new DataElement();
-  _energyStored.get(store);
-  data->addChild(store);
-
   DataElement* mstoe = new DataElement();
   _maxStorage.get(mstoe);
   data->addChild(mstoe);
@@ -51,8 +47,7 @@ void Laser::setVStatus(DataElement* data) {
     _shots.push_back(nVal);
   }
 
-  _energyStored.set(data->_children[1]);
-  _maxStorage.set(data->_children[2]);
+  _maxStorage.set(data->_children[1]);
 
 }
 void Laser::collectEvents(list<StateChange*> &addTo, time_type_s time) {

@@ -1,7 +1,9 @@
 #pragma once
 
-
-#ifdef SCRIPTS_GUI
+#ifdef M_CLIENT
+#define SCRIPT_GUI
+#endif
+#ifdef SCRIPT_GUI
 #include "../../robotization dilemma/GUI/GUIElement.h"
 #else
 #include "../Maths/FlowSystem.h"
@@ -165,6 +167,11 @@ public:
   colorargb bgcolor_odd;
   ScriptIBlock* code;
 
+  ScriptGUI(string name, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbgcolorodd, colorargb lactivecolor, colorargb ltextcolor, colorargb lbgcoloreven) : GUIElement(name, lmincorner, lmaxcorner, lbgcolorodd, lactivecolor, ltextcolor) {
+    bgcolor_even = lbgcoloreven;
+    bgcolor_odd = lbgcolorodd;
+  }
+
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
   void getRect(int offsetX, int offsetY);
   int mouseEnter(int state);
@@ -218,6 +225,8 @@ public:
   void load(xml_node<> *data);
   ~ScriptIIfElse();
 #ifdef SCRIPT_GUI
+  int cty;//Then, else text coord
+  int cey;
   void getRect(int offsetX, int offsetY);
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
@@ -247,6 +256,7 @@ public:
   ScriptInstruction* _to;
   ScriptInstruction* _val;
   ScriptData* run(ScriptData& _args);
+  int cex; //Equation
   void load(xml_node<> *data);
   ~ScriptIAssign();
 #ifdef SCRIPT_GUI
@@ -321,6 +331,7 @@ public:
   void load(xml_node<> *data);
   ~ScriptIMath();
 #ifdef SCRIPT_GUI
+  int cox; //Operator sign (for binary)
   void getRect(int offsetX, int offsetY);
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
@@ -349,6 +360,7 @@ public:
   void load(xml_node<> *data);
   ~ScriptILogic();
 #ifdef SCRIPT_GUI
+  int cox; //Operator sign (for binary)
   void getRect(int offsetX, int offsetY);
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);

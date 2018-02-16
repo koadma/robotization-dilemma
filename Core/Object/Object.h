@@ -120,7 +120,7 @@ public:
 
   bool loadEnergy(xml_node<>* data, time_type_s time);
   bool load(xml_node<>* data, time_type_s time);
-  virtual bool loadV(xml_node<>* data, time_type_s time) { return false; }
+  virtual bool loadV(xml_node<>* data, time_type_s time) { return true; }
   virtual void energyCallbackV(time_type_s t, Game* g) {}
   void energyCallback(time_type_s t, Game* g);
 #endif

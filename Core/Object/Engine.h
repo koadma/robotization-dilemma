@@ -32,6 +32,7 @@ public:
   }
 
 #ifdef M_SERVER
+  bool loadV(xml_node<>* data, time_type_s time);
   void energyCallbackV(time_type_s t, Game* g);
   void setTargetAccel(time_type_s time, mpssVec3 acc, Game* g);
 #endif

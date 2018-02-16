@@ -20,12 +20,13 @@ public:
 
 #ifdef M_SERVER
   bool loadV(xml_node<>* data) {
-    xml_node<>* elem;
+    /*xml_node<>* elem;
 
     elem = data->first_node("shipclass");
     if (!elem) {
       return false;
-    }
+    }*/
+    return true;
     
   }
 #endif

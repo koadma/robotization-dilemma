@@ -354,12 +354,12 @@ bool Object::loadEnergy(xml_node<>* data, time_type_s time) {
 
     elem = data->first_node("max_useable_power");
     if (elem) {
-      maxUseablePowerChange(time, strTo<power_type_W>(elem->value()));
+      maxUseablePowerChange(time, abs(strTo<power_type_W>(elem->value())));
     }
 
     elem = data->first_node("max_generated_power");
     if (elem) {
-      maxGeneratedPowerChange(time, -strTo<power_type_W>(elem->value()));
+      maxGeneratedPowerChange(time, abs(strTo<power_type_W>(elem->value())));
     }
   }
   return true;

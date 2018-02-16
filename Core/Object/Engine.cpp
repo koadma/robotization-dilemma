@@ -50,6 +50,10 @@ void Engine::setTargetAccel(time_type_s time, mpssVec3 acc, Game* g) {
   setTargetAccel(time, acc);
   _parentShip->energyUpdate(time, game);
 }
+bool Engine::loadV(xml_node<>* data, time_type_s time) {
+  setTargetAccel(time, {0,0,0});
+  return true;
+}
 void Engine::energyCallbackV(time_type_s time, Game* g) {
   power_type_W power = _energySystem->_delta;
   

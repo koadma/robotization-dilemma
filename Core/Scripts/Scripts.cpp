@@ -854,32 +854,30 @@ void ScriptGUI::getRect(int offsetX, int offsetY) {
   code->getRect(offsetX, offsetY);
 }
 int ScriptGUI::mouseEnter(int state) {
-  code->mouseEnter(state);
+  return code->mouseEnter(state);
 }
 int ScriptGUI::mouseMoved(int mx, int my) {
-  code->mouseMoved(mx, my);
+  return code->mouseMoved(mx, my);
 }
 int ScriptGUI::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
-  code->guiEvent(evt, mx, my, down);
+  return code->guiEvent(evt, mx, my, down);
 }
 void ScriptGUI::render() {
   code->render(this, 1);
 }
 
 void ScriptGUIBase::getRect(int lcax, int lcby) {
-
 }
 int ScriptGUIBase::mouseEnter(int state) {
-
+  return 0;
 }
 int ScriptGUIBase::mouseMoved(int mx, int my) {
-
+  return 0;
 }
 int ScriptGUIBase::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
-
+  return 0;
 }
 void ScriptGUIBase::render(ScriptGUI* base, int depth) {
-
 }
 
 void ScriptInstruction::getRect(int offsetX, int offsetY) {
@@ -888,51 +886,54 @@ void ScriptInstruction::getRect(int offsetX, int offsetY) {
 void ScriptIIfElse::getRect(int offsetX, int offsetY) {
   cax = cbx = offsetX;
   cay = cby = offsetY;
-  if (_condition != NULL) {
-    _condition->getRect(cbx + 5, cby + 5);
-    cby = _condition->cby + 5;
-    cbx = max(cbx, _condition->cbx + 5);
-  }
-  if (_then != NULL) {
-    _then->getRect(cbx + 5, cby + 5);
-    cby = _then->cby + 5;
-    cbx = max(cbx, _then->cbx + 5);
-  }
   if (_else != NULL) {
-    _else->getRect(cbx + 5, cby + 5);
-    cby = _else->cby + 5;
+    _else->getRect(cax + 5, cby + 5);
+    cby = _else->cby + 15;
+    cey = cby;
     cbx = max(cbx, _else->cbx + 5);
   }
-
-  cby = offsetY;
+  if (_then != NULL) {
+    _then->getRect(cax + 5, cby + 5);
+    cby = _then->cby + 15;
+    cty = cby;
+    cbx = max(cbx, _then->cbx + 5);
+  }
+  if (_condition != NULL) {
+    _condition->getRect(cax + 5, cby + 5);
+    cby = _condition->cby + 20;
+    cbx = max(cbx, _condition->cbx + 5);
+  }
 }
 void ScriptILoop::getRect(int offsetX, int offsetY) {
   cax = cbx = offsetX;
   cay = cby = offsetY;
-  if (_condition != NULL) {
-    _condition->getRect(cbx + 5, cby + 5);
-    cby = _condition->cby + 5;
-    cbx = max(cbx, _condition->cbx + 5);
-  }
-  if (_code != NULL) {
-    _code->getRect(cbx + 5, cby + 5);
+    if (_code != NULL) {
+    _code->getRect(cax + 5, cby + 5);
     cby = _code->cby + 5;
     cbx = max(cbx, _code->cbx + 5);
   }
+  if (_condition != NULL) {
+    _condition->getRect(cax + 5, cby + 5);
+    cby = _condition->cby + 5;
+    cbx = max(cbx, _condition->cbx + 5);
+  }
+
 }
 void ScriptIAssign::getRect(int offsetX, int offsetY) {
   cax = cbx = offsetX;
   cay = cby = offsetY;
+  if (_to != NULL) {
+    _to->getRect(cbx + 5, cay + 5);
+    cbx = _to->cbx + 20;
+    cex = cbx;
+    cby = max(cby, _to->cby + 5);
+  }
   if (_val != NULL) {
-    _val->getRect(cbx + 5, cby + 5);
+    _val->getRect(cbx + 5, cay + 5);
     cbx = _val->cbx + 5;
     cby = max(cby, _val->cby + 5);
   }
-  if (_to != NULL) {
-    _to->getRect(cbx + 5, cby + 5);
-    cbx = _to->cbx + 5;
-    cby = max(cby, _to->cby + 5);
-  }
+
 }
 /*void ScriptICopy::getRect(int offsetX, int offsetY) {
   cax = offsetX;
@@ -958,28 +959,30 @@ void ScriptIMath::getRect(int offsetX, int offsetY) {
   cax = cbx = offsetX;
   cay = cby = offsetY;
   if (_arg1 != NULL) {
-    _arg1->getRect(cbx + 5, cby + 5);
-    cby = _arg1->cby + 5;
-    cbx = max(cbx, _arg1->cbx + 5);
+    _arg1->getRect(cbx + 5, cay + 5);
+    cbx = _arg1->cbx + 20;
+    cox = cbx;
+    cby = max(cby, _arg1->cby + 5);
   }
   if (_arg2 != NULL) {
-    _arg2->getRect(cbx + 5, cby + 5);
-    cby = _arg2->cby + 5;
-    cbx = max(cbx, _arg2->cbx + 5);
+    _arg2->getRect(cbx + 5, cay + 5);
+    cbx = _arg2->cbx + 5;
+    cby = max(cby, _arg2->cby + 5);
   }
 }
 void ScriptILogic::getRect(int offsetX, int offsetY) {
   cax = cbx = offsetX;
   cay = cby = offsetY;
   if (_arg1 != NULL) {
-    _arg1->getRect(cbx + 5, cby + 5);
-    cby = _arg1->cby + 5;
-    cbx = max(cbx, _arg1->cbx + 5);
+    _arg1->getRect(cbx + 5, cay + 5);
+    cbx = _arg1->cbx + 20;
+    cox = cbx;
+    cby = max(cby, _arg1->cby + 5);
   }
   if (_arg2 != NULL) {
-    _arg2->getRect(cbx + 5, cby + 5);
-    cby = _arg2->cby + 5;
-    cbx = max(cbx, _arg2->cbx + 5);
+    _arg2->getRect(cbx + 5, cay + 5);
+    cbx = _arg2->cbx + 5;
+    cby = max(cby, _arg2->cby + 5);
   }
 }
 void ScriptIVariable::getRect(int offsetX, int offsetY) {
@@ -992,12 +995,12 @@ void ScriptIIndex::getRect(int offsetX, int offsetY) {
   cax = cbx = offsetX;
   cay = cby = offsetY;
   if (_arg != NULL) {
-    _arg->getRect(cbx + 5, cby + 5);
+    _arg->getRect(cbx + 5, cay + 5);
     cbx = _arg->cbx + 5;
     cby = max(cby, _arg->cby + 5);
   }
   if (_ind != NULL) {
-    _ind->getRect(cbx + 5, cby + 5);
+    _ind->getRect(cbx + 5, cay + 5);
     cbx = _ind->cbx + 5;
     cby = max(cby, _ind->cby + 5);
   }
@@ -1005,15 +1008,22 @@ void ScriptIIndex::getRect(int offsetX, int offsetY) {
 void ScriptIFunctionCall::getRect(int offsetX, int offsetY) {
   //getRect();
 }
+void ScriptIAPICall::getRect(int offsetX, int offsetY) {
+  //getRect();
+}
 void ScriptIBlock::getRect(int offsetX, int offsetY) {
   //getRect();
   cax = cbx = offsetX;
   cay = cby = offsetY;
-  for(auto&& it : _instructions) {
-    it->getRect(cbx + 5, cby + 5);
-    cby = it->cby + 5;
-    cbx = max(cbx, it->cbx + 5);
+  auto it = _instructions.end();
+
+  while(it != _instructions.begin()) {
+    --it;
+    (*it)->getRect(cax + 5, cby + 5);
+    cby = (*it)->cby;
+    cbx = max(cbx, (*it)->cbx + 5);
   }
+  cby = cby + 5;
 }
 
 void ScriptInstruction::render(ScriptGUI* base, int depth) {
@@ -1026,6 +1036,7 @@ void ScriptGUIBase::renderBg(ScriptGUI* base, int depth) {
   else {
     setColor(base->bgcolor_even);
   }
+  glBegin(GL_QUADS);
   glVertex2d(cax, cay);
   glVertex2d(cbx, cay);
   glVertex2d(cbx, cby);
@@ -1035,8 +1046,11 @@ void ScriptGUIBase::renderBg(ScriptGUI* base, int depth) {
 void ScriptIIfElse::render(ScriptGUI* base, int depth) {
   renderBg(base, depth);
 
+  renderBitmapString(cax + 5, cby - 15 , "IF", base->textColor, false);
   _condition->render(base, depth + 1);
+  renderBitmapString(cax + 5, cty - 10, "THEN", base->textColor, false);
   _then->render(base, depth + 1);
+  renderBitmapString(cax + 5, cey - 10, "ELSE", base->textColor, false);
   _else->render(base, depth + 1);
 }
 void ScriptILoop::render(ScriptGUI* base, int depth) {
@@ -1049,16 +1063,91 @@ void ScriptIAssign::render(ScriptGUI* base, int depth) {
   renderBg(base, depth);
 
   _val->render(base, depth + 1);
+  renderBitmapString(cex - 10, (cay+cby)/2, "=", base->textColor, true);
   _to->render(base, depth + 1);
 }
 void ScriptIConstant::render(ScriptGUI* base, int depth) {
   renderBg(base, depth);
+
+  renderBitmapString((cax + cbx) / 2.0f, (cay + cby) / 2.0f, _val->_data->getString(), base->textColor, true);
 }
 void ScriptIMath::render(ScriptGUI* base, int depth) {
   renderBg(base, depth);
 
+  string operb = "";
+  string operm = "";
+  switch (_oper) {
+    case Operation::PLUS:
+      operm = '+';
+      break;
+    case Operation::MINUS:
+      operm = '-';
+      break;
+    case Operation::MULTI:
+      operm = '*';
+      break;
+    case Operation::DIV:
+      operm = '/';
+      break;
+    case Operation::POW:
+      operm = '^';
+      break;
+    case Operation::LOG:
+      operm = '_';
+      operb = "LG";
+      break;
+    case Operation::MOD:
+      operm = '%';
+      break;
+    case Operation::ATAN2:
+      operb = "ATAN2";
+      operm = ",";
+      break;
+    case Operation::L:
+      operm = '<';
+      break;
+    case Operation::LEQ:
+      operm = "<=";
+      break;
+    case Operation::EQ:
+      operm = "==";
+      break;
+    case Operation::NEQ:
+      operm = '!=';
+      break;
+    case Operation::GEQ:
+      operm = ">=";
+      break;
+    case Operation::G:
+      operm = '>';
+      break;
+    case Operation::SQRT:
+      operb = "Rt";
+      break;
+    case Operation::SIN:
+      operb = 'S';
+      break;
+    case Operation::COS:
+      operb = 'C';
+      break;
+    case Operation::TAN:
+      operb = 'T';
+      break;
+    case Operation::ASIN:
+      operb = "AS";
+      break;
+    case Operation::ACOS:
+      operb = "AC";
+      break;
+    case Operation::ATAN:
+      operb = "AT";
+      break;
+  }
+
+  renderBitmapString(cax, (cay + cby) / 2, operb, base->textColor, false);
   _arg1->render(base, depth + 1);
   if(_arg2 != NULL) {
+    renderBitmapString(cox - 10, (cay + cby) / 2, operm, base->textColor, true);
     _arg2->render(base, depth + 1);
   }
 }
@@ -1072,6 +1161,9 @@ void ScriptILogic::render(ScriptGUI* base, int depth) {
 }
 void ScriptIVariable::render(ScriptGUI* base, int depth) {
   renderBg(base, depth);
+
+  renderBitmapString((cax + cbx) / 2.0f, (cay + cby) / 2.0f, _arg, base->textColor, true);
+
 }
 void ScriptIIndex::render(ScriptGUI* base, int depth) {
   renderBg(base, depth);
@@ -1082,8 +1174,125 @@ void ScriptIIndex::render(ScriptGUI* base, int depth) {
 void ScriptIFunctionCall::render(ScriptGUI* base, int depth) {
 
 }
-void ScriptIBlock::render(ScriptGUI* base, int depth) {
+void ScriptIAPICall::render(ScriptGUI* base, int depth) {
 
 }
+void ScriptIBlock::render(ScriptGUI* base, int depth) {
+  renderBg(base, depth);
 
+  for (auto&& it : _instructions) {
+    it->render(base, depth + 1);
+  }
+}
+
+int ScriptInstruction::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIIfElse::mouseEnter(int state) {
+  return 0;
+}
+int ScriptILoop::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIAssign::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIConstant::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIMath::mouseEnter(int state) {
+  return 0;
+}
+int ScriptILogic::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIVariable::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIIndex::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIFunctionCall::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIAPICall::mouseEnter(int state) {
+  return 0;
+}
+int ScriptIBlock::mouseEnter(int state) {
+  return 0;
+}
+
+int ScriptInstruction::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIIfElse::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptILoop::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIAssign::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIConstant::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIMath::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptILogic::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIVariable::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIIndex::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIFunctionCall::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIAPICall::mouseMoved(int mx, int my) {
+  return 0;
+}
+int ScriptIBlock::mouseMoved(int mx, int my) {
+  return 0;
+}
+
+int ScriptInstruction::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIIfElse::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptILoop::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIAssign::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIConstant::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIMath::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptILogic::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIVariable::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIIndex::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIFunctionCall::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIAPICall::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
+int ScriptIBlock::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
+  return 0;
+}
 #endif

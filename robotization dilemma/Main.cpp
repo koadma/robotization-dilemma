@@ -133,7 +133,26 @@ int main() {
   loadColors();
 
   InitGraphics();
+  
+  ifstream sensfile("html/sensor_detect.xml");
 
+  std::stringstream buffer;
+  buffer << sensfile.rdbuf();
+  sensfile.close();
+
+  xml_document<> doc;
+  std::string content(buffer.str());
+  doc.parse<0>(&content[0]);
+
+  Container* testc = new Container("ctest,", { 0,0 }, { 1,1 }, 0xff111111);
+  ScriptGUI* test = new ScriptGUI("stest,", { 0,0 }, { 1,1 }, 0xff111111, 0xff888888, 0xffffffff, 0xff222222);
+  test->code = new ScriptIBlock();
+  test->code->load(doc.first_node("root"));
+  testc->element = test;
+
+  Graphics::addElement(objectMenuSubWindow, testc);
+
+  /*
   vector<string> reConnectData;
   if (hasSaveFile(reConnectData) && reConnectData[2] != "") {
     createReconnectScreen();
@@ -141,7 +160,7 @@ int main() {
   }
   else {
     createMainMenu();
-  }
+  }*/
   glutPostRedisplay();
   glutMainLoop();
 }

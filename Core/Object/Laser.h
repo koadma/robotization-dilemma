@@ -5,9 +5,6 @@
 class Laser : public Object {       //Order of serialisation
 private:
   list<tuple<time_type_s, energy_type_J, sVec3, bool>> _shots; //time, energy, direction, eventCrated
-                                                               //pair<energy_type_J, sVec3> _shot;
-  keyframe<value<energy_type_J>> _energyStored;
-  keyframe<value<energy_type_J>> _maxStorage;
 
   energy_type_J _tempE;
   sVec3 _tempD;
@@ -33,11 +30,11 @@ public:
     return max(0.0, extra);
   }*/
 
-  virtual energy_type_J getDisplayMaxEnergy(time_type_s time) { ///Max stored energy, used in an operation, whatever applicable
+  energy_type_J getDisplayMaxEnergy(time_type_s time) { ///Max stored energy, used in an operation, whatever applicable
     return _maxStorage.getAt(time)();
-  }
-  virtual energy_type_J getDisplayEnergy(time_type_s time) {
-    return _energyStored.getAt(time)();
+}
+  energy_type_J getDisplayEnergy(time_type_s time) {
+    return _energySystem->_val.getAt(time);
   }
 
 #ifdef M_SERVER

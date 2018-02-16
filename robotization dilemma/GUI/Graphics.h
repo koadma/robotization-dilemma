@@ -1,6 +1,5 @@
 #pragma once
 
-#define SCRIPTS_GUI
 #include "../../Core/Scripts/Scripts.h"
 #include "Button.h"
 #include "Checkbox.h"

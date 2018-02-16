@@ -66,6 +66,8 @@ public:
       return false;
     }
 
+    _autofire.addFrame(time, false);
+
     string filename = elem->value();
 
     ifstream sensfile(filename);
