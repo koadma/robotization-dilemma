@@ -70,9 +70,9 @@
 		<max_health>1000</max_health>
 		<energy>
 			<max_storage>1000000</max_storage>
-			<max_charge>100000</max_charge>
-			<max_drain>100000</max_drain>
-			<max_generated_power>100000</max_generated_power>
+			<max_charge>10000000</max_charge>
+			<max_drain>10000000</max_drain>
+			<max_generated_power>10000000</max_generated_power>
 		</energy>
 		<maxstructure></maxstructure>
 		<crushdamage></crushdamage>

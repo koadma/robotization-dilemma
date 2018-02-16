@@ -163,6 +163,7 @@ void Ship::load(uint32_t _ID, mVec3 _pos, string filename) {
   std::string content(buffer.str());
   doc.parse<0>(&content[0]);
   xml_node<> *data = doc.first_node("ship");
+  buffer.clear();
 
   int id = 0;
 
@@ -205,6 +206,21 @@ void Ship::load(uint32_t _ID, mVec3 _pos, string filename) {
       }
     }
 #endif
+  }
+
+  file = ifstream(filename + "energySystem.xml");
+  buffer << file.rdbuf();
+  file.close();
+  content = string(buffer.str());
+  doc.parse<0>(&content[0]);
+  data = doc.first_node("cables");
+
+  for (xml_node<> *pElem = data->first_node(); pElem; pElem = pElem->next_sibling()) {
+    energySystem.addEdge(
+      getObject(pElem->first_node("from")->value())->_energySystem,
+      getObject(pElem->first_node("to")->value())->_energySystem,
+      Fraction(pElem->first_node("capacity")->value())
+    );
   }
 
   /*energySystem.addSymmetricEdge(go->_energySystem, so->_energySystem, 1000000);

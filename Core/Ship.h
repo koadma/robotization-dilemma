@@ -68,6 +68,14 @@ public:
     }
     return NULL;
   }
+  Object* getObject(string name) {
+    for (auto it : objects) {
+      if (it->name() == name) {
+        return it;
+      }
+    }
+    return NULL;
+  }
 
   power_type_W getMaxGeneratedPower(time_type_s time);
   power_type_W getGeneratedPower(time_type_s time);

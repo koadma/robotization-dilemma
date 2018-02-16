@@ -134,7 +134,7 @@ int main() {
 
   InitGraphics();
   
-  ifstream sensfile("html/sensor_detect.xml");
+  /*ifstream sensfile("html/sensor_detect.xml");
 
   std::stringstream buffer;
   buffer << sensfile.rdbuf();
@@ -150,9 +150,9 @@ int main() {
   test->code->load(doc.first_node("root"));
   testc->element = test;
 
-  Graphics::addElement(objectMenuSubWindow, testc);
+  Graphics::addElement(objectMenuSubWindow, testc);*/
 
-  /*
+  
   vector<string> reConnectData;
   if (hasSaveFile(reConnectData) && reConnectData[2] != "") {
     createReconnectScreen();
@@ -160,7 +160,7 @@ int main() {
   }
   else {
     createMainMenu();
-  }*/
+  }
   glutPostRedisplay();
   glutMainLoop();
 }

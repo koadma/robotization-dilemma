@@ -1,0 +1,17 @@
+<cables>
+	<cable>
+		<from>Main_Generator</from>
+		<to>Forward_Battery</to>
+		<capacity>1000000</capacity>
+	</cable>
+	<cable>
+		<from>Main_Generator</from>
+		<to>Engine_1</to>
+		<capacity>1000000</capacity>
+	</cable>
+	<cable>
+		<from>Main_Generator</from>
+		<to>Main_EM_Controll</to>
+		<capacity>1000000</capacity>
+	</cable>
+</cables>
