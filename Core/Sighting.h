@@ -9,33 +9,39 @@
 
 class Sighting {
 public:
-  keyframe<Movement, Movement, time_type_s> keyframes;
-  void addFrame(time_type_s& _time, Movement& _val) {
-    keyframes.addFrame(_time, _val);
+  keyframe<Movement, Movement, time_type_s> _keyframes;
+  bool _closed;
+  time_type_s _closetime;
+  void addFrame(time_type_s& time, Movement& val, bool closed, time_type_s closetime = 0) {
+    _keyframes.addFrame(time, val);
+    _closed = closed;
+    if (closed) {
+      _closetime = closetime;
+    }
   }
 
   time_type_s getFirst() {
-    return keyframes.getFirst();
+    return _keyframes.getFirst();
   }
-  Movement getAt(time_type_s _time) {
-    return keyframes.getAt(_time);
+  Movement getAt(time_type_s time) {
+    return _keyframes.getAt(time);
   }
   void get(DataElement* data) {
-    keyframes.get(data);
+    _keyframes.get(data);
   }
   void set(DataElement* data) {
-    keyframes.set(data);
+    _keyframes.set(data);
   }
   pair<distance_type_m, bool> closest(Movement* p) {
     priority_queue<distance_type_m, vector<distance_type_m>, greater<distance_type_m>> intersects;
-    if(keyframes.size()) {
-      auto it = keyframes._frames.begin();
+    if(_keyframes.size()) {
+      auto it = _keyframes._frames.begin();
       auto nit = it;
-      while (it != keyframes._frames.end()) {
+      while (it != _keyframes._frames.end()) {
         ++nit;
         vector<time_type_s> temp = intersectPaths(&it->second, p, true);
         for (auto && tit : temp) {
-          if ((it == keyframes._frames.begin() || it->first <= tit) && (nit == keyframes._frames.end() || tit <= nit->first)) {
+          if ((it == _keyframes._frames.begin() || it->first <= tit) && (nit == _keyframes._frames.end() || tit <= nit->first)) {
             intersects.push((p->getAt(tit).pos - it->second.getAt(tit).pos).length());
           }
           intersects.push((p->getAt(it->first).pos - it->second.getAt(it->first).pos).length());

@@ -208,13 +208,13 @@ inline bool bxor(bVec3 v) { return v.x != v.y != v.z; }
 
 template<typename T> std::ostream& operator<<(std::ostream& os, const vec3<T>& v)
 {
-  throw 1;
+  //throw 1;
   os << v.x << " " << v.y << " " << v.z;
   return os;
 }
 template<typename T> std::istream& operator>> <>(std::istream& is, vec3<T>& v)
 {
-  throw 1;
+  //throw 1;
   is >> v.x >> v.y >> v.z;
   return is;
 }

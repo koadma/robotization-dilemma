@@ -171,13 +171,13 @@ void Game::simulate(float from, float till) {
       (*it)->apply(this);
       auto it2 = it;
       ++it;
-      cout << "PEVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      cout << "PAST EVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
       events.erase(it2);
     }
     else {
       auto it2 = it;
       ++it;
-      cout << "DEVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      cout << "DEL  EVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
       events.erase(it2);
     }
   }

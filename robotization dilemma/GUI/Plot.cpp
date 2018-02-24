@@ -34,12 +34,13 @@ int Plot::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
     return 1;
   }
   if (checkKey(KeyPlotReset, evt._key)) { //Reset
-    double nsx, nsy;
+    /*double nsx, nsy;
     nsx = nsy = max(sx, sy);
     ox += ((cbx + cax) / 2.0 - mx)*(nsx - sx);
     oy += ((cby + cay) / 2.0 - my)*(nsy - sy);
     sx = nsx;
-    sy = nsy;
+    sy = nsy;*/
+    reloadAxes();
     return 1;
   }
   if (evt._key._type == key::type_mouse) {
@@ -223,4 +224,44 @@ void Plot::render() {
 
 int Plot::get(double ori, double scale, double v, int h) {
   return h / 2.0 + (v - ori) / scale;
+}
+
+void Plot::reloadAxes() {
+  double dax, day, dbx, dby;
+  bool hasData = false;
+  for (auto&& dit : plotData) {
+    NoTypeIter* it = dit->first();
+    do {
+      auto nit = it->copy();
+      double nittime = it->getX() + 2;
+      if (nit->next()) {
+        nittime = nit->getX();
+      }
+      if (!hasData) {
+        hasData = true;
+        glBegin(GL_LINES);
+        dax = it->getX();
+        day = it->getY(it->getX());
+        dbx = nittime;
+        dby = it->getY(nittime);
+        if (dby > day) {
+          swap(day, dby);
+        }
+        glEnd();
+      }
+      else {
+        dax = min(it->getX(), dax);
+        day = min(it->getY(it->getX()), day);
+        day = min(it->getY(nittime), day);
+        dbx = max(nittime, dbx);
+        dby = max(it->getY(it->getX()), dby);
+        dby = max(it->getY(nittime), dby);
+      }
+
+    } while (it->next());
+  }
+  ox = (dax + dbx)/2;
+  oy = (day + dby)/2;
+  sx = (dbx - dax) * 7 / 10 / (cbx - cax);
+  sy = (dby - day) * 7 / 10 / (cby - cay);
 }

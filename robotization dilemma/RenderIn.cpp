@@ -313,7 +313,7 @@ energy_type_J getCurrentStoredEnergy() {
 string isSurefire() {
   if (selecteds != NULL && selectedo != NULL && selectedo->type() == Object::Laser) {
     sVec3 sdir;
-    bool b = surefire(ship->mov, selecteds->keyframes, timeNow, sdir);
+    bool b = surefire(ship->mov, selecteds->_keyframes, timeNow, sdir);
     //if (b) {
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputX"))->text = to_string(sdir.x);
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputY"))->text = to_string(sdir.y);

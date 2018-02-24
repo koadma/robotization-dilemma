@@ -133,8 +133,8 @@ void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, ti
     glEnd();
   }*/
 
-  if (keyframes.size() && keyframes.getFirst() < time && (time < keyframes.getLast() + ROUND_TIME || selected)) {
-    Movement now = keyframes.getAt(time);
+  if (_keyframes.size() && _keyframes.getFirst() < time && ((time < _keyframes.getLast() + ROUND_TIME && _closed) || selected || (_closed && time < _closetime))) {
+    Movement now = _keyframes.getAt(time);
     glBegin(GL_LINE_STRIP);
     if (selected) {
       setColor(0xffff0000);

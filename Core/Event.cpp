@@ -125,8 +125,6 @@ void StateChange::setV(DataElement* data, Game* game) {
 void EngineAcc::apply(Game *g) {
   reinterpret_cast<Engine*>(_o)->setTargetAccel(_time, _acc, g);
 
-  _o->_parentShip->energyUpdate(_time, g); //recalculate ship energy info
-
   g->recalcIntersects(_o->_parentShip);
 }
 void EngineAcc::setV(DataElement* data, Game* game) {
@@ -157,6 +155,7 @@ void ThermalRadiation::apply(Game *g) {
   Bubble* b = new Bubble();
   b->constrains.push_back(constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Include all directions
   b->bsource = Bubble_Thermal;
+  b->btype = Bubble_Start;
   b->emitter = _o->getMovement(_time);
   b->energy = _o->getUsedPower(_time);
   b->gEmissionTime = _time;
@@ -164,7 +163,7 @@ void ThermalRadiation::apply(Game *g) {
 
   //_o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
 
-  g->add(b);
+  _o->changeSelfBubble(b, g);
 }
 void ThermalRadiation::setV(DataElement* data, Game* game) {
 

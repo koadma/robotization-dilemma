@@ -116,4 +116,6 @@ public:
   int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
   void render();
   int get(double ori, double scale, double v, int h);
+  ///Only after GetRect
+  void reloadAxes();
 };

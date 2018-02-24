@@ -116,6 +116,12 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
         _parentShip->sightMovement(m, time);
       }
     }*/
+    cout << "Pow: " << _selfUsedPower.getAt(time)();
+    cout << "Src: " << reinterpret_cast<Bubble*>(p)->emitter.pos;
+    cout << "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime;
+    cout << "OID: " << reinterpret_cast<Bubble*>(p)->originID;
+    cout << "SID: " << _ID;
+    cout << "En : " << reinterpret_cast<Bubble*>(p)->getFlux(time, getMovement(time).pos);
     ScriptData* d = new ScriptData();
     ScriptData* hph = new ScriptData();
     hph->_data = new ScriptDataNumber(_health.getAt(time)() / double(_maxHealth.getAt(time)()));

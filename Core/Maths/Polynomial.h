@@ -95,12 +95,17 @@ public:
     }
   }
   T minimize() { //not counting lim +- infty
-    vector<T> ders = derivative().solve();
     T res = 0;
-    for (auto&& it : ders) {
-      if (at(it) < at(res)) {
-        res = it;
+    if (degree > 0) {
+      vector<T> ders = derivative().solve();
+      for (auto&& it : ders) {
+        if (at(it) < at(res)) {
+          res = it;
+        }
       }
+    }
+    else if (degree == 0) {
+      res = Coefficient[0];
     }
     return res;
   }

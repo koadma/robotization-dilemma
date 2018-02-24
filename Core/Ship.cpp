@@ -236,6 +236,10 @@ void Ship::load(uint32_t _ID, mVec3 _pos, string filename) {
 Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, BubbleType type, bool _autofire) {
   Sighting* s = NULL;
   priority_queue<pair<distance_type_m, Sighting*>> intersects;
+  bool closed = true;
+  if(type == Bubble_Start) {
+    closed = true;
+  }
 
   for (auto&& it : sightings) {
     pair<distance_type_m, bool> res = it->closest(&m);
@@ -247,18 +251,18 @@ Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, BubbleTyp
   if (intersects.size()) {
     pair<distance_type_m, Sighting*> elem = intersects.top();
     if (-elem.first < 1) {
-      elem.second->addFrame(time, m);
+      elem.second->addFrame(time, m, closed, time);
       s = elem.second;
     }
     else {
       s = new Sighting();
-      s->addFrame(time, m);
+      s->addFrame(time, m, closed, time);
       sightings.push_back(s);
     }
   }
   else {
     s = new Sighting();
-    s->addFrame(time, m);
+    s->addFrame(time, m, closed, time);
     sightings.push_back(s);
   }
   if (_autofire) {
@@ -266,7 +270,7 @@ Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, BubbleTyp
       if (it->type() == Object::Laser) {
         Laser* lit = (Laser*)it;
         sVec3 dir;
-        bool sf = surefire(mov, s->keyframes, time, dir);
+        bool sf = surefire(mov, s->_keyframes, time, dir);
         lit->setDir(dir);
         lit->setEnergy(100000);
         lit->shoot(time);
