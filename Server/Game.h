@@ -20,6 +20,8 @@ class Game {
   void removeIntersect(Drone* drone);
   void removeIntersect(Path* path);
 
+  void removeBatteryEvents(Drone* drone);
+
   void calcIntersect(Object* object);
   void calcIntersect(Drone* drone);
   void calcIntersect(Path* path);
@@ -64,6 +66,7 @@ public:
   void recalcIntersects(Drone* drone);
   void recalcIntersects(Object* object);
   void recalcIntersects(Path* path);
+  void updateDroneBatteryEvents(Drone* drone, vector<time_type_s> evts);
   void simulate(float from, float till);
 };
 

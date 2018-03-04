@@ -65,18 +65,11 @@ void Object::maxStorageChange(time_type_s time, energy_type_J energy) {
 #ifdef M_SERVER
 void Object::changeSelfBubble(Bubble* newSelf, Game* g) {
   if (_selfBubble) {
-    Bubble* selfend = new Bubble(*_selfBubble);
-    if (selfend->btype == BubbleType::Bubble_Start) {
-      selfend->btype = BubbleType::Bubble_End;
-      selfend->other = _selfBubble;
-      _selfBubble->other = selfend;
-      g->add(selfend);
-    }
-    else {
-      throw 1;
-    }
+    _selfBubble->after = newSelf;
+    newSelf->before = _selfBubble;
   }
   _selfBubble = newSelf;
+  g->add(_selfBubble);
 }
 energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount, Game* g) {
   return -_parentShip->energyUpdate(time, g, this, -amount);
@@ -297,7 +290,7 @@ void Object::energyCallback(time_type_s t, Game* g) {
     _usedPower.addFrame(t, double(_energySystem->_delta));
     _selfUsedPower.addFrame(t, double(_energySystem->_firstDelta));
   }
-  if (_energySystem->_delta < Fraction(0)) {
+  if (_energySystem->_delta <= Fraction(0)) {
     _generatedPower.addFrame(t, -double(_energySystem->_delta));
     _usedPower.addFrame(t, 0);
     _selfUsedPower.addFrame(t, 0);

@@ -63,6 +63,12 @@ extern Zero<float>    floatZero;
 extern Zero<double>  doubleZero;
 extern Zero<string>  stringZero;
 
+template <typename T>
+using priority_queue_largest = priority_queue<T, vector<T>, less<T>>;
+
+template <typename T>
+using priority_queue_smallest = priority_queue<T, vector<T>, greater<T>>;
+
 ///####################################################///
 //         DO NOT TOUCH THE TEXTBIND CLASSES!!!         //
 ///####################################################///

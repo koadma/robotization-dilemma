@@ -57,8 +57,11 @@ bool Engine::loadV(xml_node<>* data, time_type_s time) {
 void Engine::energyCallbackV(time_type_s time, Game* g) {
   power_type_W power = _energySystem->_delta;
   
-  if(_accelRequest.size() && _accelRequest.getFirst() <= time && _accelRequest.getAt(time)().length() > 0.00001) {
-    mpssVec3 acc = _accelRequest.getAt(time)().norm() * power2accel(power);
+  if(_accelRequest.size() && _accelRequest.getFirst() <= time) {
+    mpssVec3 acc = {0,0,0};
+    if(_accelRequest.getAt(time)().length() > 0.00001) {
+      acc = _accelRequest.getAt(time)().norm() * power2accel(power);
+    }
     _accel.addFrame(time, acc);
 
     Movement m = _parentShip->mov.getAt(time);

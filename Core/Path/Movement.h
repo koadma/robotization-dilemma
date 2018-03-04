@@ -82,7 +82,6 @@ enum BubbleSource {
   Bubble_Chat = 3
 };
 enum BubbleType {
-  Bubble_Start = 1,
   Bubble_Pulse = 0,
-  Bubble_End = -1
+  Bubble_Row_Border = 1
 };

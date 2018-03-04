@@ -86,7 +86,7 @@ public:
   energy_type_J getStoredEnergy(time_type_s time);
   
 #ifdef M_SERVER
-  Sighting* sightMovement(Movement& m, time_type_s time, Game* g, BubbleType type, bool autofire);
+  Sighting* sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bool autofire);
   energy_type_J energyUpdate(time_type_s time, Game* g, Object* chg = NULL, energy_type_J chgval = 0); //To do energy simulations.
   void energyCallback(time_type_s, Game* g); // Callback for energy run out objects, or any run of neergy sys
 #endif
@@ -174,6 +174,8 @@ public:
 };
 
 bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction);
+bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, sVec3 &direction);
+
 
 #ifdef M_CLIENT
 extern Ship* ship;

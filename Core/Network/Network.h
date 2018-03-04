@@ -2,7 +2,7 @@
 
 #include "../Network/NetworkData.h"
 
-#ifdef WIN32 || _WIN64
+#ifdef WIN32
 #include <winsock2.h>
 #include <Windows.h>
 #include <ws2tcpip.h>

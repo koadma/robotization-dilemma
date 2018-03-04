@@ -35,7 +35,7 @@ void Game::remove(Path* path) {
   auto it = events.begin();
 
   while (it != events.end()) {
-    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
+    if (!(*it)->_isApplying && (*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
       auto it2 = it;
       ++it;
       events.erase(it2);
@@ -49,7 +49,7 @@ void Game::remove(Path* path) {
 void Game::removeIntersect(Object* object) {
   auto it = events.begin();
   while (it != events.end()) {
-    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o == object) {
+    if (!(*it)->_isApplying && (*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o == object) {
       auto it2 = it;
       ++it;
       events.erase(it2);
@@ -62,7 +62,7 @@ void Game::removeIntersect(Object* object) {
 void Game::removeIntersect(Drone* drone) {
   auto it = events.begin();
   while (it != events.end()) {
-    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->_parentShip == drone) {
+    if (!(*it)->_isApplying && (*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_o->_parentShip == drone) {
       auto it2 = it;
       ++it;
       events.erase(it2);
@@ -76,7 +76,22 @@ void Game::removeIntersect(Path* path) {
   auto it = events.begin();
 
   while (it != events.end()) {
-    if ((*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
+    if (!(*it)->_isApplying && (*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
+      auto it2 = it;
+      ++it;
+      events.erase(it2);
+    }
+    else {
+      ++it;
+    }
+  }
+}
+
+void Game::removeBatteryEvents(Drone * drone) {
+  auto it = events.begin();
+
+  while (it != events.end()) {
+    if (!(*it)->_isApplying && (*it)->type() == Event::EvTBatteryDrain && (reinterpret_cast<BatteryDrain*>(*it))->_d == drone) {
       auto it2 = it;
       ++it;
       events.erase(it2);
@@ -95,7 +110,7 @@ void Game::calcIntersect(Object* object) {
       coll->_time = it.first;
       coll->_o = it.second.first;
       coll->_p = it.second.second;
-      events.insert(coll);
+      add(coll);
     }
   }
 }
@@ -113,7 +128,7 @@ void Game::calcIntersect(Path* path) {
       coll->_time = it.first;
       coll->_o = it.second.first;
       coll->_p = it.second.second;
-      events.insert(coll);
+      add(coll);
     }
     ++its;
   }
@@ -142,12 +157,13 @@ void Game::add(Path* path) {
   paths.push_back(path);
 }
 void Game::add(Event* evt) {
+  cout << "Event added at " << evt->_time << ", type " << evt->type_name() << endl;
   events.insert(evt);
 }
 
 void Game::recalcIntersects() {
   for (auto&& it : drones) {
-    calcIntersect(it);
+    recalcIntersects(it);
   }
 }
 void Game::recalcIntersects(Drone* drone) {
@@ -162,22 +178,33 @@ void Game::recalcIntersects(Path* path) {
   removeIntersect(path);
   calcIntersect(path);
 }
+void Game::updateDroneBatteryEvents(Drone * drone, vector<time_type_s> evts) {
+  removeBatteryEvents(drone);
+  sort(evts.begin(), evts.end());
+  if (evts.size()) {
+    BatteryDrain* evt = new BatteryDrain();
+    evt->_d = drone;
+    evt->_time = evts.front();
+    add(evt);
+  }
+}
 void Game::simulate(float from, float till) {
   //recalcIntersects();
   cout << "SIM " << from << " " << till << endl;
   auto it = events.begin();
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
-      (*it)->apply(this);
       auto it2 = it;
+      cout << "PROCESSING EVENT " << (*it)->type_name() << " TIME " << (*it)->_time << endl;
+      (*it)->apply(this);
+      cout << "PROCESSED EVENT" << endl;
       ++it;
-      cout << "PAST EVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
       events.erase(it2);
     }
     else {
       auto it2 = it;
       ++it;
-      cout << "DEL  EVENT " << (*it2)->type() << " TIME " << (*it2)->_time << endl;
+      cout << "DEL EVENT " << (*it2)->type_name() << " TIME " << (*it2)->_time << endl;
       events.erase(it2);
     }
   }

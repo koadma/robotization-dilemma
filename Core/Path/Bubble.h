@@ -10,7 +10,8 @@ public:
   energy_type_J energy = 1.0f;
   string data = "";
   vector<constrain> constrains;
-  Bubble* other = NULL; //only for btype Start/End
+  Bubble* before = NULL; //only for btype Row_Border
+  Bubble* after = NULL; //only for btype Row_Border
   en_flux_type_Jpermm getFlux(time_type_s t, mVec3 pos) {
     if (t <= gEmissionTime) {
       return 0;

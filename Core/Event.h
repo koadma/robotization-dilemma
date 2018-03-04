@@ -23,11 +23,50 @@ public:
     EvTSensorDetect = 10,
   };
   time_type_s _time;
-
+  bool _isApplying;
   virtual int type();
+  virtual string type_name() {
+    switch (type()) {
+    case EvTEvent:
+      return "EvTEvent";
+      break;
+    case EvTCollision:
+      return "EvTCollision";
+      break;
+    case EvTStateChange:
+      return "EvTStateChange";
+      break;
+    case EvTEngineAcc:
+      return "EvTEngineAcc";
+      break;
+    case EvTSensorPow:
+      return "EvTSensorPow";
+      break;
+    case EvTLaserShot:
+      return "EvTLaserShot";
+      break;
+    case EvTThermalRadiation:
+      return "EvTThermalRadiation";
+      break;
+    case EvTBatteryDrain:
+      return "EvTBatteryDrain";
+      break;
+    case EvTSensorPing:
+      return "EvTSensorPing";
+      break;
+    case EvTSensorAutofire:
+      return "EvTSensorAutofire";
+      break;
+    case EvTSensorDetect:
+      return "EvTSensorDetect";
+      break;
+    }
+    return "EvTUNKNOWN";
+  }
 
 #ifdef M_SERVER
-  virtual void apply(Game *g);
+  void apply(Game *g);
+  virtual void applyV(Game *g);
 #endif
 };
 class Collision : public Event {
@@ -38,7 +77,7 @@ public:
   int type();
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyV(Game *g);
 #endif
 
 };
@@ -49,7 +88,7 @@ public:
   int type();
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyV(Game *g);
 #endif
 
 };
@@ -57,11 +96,11 @@ class SensorDetect : public Event {
 public:
   Sensor* _o;
   Path* _what;
-
+  bool _closed;
   int type();
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyV(Game *g);
 #endif
 };
 class StateChange : public Event {
@@ -73,7 +112,8 @@ public:
   void get(DataElement* data);
 
 #ifdef M_SERVER
-  virtual void apply(Game *g);
+  void applyV(Game *g);
+  virtual void applyVV(Game *g);
   void set(DataElement* data, Game* game);
   virtual void setV(DataElement* data, Game* game);
 #endif
@@ -86,7 +126,7 @@ public:
   void getV(DataElement* data);
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyVV(Game *g);
   void setV(DataElement* data, Game* game);
 #endif
 };
@@ -98,7 +138,7 @@ public:
   void getV(DataElement* data);
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyVV(Game *g);
   void setV(DataElement* data, Game* game);
 #endif
 };
@@ -111,7 +151,7 @@ public:
   void getV(DataElement* data);
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyVV(Game *g);
   void setV(DataElement* data, Game* game);
 #endif
 };
@@ -121,7 +161,7 @@ public:
   void getV(DataElement* data);
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyVV(Game *g);
   void setV(DataElement* data, Game* game);
 #endif
 };
@@ -133,7 +173,7 @@ public:
   void getV(DataElement* data);
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyVV(Game *g);
   void setV(DataElement* data, Game* game);
 #endif
 };
@@ -145,7 +185,7 @@ public:
   void getV(DataElement* data);
 
 #ifdef M_SERVER
-  void apply(Game *g);
+  void applyVV(Game *g);
   void setV(DataElement* data, Game* game);
 #endif
 };

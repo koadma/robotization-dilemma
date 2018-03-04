@@ -91,22 +91,30 @@ void SensorAutofire::getV(DataElement* data) {
 
 #ifdef M_SERVER
 void Event::apply(Game *g) {
+  _isApplying = true;
+  applyV(g);
+  _isApplying = false;
+}
+void Event::applyV(Game *g) {
   throw 1;
 }
-void Collision::apply(Game *g) {
+void Collision::applyV(Game *g) {
   if (_p->verify(_time, _o->getMovement(_time).pos)) { //for future non full sphere em waves (e.g. cones)
     _o->getPath(_time, _p, g);
   }
 }
-void BatteryDrain::apply(Game *g) {
+void BatteryDrain::applyV(Game *g) {
   //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
   _d->energyUpdate(_time, g);
 }
-void SensorDetect::apply(Game *g) {
+void SensorDetect::applyV(Game *g) {
   //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
-  _o->detectCallback(_time, _what, g);
+  _o->detectCallback(_time, _closed,_what,  g);
 }
-void StateChange::apply(Game *g) {
+void StateChange::applyV(Game *g) {
+  applyVV(g);
+}
+void StateChange::applyVV(Game *g) {
   throw 1;
 }
 void StateChange::set(DataElement* data, Game* game) {
@@ -122,7 +130,7 @@ void StateChange::set(DataElement* data, Game* game) {
 void StateChange::setV(DataElement* data, Game* game) {
 
 }
-void EngineAcc::apply(Game *g) {
+void EngineAcc::applyVV(Game *g) {
   reinterpret_cast<Engine*>(_o)->setTargetAccel(_time, _acc, g);
 
   g->recalcIntersects(_o->_parentShip);
@@ -130,13 +138,13 @@ void EngineAcc::apply(Game *g) {
 void EngineAcc::setV(DataElement* data, Game* game) {
   _acc.set(data->_children[0]);
 }
-void SensorPow::apply(Game *g) {
+void SensorPow::applyVV(Game *g) {
   reinterpret_cast<Sensor*>(_o)->setTargetPower(_time, _power, g);
 }
 void SensorPow::setV(DataElement* data, Game* game) {
   _power = data->_children[0]->_core->toType<power_type_W>();
 }
-void LaserShot::apply(Game *g) {
+void LaserShot::applyVV(Game *g) {
   Shot* s = new Shot();
   s->energy = _energy - _o->useEnergy(_time, _energy, g);
   s->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
@@ -151,11 +159,11 @@ void LaserShot::setV(DataElement* data, Game* game) {
 
   _energy = data->_children[1]->_core->toType<energy_type_J>();
 }
-void ThermalRadiation::apply(Game *g) {
+void ThermalRadiation::applyVV(Game *g) {
   Bubble* b = new Bubble();
   b->constrains.push_back(constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Include all directions
   b->bsource = Bubble_Thermal;
-  b->btype = Bubble_Start;
+  b->btype = Bubble_Row_Border;
   b->emitter = _o->getMovement(_time);
   b->energy = _o->getUsedPower(_time);
   b->gEmissionTime = _time;
@@ -168,7 +176,7 @@ void ThermalRadiation::apply(Game *g) {
 void ThermalRadiation::setV(DataElement* data, Game* game) {
 
 }
-void SensorPing::apply(Game *g) {
+void SensorPing::applyVV(Game *g) {
   Bubble* b = new Bubble();
   b->constrains.push_back(constrain(constrain::include, { 1, 0, 0 }, -2)); //Include all directions
   b->bsource = Bubble_Ping;
@@ -184,7 +192,7 @@ void SensorPing::apply(Game *g) {
 void SensorPing::setV(DataElement* data, Game* game) {
   _energy = data->_children[0]->_core->toType<energy_type_J>();
 }
-void SensorAutofire::apply(Game *g) {
+void SensorAutofire::applyVV(Game *g) {
   reinterpret_cast<Sensor*>(_o)->setAutofire(_autofire, _time);
 }
 void SensorAutofire::setV(DataElement* data, Game* game) {

@@ -7,33 +7,70 @@
 
 //typedef keyframe<unpoint<Movement*>> Sighting;
 
+class SightedMovement : public Movement {
+public:
+  Path* original;
+  SightedMovement() {
+
+  }
+  SightedMovement(Movement m) : Movement(m) {
+
+  }
+  SightedMovement(Movement m, Path* p) : Movement(m), original(p) {
+
+  }
+};
+
 class Sighting {
 public:
-  keyframe<Movement, Movement, time_type_s> _keyframes;
+  keyframe<SightedMovement, SightedMovement, time_type_s> _keyframes;
   bool _closed;
   time_type_s _closetime;
-  void addFrame(time_type_s& time, Movement& val, bool closed, time_type_s closetime = 0) {
+  void addFrame(time_type_s& time, SightedMovement& val) {
     _keyframes.addFrame(time, val);
-    _closed = closed;
-    if (closed) {
-      _closetime = closetime;
-    }
+    _closed = false;
   }
+
 
   time_type_s getFirst() {
     return _keyframes.getFirst();
   }
-  Movement getAt(time_type_s time) {
+  SightedMovement getAt(time_type_s time) {
     return _keyframes.getAt(time);
   }
+  bool tryClose(Path* p, time_type_s t) {
+    if(_keyframes.size()) {
+      auto it = _keyframes._frames.end();
+      --it;
+      if (it->second.original == p) {
+        _closed = true;
+        _closetime = t;
+        return true;
+      }
+    }
+    return false;
+  }
   void get(DataElement* data) {
-    _keyframes.get(data);
+    DataElement* keye = new DataElement();
+    _keyframes.get(keye);
+    data->addChild(keye);
+
+    DataElement* close = new DataElement();
+    vGFunc(_closed, close);
+    data->addChild(close);
+
+    DataElement* timee = new DataElement();
+    vGFunc(_closetime, timee);
+    data->addChild(timee);
   }
   void set(DataElement* data) {
-    _keyframes.set(data);
+    _keyframes.set(data->_children[0]);
+    vSFunc(_closed, data->_children[1]);
+    vSFunc(_closetime, data->_children[2]);
+
   }
   pair<distance_type_m, bool> closest(Movement* p) {
-    priority_queue<distance_type_m, vector<distance_type_m>, greater<distance_type_m>> intersects;
+    priority_queue_smallest<distance_type_m> intersects;
     if(_keyframes.size()) {
       auto it = _keyframes._frames.begin();
       auto nit = it;

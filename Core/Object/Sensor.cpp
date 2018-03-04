@@ -103,72 +103,93 @@ void Sensor::setTargetPower(time_type_s time, power_type_W val, Game* g) {
 void Sensor::energyCallbackV(time_type_s time, Game* g) {
   
 }
+float Sensor::getSensorChance(Bubble* what, time_type_s when) {
+  ScriptData* d = new ScriptData();
+  ScriptData* hph = new ScriptData();
+  hph->_data = new ScriptDataNumber(_health.getAt(when)() / double(_maxHealth.getAt(when)()));
+  ScriptData* epp = new ScriptData();
+  epp->_data = new ScriptDataNumber(what->getFlux(when, getMovement(when).pos) * _radius * _radius * PI * _selfUsedPower.getAt(when)());
+  ScriptData* meta = new ScriptData();
+  meta->_data = new ScriptDataString(what->data);
+  d->_elems.insert({ "relHealth", hph });
+  d->_elems.insert({ "relEnergy", epp });
+  d->_elems.insert({ "metaData", meta });
+  ScriptData* res = _sensitivity->run(*d);
+  double resd = ((ScriptDataNumber*)res->_data)->_num;
+  DeletePtr(res);
+  DeletePtr(d);
+  return resd;
+}
+
 void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
   if (p->type() == Path::PathTypeBubble) {
-    /*float h = _health.getAt(time)() / float(_maxHealth);
-    cout << "SENSOR " << _ID << " EN " << reinterpret_cast<Bubble*>(p)->energy << " FROM " << p->originID << endl;
-    if (ran1() < 2 * (1 - 1 / (1 + h))) {
-      float e = reinterpret_cast<Bubble*>(p)->energy * _power.getAt(time)();
-      if (ran1() < 1 / (1 + pow(2, (1 / e - e) * 3))) { //detect
+    Bubble* b = (Bubble*)p;
+    if (high(b->originID) == high(this->_ID)) {
+      return;
+    }
+    cout << "Pow: " << _selfUsedPower.getAt(time)() << endl;
+    cout << "Src: " << reinterpret_cast<Bubble*>(p)->emitter.pos << endl;
+    cout << "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime << endl;
+    cout << "OID: " << reinterpret_cast<Bubble*>(p)->originID << endl;
+    cout << "SID: " << _ID << endl;
+    cout << "En : " << reinterpret_cast<Bubble*>(p)->getFlux(time, getMovement(time).pos) << endl;
+
+    if (b->btype == BubbleType::Bubble_Pulse) {
+      float detectCh = getSensorChance(b, time);
+      cout << "Ch: " << detectCh << endl;
+      if (ran1() < detectCh) {
         cout << "Detected" << endl;
-        Sighting* s = new Sighting();
-        Movement m = reinterpret_cast<Bubble*>(p)->emitter; ///TODO Memory safe??
-        _parentShip->sightMovement(m, time);
-      }
-    }*/
-    cout << "Pow: " << _selfUsedPower.getAt(time)();
-    cout << "Src: " << reinterpret_cast<Bubble*>(p)->emitter.pos;
-    cout << "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime;
-    cout << "OID: " << reinterpret_cast<Bubble*>(p)->originID;
-    cout << "SID: " << _ID;
-    cout << "En : " << reinterpret_cast<Bubble*>(p)->getFlux(time, getMovement(time).pos);
-    ScriptData* d = new ScriptData();
-    ScriptData* hph = new ScriptData();
-    hph->_data = new ScriptDataNumber(_health.getAt(time)() / double(_maxHealth.getAt(time)()));
-    ScriptData* epp = new ScriptData();
-    epp->_data = new ScriptDataNumber(reinterpret_cast<Bubble*>(p)->getFlux(time, getMovement(time).pos) * _selfUsedPower.getAt(time)() * PI * _radius * _radius);
-    ScriptData* meta = new ScriptData();
-    meta->_data = new ScriptDataString(reinterpret_cast<Bubble*>(p)->data);
-    d->_elems.insert({ "relHealth", hph });
-    d->_elems.insert({ "relEnergy", epp });
-    d->_elems.insert({ "metaData", meta });
-    ScriptData* res = _sensitivity->run(*d);
-    float resf = ((ScriptDataNumber*)res->_data)->_num;
-    cout << "Ch: " << resf << endl;
-    if (((Bubble*)p)->btype == BubbleType::Bubble_Pulse) {
-      if (ran1() < resf) {
-        cout << "Detected" << endl;
-        detectCallback(time, p, game);
+        detectCallback(time, true, p, game);
       }
     }
-    if (((Bubble*)p)->btype == BubbleType::Bubble_Start || ((Bubble*)p)->btype == BubbleType::Bubble_End) {
-      float prob = resf / (1-resf);
-      float detecttime = -log(1-ran1()) / prob;
-      cout << "Detected in " << detecttime << endl;
-      SensorDetect* nd = new SensorDetect();
-      nd->_o = this;
-      nd->_time = time + detecttime;
-      nd->_what = p;
-      g->add(nd);
+    if (b->btype == BubbleType::Bubble_Row_Border) {
+      energy_type_J en_before = 0;
+      double endtime_inv = 0;
+      double begtime_inv = 0;
+      if (b->before != NULL) {
+        double endval = getSensorChance(b->before, time);
+        double endprob = endval / (1 - endval); //probability of detection, 1/s
+        endtime_inv = -endprob / log(1 - ran1());
+      }
+      double begval = getSensorChance(b, time);
+      double begprob = begval / (1- begval); //probability of detection, 1/s
+      begtime_inv = -begprob / log(1 - ran1());
+      if (endtime_inv + begtime_inv > EPS) {
+        SensorDetect* nd;
+        if (b->before != NULL) {
+          double detecttime = 1 / (begtime_inv + endtime_inv);
+          cout << "End detected in " << detecttime << endl;
+          nd = new SensorDetect();
+          nd->_o = this;
+          nd->_time = time + detecttime;
+          nd->_what = b->before;
+          nd->_closed = true;
+          g->add(nd);
+        }
+
+        double detecttime = 1 / (begtime_inv);
+        cout << "New detected in " << detecttime << endl;
+        nd = new SensorDetect();
+        nd->_o = this;
+        nd->_time = time + detecttime;
+        nd->_what = p;
+        nd->_closed = false;
+        g->add(nd);
+      }
+      else {
+        cout << "Never detected" << endl;
+      }
     }
-    DeletePtr(res);
-    DeletePtr(d);
   }
 }
-void Sensor::detectCallback(time_type_s time, Path* p, Game* g) {
+void Sensor::detectCallback(time_type_s time, bool closed, Path* p, Game* g) {
   if (p->type() == Path::PathTypeBubble) {
     Bubble* b = (Bubble*)p;
-    if(b->btype == Bubble_Start) {
-      if(b->other == NULL || b->other->gEmissionTime > time) {
-        Movement m = b->emitter;
-        _parentShip->sightMovement(m, time, g, Bubble_Start, _autofire.getAt(time)());
-      }
+    if(b->btype == Bubble_Row_Border) {
+      _parentShip->sightPath(b, time, g, closed, _autofire.getAt(time)());
     }
-    if (b->btype == Bubble_End) {
-      if (true) {
-        Movement m = b->emitter;
-        _parentShip->sightMovement(m, time, g, Bubble_End, _autofire.getAt(time)());
-      }
+    else {
+      _parentShip->sightPath(b, time, g, true, _autofire.getAt(time)());
     }
   }
 }

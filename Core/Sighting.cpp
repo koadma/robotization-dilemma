@@ -133,7 +133,7 @@ void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, ti
     glEnd();
   }*/
 
-  if (_keyframes.size() && _keyframes.getFirst() < time && ((time < _keyframes.getLast() + ROUND_TIME && _closed) || selected || (_closed && time < _closetime))) {
+  if (_keyframes.size() && _keyframes.getFirst() < time && (!_closed || selected || (_closed && (time < _closetime)))) {
     Movement now = _keyframes.getAt(time);
     glBegin(GL_LINE_STRIP);
     if (selected) {

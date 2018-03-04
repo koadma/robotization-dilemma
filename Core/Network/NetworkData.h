@@ -128,12 +128,12 @@ public:
 
 template<typename T>
 void vSFunc(T& val, DataElement* elem) {
-  elem->_core->fromType<T>(val);
+  val = elem->_core->toType<T>();
 }
 
 template<typename T>
 void vGFunc(T& val, DataElement* elem) {
-  val = elem->_core->toType<T>();
+  elem->_core->fromType<T>(val);
 }
 
 template<typename T>

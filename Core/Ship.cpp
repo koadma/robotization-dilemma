@@ -233,39 +233,42 @@ void Ship::load(uint32_t _ID, mVec3 _pos, string filename) {
 }
 
 #ifdef M_SERVER
-Sighting* Drone::sightMovement(Movement& m, time_type_s time, Game* g, BubbleType type, bool _autofire) {
+Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bool autofire) {
   Sighting* s = NULL;
-  priority_queue<pair<distance_type_m, Sighting*>> intersects;
-  bool closed = true;
-  if(type == Bubble_Start) {
-    closed = true;
+  if (closed) {
+    for (auto&& it : sightings) {
+      if(it->tryClose(p, time)) {
+        return it;
+      }
+    }
+    return NULL;
   }
-
+  priority_queue_smallest<pair<distance_type_m, Sighting*>> closest;
   for (auto&& it : sightings) {
-    pair<distance_type_m, bool> res = it->closest(&m);
+    pair<distance_type_m, bool> res = it->closest(&(p->emitter));
     if(res.second) {
-      intersects.push({ res.first,it });
+      closest.push({ res.first,it });
     }
   }
 
-  if (intersects.size()) {
-    pair<distance_type_m, Sighting*> elem = intersects.top();
-    if (-elem.first < 1) {
-      elem.second->addFrame(time, m, closed, time);
+  if (closest.size()) {
+    pair<distance_type_m, Sighting*> elem = closest.top();
+    if (elem.first < 10) {
+      elem.second->addFrame(time, SightedMovement(p->emitter, p));
       s = elem.second;
     }
     else {
       s = new Sighting();
-      s->addFrame(time, m, closed, time);
+      s->addFrame(time, SightedMovement(p->emitter, p));
       sightings.push_back(s);
     }
   }
   else {
     s = new Sighting();
-    s->addFrame(time, m, closed, time);
+    s->addFrame(time, SightedMovement(p->emitter, p));
     sightings.push_back(s);
   }
-  if (_autofire) {
+  if (autofire) {
     for (auto&& it : objects) {
       if (it->type() == Object::Laser) {
         Laser* lit = (Laser*)it;
@@ -291,14 +294,7 @@ energy_type_J Drone::energyUpdate(time_type_s time, Game* game, Object* chg, ene
     vertex = chg->_energySystem;
   }
   pair<vector<time_type_s>, energy_type_J> runOut = energySystem.goTo(time, vertex, chgval);
-  list<Event*> res;
-  sort(runOut.first.begin(), runOut.first.end());
-  if (runOut.first.size()) { //first one is enough, recalc than will give the later ones.
-    BatteryDrain* ev = new BatteryDrain();
-    ev->_d = this;
-    ev->_time = runOut.first[0];
-    game->add(ev);
-  }
+  game->updateDroneBatteryEvents(this, runOut.first);
   energyCallback(time, game);
   return runOut.second;
 }
@@ -730,6 +726,17 @@ Ship::~Ship() {
 }
 
 bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction) {
+  //direction.randomize(100);
+  //return fmodf(when, 0.5)<0.25;
+  Movement m = me.getAt(when);
+  Movement e = (--enemy._frames.end())->second;
+  time_type_s t = (--enemy._frames.end())->first;
+  result res = surefire1(t, e.vel, e.pos, when, m.pos, MAX_ACCEL, e.radius);
+  direction = res.dir;
+  return res.answ;
+}
+
+bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, sVec3 &direction) {
   //direction.randomize(100);
   //return fmodf(when, 0.5)<0.25;
   Movement m = me.getAt(when);

@@ -56,7 +56,9 @@ public:
 
   void getPathVirt(time_type_s time, Path* p, Game* g);
 
-  void detectCallback(time_type_s time, Path* p, Game* g);
+  float getSensorChance(Bubble* what, time_type_s when);
+
+  void detectCallback(time_type_s time, bool closed, Path* p, Game* g);
 
   bool loadV(xml_node<>* data, time_type_s time) {
     xml_node<>* elem;

@@ -262,6 +262,6 @@ void Plot::reloadAxes() {
   }
   ox = (dax + dbx)/2;
   oy = (day + dby)/2;
-  sx = (dbx - dax) * 7 / 10 / (cbx - cax);
-  sy = (dby - day) * 7 / 10 / (cby - cay);
+  sx = (dbx - dax) * 7 / 5 / (cbx - cax);
+  sy = (dby - day) * 7 / 5 / (cby - cay);
 }

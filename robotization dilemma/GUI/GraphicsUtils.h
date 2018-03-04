@@ -50,7 +50,7 @@ public:
   key();
 };
 
-struct key_location : public key {
+class key_location : public key {
 public:
   int _mx;
   int _my;
@@ -63,7 +63,8 @@ public:
   key_location();
 };
 
-struct gui_event {
+class gui_event {
+public:
   key_location _key;
   enum type {
     evt_none = 0,
