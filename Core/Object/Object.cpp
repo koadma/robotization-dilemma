@@ -71,6 +71,42 @@ void Object::changeSelfBubble(Bubble* newSelf, Game* g) {
   _selfBubble = newSelf;
   g->add(_selfBubble);
 }
+void Object::reflectBubble(Bubble* what, time_type_s time, Game* g) {
+  energy_type_J newEnergy = _radius*_radius*PI*what->getFlux(time, getMovement(time).pos);
+  if(high(what->originID) == high(_ID)) {
+    return;
+  }
+  if (newEnergy <= BUBBLE_REMOVE) {
+    newEnergy = 0; //Low energy bubble only reflected as end.
+    if(what->before == NULL) { //If no prev: delete
+      return;
+    } else if (what->before->energy < BUBBLE_REMOVE) { //If prev was also low energy: delete
+      return;
+    }
+  }
+  if (what->bsource == Bubble_Chat) {
+    return;
+  }
+
+  Bubble* reflected = new Bubble();
+  reflected->constrains.push_back(constrain(constrain::include, { 1, 0, 0 }, -2)); //Include all directions
+  reflected->bsource = what->bsource;
+  reflected->btype = what->btype;
+  reflected->emitter = getMovement(time);
+  reflected->energy = newEnergy;
+  reflected->gEmissionTime = time;
+  reflected->originID = _ID;
+
+  if(reflected->btype == BubbleType::Bubble_Row_Border) {
+    auto it = reflection.find(what->before);
+    if (it != reflection.end()) {
+      reflected->before = it->second;
+      it->second->after = reflected;
+    }
+  }
+  reflection[what] = reflected;
+  g->add(reflected);
+}
 energy_type_J Object::useEnergy(time_type_s time, energy_type_J amount, Game* g) {
   return -_parentShip->energyUpdate(time, g, this, -amount);
 }
@@ -308,16 +344,8 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
     ps->energy -= 10000;
     ps->energy = max(0, ps->energy);
   }
-  if ((p->type() == Path::PathTypeBubble) && (high(p->originID) != high(_ID)) && _radius*_radius*PI*((Bubble*)p)->getFlux(time, getMovement(time).pos) > BUBBLE_REMOVE && ((Bubble*)p)->bsource != Bubble_Chat) { //Thermal and ping are reflected
-    Bubble* b = new Bubble();
-    b->constrains.push_back(constrain(constrain::include, {1, 0, 0}, -2)); //Include all directions
-    b->bsource = ((Bubble*)p)->bsource;
-    b->emitter = getMovement(time);
-    b->energy = _radius*_radius*PI*((Bubble*)p)->getFlux(time, getMovement(time).pos);
-    b->gEmissionTime = time;
-    b->originID = _ID;
-
-    g->add(b);
+  if (p->type() == Path::PathTypeBubble) {
+    reflectBubble((Bubble*)p, time, g);
   }
   getPathVirt(time, p, g);
 }

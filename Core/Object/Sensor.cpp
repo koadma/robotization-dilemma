@@ -132,7 +132,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
     cout << "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime << endl;
     cout << "OID: " << reinterpret_cast<Bubble*>(p)->originID << endl;
     cout << "SID: " << _ID << endl;
-    cout << "En : " << reinterpret_cast<Bubble*>(p)->getFlux(time, getMovement(time).pos) << endl;
+    cout << "En : " << b->getFlux(time, getMovement(time).pos) * _radius * _radius * PI << endl;
 
     if (b->btype == BubbleType::Bubble_Pulse) {
       float detectCh = getSensorChance(b, time);
@@ -149,11 +149,11 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
       if (b->before != NULL) {
         double endval = getSensorChance(b->before, time);
         double endprob = endval / (1 - endval); //probability of detection, 1/s
-        endtime_inv = -endprob / log(1 - ran1());
+        endtime_inv = -endprob / (log(ran1())-5);
       }
       double begval = getSensorChance(b, time);
       double begprob = begval / (1- begval); //probability of detection, 1/s
-      begtime_inv = -begprob / log(1 - ran1());
+      begtime_inv = -begprob / (log(ran1()) - 5);
       if (endtime_inv + begtime_inv > EPS) {
         SensorDetect* nd;
         if (b->before != NULL) {

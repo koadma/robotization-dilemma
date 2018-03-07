@@ -14,6 +14,7 @@ protected:
   keyframe<value<int> > _health;
 #ifdef M_SERVER
   Bubble* _selfBubble = NULL; //used to store current continous bubble
+  map<Bubble*, Bubble*> reflection;
 #endif
 public:
   keyframe<value<power_type_W>> _maxGeneratedPower;
@@ -60,6 +61,7 @@ public:
 
 #ifdef M_SERVER
   void changeSelfBubble(Bubble* newSelf, Game* g);
+  void reflectBubble(Bubble* what, time_type_s time, Game* g);
 
   energy_type_J useEnergy(time_type_s time, energy_type_J amount, Game* g);
   energy_type_J chargeEnergy(time_type_s time, energy_type_J amount, Game* g);

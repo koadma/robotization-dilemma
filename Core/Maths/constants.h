@@ -19,7 +19,7 @@ typedef double en_flux_type_Jpermm;
 //typedef double en_flux_type_Jy; //1Jy = 10e-26 J/m m
 typedef double mass_density_type_kgpermmm;
 
-const energy_type_J BUBBLE_REMOVE = 1e-7; //Dont emit
+const energy_type_J BUBBLE_REMOVE = 1e-8; //Dont emit
 
 ///!!!!!!!! ######## &&&&&&&&&
 const vel_type_mpers SOL = 3e5; ///TODO FIX 3e8 ######### ######### !!!!!!!!! ERROR &&&&&&&& WARNING !!!!!!!!!

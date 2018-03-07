@@ -26,7 +26,7 @@
 							</var>
 						</lhs>
 						<rhs>
-							<constant type="num">100000</constant>
+							<constant type="num">3e7</constant>
 						</rhs>
 					</math>
 				</val>
