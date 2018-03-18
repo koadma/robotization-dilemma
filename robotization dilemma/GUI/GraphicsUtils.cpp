@@ -13,7 +13,7 @@ colorargb getColor(string object, string key) {
   if (it.count("*")) {
     return it["*"];
   }
-  cout << "[GUI]\t[Colors]\t[Warning]\tUndefined color key " << object << " " << key << endl;
+  LOG WARN GRAPHICS "[Colors]\tUndefined color key " << object << " " << key END;
   return 0;
 }
 colorargb getColor(string val) {
@@ -422,7 +422,6 @@ float Coordiante::GetY(float WindowHeight) {
 }
 
 void setColor(colorargb v) {
-  //cout << ((v & 0x00FF0000) >> 16) / 255.0 << " " << ((v & 0x0000FF00) >> 8) / 255.0 << " " << ((v & 0x000000FF) >> 0) / 255.0 << " " << ((v & 0xFF000000) >> 24) / 255.0 << endl;
   glColor3f(((v & 0x00FF0000) >> 16) / 255.0f, ((v & 0x0000FF00) >> 8) / 255.0f, ((v & 0x000000FF) >> 0) / 255.0f);
 }
 

@@ -107,7 +107,7 @@ public:
   bool answ;
   sVec3 dir;
 
-  result(double inputx, double inputy, double inputz, bool inansw) : dir(inputx, inputy, inputz), answ(inansw) {};
+  result(longDouble inputx, longDouble inputy, longDouble inputz, bool inansw) : dir(inputx, inputy, inputz), answ(inansw) {};
   result(sVec3 idir, bool inansw) : dir(idir), answ(inansw) {};
 };
 

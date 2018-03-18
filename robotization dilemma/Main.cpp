@@ -9,9 +9,9 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
         Connection->ConnectedShip = ship = new Ship(data->_children[1]->_core->toType<uint64_t>());
         
         ofstream last("lastserver.dat");
-        last << client->_IP << endl;
-        last << client->_port << endl;
-        last << data->_children[2]->_core->toType<string>() << endl;
+        last << client->_IP END;
+        last << client->_port END;
+        last << data->_children[2]->_core->toType<string>() END;
         last.close();
 
         ship->connectedServer = Connection;
@@ -92,42 +92,24 @@ bool hasSaveFile(vector<string>& data) {
 }
 
 void testKey(key k) {
-  cout << k._keycode << " " << k.toName() << endl;
+  LOG INFO MISC k._keycode << " " << k.toName() END;
 }
 
 int main() {
+  /*Fraction a;
+  Fraction b;
+  
+  while (true) {
+    cin >> a;
+    b = sqrt(a);
+    cout << a.a << " " << a.b << " " << a.toDouble() << " " << a.toStr(20) << endl;
+    cout << b.a << " " << b.b << " " << b.toDouble() << " " << b.toStr(20) << endl;
+  }
+  */
+
   setlocale(LC_ALL, "");
   srand(time(NULL));
   ran1(time(NULL));
-
-  /*for (int i = 0; i<10000000; i++) {
-    if (!(i % 100000)) {
-      cout << i << endl;
-    }
-    PolynomialD poly(vector<long double>({1}));
-    double s1 = ran1() * 0.1 - 3;
-    poly = poly * PolynomialD(vector<long double>{-s1, 1 });
-    double s2 = ran1() * 0.1 - 3;
-    poly = poly * PolynomialD(vector<long double>{-s2, 1 });
-    double frs = ran1() * 10 - 5;
-    double fval = ran1() * 10 + 1;
-    poly = poly * PolynomialD(vector<long double>{ frs*frs+fval, -2 * frs, 1});
-    vector<long double> roots = poly.solveNewton();
-    bool ok1 = false;
-    bool ok2 = false;
-    for(int r = 0; r < roots.size(); r++) {
-      if (roots[r] - 0.0001 <= s1 && s1 <= roots[r] + 0.0001) {
-        ok1 = true;
-      }
-      if (roots[r] - 0.0001 <= s2 && s2 <= roots[r] + 0.0001) {
-        ok2 = true;
-      }
-    }
-    if (!(ok1 && ok2)) {
-      cout << "MISS" << roots.size() << '\t' << s1 << '\t' << s2 << '\t' << frs << '\t' << fval << endl;
-      poly.solveNewton();
-    }
-  }*/
 
   loadKeybinds();
   loadColors();

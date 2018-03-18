@@ -364,7 +364,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
           game->add(nObj);
         }
         else {
-          cout << __FILE__ << " " << __LINE__ << ": Wrong type " << typ << endl;
+          LOG LERROR "Wrong event type: " << typ END;
         }
       }
 
@@ -390,7 +390,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkS* thisptr) {
   }
   return 0;
 }
-void Ship::collectPath(list<Path*> &addTo, float time) {
+void Ship::collectPath(list<Path*> &addTo, time_type_s time) {
   for (auto it : objects) {
     //it->collectPath(addTo, time);
   }
@@ -449,7 +449,7 @@ bool Ship::loadShip(xml_node<>* data) {
       ++id;
       return true;
     } else {
-      cout << "Unknown class " << name << endl;
+      LOG LERROR "Wrong object type: " END;
       return false;
     }
   }
@@ -505,12 +505,12 @@ void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool worl
       glLineWidth(2.0);
       glBegin(GL_LINE_STRIP);
       glVertex3d(camcx/d, camcy / d, camcz / d);
-      glVertex3d(mov.getAt(timeNow).pos.x/d, camcy / d, mov.getAt(timeNow).pos.z/d);
-      glVertex3d(mov.getAt(timeNow).pos.x/d, mov.getAt(timeNow).pos.y/d, mov.getAt(timeNow).pos.z/d);
+      glVertex3d((mov.getAt(timeNow).pos.x/d).toDouble(), camcy / d, (mov.getAt(timeNow).pos.z/d).toDouble());
+      glVertex3d((mov.getAt(timeNow).pos.x/d).toDouble(), (mov.getAt(timeNow).pos.y/d).toDouble(), (mov.getAt(timeNow).pos.z/d).toDouble());
       glEnd();
-      glTranslated(mov.getAt(timeNow).pos.x / d, mov.getAt(timeNow).pos.y / d, mov.getAt(timeNow).pos.z / d);
+      glTranslated((mov.getAt(timeNow).pos.x / d).toDouble(), (mov.getAt(timeNow).pos.y / d).toDouble(), (mov.getAt(timeNow).pos.z / d).toDouble());
       glutSolidSphere(ShipSize, 20,20);
-      glTranslated(-mov.getAt(timeNow).pos.x / d, -mov.getAt(timeNow).pos.y / d,- mov.getAt(timeNow).pos.z / d);
+      glTranslated((-mov.getAt(timeNow).pos.x / d).toDouble(), (-mov.getAt(timeNow).pos.y / d).toDouble(),(- mov.getAt(timeNow).pos.z / d).toDouble());
       for (auto&& it : objects) {
         it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
       }
@@ -553,7 +553,7 @@ bool Ship::packetRecv(DataElement *Data, int Id, NetworkC* thisptr) {
   return 0;
 }
 void Ship::selectSighting(vec3<double> ori, vec3<double> dir, double d) {
-  list<pair<double, Sighting*>> inters;
+  list<pair<time_type_s, Sighting*>> inters;
 
   Shot p;
   p.origin = ori;
@@ -571,7 +571,7 @@ void Ship::selectSighting(vec3<double> ori, vec3<double> dir, double d) {
       m.radius = SightingSize;
       m.acc = { 0,0,0 };
       m.vel = { 0,0,0 };
-      vector<double> temp = intersectPaths(&m, &p);
+      vector<time_type_s> temp = intersectPaths(&m, &p);
       for (auto&& itt : temp) {
         inters.push_back({ itt, *it });
       }
@@ -665,7 +665,7 @@ void Ship::setStatus(DataElement* data) {
       nObj->setStatus(*it);
       objects.push_back(nObj);
     } else {
-      cout << __FILE__ << " " << __LINE__ << ": Wrong type " << typ << endl;
+      LOG LERROR "Wrong object type: " << typ END;
     }
 
     ++it;

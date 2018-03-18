@@ -29,4 +29,4 @@ public:
   virtual vector<time_type_s> intersect(Path* other);
 };
 
-vector<double> intersectPaths(Path* lhs, Path* rhs, bool closest = false);
+vector<longDouble> intersectPaths(Path* lhs, Path* rhs, bool closest = false);

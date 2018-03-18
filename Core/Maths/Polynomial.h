@@ -455,7 +455,7 @@ template<typename T> ostream& operator<<(ostream& o, Polynomial<T>& p) {
     }
   }
   if (p.Coefficient.size()) {
-    o << p.Coefficient[0] << endl;
+    o << p.Coefficient[0] END;
   }
   return o;
 }
@@ -749,5 +749,5 @@ template<typename T> Equation<T> operator/(Equation<T>& lhs, T rhs) {
 
 class Eqnsys {
 public:
-  map<char, Equation<double> > eqns;
+  map<char, Equation<longDouble> > eqns;
 };

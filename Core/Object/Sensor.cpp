@@ -106,9 +106,9 @@ void Sensor::energyCallbackV(time_type_s time, Game* g) {
 float Sensor::getSensorChance(Bubble* what, time_type_s when) {
   ScriptData* d = new ScriptData();
   ScriptData* hph = new ScriptData();
-  hph->_data = new ScriptDataNumber(_health.getAt(when)() / double(_maxHealth.getAt(when)()));
+  hph->_data = new ScriptDataNumber(_health.getAt(when) / double(_maxHealth.getAt(when)));
   ScriptData* epp = new ScriptData();
-  epp->_data = new ScriptDataNumber(what->getFlux(when, getMovement(when).pos) * _radius * _radius * PI * _selfUsedPower.getAt(when)());
+  epp->_data = new ScriptDataNumber((what->getFlux(when, getMovement(when).pos) * _radius * _radius * PI * _selfUsedPower.getAt(when)).toDouble());
   ScriptData* meta = new ScriptData();
   meta->_data = new ScriptDataString(what->data);
   d->_elems.insert({ "relHealth", hph });
@@ -127,18 +127,18 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
     if (high(b->originID) == high(this->_ID)) {
       return;
     }
-    cout << "Pow: " << _selfUsedPower.getAt(time)() << endl;
-    cout << "Src: " << reinterpret_cast<Bubble*>(p)->emitter.pos << endl;
-    cout << "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime << endl;
-    cout << "OID: " << reinterpret_cast<Bubble*>(p)->originID << endl;
-    cout << "SID: " << _ID << endl;
-    cout << "En : " << b->getFlux(time, getMovement(time).pos) * _radius * _radius * PI << endl;
+    LOG INFO GAME "Pow: " << _selfUsedPower.getAt(time) END;
+    LOG INFO GAME "Src: " << reinterpret_cast<Bubble*>(p)->emitter.pos END;
+    LOG INFO GAME "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime END;
+    LOG INFO GAME "OID: " << reinterpret_cast<Bubble*>(p)->originID END;
+    LOG INFO GAME "SID: " << _ID END;
+    LOG INFO GAME "En : " << b->getFlux(time, getMovement(time).pos) * _radius * _radius * PI END;
 
     if (b->btype == BubbleType::Bubble_Pulse) {
       float detectCh = getSensorChance(b, time);
-      cout << "Ch: " << detectCh << endl;
+      LOG INFO GAME "Ch: " << detectCh END;
       if (ran1() < detectCh) {
-        cout << "Detected" << endl;
+        LOG INFO GAME "Detected" END;
         detectCallback(time, true, p, game);
       }
     }
@@ -158,7 +158,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
         SensorDetect* nd;
         if (b->before != NULL) {
           double detecttime = 1 / (begtime_inv + endtime_inv);
-          cout << "End detected in " << detecttime << endl;
+          LOG INFO GAME "End detected in " << detecttime END;
           nd = new SensorDetect();
           nd->_o = this;
           nd->_time = time + detecttime;
@@ -168,7 +168,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
         }
 
         double detecttime = 1 / (begtime_inv);
-        cout << "New detected in " << detecttime << endl;
+        LOG INFO GAME "New detected in " << detecttime END;
         nd = new SensorDetect();
         nd->_o = this;
         nd->_time = time + detecttime;
@@ -177,7 +177,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
         g->add(nd);
       }
       else {
-        cout << "Never detected" << endl;
+        LOG INFO GAME "Never detected" END;
       }
     }
   }
@@ -189,7 +189,7 @@ void Sensor::detectCallback(time_type_s time, bool closed, Path* p, Game* g) {
       _parentShip->sightPath(b, time, g, closed, _autofire.getAt(time)());
     }
     else {
-      _parentShip->sightPath(b, time, g, true, _autofire.getAt(time)());
+      _parentShip->sightPath(b, time, g, false, _autofire.getAt(time)());
     }
   }
 }

@@ -7,37 +7,37 @@ Object::Object(Drone* parentShip, uint64_t ID) {
   _ID = ID;
   _parentShip = parentShip;
   
-  _maxGeneratedPower.addFrame(-2, 0);
-  _requestedPower.addFrame(-2, 0);
-  _maxUseablePower.addFrame(-2, 0);
-  _maxStorage.addFrame(-2, 0);
-  _usedPower.addFrame(-2, 0);
-  _selfUsedPower.addFrame(-2, 0);
-  _generatedPower.addFrame(-2, 0);
+  _maxGeneratedPower.addFrame(-2, power_type_W(0));
+  _requestedPower.addFrame(-2, power_type_W(0));
+  _maxUseablePower.addFrame(-2, power_type_W(0));
+  _maxStorage.addFrame(-2, energy_type_J(0));
+  _usedPower.addFrame(-2, power_type_W(0));
+  _selfUsedPower.addFrame(-2, power_type_W(0));
+  _generatedPower.addFrame(-2, power_type_W(0));
 
   _energySystem=_parentShip->energySystem.addVertex(0, 0, 0, 0, 0, -1);
 }
 
 power_type_W Object::getMaxGeneratedPower(time_type_s time) {
-  return _maxGeneratedPower.getAt(time)();
+  return _maxGeneratedPower.getAt(time);
 }
 power_type_W Object::getGeneratedPower(time_type_s time) {
-  return _generatedPower.getAt(time)();
+  return _generatedPower.getAt(time);
 }
 power_type_W Object::getMaxUseablePower(time_type_s time) {
-  return _maxUseablePower.getAt(time)();
+  return _maxUseablePower.getAt(time);
 }
 power_type_W Object::getRequestedPower(time_type_s time) {
-  return _requestedPower.getAt(time)();
+  return _requestedPower.getAt(time);
 }
 power_type_W Object::getUsedPower(time_type_s time) {
-  return _usedPower.getAt(time)();
+  return _usedPower.getAt(time);
 }
 power_type_W Object::getSelfUsedPower(time_type_s time) {
-  return _selfUsedPower.getAt(time)();
+  return _selfUsedPower.getAt(time);
 }
 energy_type_J Object::getMaxEnergy(time_type_s time) {
-  return _maxStorage.getAt(time)();
+  return _maxStorage.getAt(time);
 }
 energy_type_J Object::getStoredEnergy(time_type_s time) {
   return _energySystem->_val.getAt(time);
@@ -47,7 +47,7 @@ void Object::maxGeneratedPowerChange(time_type_s time, power_type_W power) {
   _energySystem->_goal = -power;
 }
 void Object::requestedPowerChange(time_type_s time, power_type_W power) {
-  power = max(0.0,min(power, getMaxUseablePower(time)));
+  power = maxv(0.0,minv(power, getMaxUseablePower(time)));
   _requestedPower.addFrame(time, power);
   _energySystem->_goal = power;
 }
@@ -142,14 +142,14 @@ Movement Object::getMovement(time_type_s time) {
   m.radius = _radius;
   return m;
 }
-list< pair<double, pair<Object*, Path*>>> Object::intersect(Path* p) {
-  list< pair<double, pair<Object*, Path*>>> res;
+list< pair<time_type_s, pair<Object*, Path*>>> Object::intersect(Path* p) {
+  list< pair<time_type_s, pair<Object*, Path*>>> res;
   auto it = _parentShip->mov._frames.begin();
   while (it != _parentShip->mov._frames.end()) {
     Movement m = it->second;
     m.pos += _relativePos;
     m.radius = _radius;
-    vector<double> times = p->intersect(&m);
+    vector<time_type_s> times = p->intersect(&m);
     for (auto&& itt : times) {
       auto nit = it;
       ++nit;
@@ -286,21 +286,21 @@ void Object::setSidebarElement(string filename) {
   }
 }
 void Object::setSidebar() {
-  cout << "Unimplemented type " << type() << endl;
+  LOG LERROR GRAPHICS "Unimplemented type " << type() END;
 }
-list< pair<double, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori, vec3<double> dir) {
+list< pair<time_type_s, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori, vec3<double> dir) {
   Shot p;
   p.origin = ori;
   p.origintime = 0;
   p.vel = dir;
   Movement m;
   m.pos = _relativePos /*+ _parentShip->mov.pos*/;
-  m.vel = 0;
-  m.acc = 0;
+  m.vel = vel_type_mpers(0);
+  m.acc = acc_type_mperss(0);
   m.gTimeStamp = 0;
   m.radius = _radius;
-  list< pair<double, pair<Object*, Path*>>> res;
-  vector<double> times = intersectPaths(&m, &p);
+  list< pair<time_type_s, pair<Object*, Path*>>> res;
+  vector<time_type_s> times = intersectPaths(&m, &p);
   for (auto&& it : times) {
     res.push_back({ it,{ this, &p } });
   }
@@ -310,10 +310,10 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
   if(worldView) {
     drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
   } else {
-    glTranslated(_relativePos.x, _relativePos.y, _relativePos.z);
-    setColor(0xffdf0000 + int(0xdf * _health.getAt(time)() / float(_maxHealth.getAt(time)())) + 0x100 * int(0xdf * _health.getAt(time)() / float(_maxHealth.getAt(time)())));
-    glutSolidSphere(_radius, 20, 20);
-    glTranslated(-_relativePos.x, -_relativePos.y, -_relativePos.z);
+    glTranslated(_relativePos.x.toDouble(), _relativePos.y.toDouble(), _relativePos.z.toDouble());
+    setColor(0xffdf0000 + int(0xdf * _health.getAt(time) / float(_maxHealth.getAt(time))) + 0x100 * int(0xdf * _health.getAt(time) / float(_maxHealth.getAt(time))));
+    glutSolidSphere(_radius.toDouble(), 20, 20);
+    glTranslated(-_relativePos.x.toDouble(), -_relativePos.y.toDouble(), -_relativePos.z.toDouble());
     drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
   }
 }
@@ -321,25 +321,26 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
 
 #ifdef M_SERVER
 void Object::energyCallback(time_type_s t, Game* g) {
-  if (_energySystem->_delta > Fraction(0)) {
-    _generatedPower.addFrame(t, 0);
-    _usedPower.addFrame(t, double(_energySystem->_delta));
-    _selfUsedPower.addFrame(t, double(_energySystem->_firstDelta));
+  if (_energySystem->_delta > 0) {
+    _generatedPower.addFrame(t, power_type_W(0));
+    _usedPower.addFrame(t, _energySystem->_delta);
+    _selfUsedPower.addFrame(t, _energySystem->_firstDelta);
   }
-  if (_energySystem->_delta <= Fraction(0)) {
-    _generatedPower.addFrame(t, -double(_energySystem->_delta));
-    _usedPower.addFrame(t, 0);
-    _selfUsedPower.addFrame(t, 0);
+  if (_energySystem->_delta <= 0) {
+    _generatedPower.addFrame(t, -_energySystem->_delta);
+    _usedPower.addFrame(t, power_type_W(0));
+    _selfUsedPower.addFrame(t, power_type_W(0));
   }
   energyCallbackV(t, g);
 }
 void Object::getPath(time_type_s time, Path* p, Game* g) {
+  cout << "Path type: " << p->type() << ", origin:" << p->originID << ", target " << _ID << endl; 
   if ((p->type() == Path::PathTypeShot) && (p->originID != _ID)) {
     Shot* ps = (Shot*)p;
     _health.addFrame(time,
       value<int>(max(
         0,
-        _health.getAt(time)() - int(ps->energy / 50)
+        _health.getAt(time) - int((ps->energy / 50).toDouble())
         ))); //TODO BETTER
     ps->energy -= 10000;
     ps->energy = max(0, ps->energy);
@@ -365,12 +366,12 @@ bool Object::loadEnergy(xml_node<>* data, time_type_s time) {
 
     elem = data->first_node("max_charge");
     if (elem) {
-      _energySystem->_maxCharge = Fraction(strTo<power_type_W>(elem->value())).abs();
+      _energySystem->_maxCharge = abs(strTo<power_type_W>(elem->value()));
     }
 
     elem = data->first_node("max_drain");
     if (elem) {
-      _energySystem->_maxDrain = -(Fraction(strTo<power_type_W>(elem->value())).abs());
+      _energySystem->_maxDrain = -abs(strTo<power_type_W>(elem->value()));
     }
 
     elem = data->first_node("max_useable_power");

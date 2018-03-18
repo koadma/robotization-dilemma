@@ -10,25 +10,25 @@ protected:
   mVec3 _relativePos;
   distance_type_m _radius;
   string _name;
-  keyframe<value<int> > _maxHealth;
-  keyframe<value<int> > _health;
+  keyframe<value<int>, int > _maxHealth;
+  keyframe<value<int>, int > _health;
 #ifdef M_SERVER
   Bubble* _selfBubble = NULL; //used to store current continous bubble
   map<Bubble*, Bubble*> reflection;
 #endif
 public:
-  keyframe<value<power_type_W>> _maxGeneratedPower;
-  keyframe<value<power_type_W>> _generatedPower;
-  keyframe<value<power_type_W>> _maxUseablePower;
-  keyframe<value<power_type_W>> _requestedPower;
-  keyframe<value<power_type_W>> _usedPower;
-  keyframe<value<power_type_W>> _selfUsedPower; //Not for battery charge
-  keyframe<value<energy_type_J>> _maxStorage;
+  keyframe<value<power_type_W>, power_type_W> _maxGeneratedPower;
+  keyframe<value<power_type_W>, power_type_W> _generatedPower;
+  keyframe<value<power_type_W>, power_type_W> _maxUseablePower;
+  keyframe<value<power_type_W>, power_type_W> _requestedPower;
+  keyframe<value<power_type_W>, power_type_W> _usedPower;
+  keyframe<value<power_type_W>, power_type_W> _selfUsedPower; //Not for battery charge
+  keyframe<value<energy_type_J>, power_type_W> _maxStorage;
   
   Object(Drone* parentShip, uint64_t ID);
 
   Drone* _parentShip;
-  FlowVertex<energy_type_J, Fraction, time_type_s>* _energySystem;
+  FlowVertex<energy_type_J, power_type_W, time_type_s>* _energySystem;
 
   uint64_t getId() {
     return _ID;
@@ -92,10 +92,10 @@ public:
   }
 
   int getHealth(time_type_s time) {
-    return _health.getAt(time)();
+    return _health.getAt(time);
   }
   int getMaxHealth(time_type_s time) {
-    return _maxHealth.getAt(time)();
+    return _maxHealth.getAt(time);
   }
 
   virtual mpssVec3 getAccel(time_type_s time) {
@@ -105,7 +105,7 @@ public:
   Movement getMovement(time_type_s time);
 
 #ifdef M_CLIENT
-  list< pair<double, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
+  list< pair<time_type_s, pair<Object*, Path*>>> getIntersect(vec3<double> ori, vec3<double> dir);
   virtual void setSidebarElement(string filename);
   virtual void setSidebar();
   virtual void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time, bool worldView) {}
@@ -133,7 +133,7 @@ public:
   virtual void getVStatus(DataElement* data);
   virtual void setVStatus(DataElement* data);
 
-  list< pair<double, pair<Object*, Path*>>> intersect(Path* p);
+  list< pair<time_type_s, pair<Object*, Path*>>> intersect(Path* p);
 
   ~Object();
 };

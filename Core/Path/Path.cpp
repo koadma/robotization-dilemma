@@ -14,10 +14,10 @@ bool Path::verify(time_type_s time, mVec3 pos) {
   return true;
 }
 vector<time_type_s> Path::intersect(Path* other) {
-  return intersectPaths(this, other);
+  return intersectPaths(this, other, false);
 }
 
-vector<double> intersectPaths(Path* lhs, Path* rhs, bool closest) {
+vector<time_type_s> intersectPaths(Path* lhs, Path* rhs, bool closest) {
   Eqnsys impleq; //
   Eqnsys expleq; //
   if (lhs->etype() == Path::EqnTypeExplicit && rhs->etype() == Path::EqnTypeExplicit) {

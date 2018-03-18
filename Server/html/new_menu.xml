@@ -1,0 +1,42 @@
+<body>
+	<slider
+		id = "objectNewMenuPlayerCount"
+		minrelx = "0.2"
+		minrely = "0.4"
+		minabsx = "5.0"
+		minabsy = "5.0"
+		maxrelx = "0.7"
+		maxrely = "0.5"
+		maxabsx = "-5.0"
+		maxabsy = "-5.0"
+		minvalue = "2"
+		maxvalue = "8"
+		startvalue = "2"
+		quanta = "1"
+		callback = "newMenuPlayerSliderInput"
+	></slider>
+	<button
+		id = "objectNewMenuOkButton"
+		minrelx = "0.7"
+		minrely = "0.4"
+		minabsx = "5.0"
+		minabsy = "5.0"
+		maxrelx = "0.8"
+		maxrely = "0.5"
+		maxabsx = "-5.0"
+		maxabsy = "-5.0"
+		callback = "newMenuInputButton"
+	>Ok</button>
+	<button
+		id = "objectNewMenuBackButton"
+		minrelx = "0.3"
+		minrely = "0.3"
+		minabsx = "5.0"
+		minabsy = "5.0"
+		maxrelx = "0.7"
+		maxrely = "0.4"
+		maxabsx = "-5.0"
+		maxabsy = "-5.0"
+		callback = "newMenuBackButton"
+	>Back</button>
+</body>

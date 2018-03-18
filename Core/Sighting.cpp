@@ -144,13 +144,13 @@ void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, ti
       setColor(0xffff8080);
       glLineWidth(1.0);
     }
-    glVertex3d(viewCenter.x/d, viewCenter.y/d, viewCenter.z/d);
-    glVertex3d(now.pos.x/d, viewCenter.y/d, now.pos.z/d);
-    glVertex3d(now.pos.x/d, now.pos.y/d, now.pos.z/d);
+    glVertex3d((viewCenter.x/d).toDouble(), (viewCenter.y/d).toDouble(), (viewCenter.z/d).toDouble());
+    glVertex3d((now.pos.x/d).toDouble(), (viewCenter.y/d).toDouble(), (now.pos.z/d).toDouble());
+    glVertex3d((now.pos.x/d).toDouble(), (now.pos.y/d).toDouble(), (now.pos.z/d).toDouble());
     glEnd();
-    glTranslated(now.pos.x / d, now.pos.y / d, now.pos.z / d);
+    glTranslated((now.pos.x / d).toDouble(), (now.pos.y / d).toDouble(), (now.pos.z / d).toDouble());
     glutSolidSphere(SightingSize, 20, 20);
-    glTranslated(-now.pos.x / d, -now.pos.y / d, -now.pos.z / d);
+    glTranslated((-now.pos.x / d).toDouble(), (-now.pos.y / d).toDouble(), (-now.pos.z / d).toDouble());
   }
 }
 
@@ -168,7 +168,7 @@ result coordinates(mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, acc_type
   //az utolso ismert sebesseg es az s vektor altal bezart szog
   distance_type_m vcosgamma = dot(svec, vtarget) / (s);
   //az utolso ismert sebesseg alapjan mikorra erne be a hajot egy lezerlovedek
-  double t3 = s*(-vcosgamma + sqrt(v*v - vcosgamma*vcosgamma + SOL*SOL)) / (SOL*SOL - v*v);
+  longDouble t3 = s*(-vcosgamma + sqrt(v*v - vcosgamma*vcosgamma + SOL*SOL)) / (SOL*SOL - v*v);
   result direction(starttarget + vtarget*t3 - startship, true);
   //idoben beerne meg?
   if ((sqrt(d / amax) - tpassed) < t3)
@@ -187,7 +187,7 @@ result surefire1(time_type_s obsTime, mpsVec3 vTarget, mVec3 sTarget, time_type_
   mVec3 nsship = sShip; //mi hol voltunk amikor visszalottunk?
                             //a visszaverodes es eszleles kozott eltelt ido
   //double actpass = (starttarget - startship).length() / SOL;
-  double actpass = now - obsTime;
+  longDouble actpass = now - obsTime;
 
   //amikor eszleljuk a visszaverodest addigra az ellenseg mar mozgott, az utolso ismert pozicio alapjan itt lehetett amikor visszalottunk ra
   nstarget = nstarget + nvtarget*actpass;
@@ -195,103 +195,3 @@ result surefire1(time_type_s obsTime, mpsVec3 vTarget, mVec3 sTarget, time_type_
   //hova lo a hajo,  ha az automata loves van engedelyezve
   return coordinates(nvtarget, nstarget, nsship, amax, d, actpass);
 }
-/*
-//azt szamoljuk ki hogy az elozo korben tortent eszlelesre a mostani mozgassorok közben meddig biztos a talalat
-vector<result> surefire2(mpsVec3 vship, mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, mVec3 nowship, double amax, double d, vector<vec4d> movements, double utime, double round)
-{
-  mpsVec3 nvship = vship; //a hajo sebesseg MOST
-  mpsVec3 nvtarget = vtarget; //az ellenseg utolso ismert sebessege
-  mVec3 nstarget = starttarget; //ez alapjan hol lehet most az ellenseg?
-  mVec3 nsship = nowship; //mi most hol vagyunk a kor elejen?
-                          //a visszaverodes es a kor kezdete kozott eltelt ido, ami a visszaverodes es eszleles+ eszleles es kor kezdete idok osszege
-  double actpass = sqrt((starttarget.x - startship.x)*(starttarget.x - startship.x) + (starttarget.y - startship.y)*(starttarget.y - startship.y) + (starttarget.z - startship.z)*(starttarget.z - startship.z)) / SOL + (round - 1) * 20 - utime;
-  //double itsum = 0; //a mozgasparancsok idoosszege
-
-  //amikor eszleljuk a visszaverodest addigra az ellenseg mar mozgott, az utolso ismert pozicio alapjan itt lehet most
-  nstarget = nstarget + nvtarget*actpass;
-
-  vector<result> results;
-  //a kor elejen ha lovunk mi tortenne
-  results.push_back(coordinates(nvtarget, nstarget, nsship, amax, d, actpass));
-
-  //a kor mozgasai, hiszen az eszleles amire most reagalni tudunk meg az elozo korben tortent
-  for (auto i = movements.begin(); i < movements.end(); i++)
-  {
-    //egyszerubb ez a nev egy picit, meg bennemaradt a nagy osszeolvasztott fgv bol esnem akartam szetszedni mar
-    double mtime = i->t;
-
-    //a celpont feltetelezett mozgasa
-    nstarget = nstarget + nvtarget*(mtime);
-
-    //a mi mozgasunk
-    nsship.x = nsship.x + nvship.x*(mtime)+(i->x)*(mtime)*(mtime);
-    nsship.y = nsship.y + nvship.y*(mtime)+(i->y)*(mtime)*(mtime);
-    nsship.z = nsship.z + nvship.z*(mtime)+(i->z)*(mtime)*(mtime);
-
-    //igy valtozik a sebessegunk
-    nvship.x = nvship.x + (i->x)*(mtime);
-    nvship.y = nvship.y + (i->y)*(mtime);
-    nvship.z = nvship.z + (i->z)*(mtime);
-
-    //igy az eltelt ido
-    actpass = actpass + mtime;
-
-    //a mozgasreszlet utan hova lovunk?
-    results.push_back(coordinates(nvtarget, nstarget, nsship, amax, d, actpass));
-
-  }
-
-  return results;
-
-}
-
-result surefire3(mpsVec3 vship, mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, mVec3 nowship, double amax, double d, keyframe<Movement>& movements, time_type_s detectTime, double queryTime, double round)
-{
-  mpsVec3 nvship = vship; //a hajo sebesseg MOST
-  mpsVec3 nvtarget = vtarget; //az ellenseg utolso ismert sebessege
-  mVec3 nstarget = starttarget; //ez alapjan hol lehet most az ellenseg?
-  mVec3 nsship = nowship; //mi most hol vagyunk a kor elejen?
-                          //a visszaverodes es a kor kezdete kozott eltelt ido, ami a visszaverodes es eszleles+ eszleles es kor kezdete idok osszege
-  double actpass = sqrt((starttarget.x - startship.x)*(starttarget.x - startship.x) + (starttarget.y - startship.y)*(starttarget.y - startship.y) + (starttarget.z - startship.z)*(starttarget.z - startship.z)) / SOL + (round - 1) * 20 - detectTime;
-  double itsum = 0; //a mozgasparancsok idoosszege
-
-                    //amikor eszleljuk a visszaverodest addigra az ellenseg mar mozgott, az utolso ismert pozicio alapjan itt lehet most
-  nstarget = nstarget + nvtarget*actpass;
-
-  //a kor mozgasai, hiszen az eszleles amire most reagalni tudunk meg az elozo korben tortent, valahol itt lesz a kerdezett ido is
-  for (auto i = movements._frames.begin(); i != movements._frames.end(); i++)
-  {
-    time_type_s mtime = i->first;
-
-    //a kovetkezo mozgasreszlet vegere tulleptuk-e mar a kerdezett idot?
-    if (queryTime <= (round - 1) * 20 + itsum + i->first)
-    {
-      //ha igen akkor enek a mozgaselemnek a hatasat csak a kerdezett idoig szimulaljuk
-      mtime = itsum + i->first - qtime;
-
-      nstarget = nstarget + nvtarget*(mtime);
-
-      nsship = nsship + nvship*(mtime)+(i->x)*(mtime)*(mtime);
-
-      nvship.x = nvship.x + (i->x)*(mtime);
-
-      actpass = actpass + mtime;
-
-      //szoval hova is kell loni a kerdezett idoben es biztos-e meg a talalat?
-      result cord = coordinates(nvtarget, nstarget, nsship, amax, d, actpass);
-      cout << cord.x << " " << cord.y << " " << cord.z << " " << cord.answ << endl;
-
-      return cord;
-    }
-
-    //a kerdezett idoig elvegezzuk a ket hajo mozgatasat
-    nstarget = nstarget + nvtarget*(mtime);
-
-    nsship = nsship + nvship*(mtime)+(i->x)*(mtime)*(mtime);
-
-    nvship = nvship + (i->x)*(mtime);
-
-    actpass = actpass + mtime;
-    itsum = itsum + i->first;
-  }
-}*/

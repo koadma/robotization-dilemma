@@ -18,13 +18,10 @@ enum NetworkErrorCodes {
   NetworkErrorCodeServerAccept,
 };
 
-/*void defaultRecivePacketFunc(unsigned char *Data, int Id, int DataLen) {
-  cout << Id << " " << Data << endl;
-}
-*/
+
 void NetworkError(int ID, int& set, int WSAError) {
   set = ID;
-  cout << "Error code: " << to_string(ID) << endl;
+  LOG LERROR NETWORK "Error code: " << to_string(ID) END;
 }
 
 NetworkS::NetworkS() {

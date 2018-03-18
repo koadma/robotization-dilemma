@@ -104,7 +104,7 @@ void Game::removeBatteryEvents(Drone * drone) {
 
 void Game::calcIntersect(Object* object) {
   for (auto&& itb : paths) {
-    list< pair<double, pair<Object*, Path*>>> inters = object->intersect(itb);
+    list< pair<time_type_s, pair<Object*, Path*>>> inters = object->intersect(itb);
     for (auto it : inters) {
       Collision* coll = new Collision();
       coll->_time = it.first;
@@ -122,7 +122,7 @@ void Game::calcIntersect(Drone* drone) {
 void Game::calcIntersect(Path* path) {
   auto its = drones.begin();
   while (its != drones.end()) {
-    list< pair<double, pair<Object*, Path*>>> inters = (*its)->intersect(path);
+    list< pair<time_type_s, pair<Object*, Path*>>> inters = (*its)->intersect(path);
     for (auto&& it : inters) {
       Collision* coll = new Collision();
       coll->_time = it.first;
@@ -146,7 +146,7 @@ Ship* Game::addShip() {
   return ship;
 }
 Drone* Game::addDrone(mVec3 pos) {
-///TODO: Fix
+///TODO: Fix // id only valid assuming no delets
   int nid = drones.size();
   Drone* drone = new Drone();
   drones.push_back(drone);
@@ -157,7 +157,7 @@ void Game::add(Path* path) {
   paths.push_back(path);
 }
 void Game::add(Event* evt) {
-  cout << "Event added at " << evt->_time << ", type " << evt->type_name() << endl;
+  LOG INFO "Event added at " << evt->_time << ", type " << evt->type_name() END;
   events.insert(evt);
 }
 
@@ -188,23 +188,23 @@ void Game::updateDroneBatteryEvents(Drone * drone, vector<time_type_s> evts) {
     add(evt);
   }
 }
-void Game::simulate(float from, float till) {
+void Game::simulate(time_type_s from, time_type_s till) {
   //recalcIntersects();
-  cout << "SIM " << from << " " << till << endl;
+  LOG INFO GAME "SIM " << from << " " << till END;
   auto it = events.begin();
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
       auto it2 = it;
-      cout << "PROCESSING EVENT " << (*it)->type_name() << " TIME " << (*it)->_time << endl;
+      LOG INFO GAME "PROCESSING EVENT " << (*it)->type_name() << " TIME " << (*it)->_time END;
       (*it)->apply(this);
-      cout << "PROCESSED EVENT" << endl;
+      LOG INFO GAME "PROCESSED EVENT" END;
       ++it;
       events.erase(it2);
     }
     else {
       auto it2 = it;
       ++it;
-      cout << "DEL EVENT " << (*it2)->type_name() << " TIME " << (*it2)->_time << endl;
+      LOG INFO GAME "DEL EVENT " << (*it2)->type_name() << " TIME " << (*it2)->_time END;
       events.erase(it2);
     }
   }

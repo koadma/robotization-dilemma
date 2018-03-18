@@ -67,7 +67,7 @@ public:
   void recalcIntersects(Object* object);
   void recalcIntersects(Path* path);
   void updateDroneBatteryEvents(Drone* drone, vector<time_type_s> evts);
-  void simulate(float from, float till);
+  void simulate(time_type_s from, time_type_s till);
 };
 
 extern Game* game;

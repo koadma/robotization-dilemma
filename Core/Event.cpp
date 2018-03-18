@@ -104,11 +104,9 @@ void Collision::applyV(Game *g) {
   }
 }
 void BatteryDrain::applyV(Game *g) {
-  //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
   _d->energyUpdate(_time, g);
 }
 void SensorDetect::applyV(Game *g) {
-  //cout << __FILE__ << ":" << __LINE__ << " Ship ran out of energy!" << endl;
   _o->detectCallback(_time, _closed,_what,  g);
 }
 void StateChange::applyV(Game *g) {
@@ -120,8 +118,7 @@ void StateChange::applyVV(Game *g) {
 void StateChange::set(DataElement* data, Game* game) {
   _o = game->getObject(data->_children[1]->_core->toType<uint64_t>());
   if (_o == NULL) {
-    cout << __FILE__ << ":" << __LINE__ << " Unknown Object ID " << data->_children[1]->_core->toType<uint64_t>() << endl;
-    throw 1;
+    LOG LERROR GAME "Unknown Object ID " << data->_children[1]->_core->toType<uint64_t>() END;
   }
   _time = data->_children[2]->_core->toType<float>();
 
@@ -161,7 +158,11 @@ void LaserShot::setV(DataElement* data, Game* game) {
 }
 void ThermalRadiation::applyVV(Game *g) {
   Bubble* b = new Bubble();
-  b->constrains.push_back(constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Include all directions
+  if(_o->getAccel(_time).length() > 0) {
+    b->constrains.push_back(constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Blast in direction
+  } else {
+    b->constrains.push_back(constrain(constrain::include, {1,0,0}, -2)); //Include all directions
+  }
   b->bsource = Bubble_Thermal;
   b->btype = Bubble_Row_Border;
   b->emitter = _o->getMovement(_time);

@@ -1,18 +1,17 @@
 #include "Fraction.h"
 
+cBigNumber gcd(cBigNumber x, cBigNumber y) {
+  if (y == 0) {
+    return x;
+  }
+  else {
+    return gcd(y, x%y);
+  }
+}
+
 Fraction::Fraction() {
   a = 0;
   b = 1;
-}
-
-Fraction::Fraction(cBigNumber a) {
-  this->a = a;
-  this->b = 1;
-}
-
-Fraction::Fraction(int a) {
-  this->a = a;
-  this->b = 1;
 }
 
 Fraction::Fraction(cBigNumber a, cBigNumber b) {
@@ -25,8 +24,44 @@ Fraction::Fraction(cBigNumber a, cBigNumber b) {
   this->b = b;
 }
 
+Fraction::Fraction(int _val) {
+  a = _val;
+  b = 1;
+}
+Fraction::Fraction(long _val) {
+  a = _val;
+  b = 1;
+}
+Fraction::Fraction(long long _val) {
+  a = _val;
+  b = 1;
+}
+Fraction::Fraction(unsigned int _val) {
+  a = _val;
+  b = 1;
+}
+Fraction::Fraction(unsigned long _val) {
+  a = _val;
+  b = 1;
+}
+Fraction::Fraction(unsigned long long _val) {
+  a = _val;
+  b = 1;
+}
+
+Fraction::Fraction(cBigNumber _val) {
+  a = _val;
+  b = 1;
+}
+
+Fraction::Fraction(float d) {
+  *this = approx(d, 5);
+}
 Fraction::Fraction(double d) {
   *this = approx(d, 10);
+}
+Fraction::Fraction(long double d) {
+  *this = approx(d, 15);
 }
 
 Fraction::Fraction(string s) {
@@ -49,11 +84,9 @@ Fraction::Fraction(string s) {
   this->simplify();
 }
 
-cBigNumber Fraction::gcd(cBigNumber x, cBigNumber y) {
-  if (y == 0)
-    return x;
-  else
-    return (gcd(y, x%y));
+Fraction::Fraction(const Fraction& _val) {
+  a = _val.a;
+  b = _val.b;
 }
 
 Fraction& Fraction::simplify() {
@@ -67,66 +100,34 @@ Fraction& Fraction::simplify() {
     b *= -1;
   }
 
-  return Fraction(a, b);
-}
-
-double Fraction::operator()() const {
-  cBigNumber na = a;
-  cBigNumber nb = b;
-  na.abs();
-  nb.abs();
-  double d = 0;
-
-  int prec = 44; //floating point precision (base 2)
-  d = (na / nb).tolong();
-  na = na % nb;
-  double dfc = 1;
-  do {
-    dfc /= 2;
-    na *= 2;
-    d += dfc * (na / nb).tolong();
-    na = na % nb;
-    --prec;
-  } while (prec>0);
-
-  if (a*b < 0) {
-    d *= -1;
-  }
-  return d;
-}
-
-Fraction::operator double() const {
-  cBigNumber na = a;
-  cBigNumber nb = b;
-  na.abs();
-  nb.abs();
-  double d = 0;
-
-  int prec = 44; //floating point precision (base 2)
-  d = (na / nb).tolong();
-  na = na % nb;
-  double dfc = 1;
-  do {
-    dfc /= 2;
-    na *= 2;
-    d += dfc * (na / nb).tolong();
-    na = na % nb;
-    --prec;
-  } while (prec>0);
-
-  if (a*b < 0) {
-    d *= -1;
-  }
-  return d;
-}
-
-Fraction& Fraction::abs() {
-  a = a.abs();
-  b = b.abs();
   return *this;
 }
 
-string Fraction::toStr(int prec) {
+double Fraction::toDouble() const {
+  cBigNumber na = a;
+  cBigNumber nb = b;
+  na.abs();
+  nb.abs();
+  double d = 0;
+
+  int prec = 44; //floating point precision (base 2)
+  d = (na / nb).tolong();
+  na = na % nb;
+  double dfc = 1;
+  do {
+    dfc /= 2;
+    na *= 2;
+    d += dfc * (na / nb).tolong();
+    na = na % nb;
+    --prec;
+  } while (prec>0);
+
+  if (a*b < 0) {
+    d *= -1;
+  }
+  return d;
+}
+string Fraction::toStr(int prec) const {
   cBigNumber na = a;
   cBigNumber nb = b;
 
@@ -148,19 +149,13 @@ string Fraction::toStr(int prec) {
 bool approxEqual(Fraction a, Fraction b, int prec) {
   Fraction pm(5, 10); //0.5
 
-  //cout << pm.a << "/" << pm.b << endl;
-
-  //cout << cBigNumber(10).pow(prec) << " " << cBigNumber(10).pow(-prec) << endl;
-
   if (prec < 0) {
     pm.b *= cBigNumber(10).pow(-prec);
   }
   if (prec > 0) {
     pm.a *= cBigNumber(10).pow(prec);
   }
-
-  //cout << pm.a << "/" << pm.b << endl;
-
+  Fraction f = a-pm;
   return (a - pm <= b && b<a + pm);
 }
 
@@ -178,7 +173,7 @@ Fraction approx(string s) {
   Fraction maxe(1, 1);
   Fraction fract;
   fract.a = strTo<cBigNumber>(fractional);
-  fract.b = pow(10l, fractional.length());
+  fract.b = cBigNumber(10).pow(fractional.length());
   bool fe = false;
   if (approxEqual(fract, mine, -int(fractional.length()))) {
     fe = true;
@@ -208,37 +203,7 @@ Fraction approx(string s) {
   return p;
 }
 Fraction approx(double d, int fprec) {
-  cBigNumber integ = floor(d);
-  d -= floor(d);
-  Fraction mine(0, 1);
-  Fraction p(1, 2); //a+c / b+d
-  Fraction fract;
-  Fraction maxe(1, 1);
-  fract.b = pow(10, fprec);
-  fract.a = d*fract.b;
-  bool fe = false;
-  if (approxEqual(fract, mine, -fprec)) {
-    fe = true;
-    p = mine;
-  }
-  if (approxEqual(fract, maxe, -fprec)) {
-    fe = true;
-    p = maxe;
-  }
-  while (!fe && !approxEqual(fract, p, -fprec)) {
-    if (p>fract) {
-      maxe = p;
-      p.a += mine.a;
-      p.b += mine.b;
-    }
-    else {
-      mine = p;
-      p.a += maxe.a;
-      p.b += maxe.b;
-    }
-  }
-  p += integ;
-  return p;
+  return approx(to_string(d, fprec));
 }
 
 void Fraction::get(DataElement* data) {
@@ -255,75 +220,96 @@ void Fraction::set(DataElement* data) {
   b = data->_children[1]->_core->toType<cBigNumber>();
 }
 
-Fraction operator+ (Fraction x, Fraction y) {
-  return x += y;
+Fraction Fraction::operator+=(const Fraction rhs) {
+  a = a*rhs.b + rhs.a*b;
+  b = b*rhs.b;
+  return simplify();
 }
-Fraction operator+ (Fraction x, cBigNumber y) {
-  return x += y;
+Fraction Fraction::operator-=(const Fraction rhs) {
+  a = a*rhs.b - rhs.a*b;
+  b = b*rhs.b;
+  return simplify();
 }
-Fraction operator+ (Fraction x, int y) {
-  return x += y;
+Fraction Fraction::operator*=(const Fraction rhs) {
+  a = a*rhs.a;
+  b = b*rhs.b;
+  return simplify();
 }
-
-Fraction operator- (Fraction x, Fraction y) {
-  return x -= y;
+Fraction Fraction::operator/=(const Fraction rhs) {
+  a = a*rhs.b;
+  b = b*rhs.a;
+  return simplify();
 }
-Fraction operator- (Fraction x, cBigNumber y) {
-  return x -= y;
-}
-Fraction operator- (Fraction x, int y) {
-  return x -= y;
-}
-
-Fraction operator- (Fraction x) {
-  return x *= -1;
-}
-
-Fraction operator*(Fraction x, Fraction y) {
-  return x *= y;
-}
-Fraction operator*(Fraction x, cBigNumber y) {
-  return x *= y;
-}
-Fraction operator*(Fraction x, int y) {
-  return x *= y;
+Fraction Fraction::operator%=(const Fraction rhs) {
+  Fraction div = *this;
+  div /= rhs;
+  cBigNumber intdiv = div.a / div.b;
+  *this -= rhs*intdiv;
+  return simplify();
 }
 
-Fraction operator/ (Fraction x, Fraction y) {
-  return x /= y;
+Fraction operator+ (const Fraction x, const Fraction y) {
+  return Fraction(x) += y;
 }
-Fraction operator/ (Fraction x, cBigNumber y) {
-  return x /= y;
+Fraction operator- (const Fraction x, const Fraction y) {
+  return Fraction(x) -= y;
 }
-Fraction operator/ (Fraction x, int y) {
-  return x /= y;
+Fraction operator- (const Fraction x) {
+  return Fraction(x) *= -1;
 }
-bool operator== (Fraction lhs, Fraction rhs) {
-  lhs.simplify();
-  rhs.simplify();
+Fraction operator* (const Fraction x, const Fraction y) {
+  return Fraction(x) *= y;
+}
+Fraction operator/ (const Fraction x, const Fraction y) {
+  return Fraction(x) /= y;
+}
+
+bool operator==(const Fraction lhs, const Fraction rhs) {
   return (lhs.a*rhs.b == lhs.b*rhs.a);
 }
-
-bool operator< (Fraction lhs, Fraction rhs) {
-  lhs.simplify();
-  rhs.simplify();
+bool operator< (const Fraction lhs, const Fraction rhs) {
   return (lhs.a*rhs.b < lhs.b*rhs.a);
 }
-
-bool operator> (Fraction lhs, Fraction rhs) {
-  lhs.simplify();
-  rhs.simplify();
+bool operator> (const Fraction lhs, const Fraction rhs) {
   return (lhs.a*rhs.b > lhs.b*rhs.a);
 }
-
-bool operator<= (Fraction lhs, Fraction rhs) {
-  lhs.simplify();
-  rhs.simplify();
+bool operator<=(const Fraction lhs, const Fraction rhs) {
   return (lhs.a*rhs.b <= lhs.b*rhs.a);
 }
-
-bool operator>= (Fraction lhs, Fraction rhs) {
-  lhs.simplify();
-  rhs.simplify();
+bool operator>=(const Fraction lhs, const Fraction rhs) {
   return (lhs.a*rhs.b >= lhs.b*rhs.a);
+}
+
+string to_string(const Fraction _val) {
+  return _val.toStr(8);
+}
+double toDouble(const Fraction _val) {
+  return _val.toDouble();
+}
+Fraction abs(const Fraction _val) {
+  Fraction n = _val;
+  n.a = n.a.abs();
+  n.b = n.b.abs();
+  return n;
+}
+cBigNumber floor(const Fraction _val) {
+  return _val.a / _val.b;
+}
+cBigNumber ceil(const Fraction _val) {
+  return -floor(-_val);
+}
+
+
+ostream& operator<<(ostream& o, const Fraction _val) {
+  return o << _val.toDouble();
+}
+istream& operator>>(istream& i, Fraction& _val) {
+  string s;
+  i >> s;
+  _val = Fraction(s);
+  return i;
+}
+
+double to_double(Fraction _val) {
+  return _val.toDouble();
 }

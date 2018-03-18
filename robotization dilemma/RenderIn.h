@@ -10,6 +10,8 @@ void ingameMenuExitButton();
 
 void joinMenuInput(string inp);
 
+void startServer(int players);
+
 void connectServer(string ip, string port, string code);
 
 void joinMenuInputButton();

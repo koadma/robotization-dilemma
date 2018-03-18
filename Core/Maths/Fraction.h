@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Keyframe.h"
+#include "../Network/Network.h"
+
+cBigNumber gcd(cBigNumber x, cBigNumber y);
 
 class Fraction {
 public:
@@ -8,157 +10,68 @@ public:
 
   Fraction();
 
-  Fraction(cBigNumber a);
-  
-  Fraction(int a);
-  
+  Fraction(int _val);
+  Fraction(long _val);
+  Fraction(long long _val);
+  Fraction(unsigned int _val);
+  Fraction(unsigned long _val);
+  Fraction(unsigned long long _val);
+
+  Fraction(cBigNumber _val);
+
   Fraction(cBigNumber a, cBigNumber b);
 
+  Fraction(float d);
   Fraction(double d);
+  Fraction(long double d);
 
   Fraction(string s);
 
-  Fraction& operator+=(const Fraction& rhs) {
-    cBigNumber na = a*rhs.b + b*rhs.a;
-    cBigNumber nb = b*rhs.b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator-=(const Fraction& rhs) {
-    cBigNumber na = a*rhs.b - b*rhs.a;
-    cBigNumber nb = b*rhs.b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator*=(const Fraction& rhs) {
-    cBigNumber na = a*rhs.a;
-    cBigNumber nb = b*rhs.b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator/=(const Fraction& rhs) {
-    cBigNumber na = a*rhs.b;
-    cBigNumber nb = b*rhs.a;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator+=(const cBigNumber& rhs) {
-    cBigNumber na = a + b*rhs;
-    cBigNumber nb = b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator-=(const cBigNumber& rhs) {
-    cBigNumber na = a - b*rhs;
-    cBigNumber nb = b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator*=(const cBigNumber& rhs) {
-    cBigNumber na = a*rhs;
-    cBigNumber nb = b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator/=(const cBigNumber& rhs) {
-    cBigNumber na = a;
-    cBigNumber nb = b*rhs;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator+=(const int& rhs) {
-    cBigNumber na = a + b*cBigNumber(rhs);
-    cBigNumber nb = b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator-=(const int& rhs) {
-    cBigNumber na = a - b*cBigNumber(rhs);
-    cBigNumber nb = b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator*=(const int& rhs) {
-    cBigNumber na = a*cBigNumber(rhs);
-    cBigNumber nb = b;
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
-  Fraction& operator/=(const int& rhs) {
-    cBigNumber na = a;
-    cBigNumber nb = b*cBigNumber(rhs);
-    a = na;
-    b = nb;
-    simplify();
-    return *this;
-  }
+  Fraction(const Fraction& _val);
 
-  cBigNumber gcd(cBigNumber x, cBigNumber y);
-
-  double operator()() const;
-  operator double() const;
-
-  Fraction& abs();
-
-  string toStr(int prec);
-
-  Fraction& simplify();
+  double toDouble() const;
+  string toStr(int prec) const;
+  
+  Fraction& simplify(); //Self simplify, and return
 
   void get(DataElement* data);
   void set(DataElement* data);
+
+  Fraction operator+=(const Fraction rhs);
+  Fraction operator-=(const Fraction rhs);
+  Fraction operator*=(const Fraction rhs);
+  Fraction operator/=(const Fraction rhs);
+  Fraction operator%=(const Fraction rhs);
 };
 
- //b rounded to length of a is a
+//b rounded to length of a is a
 bool approxEqual(Fraction a, Fraction b, int prec);
 Fraction approx(string s);
 Fraction approx(double d, int fprec);
 
-Fraction operator+ (Fraction x, Fraction y);
-Fraction operator+ (Fraction x, cBigNumber y);
-Fraction operator+ (Fraction x, int y);
+Fraction operator+ (const Fraction x, const Fraction y);
+Fraction operator- (const Fraction x, const Fraction y);
+Fraction operator- (const Fraction x);
+Fraction operator* (const Fraction x, const Fraction y);
+Fraction operator/ (const Fraction x, const Fraction y);
 
-Fraction operator- (Fraction x, Fraction y);
-Fraction operator- (Fraction x, cBigNumber y);
-Fraction operator- (Fraction x, int y);
+bool operator== (const Fraction lhs, const Fraction rhs);
+bool operator<  (const Fraction lhs, const Fraction rhs);
+bool operator>  (const Fraction lhs, const Fraction rhs);
+bool operator<= (const Fraction lhs, const Fraction rhs);
+bool operator>= (const Fraction lhs, const Fraction rhs);
 
-Fraction operator- (Fraction x);
+string to_string(const Fraction _val);
+double toDouble(const Fraction _val);
+Fraction abs(const Fraction _val);
+cBigNumber floor(const Fraction _val);
+cBigNumber ceil(const Fraction _val);
 
-Fraction operator*(Fraction x, Fraction y);
-Fraction operator*(Fraction x, cBigNumber y);
-Fraction operator*(Fraction x, int y);
+ostream& operator<<(ostream& o, const Fraction _val);
+istream& operator>>(istream& i, Fraction& _val);
 
-Fraction operator/ (Fraction x, Fraction y);
-Fraction operator/ (Fraction x, cBigNumber y);
-Fraction operator/ (Fraction x, int y);
-
-bool operator== (Fraction lhs, Fraction rhs);
-
-bool operator< (Fraction lhs, Fraction rhs);
-
-bool operator> (Fraction lhs, Fraction rhs);
-
-bool operator<= (Fraction lhs, Fraction rhs);
-
-bool operator>= (Fraction lhs, Fraction rhs);
+template<typename T>
+double to_double(T _val) {
+  return double(_val);
+}
+double to_double(Fraction _val);

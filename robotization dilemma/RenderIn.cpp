@@ -42,24 +42,16 @@ void newSingleMenuBackButton() {
 
 //Main / FFA
 void ffaMenuNewGameButton() {
-  createMainMenu();
+  Graphics::setElements(objectMenuSubWindow, "html/new_menu.xml");
 }
 void ffaMenuJoinGameButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
+  Graphics::setElements(objectMenuSubWindow, "html/join_menu.xml");
 }
 void ffaMenuBackButton() {
   createMainMenu();
 }
 
-//Main / FFA / Game
-void gameMenuJoinButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/join_menu.xml");
-}
-void gameMenuBackButton() {
-  Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
-}
-
-//Main / FFA / Game / Join
+//Main / FFA / Join
 void joinMenuInput(string inp) {
 
 }
@@ -108,7 +100,47 @@ void connectServer(string ip, string port, string code) {
   }
 }
 void joinMenuBackButton() {
-	Graphics::setElements(objectMenuSubWindow, "html/game_menu.xml");
+	Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
+}
+
+//Main / FFA / New
+void newMenuPlayerSliderInput(float val) {
+
+}
+void newMenuInputButton() {
+  int players = reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectNewMenuPlayerCount"))->val;
+
+  startServer(players);
+}
+void startServer(int players) {
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+
+  ZeroMemory(&si, sizeof(si));
+  si.cb = sizeof(si);
+  ZeroMemory(&pi, sizeof(pi));
+
+
+  if (!CreateProcess(TEXT("./Server.exe"),   // No module name (use command line)
+    (LPWSTR)(("-n " + to_string(players)).c_str()),        // Command line
+    NULL,           // Process handle not inheritable
+    NULL,           // Thread handle not inheritable
+    FALSE,          // Set handle inheritance to FALSE
+    0,              // No creation flags
+    NULL,           // Use parent's environment block
+    NULL,           // Use parent's starting directory 
+    &si,            // Pointer to STARTUPINFO structure
+    &pi)           // Pointer to PROCESS_INFORMATION structure
+  ) {
+    printf("Creating integrated server failed with code %d\n", GetLastError());
+    return;
+  }
+
+  CloseHandle(pi.hProcess);
+  CloseHandle(pi.hThread);
+}
+void newMenuBackButton() {
+  Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
 }
 
 //Main / Settings
@@ -133,8 +165,8 @@ void ingameMenuEnergyButton() {
     Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
     Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
-    plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, Fraction, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00"), "storage"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
+    plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, power_type_W, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00"), "storage"));
   }
 }
 
@@ -144,11 +176,11 @@ void ingameMenuPowerButton() {
     Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Power info: " + selectedo->name());
     Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000"), "max generated power"));
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_generatedPower), hexToInt("ffffff00"), "generated power"));
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_maxUseablePower), hexToInt("ff0000ff"), "max useable power"));
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_requestedPower), hexToInt("ffff00ff"), "requested power"));
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>>(&(selectedo->_usedPower), hexToInt("ff00ffff"), "used power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000"), "max generated power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_generatedPower), hexToInt("ffffff00"), "generated power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_maxUseablePower), hexToInt("ff0000ff"), "max useable power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_requestedPower), hexToInt("ffff00ff"), "requested power"));
+    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_usedPower), hexToInt("ff00ffff"), "used power"));
   }
 }
 void ingameMenuExitButton() {
@@ -237,10 +269,10 @@ int getCurrentMaxHealth() {
 float getCurrent(bool vel, int index) {
   if(ship->mov.size()) {
     if (vel) {
-      return ship->mov.getAt(timeNow).vel[index];
+      return ship->mov.getAt(timeNow).vel[index].toDouble();
     }
     else {
-      return ship->mov.getAt(timeNow).pos[index];
+      return ship->mov.getAt(timeNow).pos[index].toDouble();
     }
   }
   return 0;
@@ -395,11 +427,12 @@ int InitGraphics() {
   Graphics::setName("ffaMenuJoinGameButton", ffaMenuJoinGameButton);
   Graphics::setName("ffaMenuBackButton", ffaMenuBackButton);
 
-  //Main / Ffa / Game
-  Graphics::setName("gameMenuJoinButton", gameMenuJoinButton);
-  Graphics::setName("gameMenuBackButton", gameMenuBackButton);
+  //Main / Ffa / New
+  Graphics::setName("newMenuPlayerSliderInput", newMenuPlayerSliderInput);
+  Graphics::setName("newMenuInputButton", newMenuInputButton);
+  Graphics::setName("newMenuBackButton", newMenuBackButton);
 
-  //Main / Ffa / Game / Join
+  //Main / Ffa / Join
   Graphics::setName("joinMenuInputButton", joinMenuInputButton);
   Graphics::setName("joinMenuInput", joinMenuInput);
   Graphics::setName("joinMenuBackButton", joinMenuBackButton);

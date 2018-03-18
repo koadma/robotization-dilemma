@@ -981,7 +981,7 @@ inline cBigNumber& cBigNumber::unsign()
 inline cBigNumber& cBigNumber::set (const cBigNumber& b)
 {
 #ifndef _CBIGNUM_DEF_ALLOC
-  if ((e [0] | b._testnot0()) != 0)
+  if (((e && e [0]) | b._testnot0()) != 0)
 #endif//_CBIGNUM_DEF_ALLOC
   {
     checkexpand (b.length());

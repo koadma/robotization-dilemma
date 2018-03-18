@@ -151,7 +151,7 @@ template<typename T> ostream& operator<<(ostream& o, Polynomial<T>& p) {
 		}
 	}
 	if (p.Coefficient.size()) {
-		o << p.Coefficient[0] << endl;
+		o << p.Coefficient[0] END;
 	}
 	return o;
 }

@@ -12,10 +12,10 @@ public:
   int type();
 
   power_type_W getDisplayMaxPower(time_type_s time) { ///Max generatable power, max usable, whatever applicable
-    return _maxGeneratedPower.getAt(time)();
+    return _maxGeneratedPower.getAt(time);
   }
   power_type_W getDisplayPower(time_type_s time) {
-    return _generatedPower.getAt(time)();
+    return _generatedPower.getAt(time);
   }
 
 #ifdef M_SERVER

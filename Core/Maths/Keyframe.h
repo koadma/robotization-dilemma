@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Network/Network.h"
+#include "Polynomial.h"
  
 template<typename T>
 struct HasGetMethod
@@ -126,18 +126,17 @@ public:
   linear(V val, T at) : _val(val), _at(at), _change(dV(0)) {}
   linear(V val, T at, dV change) : _val(val), _at(at), _change(change) {}
  
-  template<typename T>
   V getAt(T& _time) {
     return _val + V((_time - _at) * T(_change));
   }
 
-  template<typename T> void set(DataElement* data, T& val, std::true_type)
+  template<typename X> void set(DataElement* data, X& val, std::true_type)
   {
     val.set(data);
   }
-  template<typename T> void set(DataElement* data, T& val, std::false_type)
+  template<typename X> void set(DataElement* data, X& val, std::false_type)
   {
-   val = data->_core->toType<T>();
+   val = data->_core->toType<X>();
   }
   void set(DataElement* data)
   {
@@ -146,13 +145,13 @@ public:
     set<dV>(data->_children[2], _change, std::integral_constant<bool, HasSetMethod<dV>::Has>());
   }
 
-  template<typename T>void get(DataElement* data, T val, std::true_type)
+  template<typename X>void get(DataElement* data, X val, std::true_type)
   {
     val.get(data);
   }
-  template<typename T> void get(DataElement* data, T val, std::false_type)
+  template<typename X> void get(DataElement* data, X val, std::false_type)
   {
-    data->_core->fromType<T>(val);
+    data->_core->fromType<X>(val);
   }
   void get(DataElement* data)
   {
@@ -195,16 +194,16 @@ public:
     }
     else {
       if(_frames.size()) {
-        cout << "Asked " << _time << ", first " << getFirst() << endl;
+        LOG WARN MATH "Asked " << _time << ", first " << getFirst() END;
       } else {
-        cout << "Asked " << _time << ", no frames" << endl;
+        LOG WARN MATH "Asked " << _time << ", no frames" END;
       }
       _CrtDbgBreak();
       return U();
     }
   }
   double getDoubleAt(double _time) {
-    return double(getAt(_time));
+    return to_double(getAt(_time));
   }
   void get(DataElement* data) {
     for (auto it : _frames) {

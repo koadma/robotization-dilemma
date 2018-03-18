@@ -41,7 +41,7 @@ void saveKeybinds(string filename) {
     string name = it.second;
     replaceChar(name, ' ', '_');
 
-    binds << id << " " << name << " " << it.first._type << " " << it.first._keycode << endl;
+    binds << id << " " << name << " " << it.first._type << " " << it.first._keycode END;
 
     id++;
   }

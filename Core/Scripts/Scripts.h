@@ -309,7 +309,7 @@ public:
     MULTI = 3,
     DIV = 4,
     POW = 5,
-    LOG = 6,
+    LOGAB = 6,
     MOD = 7,
     ATAN2 = 8,
     L = 9,

@@ -41,10 +41,10 @@ public:
     else {
       mVec3 origin = emitter.getAt(gEmissionTime).pos;
       res.eqns['t'] =
-        Equation<double>(vector<pair<double, string> >{{ 1, "x" }, { -origin.x, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "x" }, { -origin.x, "" }}) +
-        Equation<double>(vector<pair<double, string> >{{ 1, "y" }, { -origin.y, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "y" }, { -origin.y, "" }}) +
-        Equation<double>(vector<pair<double, string> >{{ 1, "z" }, { -origin.z, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "z" }, { -origin.z, "" }}) +
-        Equation<double>(vector<pair<double, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * Equation<double>(vector<pair<double, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * SOL * SOL * (-1.0);
+        Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "x" }, { -origin.x, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "x" }, { -origin.x, "" }}) +
+        Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "y" }, { -origin.y, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "y" }, { -origin.y, "" }}) +
+        Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "z" }, { -origin.z, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "z" }, { -origin.z, "" }}) +
+        Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * (SOL * SOL * -1.0);
     }
     return res;
   }

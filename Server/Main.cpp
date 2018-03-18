@@ -3,6 +3,9 @@
 NetworkS* newClientBind;
 thread* newClientThread;
 
+string port;
+int players;
+
 void detachCreateClientBind() {
   if (newClientBind && !newClientThread->joinable()) {
     throw 1;
@@ -15,7 +18,7 @@ void detachCreateClientBind() {
 }
 
 void createClientBind() {
-  newClientBind = new NetworkS("1111", loginRecv);
+  newClientBind = new NetworkS(port, loginRecv);
 }
 
 bool isCompatible(int va, int vb, int vc) {
@@ -78,7 +81,7 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
 
       thisptr->SendData(de, PacketLogin);
 
-      cout << "Client " << newShip->code << " accepted!" << endl;
+      LOG INFO GAME "Client " << newShip->code << " accepted!" END;
 
       game->tryGameStart();
 
@@ -118,7 +121,7 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
 
           detachCreateClientBind();
 
-          cout << "Client " << code << " re-connected!" << endl;
+          LOG INFO "Client " << code << " re-connected!" END;
 
           return 0;
         }
@@ -138,7 +141,7 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
 
     //this_thread::sleep_for(10s);
 
-    cout << "Client rejected " << loginState << "!" << endl;
+    LOG WARN "Client rejected " << loginState << "!" END;
 
     return 1;
   }
@@ -151,7 +154,18 @@ int main(int argc, char** argv)
 {  
   ran1(-time(0));
 
-  game = new Game(2);
+  port = "1111";
+  players = 2;
+
+  for (int opt = 1; opt<argc; ++opt) {
+    if (!strcmp(argv[opt], "-p"))      port = atoi(argv[++opt]);
+    else if (!strcmp(argv[opt], "-n")) players = atoi(argv[++opt]);
+    else { cerr << "ERROR: bad cmd line arg: " << argv[opt] END; exit(2); }
+  }
+
+  LOG INFO MISC "Starting server on port " << port << " with " << players << " players" END;
+
+  game = new Game(players);
   detachCreateClientBind(); //Begin accepting clients
 
   int n;

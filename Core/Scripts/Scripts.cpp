@@ -387,7 +387,7 @@ ScriptData* ScriptIMath::run(ScriptData& _args) {
   case POW:
     s->_data = new ScriptDataNumber(pow(((ScriptDataNumber*)(res1->_data))->_num , ((ScriptDataNumber*)(res2->_data))->_num));
     break;
-  case LOG:
+  case LOGAB:
     s->_data = new ScriptDataNumber(log(((ScriptDataNumber*)(res1->_data))->_num) + log(((ScriptDataNumber*)(res2->_data))->_num));
     break;
   case MOD:
@@ -460,7 +460,7 @@ void ScriptIMath::load(xml_node<> *data) {
       _oper = POW;
     }
     if (oper == "log") {
-      _oper = LOG;
+      _oper = LOGAB;
     }
     if (oper == "%") {
       _oper = MOD;
@@ -1092,7 +1092,7 @@ void ScriptIMath::render(ScriptGUI* base, int depth) {
     case Operation::POW:
       operm = '^';
       break;
-    case Operation::LOG:
+    case Operation::LOGAB:
       operm = '_';
       operb = "LG";
       break;

@@ -21,7 +21,7 @@ public:
   list<Object*> objects;
   list<Sighting*> sightings;
 
-  FlowGraph<energy_type_J, Fraction, time_type_s> energySystem;
+  FlowGraph<energy_type_J, power_type_W, time_type_s> energySystem;
   enum ShipClass {
     SCError = 0,
     SCTerrainCruiser = 1,
@@ -50,8 +50,8 @@ public:
 
   time_type_s lastEvtTime;
 
-  list< pair<double, pair<Object*, Path*>>> intersect(Path* p) {
-    list< pair<double, pair<Object*, Path*>>> res;
+  list< pair<time_type_s, pair<Object*, Path*>>> intersect(Path* p) {
+    list< pair<time_type_s, pair<Object*, Path*>>> res;
     auto it = objects.begin();
     while (it != objects.end()) {
       res.splice(res.end(), (*it)->intersect(p));
@@ -121,7 +121,7 @@ public:
 
   bool packetRecv(DataElement *Data, int Id, NetworkS* thisptr);
 
-  void collectPath(list<Path*> &addTo, float time);
+  void collectPath(list<Path*> &addTo, time_type_s time);
 
   bool loadShip(string filename);
   bool loadShip(xml_node<>* data);
@@ -134,12 +134,12 @@ public:
 
   void setSidebar();
   void setSidebar(vec3<double> ori, vec3<double> dir) {
-    list< pair<double, pair<Object*, Path*>>> inters;
+    list< pair<time_type_s, pair<Object*, Path*>>> inters;
 
     auto it = objects.begin();
 
     while (it != objects.end()) {
-      list< pair<double, pair<Object*, Path*>>> temp = (*it)->getIntersect(ori, dir);
+      list< pair<time_type_s, pair<Object*, Path*>>> temp = (*it)->getIntersect(ori, dir);
       inters.splice(inters.end(), temp);
       ++it;
      }

@@ -31,7 +31,7 @@ public:
   }*/
 
   energy_type_J getDisplayMaxEnergy(time_type_s time) { ///Max stored energy, used in an operation, whatever applicable
-    return _maxStorage.getAt(time)();
+    return _maxStorage.getAt(time);
 }
   energy_type_J getDisplayEnergy(time_type_s time) {
     return _energySystem->_val.getAt(time);
@@ -52,7 +52,7 @@ public:
   }
 
   void shoot(time_type_s time) {
-    _shots.push_back(make_tuple(time, _tempE, _tempD.norm() * SOL, false));
+    _shots.push_back(make_tuple(time, _tempE, _tempD * (SOL / _tempD.length()), false));
     #ifdef M_CLIENT
     reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarEnergyInput"))->text = "0";
     setEnergy(0);

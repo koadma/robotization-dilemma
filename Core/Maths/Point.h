@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BigFloat.h"
+#include "constants.h"
 
 template<typename T> class vec3;
 //typedef vec3<float>           fVec3;
@@ -24,9 +24,8 @@ public:
   vec3() : x(0), y(0), z(0) {}
   vec3(T value) : x(value), y(value), z(value) {};
   vec3(T ax, T ay, T az) : x(ax), y(ay), z(az) {};
-  /*vec3(proxy p) : x(*p.px), y(*p.py), z(*p.pz) {};*/
   template<typename U> vec3(vec3<U> c)
-    : x((T)c.x), y((T)c.y), z((T)c.z) {};
+    : x(T(c.x)), y(T(c.y)), z(T(c.z)) {};
 
   vec3<T> & operator+=(vec3<T> rhs) {
     x += rhs.x; y += rhs.y; z += rhs.z;
@@ -46,6 +45,10 @@ public:
   }
   vec3<T> & operator/=(vec3<T> rhs) {
     x /= rhs.x; y /= rhs.y; z /= rhs.z;
+    return *this;
+  }
+  vec3<T> & operator/=(T rhs) {
+    x /= rhs; y /= rhs; z /= rhs;
     return *this;
   }
   vec3<T> & operator%=(vec3<T> rhs) {
@@ -78,6 +81,7 @@ public:
   vec3<T> operator* (vec3<T> rhs) const { return vec3<T>(*this) *= rhs; }
   vec3<T> operator* (T rhs) const { return vec3<T>(*this) *= rhs; }
   vec3<T> operator/ (vec3<T> rhs) const { return vec3<T>(*this) /= rhs; }
+  vec3<T> operator/ (T rhs) const { return vec3<T>(*this) /= rhs; }
   vec3<T> operator% (vec3<T> rhs) const { return vec3<T>(*this) %= rhs; }
   vec3<T> operator& (vec3<T> rhs) const { return vec3<T>(*this) &= rhs; }
   vec3<T> operator| (vec3<T> rhs) const { return vec3<T>(*this) |= rhs; }
@@ -121,8 +125,8 @@ public:
   T sqrlen() const {
     return x*x + y*y + z*z;
   }
-  double length() const {
-    return sqrt(double(this->sqrlen()));
+  longDouble length() const {
+    return sqrt(this->sqrlen());
   }
   vec3<T> norm() {
     *this /= length();
@@ -149,7 +153,7 @@ public:
   }
 
   fVec3 at(float t) { //Only for polynomial vectors
-    return {x.at(t), y.at(t), z.at(t)};
+    return {to_double(x.at(t)), to_double(y.at(t)), to_double(z.at(t))};
   }
 
   vec3<T> randomize(T r)
@@ -234,13 +238,13 @@ template<typename T> inline float distance(vec3<T> lhs, vec3<T> rhs) {
 
 template<typename T> vector<vec3<T>> randstartpos(T radius)
 {
-  double modrad = radius*(0.25*ran1() + 0.5);
-  double modx1 = radius*ran1() / 8;
-  double modx2 = radius*ran1() / 8;
-  double mody1 = radius*ran1() / 8;
-  double mody2 = radius*ran1() / 8;
-  double modz1 = radius*ran1() / 8;
-  double modz2 = radius*ran1() / 8;
+  T modrad = radius*(0.25*ran1() + 0.5);
+  T modx1 = radius*ran1() / 8;
+  T modx2 = radius*ran1() / 8;
+  T mody1 = radius*ran1() / 8;
+  T mody2 = radius*ran1() / 8;
+  T modz1 = radius*ran1() / 8;
+  T modz2 = radius*ran1() / 8;
 
   vec3<T> firstship(modrad + modx1, modrad + mody1, modrad + modz1);
   vec3<T> secondship(-modrad - modx2, -modrad - mody2, -modrad - modz2);

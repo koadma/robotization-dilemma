@@ -3,7 +3,7 @@
 
 float MainGameCanvas::camcx = 0, MainGameCanvas::camcy = 0, MainGameCanvas::camcz = 0; //World coordiante center
 float MainGameCanvas::camphi = 0, MainGameCanvas::camtheta = 0; //phi: x-z, from x, positive to z. theta: from xz to y.
-float MainGameCanvas::d = 2*SOL;
+float MainGameCanvas::d = 2*SOL.toDouble();
 int MainGameCanvas::mxold;
 int MainGameCanvas::myold;
 int MainGameCanvas::mousebuttons = 0; //left, center, right
@@ -241,9 +241,9 @@ int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_locat
     }
     if (checkKey(KeyCenterShip, evt._key)) {
       mVec3 m = ship->mov.getAt(timeNow).pos;
-      camcx = m.x;
-      camcy = m.y;
-      camcz = m.z;
+      camcx = m.x.toDouble();
+      camcy = m.y.toDouble();
+      camcz = m.z.toDouble();
       return 1;
     }
     if (checkKey(KeyCenterWorld, evt._key)) {
@@ -254,9 +254,9 @@ int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_locat
     }
     if (checkKey(KeyCenterSighting, evt._key) && selecteds) {
       mVec3 m = selecteds->getAt(timeNow).pos;
-      camcx = m.x;
-      camcy = m.y;
-      camcz = m.z;
+      camcx = m.x.toDouble();
+      camcy = m.y.toDouble();
+      camcz = m.z.toDouble();
       return 1;
     }
     //glutPostRedisplay();

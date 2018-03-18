@@ -14,7 +14,7 @@
 		startvalue = "0"
 		quanta = "0.001"
 		callback = "ingameTimeSliderInput"
-	>Play Story Mode</slider>
+	></slider>
 	<div
 		id = "objectMainGameCanvasContainer"
 		minrelx = "0.0"

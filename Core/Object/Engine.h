@@ -14,10 +14,10 @@ public:
   int type() { return Type::Engine; }
 
   power_type_W getDisplayMaxPower(time_type_s time) {
-    return _maxUseablePower.getAt(time)();
+    return _maxUseablePower.getAt(time);
   }
   power_type_W getDisplayPower(time_type_s time) {
-    return _usedPower.getAt(time)();
+    return _usedPower.getAt(time);
   }
 
   mpssVec3 getAccel(time_type_s time) {

@@ -52,13 +52,6 @@ void solve2(float a, float b, float c, float sol[2], int& numOfSol)
 
 void terminalClear()
 {
-  /*
-  //user can scroll back on some terminal
-  for (int i=0; i<50; i++)
-  {
-    cout << '\n';
-  }
-  */
   #ifdef _WIN32
     system("cls"); //when i cross-compile and run it in wine, this does not work fsr
   #else

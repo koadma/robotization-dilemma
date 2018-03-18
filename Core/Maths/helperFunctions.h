@@ -1,7 +1,5 @@
 #pragma once
 
-#include "constants.h"
-
 #include <algorithm>
 #include <cmath>
 #include <ciso646> //defines and, or, not for visual studio, does nothing elsewhere.
@@ -307,7 +305,7 @@ vector<T> solveQuadratic(T &a, T &b, T &c)
     }
   }
 
-  double discriminant = b * b - 4.0 * a * c;
+  longDouble discriminant = b * b - 4.0 * a * c;
   if (discriminant >= 0.0)
   {
     discriminant = sqrt(discriminant);
@@ -323,7 +321,7 @@ vector<T> solveCubic(T &a, T &b, T &c, T &d)
   if (a == 0.0/* || abs(a / b) < 1.0e-6*/)
     return solveQuadratic(b, c, d);
 
-  double B = b / a, C = c / a, D = d / a;
+  longDouble B = b / a, C = c / a, D = d / a;
 
   T Q = (B*B - C*3.0) / 9.0, QQQ = Q*Q*Q;
   T R = (2.0*B*B*B - 9.0*B*C + 27.0*D) / 54.0, RR = R*R;
@@ -435,7 +433,7 @@ vector<T> solveQuartic(T &a, T &b, T &c, T &d, T &e)
       }
     }
     else {
-      cout << "ERROR" << endl;
+      LOG ERROR MATH "Quartic root error:" << a << " " << b << " " << c << " " << d << " " << e END;
     }
     //fine derivative correction
     vector<T> corres;
@@ -455,7 +453,7 @@ vector<T> solveQuartic(T &a, T &b, T &c, T &d, T &e)
         corres.push_back(res[i]);
       }
       else {
-        cout << "ROOT REMOVED";
+        LOG INFO MATH "Quartic root removed." << a << " " << b << " " << c << " " << d << " " << e END;
       }
     }
     return corres;
@@ -491,3 +489,84 @@ uint32_t low(uint64_t a);
 uint32_t high(uint64_t a);
 
 extern mutex netlock; //Locking for the network thread(s)
+
+
+constexpr long double operator"" _deg(long double deg) {
+  return deg*3.141592 / 180;
+}
+
+
+const int VersionA = 0;
+const int VersionB = 7;
+const int VersionC = 0;
+
+
+enum LoginError {
+  LoginErrorOk = 0,
+  LoginErrorInvalidCredentials = 1,
+  LoginErrorGameFull = 2,
+  LoginErrorVersionError = 3,
+  LoginErrorProtocolError = 4,
+  LoginErrorInvalidAuth = 5,
+  LoginErrorTryRejoin = 6
+};
+
+enum CommandIds {
+  CommandAccel = 1,
+  CommandShoot = 2,
+};
+
+enum PacketIds {
+  PacketDisconnect = 0,
+  PacketLogin = 1,
+  PacketGameOver = 2,
+  PacketNewRound = 3,
+  PacketCommand = 4,
+  PacketCommit = 5,
+  PacketSensor = 6,
+  PacketCommandHistory = 7,
+  PacketShipData = 8,
+};
+
+enum KeyConfigID {
+  KeyCameraUp = 0,
+  KeyCameraLeft = 1,
+  KeyCameraDown = 2,
+  KeyCameraRight = 3,
+  KeyCenterWorld = 4,
+  KeyCenterShip = 5,
+  KeyCenterSighting = 6,
+  KeyPlotZoomX = 7,
+  KeyPlotZoomY = 8,
+  KeyPlotReset = 9
+};
+
+
+#define THREE_PI    9.4247779607694
+#define TWO_PI      6.2831853071796
+#define PI          3.1415926535898
+#define HALF_PI     1.5707963267949
+#define THIRD_PI    1.0471975511966
+#define QUARTER_PI  0.7853981633974
+
+#define E           2.71828182845904523536028747135266249775724709369995
+
+#define SolvePrec 0.000001
+#define MaxTries 10
+
+#define LOG cout <<
+#define END << endl
+#define FATAL "[FATAL]\t"    << 
+#define LERROR "[ERROR]\t"    << 
+#define WARN  "[WARN]\t"     << 
+#define INFO  "[INFO]\t"     << 
+
+#define NETWORK "[NET]\t"    <<
+#define MISC "[MISC]\t"      <<
+#define MATH  "[MATH]\t"     << 
+#define GRAPHICS "[GUI]\t"   << 
+#define GAME "[GAME]\t"      << 
+#define SHIP "[SHIP]\t"      <<
+
+#define SightingSize 0.02
+#define ShipSize 0.03
