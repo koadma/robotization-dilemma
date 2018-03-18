@@ -1,11 +1,11 @@
 #include "BigFloat.h"
 
-longDouble sqrt(longDouble _val, unsigned int _prec) { //precision in 1/2^_prec
+Fraction sqrt(Fraction _val, unsigned int _prec) { //precision in 1/2^_prec
   if (_val < 0) {
     throw 1;
     return 0;
   }
-  longDouble _lower, _upper, _mid;
+  Fraction _lower, _upper, _mid;
   _mid.a = _val.a;
   _mid.a.sqrt();
   _lower.a = _mid.a;
@@ -16,9 +16,9 @@ longDouble sqrt(longDouble _val, unsigned int _prec) { //precision in 1/2^_prec
   _upper.b = _mid.b;
   _lower.b = _mid.b + 1;
 
-  longDouble _diff = _mid*_mid - _val;
+  Fraction _diff = _mid*_mid - _val;
 
-  longDouble precSqr;
+  Fraction precSqr;
   precSqr.a = 1;
   precSqr.b = 2;
   precSqr.b.pow(_prec);
@@ -35,8 +35,8 @@ longDouble sqrt(longDouble _val, unsigned int _prec) { //precision in 1/2^_prec
   return _mid;
 }
 
-longDouble pow(longDouble _val, int n) {
-  longDouble res;
+Fraction pow(Fraction _val, int n) {
+  Fraction res;
   if (n >= 0) {
     res.a = _val.a;
     res.a.pow(n);
@@ -51,12 +51,12 @@ longDouble pow(longDouble _val, int n) {
   return res;
 }
 
-longDouble minv(const longDouble _a, const longDouble _b) {
+Fraction minv(const Fraction _a, const Fraction _b) {
   if(_a < _b) return _a;
   return _b;
 }
 
-longDouble maxv(const longDouble _a, const longDouble _b) {
+Fraction maxv(const Fraction _a, const Fraction _b) {
   if (_a > _b) return _a;
   return _b;
 }

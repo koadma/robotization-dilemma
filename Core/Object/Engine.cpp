@@ -59,7 +59,7 @@ void Engine::energyCallbackV(time_type_s time, Game* g) {
   
   if(_accelRequest.size() && _accelRequest.getFirst() <= time) {
     mpssVec3 acc = {0,0,0};
-    if(_accelRequest.getAt(time)().length() > 0.00001) {
+    if(_accelRequest.getAt(time)().length() > 0) {
       acc = _accelRequest.getAt(time)().norm() * power2accel(power);
     }
     _accel.addFrame(time, acc);

@@ -61,7 +61,7 @@ Fraction::Fraction(double d) {
   *this = approx(d, 10);
 }
 Fraction::Fraction(long double d) {
-  *this = approx(d, 15);
+  *this = approx(d, 10);
 }
 
 Fraction::Fraction(string s) {
@@ -173,7 +173,7 @@ Fraction approx(string s) {
   Fraction maxe(1, 1);
   Fraction fract;
   fract.a = strTo<cBigNumber>(fractional);
-  fract.b = cBigNumber(10).pow(fractional.length());
+  fract.b = pow(10l, fractional.length());
   bool fe = false;
   if (approxEqual(fract, mine, -int(fractional.length()))) {
     fe = true;
@@ -203,7 +203,18 @@ Fraction approx(string s) {
   return p;
 }
 Fraction approx(double d, int fprec) {
-  return approx(to_string(d, fprec));
+  cBigNumber integ = floor(d);
+  d -= floor(d);
+  Fraction fract;
+  fract.b = cBigNumber(10).pow(fprec);
+  fract.a = 0;
+  for (int i = 0; i < fprec; i++) {
+    d*=10;
+    fract.a *= 10;
+    fract.a += int(d);
+    d -= floor(d);
+  }
+  return fract + integ;
 }
 
 void Fraction::get(DataElement* data) {

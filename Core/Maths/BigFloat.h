@@ -4,7 +4,7 @@
 
 typedef Fraction longDouble;
 
-longDouble sqrt(longDouble _val, unsigned int _prec = 64);
-longDouble pow(longDouble _val, int n);
-longDouble minv(const longDouble _a, const longDouble _b);
-longDouble maxv(const longDouble _a, const longDouble _b);
+Fraction sqrt(Fraction _val, unsigned int _prec = 64);
+Fraction pow(Fraction _val, int n);
+Fraction minv(const Fraction _a, const Fraction _b);
+Fraction maxv(const Fraction _a, const Fraction _b);
