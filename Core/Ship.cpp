@@ -273,7 +273,7 @@ Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bo
       if (it->type() == Object::Laser) {
         Laser* lit = (Laser*)it;
         sVec3 dir;
-        bool sf = surefire(mov, s->_keyframes, time, dir);
+        bool sf = surefire(mov, s->_keyframes, time, lit->_relativePos, dir);
         lit->setDir(dir);
         lit->setEnergy(100000);
         lit->shoot(time);
@@ -505,12 +505,28 @@ void Ship::drawObjects(float camcx, float camcy, float camcz, float d, bool worl
       glLineWidth(2.0);
       glBegin(GL_LINE_STRIP);
       glVertex3d(camcx/d, camcy / d, camcz / d);
-      glVertex3d((mov.getAt(timeNow).pos.x/d).toDouble(), camcy / d, (mov.getAt(timeNow).pos.z/d).toDouble());
-      glVertex3d((mov.getAt(timeNow).pos.x/d).toDouble(), (mov.getAt(timeNow).pos.y/d).toDouble(), (mov.getAt(timeNow).pos.z/d).toDouble());
+      glVertex3d(
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.x)/d,
+        (camcy / d),
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.z)/d
+        );
+      glVertex3d(
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.x) / d,
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.y) / d,
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.z) / d
+        );
       glEnd();
-      glTranslated((mov.getAt(timeNow).pos.x / d).toDouble(), (mov.getAt(timeNow).pos.y / d).toDouble(), (mov.getAt(timeNow).pos.z / d).toDouble());
+      glTranslated(
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.x) / d,
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.y) / d,
+        to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.z) / d
+        );
       glutSolidSphere(ShipSize, 20,20);
-      glTranslated((-mov.getAt(timeNow).pos.x / d).toDouble(), (-mov.getAt(timeNow).pos.y / d).toDouble(),(- mov.getAt(timeNow).pos.z / d).toDouble());
+      glTranslated(
+        -to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.x) / d,
+        -to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.y) / d,
+        -to_doubleT<double, distance_type_m>(mov.getAt(timeNow).pos.z) / d
+        );
       for (auto&& it : objects) {
         it->drawObject(camcx, camcy, camcz, d, timeNow, worldView);
       }
@@ -725,24 +741,24 @@ Ship::~Ship() {
 
 }
 
-bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction) {
+bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, mVec3 posShift, sVec3 &direction) {
   //direction.randomize(100);
   //return fmodf(when, 0.5)<0.25;
   Movement m = me.getAt(when);
   Movement e = (--enemy._frames.end())->second;
   time_type_s t = (--enemy._frames.end())->first;
-  result res = surefire1(t, e.vel, e.pos, when, m.pos, MAX_ACCEL, e.radius);
+  result res = surefire1(t, e.vel, e.pos, when, m.pos + posShift, MAX_ACCEL, e.radius);
   direction = res.dir;
   return res.answ;
 }
 
-bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, sVec3 &direction) {
+bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, mVec3 posShift, sVec3 &direction) {
   //direction.randomize(100);
   //return fmodf(when, 0.5)<0.25;
   Movement m = me.getAt(when);
   Movement e = (--enemy._frames.end())->second;
   time_type_s t = (--enemy._frames.end())->first;
-  result res = surefire1(t, e.vel, e.pos, when, m.pos, MAX_ACCEL, e.radius);
+  result res = surefire1(t, e.vel, e.pos, when, m.pos + posShift, MAX_ACCEL, e.radius);
   direction = res.dir;
   return res.answ;
 }

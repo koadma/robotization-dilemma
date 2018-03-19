@@ -27,10 +27,10 @@ public:
   typename map<T,V>::iterator _iter;
   keyframe<V,U,T>* _data;
   double getX() {
-    return to_double(_iter->first);
+    return to_doubleT<double, T>(_iter->first);
   }
   virtual double getY(double time) {
-    return to_double(_iter->second.getAt(T(time)));
+    return to_doubleT<double,U>(_iter->second.getAt(to_doubleT<T,double>(time)));
   }
   bool next() {
     ++_iter;

@@ -2,7 +2,9 @@
 
 #include "Fraction.h"
 
-typedef Fraction longDouble;
+typedef long double longDouble;
+
+typedef Fraction closedLongDouble;
 
 Fraction sqrt(Fraction _val, unsigned int _prec = 64);
 Fraction pow(Fraction _val, int n);

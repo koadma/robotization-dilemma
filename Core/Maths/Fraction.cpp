@@ -55,13 +55,13 @@ Fraction::Fraction(cBigNumber _val) {
 }
 
 Fraction::Fraction(float d) {
-  *this = approx(d, 5);
+  *this = approx(d, 8);
 }
 Fraction::Fraction(double d) {
-  *this = approx(d, 10);
+  *this = approx(d, 16);
 }
 Fraction::Fraction(long double d) {
-  *this = approx(d, 10);
+  *this = approx(d, 24);
 }
 
 Fraction::Fraction(string s) {
@@ -321,6 +321,15 @@ istream& operator>>(istream& i, Fraction& _val) {
   return i;
 }
 
-double to_double(Fraction _val) {
+template <>
+long double to_doubleT<long double, Fraction>(Fraction _val) {
+  return _val.toDouble();
+}
+template <>
+double to_doubleT<double, Fraction>(Fraction _val) {
+  return _val.toDouble();
+}
+template <>
+float to_doubleT<float, Fraction>(Fraction _val) {
   return _val.toDouble();
 }

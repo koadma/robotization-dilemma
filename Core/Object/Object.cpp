@@ -310,10 +310,18 @@ void Object::drawObject(float camcx, float camcy, float camcz, float d, time_typ
   if(worldView) {
     drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
   } else {
-    glTranslated(_relativePos.x.toDouble(), _relativePos.y.toDouble(), _relativePos.z.toDouble());
+    glTranslated(
+      to_doubleT<double, distance_type_m>(_relativePos.x),
+      to_doubleT<double, distance_type_m>(_relativePos.y),
+      to_doubleT<double, distance_type_m>(_relativePos.z)
+      );
     setColor(0xffdf0000 + int(0xdf * _health.getAt(time) / float(_maxHealth.getAt(time))) + 0x100 * int(0xdf * _health.getAt(time) / float(_maxHealth.getAt(time))));
-    glutSolidSphere(_radius.toDouble(), 20, 20);
-    glTranslated(-_relativePos.x.toDouble(), -_relativePos.y.toDouble(), -_relativePos.z.toDouble());
+    glutSolidSphere(to_doubleT<double, distance_type_m>(_radius), 20, 20);
+    glTranslated(
+      to_doubleT<double, distance_type_m>(-_relativePos.x),
+      to_doubleT<double, distance_type_m>(-_relativePos.y),
+      to_doubleT<double, distance_type_m>(-_relativePos.z)
+      );
     drawObjectVirt(camcx, camcy, camcz, d, time, worldView);
   }
 }
@@ -340,7 +348,7 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
     _health.addFrame(time,
       value<int>(max(
         0,
-        _health.getAt(time) - int((ps->energy / 50).toDouble())
+        _health.getAt(time) - int(to_doubleT<double, energy_type_J>(ps->energy) / 50)
         ))); //TODO BETTER
     ps->energy -= 10000;
     ps->energy = max(0, ps->energy);

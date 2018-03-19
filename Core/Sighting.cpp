@@ -144,13 +144,33 @@ void Sighting::drawSighting(mVec3 viewCenter, float d, vel_type_mpers maxVel, ti
       setColor(0xffff8080);
       glLineWidth(1.0);
     }
-    glVertex3d((viewCenter.x/d).toDouble(), (viewCenter.y/d).toDouble(), (viewCenter.z/d).toDouble());
-    glVertex3d((now.pos.x/d).toDouble(), (viewCenter.y/d).toDouble(), (now.pos.z/d).toDouble());
-    glVertex3d((now.pos.x/d).toDouble(), (now.pos.y/d).toDouble(), (now.pos.z/d).toDouble());
+    glVertex3d(
+      to_doubleT<double, distance_type_m>(viewCenter.x) / d,
+      to_doubleT<double, distance_type_m>(viewCenter.y) / d,
+      to_doubleT<double, distance_type_m>(viewCenter.z) / d
+      );
+    glVertex3d(
+      to_doubleT<double, distance_type_m>(now.pos.x) / d,
+      to_doubleT<double, distance_type_m>(viewCenter.y) / d,
+      to_doubleT<double, distance_type_m>(now.pos.z) / d
+      );
+    glVertex3d(
+      to_doubleT<double, distance_type_m>(now.pos.x) / d,
+      to_doubleT<double, distance_type_m>(now.pos.y) / d,
+      to_doubleT<double, distance_type_m>(now.pos.z) / d
+      );
     glEnd();
-    glTranslated((now.pos.x / d).toDouble(), (now.pos.y / d).toDouble(), (now.pos.z / d).toDouble());
+    glTranslated(
+      to_doubleT<double, distance_type_m>(now.pos.x) / d,
+      to_doubleT<double, distance_type_m>(now.pos.y) / d,
+      to_doubleT<double, distance_type_m>(now.pos.z) / d
+      );
     glutSolidSphere(SightingSize, 20, 20);
-    glTranslated((-now.pos.x / d).toDouble(), (-now.pos.y / d).toDouble(), (-now.pos.z / d).toDouble());
+    glTranslated(
+      -to_doubleT<double, distance_type_m>(now.pos.x) / d,
+      -to_doubleT<double, distance_type_m>(now.pos.y) / d,
+      -to_doubleT<double, distance_type_m>(now.pos.z) / d
+      );
   }
 }
 

@@ -26,7 +26,7 @@ public:
 
   bool _real;
 
-  FlowEdge(D flow, V capacity, FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, bool real = false)
+  FlowEdge(D flow, D capacity, FlowVertex<V, D, T>* u, FlowVertex<V, D, T>* v, bool real = false)
   {
     _totalFlow = D(0);
     _flow = flow;
@@ -415,10 +415,10 @@ pair<vector<T>, V> FlowGraph<V, D, T>::goTo(T time, FlowVertex<V, D, T>* chg, V 
         change = max(D(0), change);
       }
       if (change > D(0)) {
-        endtimes.push_back(time + (it->_maxVal - nval) / V(change));
+        endtimes.push_back(time + to_doubleT<time_type_s, V>(it->_maxVal - nval) / to_doubleT<T, D>(change));
       }
       if (change < D(0)) {
-        endtimes.push_back(time + (V(0) - nval) / V(change));
+        endtimes.push_back(time + to_doubleT<time_type_s, V>(V(0) - nval) / to_doubleT<T, D>(change));
       }
       
       

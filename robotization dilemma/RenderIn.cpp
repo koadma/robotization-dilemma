@@ -165,7 +165,7 @@ void ingameMenuEnergyButton() {
     Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
     Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
-    plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
+    plt->plotData.push_back(new PlotLineVUT<value<energy_type_J>, energy_type_J>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
     plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, power_type_W, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00"), "storage"));
   }
 }
@@ -269,10 +269,10 @@ int getCurrentMaxHealth() {
 float getCurrent(bool vel, int index) {
   if(ship->mov.size()) {
     if (vel) {
-      return ship->mov.getAt(timeNow).vel[index].toDouble();
+      return to_doubleT<float, vel_type_mpers>(ship->mov.getAt(timeNow).vel[index]);
     }
     else {
-      return ship->mov.getAt(timeNow).pos[index].toDouble();
+      return to_doubleT<float, distance_type_m>(ship->mov.getAt(timeNow).pos[index]);
     }
   }
   return 0;
@@ -345,7 +345,7 @@ energy_type_J getCurrentStoredEnergy() {
 string isSurefire() {
   if (selecteds != NULL && selectedo != NULL && selectedo->type() == Object::Laser) {
     sVec3 sdir;
-    bool b = surefire(ship->mov, selecteds->_keyframes, timeNow, sdir);
+    bool b = surefire(ship->mov, selecteds->_keyframes, timeNow, ((Laser*)selectedo)->_relativePos, sdir);
     //if (b) {
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputX"))->text = to_string(sdir.x);
       reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarDirInputY"))->text = to_string(sdir.y);

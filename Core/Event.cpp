@@ -166,7 +166,7 @@ void ThermalRadiation::applyVV(Game *g) {
   b->bsource = Bubble_Thermal;
   b->btype = Bubble_Row_Border;
   b->emitter = _o->getMovement(_time);
-  b->energy = _o->getUsedPower(_time);
+  b->energy = to_doubleT<energy_type_J>(_o->getUsedPower(_time));
   b->gEmissionTime = _time;
   b->originID = _o->getId();
 

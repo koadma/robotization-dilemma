@@ -4,7 +4,7 @@
 
 typedef longDouble time_type_s;
 typedef longDouble energy_type_J;
-typedef longDouble power_type_W;
+typedef closedLongDouble power_type_W;
 typedef longDouble distance_type_m;
 typedef longDouble mass_type_kg;
 typedef longDouble vel_type_mpers;

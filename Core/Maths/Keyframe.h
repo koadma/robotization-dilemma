@@ -31,7 +31,7 @@ public:
   }
   
   template<typename T>
-  V getAt(T& _time) {
+  V getAt(T _time) {
     return _val;
   }
 
@@ -126,8 +126,8 @@ public:
   linear(V val, T at) : _val(val), _at(at), _change(dV(0)) {}
   linear(V val, T at, dV change) : _val(val), _at(at), _change(change) {}
  
-  V getAt(T& _time) {
-    return _val + V((_time - _at) * T(_change));
+  V getAt(T _time) {
+    return _val + to_doubleT<V, T>((_time - _at) * to_doubleT<T,dV>(_change));
   }
 
   template<typename X> void set(DataElement* data, X& val, std::true_type)

@@ -96,11 +96,18 @@ void Laser::drawObjectVirt(float camcx, float camcy, float camcz, float d, time_
         glLineWidth(2.0f);
         glBegin(GL_LINES);
         mVec3 p = getMovement(time).pos;
-        glVertex3d(p.x.toDouble(), p.y.toDouble(), p.z.toDouble());
+        glVertex3d(
+        to_doubleT<double, distance_type_m>(p.x),
+        to_doubleT<double, distance_type_m>(p.y),
+        to_doubleT<double, distance_type_m>(p.z)
+        );
         sVec3 dvec = get<2>(it);
         dvec.norm();
         dvec *= (get<1>(it) / 100.0f + _radius);
-        glVertex3d(p.x.toDouble() + dvec.x.toDouble(), p.y.toDouble() + dvec.y.toDouble(), p.z.toDouble() + dvec.z.toDouble());
+        glVertex3d(
+        to_doubleT<double, distance_type_m>(p.x) + to_doubleT<double, distance_type_m>(dvec.x),
+        to_doubleT<double, distance_type_m>(p.y) + to_doubleT<double, distance_type_m>(dvec.y),
+        to_doubleT<double, distance_type_m>(p.z) + to_doubleT<double, distance_type_m>(dvec.z));
         glEnd();
       }
     }

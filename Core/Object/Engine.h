@@ -28,7 +28,7 @@ public:
     return acc.sqrlen();
   }
   acc_type_mperss power2accel(power_type_W pow) {
-    return sqrt(pow);
+    return to_doubleT<acc_type_mperss>(sqrt(pow));
   }
 
 #ifdef M_SERVER

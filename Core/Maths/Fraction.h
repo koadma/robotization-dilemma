@@ -70,8 +70,13 @@ cBigNumber ceil(const Fraction _val);
 ostream& operator<<(ostream& o, const Fraction _val);
 istream& operator>>(istream& i, Fraction& _val);
 
-template<typename T>
-double to_double(T _val) {
-  return double(_val);
+template<typename T, typename U>
+T to_doubleT(U _val) {
+  return T(_val);
 }
-double to_double(Fraction _val);
+template <>
+long double to_doubleT<long double, Fraction>(Fraction _val) ;
+template <>
+double to_doubleT<double, Fraction>(Fraction _val);
+template <>
+float to_doubleT<float, Fraction>(Fraction _val);

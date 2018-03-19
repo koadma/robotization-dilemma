@@ -2,7 +2,7 @@
 
 #include "Types.h"
 
-const energy_type_J BUBBLE_REMOVE = Fraction(1,100000000); //Dont emit
+const energy_type_J BUBBLE_REMOVE = 1e-8; //Dont emit
 
                                           ///!!!!!!!! ######## &&&&&&&&&
 const vel_type_mpers SOL = 3e5; ///TODO FIX 3e8 ######### ######### !!!!!!!!! ERROR &&&&&&&& WARNING !!!!!!!!!

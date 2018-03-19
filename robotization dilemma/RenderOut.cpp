@@ -112,24 +112,32 @@ void drawCoordinatingSystem(float camcx, float camcy, float camcz, float d) {
 }
 void drawXZPlane(float camcx, float camcy, float camcz, float d, int n) {
   glLineWidth(1.0f);
-  glBegin(GL_LINES);
   setColor(0xff808080);
 
-  for (int i = -n; i <= n; i++) {
-    if(i != 0) {
-      glVertex3f(camcx - n*d, camcy, camcz + i*d);
-      glVertex3f(camcx + n*d, camcy, camcz + i*d);
-      glVertex3f(camcx + i*d, camcy, camcz - n*d);
-      glVertex3f(camcx + i*d, camcy, camcz + n*d);
+  for (int i = 1; i <= n; i++) {
+    if(i > 1) {
+      int ticks = 12*(1 << int(log2(i-2)));
+      glBegin(GL_LINES);
+      for(int j = 0; j<ticks; j++) {
+        float angle = j*TWO_PI/ticks;
+        glVertex3f(camcx + (i-1)*d*sin(angle), camcy, camcz + (i-1)*d*cos(angle));
+        glVertex3f(camcx + i*d*sin(angle), camcy, camcz + i*d*cos(angle));
+      }
+      glEnd();
     }
+    glBegin(GL_LINE_LOOP);
+    for(int j = 0; j<48; j++) {
+      float angle = j*TWO_PI/48;
+      glVertex3f(camcx + i*d*sin(angle), camcy, camcz + i*d*cos(angle));
+    }
+    glEnd();
   }
-  glEnd();
 }
 
 void renderNewRound(int id) {
   reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Turn " + to_string(id);
-  reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->maxv = ROUND_TIME.toDouble()*id;
-  reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->val = ROUND_TIME.toDouble()*(id-1);
+  reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->maxv = to_doubleT<double, time_type_s>(ROUND_TIME)*id;
+  reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->val = to_doubleT<double, time_type_s>(ROUND_TIME)*(id-1);
 }
 
 void createMainMenu() {

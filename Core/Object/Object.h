@@ -7,8 +7,6 @@ class Drone;
 class Object {
 protected:
   uint64_t _ID;
-  mVec3 _relativePos;
-  distance_type_m _radius;
   string _name;
   keyframe<value<int>, int > _maxHealth;
   keyframe<value<int>, int > _health;
@@ -17,13 +15,15 @@ protected:
   map<Bubble*, Bubble*> reflection;
 #endif
 public:
+  mVec3 _relativePos;
+  distance_type_m _radius;
   keyframe<value<power_type_W>, power_type_W> _maxGeneratedPower;
   keyframe<value<power_type_W>, power_type_W> _generatedPower;
   keyframe<value<power_type_W>, power_type_W> _maxUseablePower;
   keyframe<value<power_type_W>, power_type_W> _requestedPower;
   keyframe<value<power_type_W>, power_type_W> _usedPower;
   keyframe<value<power_type_W>, power_type_W> _selfUsedPower; //Not for battery charge
-  keyframe<value<energy_type_J>, power_type_W> _maxStorage;
+  keyframe<value<energy_type_J>, energy_type_J> _maxStorage;
   
   Object(Drone* parentShip, uint64_t ID);
 

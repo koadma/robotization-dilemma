@@ -173,8 +173,8 @@ public:
   ~Ship();
 };
 
-bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, sVec3 &direction);
-bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, sVec3 &direction);
+bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, mVec3 posShift, sVec3 &direction);
+bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, mVec3 posShift, sVec3 &direction);
 
 
 #ifdef M_CLIENT
