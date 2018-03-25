@@ -148,7 +148,6 @@ void LaserShot::applyVV(Game *g) {
   s->originID = _o->getId();
   s->origintime = _time;
   s->vel = _dir;
-
   g->add(s);
 }
 void LaserShot::setV(DataElement* data, Game* game) {

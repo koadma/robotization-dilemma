@@ -154,6 +154,7 @@ void Plot::render() {
         glEnd();
       
       } while (it->next());
+      delete it;
     }
   }
 
@@ -230,35 +231,37 @@ void Plot::reloadAxes() {
   double dax, day, dbx, dby;
   bool hasData = false;
   for (auto&& dit : plotData) {
-    NoTypeIter* it = dit->first();
-    do {
-      auto nit = it->copy();
-      double nittime = it->getX() + 2;
-      if (nit->next()) {
-        nittime = nit->getX();
-      }
-      if (!hasData) {
-        hasData = true;
-        glBegin(GL_LINES);
-        dax = it->getX();
-        day = it->getY(it->getX());
-        dbx = nittime;
-        dby = it->getY(nittime);
-        if (dby > day) {
-          swap(day, dby);
+    if(dit->enabled) {
+      NoTypeIter* it = dit->first();
+      do {
+        auto nit = it->copy();
+        double nittime = it->getX() + 2;
+        if (nit->next()) {
+          nittime = nit->getX();
         }
-        glEnd();
-      }
-      else {
-        dax = min(it->getX(), dax);
-        day = min(it->getY(it->getX()), day);
-        day = min(it->getY(nittime), day);
-        dbx = max(nittime, dbx);
-        dby = max(it->getY(it->getX()), dby);
-        dby = max(it->getY(nittime), dby);
-      }
-
-    } while (it->next());
+        if (!hasData) {
+          hasData = true;
+          glBegin(GL_LINES);
+          dax = it->getX();
+          day = it->getY(it->getX());
+          dbx = nittime;
+          dby = it->getY(nittime);
+          if (dby > day) {
+            swap(day, dby);
+          }
+          glEnd();
+        }
+        else {
+          dax = min(it->getX(), dax);
+          day = min(it->getY(it->getX()), day);
+          day = min(it->getY(nittime), day);
+          dbx = max(nittime, dbx);
+          dby = max(it->getY(it->getX()), dby);
+          dby = max(it->getY(nittime), dby);
+        }
+      } while (it->next());
+      delete it;
+    }
   }
   ox = (dax + dbx)/2;
   oy = (day + dby)/2;

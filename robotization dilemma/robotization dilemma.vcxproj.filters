@@ -311,9 +311,6 @@
     <ClInclude Include="..\Core\Event.h">
       <Filter>Code\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="..\Core\Scripts\Scripts.h">
-      <Filter>Code\Libraries\Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Checkbox.h">
       <Filter>Code\Libraries\GUI</Filter>
     </ClInclude>
@@ -367,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="..\Core\Maths\Types.h">
       <Filter>Code\Libraries\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Scripts\Scripts.h">
+      <Filter>Code\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

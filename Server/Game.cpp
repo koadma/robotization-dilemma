@@ -155,9 +155,10 @@ Drone* Game::addDrone(mVec3 pos) {
 void Game::add(Path* path) {
   calcIntersect(path);
   paths.push_back(path);
+  LOG INFO GAME "Path " << path << ": " << path->type() << " added" END;
 }
 void Game::add(Event* evt) {
-  LOG INFO "Event added at " << evt->_time << ", type " << evt->type_name() END;
+  LOG INFO "Event " << evt << " added at " << evt->_time << ", type " << evt->type_name() END;
   events.insert(evt);
 }
 
@@ -195,16 +196,17 @@ void Game::simulate(time_type_s from, time_type_s till) {
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
       auto it2 = it;
-      LOG INFO GAME "PROCESSING EVENT " << (*it)->type_name() << " TIME " << (*it)->_time END;
+      LOG INFO GAME "Event " << *it << ": " << (*it)->type_name() << " processed at " << (*it)->_time END;
       (*it)->apply(this);
-      LOG INFO GAME "PROCESSED EVENT" END;
+      LOG INFO GAME "Done" END;
       ++it;
+      delete *it2;
       events.erase(it2);
     }
     else {
       auto it2 = it;
       ++it;
-      LOG INFO GAME "DEL EVENT " << (*it2)->type_name() << " TIME " << (*it2)->_time END;
+      LOG INFO GAME "Event " << *it2 << ": " << (*it2)->type_name() << " deleted at " << (*it2)->_time END;
       events.erase(it2);
     }
   }
@@ -212,24 +214,26 @@ void Game::simulate(time_type_s from, time_type_s till) {
   //Clean bubbles
   auto pit = paths.begin();
   while(pit != paths.end()) {
-    bool land = true;
+    bool land = false;
     if ((*pit)->type() == Path::PathTypeBubble) {
+      land = true;
       auto dit = drones.begin();
       while (dit != drones.end() && land) {
         auto oit = (*dit)->objects.begin();
         while (oit != (*dit)->objects.end() && land) {
-          land = land && !((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
+          land = land && ((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
           ++oit;
         }
         ++dit;
       }
+      if (land) {
+        auto dpit = pit;
+        ++pit;
+        removeIntersect(*dpit);
+        paths.erase(dpit);
+      }
     }
-    if (land) {
-      auto dpit = pit;
-      ++pit;
-      removeIntersect(*dpit);
-      paths.erase(dpit);
-    } else {
+    if (!land) {
       ++pit;
     }
   }

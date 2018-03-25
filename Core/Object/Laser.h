@@ -4,7 +4,8 @@
 
 class Laser : public Object {       //Order of serialisation
 private:
-  list<tuple<time_type_s, energy_type_J, sVec3, bool>> _shots; //time, energy, direction, eventCrated
+  typedef list<tuple<time_type_s, energy_type_J, sVec3, bool>> shotListType;
+  shotListType _shots; //time, energy, direction, eventCrated
 
   energy_type_J _tempE;
   sVec3 _tempD;
@@ -37,9 +38,6 @@ public:
     return _energySystem->_val.getAt(time);
   }
 
-#ifdef M_SERVER
-  void energyCallbackV(time_type_s t, Game* g);
-#endif
 
   void setComponent(int index, scalar_type comp) {
     _tempD[index] = comp;
@@ -50,16 +48,35 @@ public:
   void setEnergy(energy_type_J val) {
     _tempE = val;
   }
-
+  typename shotListType::iterator shoot(time_type_s time, energy_type_J energy, sVec3 dir, bool applied = false) {
+    _shots.push_back(make_tuple(time, energy, dir * (SOL / dir.length()), applied));
+    return --_shots.end();
+  }
+#ifdef M_SERVER
+  void shoot(shotListType::iterator& what, Game* g) {
+    if(get<3>(*what)) {
+      LOG GAME LERROR "Shot was already fired" END;
+      return;
+    }
+    LaserShot ev;
+    ev._time = get<0>(*what);
+    ev._energy = get<1>(*what);
+    ev._dir = get<2>(*what);
+    ev._o = this;
+    get<3>(*what) = true;
+    ev.apply(g);
+  }
+  void shoot(time_type_s time, energy_type_J energy, sVec3 dir, Game* g) {
+    shoot(shoot(time, energy, dir),g);
+  }
+  void energyCallbackV(time_type_s t, Game* g);
+#endif
+#ifdef M_CLIENT
   void shoot(time_type_s time) {
-    _shots.push_back(make_tuple(time, _tempE, _tempD * (SOL / _tempD.length()), false));
-    #ifdef M_CLIENT
+    shoot(time, _tempE, _tempD, false);
     reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectLaserSidebarEnergyInput"))->text = "0";
     setEnergy(0);
-    #endif
   }
-
-#ifdef M_CLIENT
   void setSidebar();
   void drawObjectVirt(float camcx, float camcy, float camcz, float d, time_type_s time, bool full);
 #endif

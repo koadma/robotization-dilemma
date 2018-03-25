@@ -274,15 +274,7 @@ Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bo
         Laser* lit = (Laser*)it;
         sVec3 dir;
         bool sf = surefire(mov, s->_keyframes, time, lit->_relativePos, dir);
-        lit->setDir(dir);
-        lit->setEnergy(100000);
-        lit->shoot(time);
-        LaserShot ev;
-        ev._dir = dir.norm() * SOL;
-        ev._energy = 100000;
-        ev._o = lit;
-        ev._time = time;
-        ev.apply(g);
+        lit->shoot(time, 100000, dir, g);
       }
     }
   }
