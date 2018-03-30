@@ -44,4 +44,3 @@ void Image::render() {
   glDisable(GL_BLEND);
   glDisable(GL_TEXTURE_2D);
 }
-

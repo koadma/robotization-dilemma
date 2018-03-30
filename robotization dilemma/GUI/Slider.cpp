@@ -78,3 +78,6 @@ void Slider::render() {
   //shapesPrintf(0, 0, text.c_str());
 }
 
+Slider::~Slider() {
+
+}

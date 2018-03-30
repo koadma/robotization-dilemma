@@ -103,7 +103,7 @@ void Sensor::setTargetPower(time_type_s time, power_type_W val, Game* g) {
 void Sensor::energyCallbackV(time_type_s time, Game* g) {
   
 }
-float Sensor::getSensorChance(Bubble* what, time_type_s when) {
+double Sensor::getSensorChance(Bubble* what, time_type_s when) {
   ScriptData* d = new ScriptData();
   ScriptData* hph = new ScriptData();
   hph->_data = new ScriptDataNumber(_health.getAt(when) / double(_maxHealth.getAt(when)));

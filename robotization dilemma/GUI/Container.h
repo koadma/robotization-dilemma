@@ -10,10 +10,10 @@ public:
   int mxo;
   int myo;
   bool mid = false;
-  Container(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg) :
+  Container(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
   }
-  void transformCoordiantes(int &mx, int &my);
+  void transformCoordinates(int &mx, int &my);
   int mouseEnter(int state);
   int mouseMoved(int mx, int my);
   int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
@@ -28,4 +28,6 @@ public:
   bool specialPressed(int key, int mx, int my);
   bool mouseClicked(int mx, int my);
   void render();*/
+  ~Container();
+
 };

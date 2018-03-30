@@ -439,12 +439,12 @@ bool Ship::loadShip(xml_node<>* data) {
       }
       objects.push_back(o);
       ++id;
-      return true;
     } else {
       LOG LERROR "Wrong object type: " END;
       return false;
     }
   }
+  return true;
 }
 #endif
 #ifdef M_CLIENT
@@ -745,8 +745,6 @@ bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s whe
 }
 
 bool surefire(keyframe<Movement>& me, keyframe<SightedMovement>& enemy, time_type_s when, mVec3 posShift, sVec3 &direction) {
-  //direction.randomize(100);
-  //return fmodf(when, 0.5)<0.25;
   Movement m = me.getAt(when);
   Movement e = (--enemy._frames.end())->second;
   time_type_s t = (--enemy._frames.end())->first;

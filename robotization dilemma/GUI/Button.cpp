@@ -1,18 +1,5 @@
 #include "Button.h"
 
-/*Button::Button(int lx, int ly, int lwidth, int lheight, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, ClickCallback lclickCallback) {
-  x = lx;
-  y = ly;
-  width = lwidth;
-  height = lheight;
-  bgColor = lbg;
-  activeColor = lactive;
-  textColor = ltextColor;
-  text = ltext;
-  clickCallback = lclickCallback;
-  active = false;
-}*/
-
 int Button::mouseEnter(int state) {
   bool oactive = active;
   active &= state; //if mouse leaves, deactivate.
@@ -26,6 +13,10 @@ int Button::mouseMoved(int mx, int my) {
 
 int Button::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   if (isIn(mx, my) && evt._key._type == key::type_mouse && evt._type == gui_event::evt_pressed && evt._key._keycode == 0) { //mouse, click, left
+    clickCallback();
+    return 3;
+  }
+  if (triggerkey == evt._key && evt._type == evt.evt_pressed) {
     clickCallback();
     return 3;
   }
@@ -50,3 +41,6 @@ void Button::render() {
   //shapesPrintf(0, 0, text.c_str());
 }
 
+Button::~Button() {
+
+}

@@ -102,7 +102,7 @@ public:
   double ox, oy; //in plot coords, for center of plot
   double sx, sy; //data / plotwidth
 
-  Plot(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) :
+  Plot(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
     ox = 0;//(frames->getFirst() + frames->getLast())/2.0;
     oy = 0;//(frames->getDoubleAt(frames->getFirst()) +frames->getDoubleAt(frames->getLast()))/2.0;
@@ -118,4 +118,5 @@ public:
   int get(double ori, double scale, double v, int h);
   ///Only after GetRect
   void reloadAxes();
+  ~Plot();
 };

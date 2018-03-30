@@ -72,5 +72,6 @@
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
 		callback = "joinMenuBackButton"
+		trigger = "0 27"
 	>Back</button>
 </body>

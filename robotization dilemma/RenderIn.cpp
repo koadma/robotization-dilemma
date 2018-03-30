@@ -108,7 +108,7 @@ void newMenuPlayerSliderInput(float val) {
 
 }
 void newMenuInputButton() {
-  int players = reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectNewMenuPlayerCount"))->val;
+  int players = (int)round(reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectNewMenuPlayerCount"))->val);
 
   startServer(players);
 }
@@ -163,7 +163,7 @@ void ingameTimeSliderInput(float val) {
 void ingameMenuEnergyButton() {
   if (selectedo != NULL) {
     Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
-    Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+    Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordinate{ 0, 0 }, Coordinate{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
     plt->plotData.push_back(new PlotLineVUT<value<energy_type_J>, energy_type_J>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
     plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, power_type_W, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00"), "storage"));
@@ -174,7 +174,7 @@ void ingameMenuEnergyButton() {
 void ingameMenuPowerButton() {
   if (selectedo != NULL) {
     Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Power info: " + selectedo->name());
-    Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordiante{ 0, 0 }, Coordiante{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+    Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordinate{ 0, 0 }, Coordinate{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
     plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000"), "max generated power"));
     plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_generatedPower), hexToInt("ffffff00"), "generated power"));
@@ -478,9 +478,9 @@ int InitGraphics() {
 
   //Subwindows
   objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
-  objectMenuSubWindow = Graphics::createPanel("objectMenuSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, getColor("div", "bgcolor"));
+  objectMenuSubWindow = Graphics::createPanel("objectMenuSubWindow", Coordinate{ 0.0f, 0.0f, 0, 0 }, Coordinate{ 1.0f, 1.0f, 0, 0 }, getColor("div", "bgcolor"));
   Graphics::addElement(objectMainWindow, objectMenuSubWindow);
-  objectGameSubWindow = Graphics::createPanel("objectGameSubWindow", Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f }, Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f }, getColor("div", "bgcolor"));
+  objectGameSubWindow = Graphics::createPanel("objectGameSubWindow", Coordinate{ 0.0f, 0.0f, 0, 0 }, Coordinate{ 1.0f, 1.0f, 0, 0 }, getColor("div", "bgcolor"));
   Graphics::addElement(objectMainWindow, objectGameSubWindow);
   return 0;
 }

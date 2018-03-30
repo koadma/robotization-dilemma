@@ -46,6 +46,7 @@
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
 		callback = "mainMenuSettingsButton"
+		trigger = "0 115"
 	>Settings</button>
 	<button
 		id = "objectMainMenuExitButton"
@@ -58,6 +59,7 @@
 		maxabsx = "-5.0"
 		maxabsy = "-5.0"
 		callback = "mainMenuExitButton"
+		trigger = "0 27"
 	>Exit</button>
 	<labelbind
 		id = "objectMainMenuVersion"

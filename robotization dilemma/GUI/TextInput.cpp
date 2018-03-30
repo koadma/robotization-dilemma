@@ -72,3 +72,6 @@ void TextInput::render() {
   //shapesPrintf(0, 0, text.c_str());
 }
 
+TextInput::~TextInput() {
+
+}

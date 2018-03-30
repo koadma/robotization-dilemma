@@ -89,7 +89,7 @@ void Object::reflectBubble(Bubble* what, time_type_s time, Game* g) {
   }
 
   Bubble* reflected = new Bubble();
-  reflected->constrains.push_back(constrain(constrain::include, { 1, 0, 0 }, -2)); //Include all directions
+  reflected->setConstrains({constrain(constrain::include, { 1, 0, 0 }, -2)}); //Include all directions
   reflected->bsource = what->bsource;
   reflected->btype = what->btype;
   reflected->emitter = getMovement(time);

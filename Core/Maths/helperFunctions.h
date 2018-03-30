@@ -498,7 +498,7 @@ constexpr long double operator"" _deg(long double deg) {
 
 const int VersionA = 0;
 const int VersionB = 7;
-const int VersionC = 0;
+const int VersionC = 1;
 
 
 enum LoginError {
@@ -562,6 +562,7 @@ enum KeyConfigID {
 #define INFO  "[INFO]\t"     << 
 
 #define NETWORK "[NET]\t"    <<
+#define SCRIPTS "[SCR]\t"    <<
 #define MISC "[MISC]\t"      <<
 #define MATH  "[MATH]\t"     << 
 #define GRAPHICS "[GUI]\t"   << 

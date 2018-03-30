@@ -14,7 +14,7 @@ public:
   float maxv;
   float val;
   float quanta;
-  Slider(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, colorargb lpulledcolor, float lmin, float lmax, float lvalue, float lquanta, SliderInputFunc lclickCallback) :
+  Slider(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, colorargb lpulledcolor, float lmin, float lmax, float lvalue, float lquanta, SliderInputFunc lclickCallback) :
     GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
     minv = lmin;
     maxv = lmax;
@@ -27,4 +27,5 @@ public:
   int mouseMoved(int mx, int my);
   int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
   void render();
+  ~Slider();
 };

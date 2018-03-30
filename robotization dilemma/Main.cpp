@@ -20,8 +20,8 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
 
         objectMainGameCanvas = Graphics::createCanvas(
           "objectMainGameCanvas",
-          Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f },
-          Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f },
+          Coordinate{ 0.0f, 0.0f, 0, 0 },
+          Coordinate{ 1.0f, 1.0f, 0, 0 },
           IWindowManagers{
             MainGameCanvas::renderManager,
             MainGameCanvas::resizeManager,
@@ -35,8 +35,8 @@ bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
           objectMainGameCanvas);
         objectMainGameShipCanvas = Graphics::createCanvas(
           "objectMainGameShipCanvas",
-          Coordiante{ 0.0f, 0.0f, 0.0f, 0.0f },
-          Coordiante{ 1.0f, 1.0f, 0.0f, 0.0f },
+          Coordinate{ 0.0f, 0.0f, 0, 0 },
+          Coordinate{ 1.0f, 1.0f, 0, 0 },
           IWindowManagers{
             MainGameShipCanvas::renderManager,
             MainGameShipCanvas::resizeManager,

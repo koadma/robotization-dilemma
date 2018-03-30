@@ -280,6 +280,17 @@ gui_event::gui_event(key_location key, type type) {
   _type = type;
 }
 
+key loadKey(xml_attribute<>* me) {
+  if (me) {
+    stringstream ss;
+    ss << me->value();
+    int valt, valv;
+    ss >> valt >> valv;
+    return key(valv, valt);
+  } else {
+    return key(key::type_key,0);
+  }
+}
 
 bool operator==(const key& lhs, const key& rhs) {
   return (lhs._type == rhs._type) & (lhs._keycode == rhs._keycode);
@@ -396,28 +407,28 @@ void Graphics::resetViewport() {
   glColor3ub(0, 255, 0);
 }
 
-Coordiante::Coordiante() {
+Coordinate::Coordinate() {
   x = 0;
   y = 0;
   relx = 0;
   rely = 0;
 }
-Coordiante::Coordiante(float lrelx, float lrely) {
+Coordinate::Coordinate(float lrelx, float lrely) {
   x = 0;
   y = 0;
   relx = lrelx;
   rely = lrely;
 }
-Coordiante::Coordiante(float lrelx, float lrely, float labsx, float labsy) {
+Coordinate::Coordinate(float lrelx, float lrely, int labsx, int labsy) {
   x = labsx;
   y = labsy;
   relx = lrelx;
   rely = lrely;
 }
-float Coordiante::GetX(float WindowWidht) {
+int Coordinate::GetX(int WindowWidht) {
   return WindowWidht*relx + x;
 }
-float Coordiante::GetY(float WindowHeight) {
+int Coordinate::GetY(int WindowHeight) {
   return WindowHeight*rely + y;
 }
 

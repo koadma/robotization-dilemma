@@ -201,7 +201,7 @@ uint32_t high(uint64_t a) {
 string randomHexString(size_t length) {
   string s(length, '-');
   for (size_t i = 0; i < length; i++) {
-    int r = 16 * ran1();
+    int r = (int)(16 * ran1());
     if (r < 10) {
       s[i] = '0'+r;
     }

@@ -167,7 +167,7 @@ public:
   colorargb bgcolor_odd;
   ScriptIBlock* code;
 
-  ScriptGUI(string name, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbgcolorodd, colorargb lactivecolor, colorargb ltextcolor, colorargb lbgcoloreven) : GUIElement(name, lmincorner, lmaxcorner, lbgcolorodd, lactivecolor, ltextcolor) {
+  ScriptGUI(string name, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbgcolorodd, colorargb lactivecolor, colorargb ltextcolor, colorargb lbgcoloreven) : GUIElement(name, lmincorner, lmaxcorner, lbgcolorodd, lactivecolor, ltextcolor) {
     bgcolor_even = lbgcoloreven;
     bgcolor_odd = lbgcolorodd;
   }

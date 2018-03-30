@@ -63,6 +63,7 @@ public:
     include = true,
     exclude = false
   };
+  constrain(bool sign, sVec3 dir, double cosphi) : _include(sign), _dir(dir.norm()), _cosphi(cosphi) { }
   void verify(bool& current, sVec3 toVerify) {
     toVerify.norm();
     bool in = dot(toVerify, _dir) >= _cosphi;
@@ -73,7 +74,10 @@ public:
     //Sum: If it was current, and not in -> its in;
     current = (_include and in) or (current and not in);
   }
-  constrain(bool sign, sVec3 dir, double cosphi) : _include(sign), _dir(dir.norm()), _cosphi(cosphi) { }
+  double solidangle() {
+    double cphi2 = min(max(-1.0,_cosphi),1.0);
+    return TWO_PI*(1-cphi2);
+  }
 };
 
 enum BubbleSource {

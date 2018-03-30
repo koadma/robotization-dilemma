@@ -93,6 +93,7 @@ public:
     if (degree == 1) {
       return {- Coefficient[0] / Coefficient[1]};
     }
+    return {};
   }
   T minimize() { //not counting lim +- infty
     T res = 0;

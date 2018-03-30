@@ -1,6 +1,6 @@
 #include "Container.h"
 
-void Container::transformCoordiantes(int &mx, int &my) {
+void Container::transformCoordinates(int &mx, int &my) {
   /*mx -= cax;
   my -= cay;*/
 }
@@ -71,16 +71,6 @@ void Container::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
   }
 }
 
-void Container::deleteElements(bool hard) {
-  if (element != NULL) {
-    element->toDelete = true;
-    if (hard) {
-      delete element;
-      element = NULL;
-    }
-  }
-}
-
 GUIElement* Container::getElementById(string id) {
   if (name == id) {
     return this;
@@ -91,5 +81,11 @@ GUIElement* Container::getElementById(string id) {
       GUIElement* e = element->getElementById(id);
     }
     return res;
+  }
+}
+
+Container::~Container() {
+  if (element != NULL) {
+    delete element;
   }
 }

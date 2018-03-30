@@ -135,7 +135,7 @@ void ScriptData::CopyContent(ScriptData* _from) {
 ScriptData::~ScriptData() {
   delete _data;
   if (_instances != 0) {
-    throw 1;
+    LOG LERROR SCRIPTS "Script data instances " << _instances << " when deleted" END;
   }
   while (_elems.size()) {
     DeletePtr(_elems.begin()->second);
@@ -183,6 +183,8 @@ ScriptData* ScriptIIfElse::run(ScriptData& _args) {
       return _else->run(_args);
     }
   }
+  throw 1;
+  return NULL;
 }
 void ScriptIIfElse::load(xml_node<> *data) {
   xml_node<> *pElem = data->first_node("cond");

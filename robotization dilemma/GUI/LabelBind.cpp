@@ -6,3 +6,6 @@ void LabelBind::render() {
   //}
 }
 
+LabelBind::~LabelBind() {
+  delete text;
+}

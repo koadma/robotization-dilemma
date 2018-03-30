@@ -29,7 +29,7 @@ public:
 
   Fraction(const Fraction& _val);
 
-  double toDouble() const;
+  long double toDouble() const;
   string toStr(int prec) const;
   
   Fraction& simplify(); //Self simplify, and return

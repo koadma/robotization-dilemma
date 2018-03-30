@@ -65,6 +65,7 @@
     <ClCompile Include="GUI\LabelBind.cpp" />
     <ClCompile Include="GUI\Panel.cpp" />
     <ClCompile Include="GUI\Plot.cpp" />
+    <ClCompile Include="GUI\Popup.cpp" />
     <ClCompile Include="GUI\Slider.cpp" />
     <ClCompile Include="GUI\Table.cpp" />
     <ClCompile Include="GUI\TextInput.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="GUI\LabelBind.h" />
     <ClInclude Include="GUI\Panel.h" />
     <ClInclude Include="GUI\Plot.h" />
+    <ClInclude Include="GUI\Popup.h" />
     <ClInclude Include="GUI\Slider.h" />
     <ClInclude Include="GUI\Table.h" />
     <ClInclude Include="GUI\TextInput.h" />

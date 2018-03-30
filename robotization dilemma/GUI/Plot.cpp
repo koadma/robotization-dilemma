@@ -33,7 +33,7 @@ int Plot::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
     }
     return 1;
   }
-  if (checkKey(KeyPlotReset, evt._key)) { //Reset
+  if (checkKey(KeyPlotReset, evt._key) && evt._type == evt.evt_pressed) { //Reset
     /*double nsx, nsy;
     nsx = nsy = max(sx, sy);
     ox += ((cbx + cax) / 2.0 - mx)*(nsx - sx);
@@ -267,4 +267,13 @@ void Plot::reloadAxes() {
   oy = (day + dby)/2;
   sx = (dbx - dax) * 7 / 5 / (cbx - cax);
   sy = (dby - day) * 7 / 5 / (cby - cay);
+}
+
+Plot::~Plot() {
+  while (plotData.size()) {
+    if (plotData.front() != NULL) {
+      delete plotData.front();
+      plotData.pop_front();
+    }
+  }
 }

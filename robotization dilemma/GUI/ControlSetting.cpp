@@ -36,3 +36,6 @@ void ControlSetting::render() {
   //shapesPrintf(0, 0, text.c_str());
 }
 
+ControlSetting::~ControlSetting() {
+
+}

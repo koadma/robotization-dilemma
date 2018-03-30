@@ -77,6 +77,8 @@ public:
   gui_event(key_location key, type type);
 };
 
+key loadKey(xml_attribute<>* me);
+
 typedef void(*ClickCallback)();
 typedef void(*CheckCallback)(bool);
 typedef void(*TextInputFunc)(string);
@@ -142,17 +144,17 @@ namespace Graphics {
 
 }
 
-class Coordiante {
+class Coordinate {
 public:
-  float x;
-  float y;
+  int x;
+  int y;
   float relx;
   float rely;
-  Coordiante();
-  Coordiante(float relx, float rely);
-  Coordiante(float relx, float rely, float absx, float absy);
-  float GetX(float WindowWidht);
-  float GetY(float WindowHeight);
+  Coordinate();
+  Coordinate(float relx, float rely);
+  Coordinate(float relx, float rely, int absx, int absy);
+  int GetX(int WindowWidht);
+  int GetY(int WindowHeight);
 };
 
 static void shapesPrintf(int row, int col, const char *fmt, ...);

@@ -5,16 +5,16 @@
 class GUIElement {
 public:
   string name;
-  float cax, cay, cbx, cby; //Not for long term storage.
-  Coordiante mincorner;
-  Coordiante maxcorner;
+  int cax, cay, cbx, cby; //Not for long term storage.
+  Coordinate mincorner;
+  Coordinate maxcorner;
   colorargb bgColor; //#aarrggbb
   colorargb activeColor; //#aarrggbb
   colorargb textColor;
   bool active;
   bool toDelete;
 
-  GUIElement(string name, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
+  GUIElement(string name, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
   virtual bool isIn(int mx, int my);
   virtual void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
   virtual void getRect();
@@ -27,4 +27,5 @@ public:
   virtual int getHeight();
   virtual int getHeight(int winHeight);
   virtual GUIElement* getElementById(string id);
+  ~GUIElement();
 };

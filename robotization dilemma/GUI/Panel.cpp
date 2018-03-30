@@ -1,6 +1,6 @@
 #include "Panel.h"
 
-void Panel::transformCoordiantes(int &mx, int &my) {
+void Panel::transformCoordinates(int &mx, int &my) {
   /*mx -= cax;
   my -= cay;*/
 }
@@ -18,7 +18,7 @@ int Panel::mouseEnter(int state) {
   return bstate;
 }
 int Panel::mouseMoved(int mx, int my) {
-  transformCoordiantes(mx, my);
+  transformCoordinates(mx, my);
 
   auto it = elements.end();
 
@@ -33,7 +33,7 @@ int Panel::mouseMoved(int mx, int my) {
   return state;
 }
 int Panel::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
-  transformCoordiantes(mx, my);
+  transformCoordinates(mx, my);
 
   auto it = elements.end();
 
@@ -86,24 +86,6 @@ void Panel::getRect() {
   }
 }
 
-void Panel::deleteElements(bool hard) {
-  auto it = elements.begin();
-  while (it != elements.end()) {
-    if ((*it) != NULL) {
-      (*it)->toDelete = true;
-      if (hard) {
-        delete *it;
-        elements.erase(it);
-      }
-    }
-    else {
-      elements.erase(it);
-      throw 1;
-    }
-    ++it;
-  }
-}
-
 GUIElement* Panel::getElementById(string id) {
   if (name == id) {
     return this;
@@ -125,5 +107,14 @@ GUIElement* Panel::getElementById(string id) {
       ++it;
     }
     return res;
+  }
+}
+
+Panel::~Panel() {
+  while (elements.size()) {
+    if (elements.front() != NULL) {
+      delete elements.front();
+      elements.pop_front();
+    }
   }
 }

@@ -63,5 +63,5 @@ bool isDown(set<key_location>& down, key toTest) {
   return isDown(down, key_location(toTest));
 }
 bool isDown(set<key_location>& down, key_location toTest) {
-  return down.count(toTest);
+  return down.count(toTest) > 0;
 }

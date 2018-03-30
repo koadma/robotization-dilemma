@@ -103,17 +103,17 @@ Fraction& Fraction::simplify() {
   return *this;
 }
 
-double Fraction::toDouble() const {
+long double Fraction::toDouble() const {
   cBigNumber na = a;
   cBigNumber nb = b;
   na.abs();
   nb.abs();
-  double d = 0;
+  long double d = 0;
 
-  int prec = 44; //floating point precision (base 2)
+  int prec = 53; //floating point precision (base 2)
   d = (na / nb).tolong();
   na = na % nb;
-  double dfc = 1;
+  long double dfc = 1;
   do {
     dfc /= 2;
     na *= 2;
@@ -327,9 +327,9 @@ long double to_doubleT<long double, Fraction>(Fraction _val) {
 }
 template <>
 double to_doubleT<double, Fraction>(Fraction _val) {
-  return _val.toDouble();
+  return double(_val.toDouble());
 }
 template <>
 float to_doubleT<float, Fraction>(Fraction _val) {
-  return _val.toDouble();
+  return float(_val.toDouble());
 }

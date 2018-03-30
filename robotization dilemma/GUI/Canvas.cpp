@@ -16,3 +16,6 @@ void Canvas::render() {
   managers.renderManager(cax, cay, cbx, cby);
 }
 
+Canvas::~Canvas() {
+
+}

@@ -84,22 +84,12 @@ int TableRow::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   return state;
 }
 
-
-void TableRow::deleteElements(bool hard) {
-  auto it = data.begin();
-  while (it != data.end()) {
-    if ((*it) != NULL) {
-      (*it)->toDelete = true;
-      if (hard) {
-        delete *it;
-        data.erase(it);
-      }
+TableRow::~TableRow() {
+  while (data.size()) {
+    if (data.front() != NULL) {
+      delete data.front();
+      data.pop_front();
     }
-    else {
-      data.erase(it);
-      throw 1;
-    }
-    ++it;
   }
 }
 
@@ -241,24 +231,6 @@ int Table::mouseMoved(int mx, int my) {
   return state;
 }
 
-void Table::deleteElements(bool hard) {
-  auto it = data.begin();
-  while (it != data.end()) {
-    if ((*it) != NULL) {
-      (*it)->toDelete = true;
-      if (hard) {
-        delete *it;
-        data.erase(it);
-      }
-    }
-    else {
-      data.erase(it);
-      throw 1;
-    }
-    ++it;
-  }
-}
-
 int Table::guiEvent(gui_event evt, int mx, int my, set<key_location>& down) {
   if (evt._key._type == key::type_wheel) {
     if (isIn(mx, my)) {
@@ -303,5 +275,14 @@ GUIElement* Table::getElementById(string id) {
       ++it;
     }
     return res;
+  }
+}
+
+Table::~Table() {
+  while (data.size()) {
+    if (data.front() != NULL) {
+      delete data.front();
+      data.pop_front();
+    }
   }
 }

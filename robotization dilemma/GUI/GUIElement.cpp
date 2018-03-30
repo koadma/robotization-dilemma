@@ -1,6 +1,6 @@
 #include "GUIElement.h"
 
-GUIElement::GUIElement(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) {
+GUIElement::GUIElement(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) {
   name = lname;
   mincorner = lmincorner;
   maxcorner = lmaxcorner;
@@ -68,4 +68,8 @@ int GUIElement::getHeight() {
 }
 int GUIElement::getHeight(int winHeight) {
   return maxcorner.GetY(winHeight) - mincorner.GetY(winHeight);
+}
+
+GUIElement::~GUIElement() {
+
 }

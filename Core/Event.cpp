@@ -158,9 +158,9 @@ void LaserShot::setV(DataElement* data, Game* game) {
 void ThermalRadiation::applyVV(Game *g) {
   Bubble* b = new Bubble();
   if(_o->getAccel(_time).length() > 0) {
-    b->constrains.push_back(constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))); //Blast in direction
+    b->setConstrains({ constrain(constrain::include, -_o->getAccel(_time), cos(60.0_deg))}); //Blast in direction
   } else {
-    b->constrains.push_back(constrain(constrain::include, {1,0,0}, -2)); //Include all directions
+    b->setConstrains({ constrain(constrain::include, {1,0,0}, -2)}); //Include all directions
   }
   b->bsource = Bubble_Thermal;
   b->btype = Bubble_Row_Border;
@@ -178,7 +178,7 @@ void ThermalRadiation::setV(DataElement* data, Game* game) {
 }
 void SensorPing::applyVV(Game *g) {
   Bubble* b = new Bubble();
-  b->constrains.push_back(constrain(constrain::include, { 1, 0, 0 }, -2)); //Include all directions
+  b->setConstrains({constrain(constrain::include, { 1, 0, 0 }, -2)}); //Include all directions
   b->bsource = Bubble_Ping;
   b->emitter = _o->getMovement(_time);
   b->energy = _energy - _o->useEnergy(_time, _energy, g);

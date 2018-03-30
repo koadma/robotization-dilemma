@@ -4,16 +4,34 @@
 
 class Bubble : public Path
 {
+private:
+  vector<constrain> constrains;
 public:
+  double solidangle;
   time_type_s gEmissionTime;
   Movement emitter;
   energy_type_J energy = 1.0f;
   string data = "";
-  vector<constrain> constrains;
   Bubble* before = NULL; //only for btype Row_Border
   Bubble* after = NULL; //only for btype Row_Border
+  void setConstrains(vector<constrain> to, double newsolidangle) {
+    constrains = to;
+    solidangle = newsolidangle;
+  }
+  void setConstrains(vector<constrain> to) {
+    if (to.size() == 1) {
+      setConstrains(to, to[0].solidangle());
+    } else {
+      LOG LERROR MATH "Unable to calculate solid angle" END;
+    }
+  }
   en_flux_type_Jpermm getFlux(time_type_s t, mVec3 pos) {
     if (t <= gEmissionTime) {
+      LOG LERROR MATH "Asked time before creation" END;
+      return 0;
+    }
+    if (solidangle == 0) {
+      LOG LERROR MATH "Solid angle is 0" END;
       return 0;
     }
     bool in = false;
@@ -21,7 +39,7 @@ public:
       it.verify(in, pos - emitter.getAt(gEmissionTime).pos);
     }
     if (in) {
-      return energy / (4 * PI * (SOL * (t - gEmissionTime)) * (SOL * (t - gEmissionTime)));
+      return energy / (solidangle * (SOL * (t - gEmissionTime)) * (SOL * (t - gEmissionTime)));
     }
     return 0;
   }

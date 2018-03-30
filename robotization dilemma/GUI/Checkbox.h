@@ -6,7 +6,7 @@ class Checkbox : public GUIElement{
 public:
   bool checked;
   CheckCallback checkCallback;
-  Checkbox(string lname, Coordiante lmincorner, Coordiante lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, bool lchecked, CheckCallback lcheckCallback) :
+  Checkbox(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, bool lchecked, CheckCallback lcheckCallback) :
   GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
   checked = lchecked;
   checkCallback = lcheckCallback;
@@ -15,4 +15,5 @@ public:
   int mouseMoved(int mx, int my);
   int guiEvent(gui_event evt, int mx, int my, set<key_location>& down);
   void render();
+  ~Checkbox();
 };
