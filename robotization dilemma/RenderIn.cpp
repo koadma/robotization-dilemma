@@ -162,8 +162,8 @@ void ingameTimeSliderInput(float val) {
 }
 void ingameMenuEnergyButton() {
   if (selectedo != NULL) {
-    Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Energy info: " + selectedo->name());
-    Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordinate{ 0, 0 }, Coordinate{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+    Graphics::WinHwnd win = Graphics::CreateMainWindow("Energy info: " + selectedo->name());
+    Graphics::PlotHwnd plt = Graphics::createPlot("plot", fullContainer, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
     plt->plotData.push_back(new PlotLineVUT<value<energy_type_J>, energy_type_J>(&(selectedo->_maxStorage), hexToInt("ffff0000"), "max storage"));
     plt->plotData.push_back(new PlotLineVUT<linear<energy_type_J, power_type_W, time_type_s>, energy_type_J, time_type_s>(&(selectedo->_energySystem->_val), hexToInt("ffffff00"), "storage"));
@@ -173,8 +173,8 @@ void ingameMenuEnergyButton() {
 //Ingame / Ship
 void ingameMenuPowerButton() {
   if (selectedo != NULL) {
-    Graphics::WinHwnd win = Graphics::CreateMainWindow(200, 200, 800, 600, "Power info: " + selectedo->name());
-    Graphics::PlotHwnd plt = Graphics::createPlot("plot", Coordinate{ 0, 0 }, Coordinate{ 1, 1 }, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
+    Graphics::WinHwnd win = Graphics::CreateMainWindow("Power info: " + selectedo->name());
+    Graphics::PlotHwnd plt = Graphics::createPlot("plot", fullContainer, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
     Graphics::addElement(win, plt);
     plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_maxGeneratedPower), hexToInt("ffff0000"), "max generated power"));
     plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_generatedPower), hexToInt("ffffff00"), "generated power"));
@@ -477,10 +477,10 @@ int InitGraphics() {
   glutInit(&argc, argv);
 
   //Subwindows
-  objectMainWindow = Graphics::CreateMainWindow(200, 200, 800, 600, "Game");
-  objectMenuSubWindow = Graphics::createPanel("objectMenuSubWindow", Coordinate{ 0.0f, 0.0f, 0, 0 }, Coordinate{ 1.0f, 1.0f, 0, 0 }, getColor("div", "bgcolor"));
+  objectMainWindow = Graphics::CreateMainWindow("Game", Graphics::defaultWindowManagers, 640, 480, true);
+  objectMenuSubWindow = Graphics::createPanel("objectMenuSubWindow", fullContainer, getColor("div", "bgcolor"));
   Graphics::addElement(objectMainWindow, objectMenuSubWindow);
-  objectGameSubWindow = Graphics::createPanel("objectGameSubWindow", Coordinate{ 0.0f, 0.0f, 0, 0 }, Coordinate{ 1.0f, 1.0f, 0, 0 }, getColor("div", "bgcolor"));
+  objectGameSubWindow = Graphics::createPanel("objectGameSubWindow", fullContainer, getColor("div", "bgcolor"));
   Graphics::addElement(objectMainWindow, objectGameSubWindow);
   return 0;
 }

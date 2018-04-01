@@ -1,14 +1,24 @@
 <body>
 	<labelbind
 		id = "objectShipSidebarEnergyLabel"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-95.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-55.0"
 		align = "1"
-	>0 / 0</labelbind>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-95.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-55.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location>0 / 0</labelbind>
 </body>

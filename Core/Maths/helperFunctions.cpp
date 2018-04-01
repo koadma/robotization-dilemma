@@ -212,4 +212,33 @@ string randomHexString(size_t length) {
   return s;
 }
 
+bool trimChar(char& c, int flags) {
+  if (c == '\n' && (flags & Trim_NewLine)) {
+    return true;
+  }
+  if (c == '\r' && (flags & Trim_CarrRet)) {
+    return true;
+  }
+  if (c == ' ' && (flags & Trim_Space)) {
+    return true;
+  }
+  if (c < 32 && (flags & Trim_Control)) {
+    return true;
+  }
+  if (c == 127 && (flags & Trim_Control)) {
+    return true;
+  }
+  return false;
+}
+
+string trimStr(string& in, int flags) {
+  string res;
+  for (auto&& it : in) {
+    if (!trimChar(it, flags)) {
+      res += it;
+    }
+  }
+  return res;
+}
+
 mutex netlock; //Locking for the network thread(s)

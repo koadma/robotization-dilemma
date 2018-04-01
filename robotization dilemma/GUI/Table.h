@@ -6,8 +6,8 @@
 class TableRow : public GUIElement {
 public:
   list<GUIElement*> data;
-  TableRow(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
+  TableRow(string lname, LocationData llocation, colorargb lbg) :
+    GUIElement(lname, llocation, lbg, 0, 0) {
   }
   void render();
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
@@ -27,8 +27,8 @@ public:
   int sba, sbb; //scroll bar top - bottom
   int height;
   float scroll;
-  Table(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, 0) {
+  Table(string lname, LocationData llocation, colorargb lbg, colorargb lactive) :
+    GUIElement(lname, llocation, lbg, lactive, 0) {
   }
   void render();
   void getRect(int winWidth, int winHeight, int offsetX, int offsetY);

@@ -8,8 +8,8 @@ public:
   int cursor;
   TextValidatorFunc validator;
   TextInputFunc input;
-  TextInput(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, TextInputFunc linput, TextValidatorFunc lvalidator = *textValidator) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
+  TextInput(string lname, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, TextInputFunc linput, TextValidatorFunc lvalidator = *textValidator) :
+    GUIElement(lname, llocation, lbg, lactive, ltextColor) {
     text = ltext;
     input = linput;
     validator = lvalidator;

@@ -1,9 +1,12 @@
 #include "Graphics.h"
 
-
-Graphics::WinHwnd Graphics::CreateMainWindow(int x, int y, int width, int height, string caption, WindowManagers managers) {
-  glutInitWindowSize(width, height);
-  glutInitWindowPosition(x, y);
+Graphics::WinHwnd Graphics::CreateMainWindow(string caption, WindowManagers managers, int width, int height, bool setsize, int x, int y, bool setposition) {
+  if(setsize) {
+    glutInitWindowSize(width, height);
+  }
+  if(setposition) {
+    glutInitWindowPosition(x, y);
+  }
 
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 
@@ -13,10 +16,10 @@ Graphics::WinHwnd Graphics::CreateMainWindow(int x, int y, int width, int height
 
   int id = glutGetWindow();
 
-  return SetUpWindow(id, -1, Coordinate(0,0,x,y), Coordinate(0, 0, x+width, y+height), managers);
+  return SetUpWindow(id, -1, LocationData(LinearScale(0,y), LinearScale(0, y+height), LinearScale(0, x), LinearScale(0, x+width)), managers);
 }
 
-Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordinate minc, Coordinate maxc, WindowManagers manager) {
+Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, LocationData pos, WindowManagers manager) {
   colorargb bgcolor = getColor("win", "bgcolor");
   
   if(id != -1) {
@@ -38,15 +41,14 @@ Graphics::WinHwnd Graphics::SetUpWindow(int id, int parent, Coordinate minc, Coo
     glClearColor(((bgcolor & 0xff0000) >> 16)/255.0, ((bgcolor & 0xff00) >> 8) / 255.0, ((bgcolor & 0xff) >> 0) / 255.0, 1);
    }
 
-  GWindow* data = new GWindow;
+  GWindow* data = new GWindow();
   
-  PanelHwnd panel = new Panel("", Coordinate{ 0,0,0,0 }, Coordinate{ 1,1,0,0 }, bgcolor);
+  PanelHwnd panel = new Panel("", fullContainer, bgcolor);
 
   data->id = id;
   data->parent = parent;
   data->windowManagers = manager;
-  data->minc = minc;
-  data->maxc = maxc;
+  data->location = pos;
   data->myPanel = panel;
   if (id != -1) {
     windows[id] = data;
@@ -70,10 +72,10 @@ Graphics::WinHwnd Graphics::GetWinHwnd(int id) {
 }
 
 void Graphics::GWindow::getWin(float pax, float pay, float pbx, float pby) {
-  ax = pax + minc.GetX(pbx - pax);
-  ay = pay + minc.GetY(pby - pay);
-  bx = pbx + minc.GetX(pbx - pax);
-  by = pby + minc.GetY(pby - pay);
+  ax = pax + location.getBot(pbx - pax);
+  ay = pay + location.getLeft(pby - pay);
+  bx = pbx + location.getTop(pbx - pax);
+  by = pby + location.getRight(pby - pay);
 }
 
 void Graphics::defaultRenderManager() {
@@ -235,23 +237,13 @@ void Graphics::elementRenderManager(WinHwnd id) {
   id->myPanel->render();
 }
 
-Graphics::ButtonHwnd Graphics::createButton(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, key trigger, ClickCallback clickCallback) {
-  return new Button(lname, mincorner, maxcorner, bg, active, textColor, text, trigger, clickCallback);
+Graphics::ButtonHwnd Graphics::createButton(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, string text, key trigger, ClickCallback clickCallback) {
+  return new Button(lname, location, bg, active, textColor, text, trigger, clickCallback);
 }
 Graphics::ButtonHwnd Graphics::createButton(xml_node<> *me) {
   return createButton(
     me->first_attribute("id")->value(),
-    Coordinate {
-      strTo<float>(me->first_attribute("minrelx")->value()),
-      strTo<float>(me->first_attribute("minrely")->value()),
-      strTo<int>(me->first_attribute("minabsx")->value()),
-      strTo<int>(me->first_attribute("minabsy")->value()),
-    }, Coordinate {
-      strTo<float>(me->first_attribute("maxrelx")->value()),
-      strTo<float>(me->first_attribute("maxrely")->value()),
-      strTo<int>(me->first_attribute("maxabsx")->value()),
-      strTo<int>(me->first_attribute("maxabsy")->value()),
-    },
+    loadLocation(me->first_node("location")),
     getColor(me, "button", "bgcolor"),
     getColor(me, "button", "activecolor"),
     getColor(me, "button", "textcolor"),
@@ -260,23 +252,13 @@ Graphics::ButtonHwnd Graphics::createButton(xml_node<> *me) {
     reinterpret_cast<ClickCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
-Graphics::CheckboxHwnd Graphics::createCheckbox(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
-  return new Checkbox(lname, mincorner, maxcorner, bg, active, textColor, checked, checkCallback);
+Graphics::CheckboxHwnd Graphics::createCheckbox(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, bool checked, CheckCallback checkCallback) {
+  return new Checkbox(lname, location, bg, active, textColor, checked, checkCallback);
 }
 Graphics::CheckboxHwnd Graphics::createCheckbox(xml_node<> *me) {
   return createCheckbox(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "checkbox", "bgcolor"),
     getColor(me, "checkbox", "activecolor"),
     getColor(me, "checkbox", "textcolor"),
@@ -284,23 +266,13 @@ Graphics::CheckboxHwnd Graphics::createCheckbox(xml_node<> *me) {
     reinterpret_cast<CheckCallback>(funcs[me->first_attribute("callback")->value()]));
 }
 
-Graphics::LabelHwnd Graphics::createLabel(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
-  return new Label(lname, mincorner, maxcorner, bg, active, textColor, text, align);
+Graphics::LabelHwnd Graphics::createLabel(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+  return new Label(lname, location, bg, active, textColor, text, align);
 }
 Graphics::LabelHwnd Graphics::createLabel(xml_node<> *me) {
   return createLabel(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "label", "bgcolor"),
     getColor(me, "label", "activecolor"),
     getColor(me, "label", "textcolor"),
@@ -308,23 +280,13 @@ Graphics::LabelHwnd Graphics::createLabel(xml_node<> *me) {
     strTo<int>(me->first_attribute("align")->value()));
 }
 
-Graphics::ImageHwnd Graphics::createImage(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
-  return new Image(lname, mincorner, maxcorner, bg, active, textColor, text, align);
+Graphics::ImageHwnd Graphics::createImage(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, string text, int align) {
+  return new Image(lname, location, bg, active, textColor, text, align);
 }
 Graphics::ImageHwnd Graphics::createImage(xml_node<> *me) {
   return createImage(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "image", "bgcolor"),
     getColor(me, "image", "activecolor"),
     getColor(me, "image", "textcolor"),
@@ -332,23 +294,13 @@ Graphics::ImageHwnd Graphics::createImage(xml_node<> *me) {
     strTo<int>(me->first_attribute("align")->value()));
 }
 
-Graphics::TextInputHwnd Graphics::createTextInput(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
-  return new TextInput(lname, mincorner, maxcorner, bg, active, textColor, text, inputCallback, validator);
+Graphics::TextInputHwnd Graphics::createTextInput(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, string text, TextInputFunc inputCallback, TextValidatorFunc validator) {
+  return new TextInput(lname, location, bg, active, textColor, text, inputCallback, validator);
 }
 Graphics::TextInputHwnd Graphics::createTextInput(xml_node<> *me) {
   return createTextInput(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "input", "bgcolor"),
     getColor(me, "input", "activecolor"),
     getColor(me, "input", "textcolor"),
@@ -357,23 +309,13 @@ Graphics::TextInputHwnd Graphics::createTextInput(xml_node<> *me) {
     reinterpret_cast<TextValidatorFunc>(funcs[me->first_attribute("validatorfunc")->value()]));
 }
 
-Graphics::ControlHwnd Graphics::createControl(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, key selected, int id, ControlInputFunc inputCallback) {
-  return new ControlSetting(lname, mincorner, maxcorner, bg, active, textColor, selected, id, inputCallback);
+Graphics::ControlHwnd Graphics::createControl(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, key selected, int id, ControlInputFunc inputCallback) {
+  return new ControlSetting(lname, location, bg, active, textColor, selected, id, inputCallback);
 }
 Graphics::ControlHwnd Graphics::createControl(xml_node<> *me) {
   return createControl(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "control", "bgcolor"),
     getColor(me, "control", "activecolor"),
     getColor(me, "control", "textcolor"),
@@ -382,31 +324,21 @@ Graphics::ControlHwnd Graphics::createControl(xml_node<> *me) {
     reinterpret_cast<ControlInputFunc>(funcs[me->first_attribute("inputfunc")->value()]));
 }
 
-Graphics::CanvasHwnd Graphics::createCanvas(string lname, Coordinate mincorner, Coordinate maxcorner, IWindowManagers managers) {
-  return new Canvas(lname, mincorner, maxcorner, managers);
+Graphics::CanvasHwnd Graphics::createCanvas(string lname, LocationData location, IWindowManagers managers) {
+  return new Canvas(lname, location, managers);
 }
 
-Graphics::PlotHwnd Graphics::createPlot(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor) {
-  return new Plot(lname, mincorner, maxcorner, bg, active, textColor);
+Graphics::PlotHwnd Graphics::createPlot(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor) {
+  return new Plot(lname, location, bg, active, textColor);
 }
 
-Graphics::PanelHwnd Graphics::createPanel(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg) {
-  return new Panel(lname, mincorner, maxcorner, bg);
+Graphics::PanelHwnd Graphics::createPanel(string lname, LocationData location, colorargb bg) {
+  return new Panel(lname, location, bg);
 }
 Graphics::PanelHwnd Graphics::createPanel(xml_node<> *me) {
   PanelHwnd p = createPanel(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "panel", "bgcolor"));
 
   setElements(p, me);
@@ -414,23 +346,13 @@ Graphics::PanelHwnd Graphics::createPanel(xml_node<> *me) {
   return p;
 }
 
-Graphics::TableHwnd Graphics::createTable(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active) {
-  return new Table(lname, mincorner, maxcorner, bg, active);
+Graphics::TableHwnd Graphics::createTable(string lname, LocationData location, colorargb bg, colorargb active) {
+  return new Table(lname, location, bg, active);
 }
 Graphics::TableHwnd Graphics::createTable(xml_node<> *me) {
   TableHwnd p = createTable(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "table", "bgcolor"),
     getColor(me, "table", "activecolor"));
 
@@ -439,23 +361,13 @@ Graphics::TableHwnd Graphics::createTable(xml_node<> *me) {
   return p;
 }
 
-Graphics::TablerowHwnd Graphics::createTableRow(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg) {
-  return new TableRow(lname, mincorner, maxcorner, bg);
+Graphics::TablerowHwnd Graphics::createTableRow(string lname, LocationData location, colorargb bg) {
+  return new TableRow(lname, location, bg);
 }
 Graphics::TablerowHwnd Graphics::createTableRow(xml_node<> *me) {
   TablerowHwnd p = createTableRow(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "tablerow", "bgcolor"));
 
   setElements(p, me);
@@ -463,46 +375,25 @@ Graphics::TablerowHwnd Graphics::createTableRow(xml_node<> *me) {
   return p;
 }
 
-Graphics::ContainerHwnd Graphics::createContainer(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg) {
-  return new Container(lname, mincorner, maxcorner, bg);
+Graphics::ContainerHwnd Graphics::createContainer(string lname, LocationData location, colorargb bg) {
+  return new Container(lname, location, bg);
 }
 Graphics::ContainerHwnd Graphics::createContainer(xml_node<> *me) {
   ContainerHwnd p = createContainer(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "container", "bgcolor"));
 
   return p;
 }
 
-Graphics::SliderHwnd Graphics::createSlider(string name, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
-return new Slider(name, mincorner, maxcorner, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
+Graphics::SliderHwnd Graphics::createSlider(string name, LocationData location, colorargb bg, colorargb active, colorargb textColor, colorargb pulledcolor, float min, float max, float value, float quanta, SliderInputFunc clickCallback) {
+return new Slider(name, location, bg, active, textColor, pulledcolor, min, max, value, quanta, clickCallback);
 }
 Graphics::SliderHwnd Graphics::createSlider(xml_node<> *me) {
   SliderHwnd p = createSlider(
     me->first_attribute("id")->value(),
-    Coordinate{
-      strTo<float>(me->first_attribute("minrelx")->value()),
-      strTo<float>(me->first_attribute("minrely")->value()),
-      strTo<int>(me->first_attribute("minabsx")->value()),
-      strTo<int>(me->first_attribute("minabsy")->value()),
-    },
-    Coordinate{
-      strTo<float>(me->first_attribute("maxrelx")->value()),
-      strTo<float>(me->first_attribute("maxrely")->value()),
-      strTo<int>(me->first_attribute("maxabsx")->value()),
-      strTo<int>(me->first_attribute("maxabsy")->value()),
-    },
+    loadLocation(me->first_node("location")),
     getColor(me, "slider", "bgcolor"),
     getColor(me, "slider", "activecolor"),
     getColor(me, "slider", "textcolor"),
@@ -516,23 +407,13 @@ Graphics::SliderHwnd Graphics::createSlider(xml_node<> *me) {
   return p;
 }
 
-Graphics::LabelBindHwnd Graphics::createLabelBind(string lname, Coordinate mincorner, Coordinate maxcorner, colorargb bg, colorargb active, colorargb textColor, int center) {
-  return new LabelBind(lname, mincorner, maxcorner, bg, active, textColor, center);
+Graphics::LabelBindHwnd Graphics::createLabelBind(string lname, LocationData location, colorargb bg, colorargb active, colorargb textColor, int center) {
+  return new LabelBind(lname, location, bg, active, textColor, center);
 }
 Graphics::LabelBindHwnd Graphics::createLabelBind(xml_node<> *me) {
   return createLabelBind(
     me->first_attribute("id")->value(),
-    Coordinate{
-    strTo<float>(me->first_attribute("minrelx")->value()),
-    strTo<float>(me->first_attribute("minrely")->value()),
-    strTo<int>(me->first_attribute("minabsx")->value()),
-    strTo<int>(me->first_attribute("minabsy")->value()),
-  }, Coordinate{
-    strTo<float>(me->first_attribute("maxrelx")->value()),
-    strTo<float>(me->first_attribute("maxrely")->value()),
-    strTo<int>(me->first_attribute("maxabsx")->value()),
-    strTo<int>(me->first_attribute("maxabsy")->value()),
-  },
+    loadLocation(me->first_node("location")),
     getColor(me, "lablebind", "bgcolor"),
     getColor(me, "lablebind", "activecolor"),
     getColor(me, "lablebind", "textcolor"),
@@ -547,6 +428,9 @@ Graphics::ElemHwnd Graphics::addElement(WinHwnd id, ElemHwnd elem) {
   return addElement(id->myPanel, elem);
 }
 Graphics::ElemHwnd Graphics::addElement(PanelHwnd id, ElemHwnd elem) {
+  if (elem == NULL) {
+    return NULL;
+  }
   id->elements.push_back(elem);
   id->getRect();
   return elem;
@@ -564,6 +448,9 @@ Graphics::ElemHwnd Graphics::addElement(TablerowHwnd id, ElemHwnd elem) {
 
 Graphics::ElemHwnd Graphics::createElement(xml_node<> *me) {
   string name = me->name();
+  if (name == "location") { //Parameter to div, NOT element
+    return NULL;
+  }
   if (name == "button") {
     return createButton(me);
   }

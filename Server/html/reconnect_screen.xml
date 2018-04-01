@@ -1,14 +1,24 @@
 <body>
 	<label
 		id = "objectReconnectMenuLabel"
-		minrelx = "0.0"
-		minrely = "0.0"
-		minabsx = "0.0"
-		minabsy = "0.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "0.0"
-		maxabsy = "0.0"
 		align = "1"
-	>Reconnecting to your previous game...</label>
+	>
+		<location>
+			<bot
+				rel="0.0"
+				abs="0.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="0.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="0.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="0.0"
+			></right>
+		</location>Reconnecting to your previous game...</label>
 </body>

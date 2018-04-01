@@ -845,10 +845,10 @@ ScriptIBlock::~ScriptIBlock() {
 #ifdef SCRIPT_GUI
 
 void ScriptGUI::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
-  cax = offsetX + mincorner.GetX(winWidth);
-  cay = offsetY + mincorner.GetY(winHeight);
-  cbx = offsetX + maxcorner.GetX(winWidth);
-  cby = offsetY + maxcorner.GetY(winHeight);
+  cax = offsetX + location.getLeft(winWidth);
+  cay = offsetY + location.getBot(winHeight);
+  cbx = offsetX + location.getRight(winWidth);
+  cby = offsetY + location.getTop(winHeight);
 
   getRect(offsetX, offsetY);
 }

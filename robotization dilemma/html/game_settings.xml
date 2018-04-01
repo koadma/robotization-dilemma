@@ -1,30 +1,45 @@
 <body>
 	<button
 		id = "objectSettingsMenuBackButton"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-25.0"
-		maxrelx = "0.0"
-		maxrely = "1.0"
-		maxabsx = "95.0"
-		maxabsy = "-5.0"
-
-
-
 		callback = "settingsMenuBackButton"
-	>Back</button>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-25.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.0"
+				abs="95.0"
+			></right>
+	</location>Back</button>
 	<table
 		id = "objectSettingsMenuTable"
-		minrelx = "0.0"
-		minrely = "0.0"
-		minabsx = "0.0"
-		minabsy = "0.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "0.0"
-		maxabsy = "-30.0"
-
-
-	></table>
+	>
+		<location>
+			<bot
+				rel="0.0"
+				abs="0.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-30.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="0.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="0.0"
+			></right>
+	</location></table>
 </body>

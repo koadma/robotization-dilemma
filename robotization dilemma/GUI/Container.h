@@ -10,8 +10,8 @@ public:
   int mxo;
   int myo;
   bool mid = false;
-  Container(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, 0, 0) {
+  Container(string lname, LocationData llocation, colorargb lbg) :
+    GUIElement(lname, llocation, lbg, 0, 0) {
   }
   void transformCoordinates(int &mx, int &my);
   int mouseEnter(int state);

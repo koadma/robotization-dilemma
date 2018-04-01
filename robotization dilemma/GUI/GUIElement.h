@@ -6,15 +6,14 @@ class GUIElement {
 public:
   string name;
   int cax, cay, cbx, cby; //Not for long term storage.
-  Coordinate mincorner;
-  Coordinate maxcorner;
+  LocationData location;
   colorargb bgColor; //#aarrggbb
   colorargb activeColor; //#aarrggbb
   colorargb textColor;
   bool active;
   bool toDelete;
 
-  GUIElement(string name, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor);
+  GUIElement(string name, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor);
   virtual bool isIn(int mx, int my);
   virtual void getRect(int winWidth, int winHeight, int offsetX, int offsetY);
   virtual void getRect();

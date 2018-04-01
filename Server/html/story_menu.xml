@@ -1,39 +1,69 @@
 <body>
 	<button
 		id = "objectStoryMenuNewButton"
-		minrelx = "0.3"
-		minrely = "0.6"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.7"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "storyMenuNewButton"
-	>Start New Journey</button>
+	>
+		<location>
+			<bot
+				rel="0.6"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.7"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Start New Journey</button>
 	<button
 		id = "objectStoryMenuLoadButton"
-		minrelx = "0.3"
-		minrely = "0.5"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.6"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "storyMenuLoadButton"
-	>Load Saved Game</button>
+	>
+		<location>
+			<bot
+				rel="0.5"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.6"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Load Saved Game</button>
 	<button
 		id = "objectStoryMenuBackButton"
-		minrelx = "0.3"
-		minrely = "0.4"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.5"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "storyMenuBackButton"
-	>Back</button>
+	>
+		<location>
+			<bot
+				rel="0.4"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.5"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Back</button>
 	
 </body>

@@ -1,76 +1,137 @@
 <body>
 	<input
 		id = "objectSensorSidebarPowerInput"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-45.0"
-		maxrelx = "0.5"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		inputfunc = "ingameSensorSidebarPowerInput"
 		validatorfunc = "floatValidator"
-	>0</input>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-45.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.5"
+				abs="-5.0"
+			></right>
+		</location>0</input>
 	<label
 		id = "objectSensorSidebarPowerLabel"
-		minrelx = "0.5"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-45.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		align = "1"
-	> / 0</label>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-45.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.5"
+				abs="5.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location> / 0</label>
 	<input
 		id = "objectSensorSidebarEnergyInput"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-95.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-55.0"
 		inputfunc = "ingameSensorSidebarEnergyInput"
 		validatorfunc = "floatValidator"
-	>0</input>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-95.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-55.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location>0</input>
 	<button
 		id = "objectSensorSidebarPingButton"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-145.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-105.0"
 		callback = "ingameSensorSidebarPing"
-	>Ping</button>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-145.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-105.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location>
+	Ping</button>
 	<label
 		id = "objectSensorAutoFireLabel"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-195.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-55.0"
-		maxabsy = "-155.0"
 		align = "1"
-	> / 0</label>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-195.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-155.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-55.0"
+			></right>
+		</location> / 0</label>
 	<checkbox
 		id = "objectSensorAutoFireCheckbox"
-		minrelx = "1.0"
-		minrely = "1.0"
-		minabsx = "-55.0"
-		minabsy = "-195.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-155.0"
 		callback = "ingameSensorSidebarAutofire"
-	>0</checkbox>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-195.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-155.0"
+			></top>
+			<left
+				rel="1.0"
+				abs="-55.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location>0</checkbox>
 </body>

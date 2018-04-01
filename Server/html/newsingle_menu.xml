@@ -1,62 +1,112 @@
 <body>
 	<label
 		id = "objectJoinMenuIpLabel"
-		minrelx = "0.3"
-		minrely = "0.7"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.8"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		align = "1"
-	>Choose Campaign Mode</label>
+	>
+		<location>
+			<bot
+				rel="0.7"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.8"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Choose Campaign Mode</label>
 	<button
 		id = "objectNewSingleMenu3PlayerButton"
-		minrelx = "0.3"
-		minrely = "0.6"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.7"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "newSingleMenu3PlayerButton"
-	>3 Player Story</button>
+	>
+		<location>
+			<bot
+				rel="0.6"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.7"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>3 Player Story</button>
 	<button
 		id = "objectNewSingleMenu4PlayerButton"
-		minrelx = "0.3"
-		minrely = "0.5"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.6"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "newSingleMenu4PlayerButton"
-	>4 Player Story</button>
+	>
+		<location>
+			<bot
+				rel="0.5"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.6"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>4 Player Story</button>
 	<button
 		id = "objectNewSingleMenu5PlayerButton"
-		minrelx = "0.3"
-		minrely = "0.4"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.5"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "newSingleMenu5PlayerButton"
-	>5 Player Story</button>
+	>
+		<location>
+			<bot
+				rel="0.4"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.5"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>5 Player Story</button>
 	<button
 		id = "objectNewSingleMenuBackButton"
-		minrelx = "0.3"
-		minrely = "0.3"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.4"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "newSingleMenuBackButton"
-	>Back</button>
+	>
+		<location>
+			<bot
+				rel="0.3"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.4"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Back</button>
 </body>

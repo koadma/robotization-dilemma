@@ -144,18 +144,80 @@ namespace Graphics {
 
 }
 
-class Coordinate {
+class LinearScale {
 public:
-  int x;
-  int y;
-  float relx;
-  float rely;
-  Coordinate();
-  Coordinate(float relx, float rely);
-  Coordinate(float relx, float rely, int absx, int absy);
-  int GetX(int WindowWidht);
-  int GetY(int WindowHeight);
+  int absc;
+  float relc;
+  LinearScale();
+  LinearScale(float relc);
+  LinearScale(float relc, int absc);
+  int getVal(int size);
 };
+
+LinearScale operator+(LinearScale& lhs, LinearScale& rhs);
+LinearScale operator-(LinearScale& lhs, LinearScale& rhs);
+LinearScale operator-(LinearScale& lhs);
+LinearScale operator*(LinearScale& lhs, float rhs);
+LinearScale operator*(float rhs, LinearScale& lhs);
+LinearScale operator/(LinearScale& lhs, float rhs);
+LinearScale operator*(LinearScale& lhs, float& rhs);
+LinearScale operator*(float& rhs, LinearScale& lhs);
+LinearScale operator/(LinearScale& lhs, float& rhs);
+
+class LocationData {
+public:
+  enum Lock {
+    Lock_Min,
+    Lock_Max,
+    Lock_Mid,
+    Lock_Dist
+  };
+  LinearScale bottom, top, left, right;
+
+  LocationData();
+  LocationData(LinearScale lbottom, LinearScale ltop, LinearScale lleft, LinearScale lright);
+
+  void setWidth(LinearScale to, Lock lock);
+  void setHeight(LinearScale to, Lock lock);
+  void setTop(LinearScale to, Lock lock);
+  void setBot(LinearScale to, Lock lock);
+  void setLeft(LinearScale to, Lock lock);
+  void setRight(LinearScale to, Lock lock);
+  void setMidLR(LinearScale to, Lock lock);
+  void setMidBT(LinearScale to, Lock lock);
+
+  int getLeft(int contWidth);
+  int getRight(int contWidth);
+  int getTop(int contHeigth);
+  int getBot(int contHeigth);
+  int getWidth(int contWidth);
+  int getHeight(int contHeight);
+  
+};
+
+extern LocationData fullContainer;
+
+/// <summary>
+/// Return the lock that can be used when setting
+/// </summary>
+/// <param name="to">The previously set parameter. Will be returned if possible. Changed to newlock</param>
+/// <param name="newlock">What the new set will be. NEVER returned</param>
+/// <returns>Lock that can be passed to set function</returns>
+LocationData::Lock setLock(LocationData::Lock& to, LocationData::Lock newlock);
+
+/// <summary>
+/// Load linear scale from xml node attributes.
+/// </summary>
+/// <param name="me">XML node</param>
+/// <returns>LinearScale loaded result</returns>
+LinearScale loadLinear(xml_node<>* me);
+
+/// <summary>
+/// Load location data from location xml tag.
+/// </summary>
+/// <param name="me">The location tag</param>
+/// <returns>Loaded location data</returns>
+LocationData loadLocation(xml_node<>* me);
 
 static void shapesPrintf(int row, int col, const char *fmt, ...);
 

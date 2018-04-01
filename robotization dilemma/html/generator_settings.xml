@@ -1,14 +1,24 @@
 <body>
 	<labelbind
 		id = "objectGeneratorSidebarMaxEnergyLabel"
-		minrelx = "0.0"
-		minrely = "1.0"
-		minabsx = "5.0"
-		minabsy = "-45.0"
-		maxrelx = "1.0"
-		maxrely = "1.0"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		align = "1"
-	>0</labelbind>
+	>
+		<location>
+			<bot
+				rel="1.0"
+				abs="-45.0"
+			></bot>
+			<top
+				rel="1.0"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.0"
+				abs="5.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location>0</labelbind>
 </body>

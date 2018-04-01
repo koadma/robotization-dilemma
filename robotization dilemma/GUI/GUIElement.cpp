@@ -1,9 +1,8 @@
 #include "GUIElement.h"
 
-GUIElement::GUIElement(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor) {
+GUIElement::GUIElement(string lname, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor) {
   name = lname;
-  mincorner = lmincorner;
-  maxcorner = lmaxcorner;
+  location = llocation;
   bgColor = lbg;
   activeColor = lactive;
   textColor = ltextColor;
@@ -12,10 +11,10 @@ GUIElement::GUIElement(string lname, Coordinate lmincorner, Coordinate lmaxcorne
 }
 
 void GUIElement::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
-  cax = offsetX + mincorner.GetX(winWidth);
-  cay = offsetY + mincorner.GetY(winHeight);
-  cbx = offsetX + maxcorner.GetX(winWidth);
-  cby = offsetY + maxcorner.GetY(winHeight);
+  cax = offsetX + location.getLeft(winWidth);
+  cay = offsetY + location.getBot(winHeight);
+  cbx = offsetX + location.getRight(winWidth);
+  cby = offsetY + location.getTop(winHeight);
 
   getRect();
 }
@@ -61,13 +60,13 @@ int GUIElement::getWidth() {
   return cbx - cax;
 }
 int GUIElement::getWidth(int winWidth) {
-  return maxcorner.GetX(winWidth) - mincorner.GetX(winWidth);
+  return location.getWidth(winWidth);
 }
 int GUIElement::getHeight() {
   return cby - cay;
 }
 int GUIElement::getHeight(int winHeight) {
-  return maxcorner.GetY(winHeight) - mincorner.GetY(winHeight);
+  return location.getHeight(winHeight);
 }
 
 GUIElement::~GUIElement() {

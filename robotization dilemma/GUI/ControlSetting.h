@@ -7,8 +7,8 @@ public:
   key selected;
   int id;
   ControlInputFunc input;
-  ControlSetting(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, key lselected, int lid, ControlInputFunc linput) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
+  ControlSetting(string lname, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor, key lselected, int lid, ControlInputFunc linput) :
+    GUIElement(lname, llocation, lbg, lactive, ltextColor) {
     selected = lselected;
     input = linput;
     id = lid;

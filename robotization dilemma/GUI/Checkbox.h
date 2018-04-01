@@ -6,8 +6,8 @@ class Checkbox : public GUIElement{
 public:
   bool checked;
   CheckCallback checkCallback;
-  Checkbox(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, bool lchecked, CheckCallback lcheckCallback) :
-  GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
+  Checkbox(string lname, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor, bool lchecked, CheckCallback lcheckCallback) :
+  GUIElement(lname, llocation, lbg, lactive, ltextColor) {
   checked = lchecked;
   checkCallback = lcheckCallback;
   }

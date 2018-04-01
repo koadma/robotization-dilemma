@@ -14,8 +14,8 @@ public:
   float maxv;
   float val;
   float quanta;
-  Slider(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, colorargb lpulledcolor, float lmin, float lmax, float lvalue, float lquanta, SliderInputFunc lclickCallback) :
-    GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
+  Slider(string lname, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor, colorargb lpulledcolor, float lmin, float lmax, float lvalue, float lquanta, SliderInputFunc lclickCallback) :
+    GUIElement(lname, llocation, lbg, lactive, ltextColor) {
     minv = lmin;
     maxv = lmax;
     val = lvalue;

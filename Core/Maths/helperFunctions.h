@@ -488,6 +488,17 @@ uint64_t mix(uint64_t a, uint64_t b);
 uint32_t low(uint64_t a);
 uint32_t high(uint64_t a);
 
+enum {
+  Trim_Control = 0x01,
+  Trim_NewLine = 0x02,
+  Trim_CarrRet = 0x04,
+  Trim_Space   = 0x08
+};
+
+bool trimChar(char& c, int flags);
+
+string trimStr(string& in, int flags = Trim_Control | Trim_NewLine | Trim_CarrRet | Trim_Space);
+
 extern mutex netlock; //Locking for the network thread(s)
 
 

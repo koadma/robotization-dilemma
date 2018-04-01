@@ -7,8 +7,8 @@ public:
   key triggerkey;
   string text;
   ClickCallback clickCallback;
-  Button(string lname, Coordinate lmincorner, Coordinate lmaxcorner, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, key ltriggerkey, ClickCallback lclickCallback) :
-  GUIElement(lname, lmincorner, lmaxcorner, lbg, lactive, ltextColor) {
+  Button(string lname, LocationData llocation, colorargb lbg, colorargb lactive, colorargb ltextColor, string ltext, key ltriggerkey, ClickCallback lclickCallback) :
+  GUIElement(lname, llocation, lbg, lactive, ltextColor) {
     text = ltext;
     clickCallback = lclickCallback;
     triggerkey = ltriggerkey;

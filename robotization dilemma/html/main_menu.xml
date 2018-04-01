@@ -1,76 +1,136 @@
 <body>
 	<image
 		id = "objectMainMenuLogoImage"
-		minrelx = "0.1"
-		minrely = "0.7"
-		minabsx = "0.0"
-		minabsy = "0.0"
-		maxrelx = "0.9"
-		maxrely = "0.9"
-		maxabsx = "0.0"
-		maxabsy = "0.0"
 		align = "1"
-	>html/logo.png</image>
+	>
+		<location>
+			<bot
+				rel="0.7"
+				abs="0.0"
+			></bot>
+			<top
+				rel="0.9"
+				abs="0.0"
+			></top>
+			<left
+				rel="0.1"
+				abs="0.0"
+			></left>
+			<right
+				rel="0.9"
+				abs="0.0"
+			></right>
+		</location>html/logo.png</image>
 	<button
 		id = "objectMainMenuStoryModePlayButton"
-		minrelx = "0.3"
-		minrely = "0.6"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.7"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "mainMenuStoryModePlayButton"
-	>Play Story Mode</button>
+	>
+		<location>
+			<bot
+				rel="0.6"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.7"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Play Story Mode</button>
 	<button
 		id = "objectMainMenuPlayButton"
-		minrelx = "0.3"
-		minrely = "0.5"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.6"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "mainMenuFFAPlayButton"
-	>Play FFA</button>
+	>
+		<location>
+			<bot
+				rel="0.5"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.6"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Play FFA</button>
 	<button
 		id = "objectMainMenuSettingsButton"
-		minrelx = "0.3"
-		minrely = "0.4"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.5"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "mainMenuSettingsButton"
 		trigger = "0 115"
-	>Settings</button>
+	>
+		<location>
+			<bot
+				rel="0.4"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.5"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Settings</button>
 	<button
 		id = "objectMainMenuExitButton"
-		minrelx = "0.3"
-		minrely = "0.3"
-		minabsx = "5.0"
-		minabsy = "5.0"
-		maxrelx = "0.7"
-		maxrely = "0.4"
-		maxabsx = "-5.0"
-		maxabsy = "-5.0"
 		callback = "mainMenuExitButton"
 		trigger = "0 27"
-	>Exit</button>
+	>
+		<location>
+			<bot
+				rel="0.3"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.4"
+				abs="-5.0"
+			></top>
+			<left
+				rel="0.3"
+				abs="5.0"
+			></left>
+			<right
+				rel="0.7"
+				abs="-5.0"
+			></right>
+		</location>Exit</button>
 	<labelbind
 		id = "objectMainMenuVersion"
-		minrelx = "1.0"
-		minrely = "0.0"
-		minabsx = "-95.0"
-		minabsy = "5.0"
-		maxrelx = "1.0"
-		maxrely = "0.0"
-		maxabsx = "-5.0"
-		maxabsy = "35.0"
 		align = "1"
-	>ERROR</labelbind>
+	>
+		<location>
+			<bot
+				rel="0.0"
+				abs="5.0"
+			></bot>
+			<top
+				rel="0.0"
+				abs="35.0"
+			></top>
+			<left
+				rel="1.0"
+				abs="-95.0"
+			></left>
+			<right
+				rel="1.0"
+				abs="-5.0"
+			></right>
+		</location>ERROR</labelbind>
 </body>

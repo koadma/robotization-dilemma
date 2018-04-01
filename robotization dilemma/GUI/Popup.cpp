@@ -1,10 +1,10 @@
 #include "Popup.h"
 
-Coordinate to_mincorner(Coordinate topleft, Coordinate dimension) {
-  return Coordinate(topleft.relx, topleft.rely - dimension.rely, topleft.x, topleft.y - dimension.y);
+/*Coordinate to_mincorner(int topleftx, int toplefty, Coordinate dimension) {
+  return Coordinate(0, - dimension.rely, topleftx, toplefty - dimension.y);
 }
-Coordinate to_maxcorner(Coordinate topleft, Coordinate dimension) {
-  return Coordinate(topleft.relx + dimension.relx, topleft.rely, topleft.x + dimension.x, topleft.y);
+Coordinate to_maxcorner(int topleftx, int toplefty, Coordinate dimension) {
+  return Coordinate(dimension.relx, 0, topleftx + dimension.x, toplefty);
 }
 
 void Popup::transformCoordinates(int &mx, int &my) {
@@ -26,6 +26,21 @@ void Popup::getRect(int winWidth, int winHeight, int offsetX, int offsetY) {
   if (element != NULL) {
     element->getRect(cbx - cax, cby - cay, cax, cay);
   }
+}
+
+void Popup::moveTo(int topleftx, int toplefty) {
+  maxcorner = to_maxcorner(topleftx, toplefty, sizec);
+  mincorner = to_mincorner(topleftx, toplefty, sizec);
+ 
+  int offsetx = topleftx - topleftc.x;
+  int offsety = toplefty - topleftc.y;
+
+  topleftc = Coordinate(0,0,topleftx,toplefty);
+
+  cax += offsetx;
+  cbx += offsetx;
+  cay += offsety;
+  cby += offsety;
 }
 
 void Popup::deleteElements(bool hard) {
@@ -53,4 +68,4 @@ Popup::~Popup() {
   if (element != NULL) {
     delete element;
   }
-}
+}*/
