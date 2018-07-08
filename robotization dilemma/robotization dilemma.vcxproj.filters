@@ -4,18 +4,6 @@
     <Filter Include="Code">
       <UniqueIdentifier>{d66bffac-f639-43cf-a6d3-676d5b4289e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Code\Libraries">
-      <UniqueIdentifier>{84df28ba-3a81-4ab3-a039-251beb514796}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Libraries\GUI">
-      <UniqueIdentifier>{9391fbe4-7bce-4e79-b72a-c07c74b221e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Libraries\Maths">
-      <UniqueIdentifier>{ce2e52a3-2697-4943-9e00-b8fa6ffc079e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Libraries\Network">
-      <UniqueIdentifier>{ac0ece5f-ff31-42be-81ba-9cc8141a31c9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Code\Framework">
       <UniqueIdentifier>{4cafe0d7-470e-4d3c-b32d-cea9d69654b6}</UniqueIdentifier>
     </Filter>
@@ -25,71 +13,11 @@
     <Filter Include="Code\Objects">
       <UniqueIdentifier>{f731ef97-4023-4cae-bc4a-dd79dffef8c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Code\Libraries\Scripts">
-      <UniqueIdentifier>{f9b98839-2b1b-4107-805f-1faaba05afe2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Libraries\Maths\BigNumber">
-      <UniqueIdentifier>{a550c39b-43a8-4621-98dc-7e5e7cca6666}</UniqueIdentifier>
+    <Filter Include="NGin">
+      <UniqueIdentifier>{cb4901cd-b1f4-4d8a-bb66-5d36847f90a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GUI\Button.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Canvas.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Container.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Graphics.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\GraphicsUtils.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\GUIElement.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Label.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\LabelBind.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Panel.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Slider.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Table.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TextInput.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Maths\Fraction.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Maths\helperFunctions.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Maths\Keyframe.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Maths\Point.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Maths\Polynomial.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Network\Network.cpp">
-      <Filter>Code\Libraries\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Network\NetworkData.cpp">
-      <Filter>Code\Libraries\Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\Core\Object\Battery.cpp">
       <Filter>Code\Objects</Filter>
     </ClCompile>
@@ -126,9 +54,6 @@
     <ClCompile Include="..\Core\Path\Shot.cpp">
       <Filter>Code\EM</Filter>
     </ClCompile>
-    <ClCompile Include="ClientCore.cpp">
-      <Filter>Code\Framework</Filter>
-    </ClCompile>
     <ClCompile Include="GameCanvas.cpp">
       <Filter>Code\Framework</Filter>
     </ClCompile>
@@ -150,110 +75,113 @@
     <ClCompile Include="..\Core\Event.cpp">
       <Filter>Code\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Scripts\Scripts.cpp">
-      <Filter>Code\Libraries\Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Checkbox.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Core\Maths\FlowSystem.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClCompile>
     <ClCompile Include="..\Core\Resources.cpp">
       <Filter>Code\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Plot.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\Button.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\ControlSetting.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\Canvas.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Image.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\Checkbox.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignum.cpp">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\ClientCore.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignumf.cpp">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\Container.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignums.cpp">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\ControlSetting.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Ctty.cpp">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\Graphics.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Exarray.cpp">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\GraphicsUtils.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\Maths\BigFloat.cpp">
-      <Filter>Code\Libraries\Maths</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\GUIElement.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Popup.cpp">
-      <Filter>Code\Libraries\GUI</Filter>
+    <ClCompile Include="..\..\..\NGin\GUI\Image.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\Label.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\LabelBind.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\Panel.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\Plot.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\Popup.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\Slider.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\Table.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\GUI\TextInput.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigFloat.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\FlowSystem.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\Fraction.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\helperFunctions.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\Keyframe.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\Point.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\Polynomial.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignum.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignumf.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignums.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Ctty.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Exarray.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Prime.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Network\Network.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Network\NetworkData.cpp">
+      <Filter>NGin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NGin\Scripts\Scripts.cpp">
+      <Filter>NGin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GUI\Button.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Canvas.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Container.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Graphics.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\GraphicsUtils.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\GUIElement.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Label.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\LabelBind.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Panel.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Slider.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Table.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TextInput.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\constants.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\Fraction.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\helperFunctions.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\Keyframe.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\Point.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\Polynomial.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Network\Network.h">
-      <Filter>Code\Libraries\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Network\NetworkData.h">
-      <Filter>Code\Libraries\Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\Core\Object\Battery.h">
       <Filter>Code\Objects</Filter>
     </ClInclude>
@@ -290,9 +218,6 @@
     <ClInclude Include="..\Core\Path\Shot.h">
       <Filter>Code\EM</Filter>
     </ClInclude>
-    <ClInclude Include="ClientCore.h">
-      <Filter>Code\Framework</Filter>
-    </ClInclude>
     <ClInclude Include="GameCanvas.h">
       <Filter>Code\Framework</Filter>
     </ClInclude>
@@ -314,84 +239,177 @@
     <ClInclude Include="..\Core\Event.h">
       <Filter>Code\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Checkbox.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\FlowSystem.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
     <ClInclude Include="..\Core\Resources.h">
       <Filter>Code\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Plot.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\ControlSetting.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Image.h">
-      <Filter>Code\Libraries\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignum.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignumf.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignums.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbnl.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cios.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Ctty.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exarray.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exdebug.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exstring.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exthread.h">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\BigFloat.h">
-      <Filter>Code\Libraries\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Core\Maths\Types.h">
-      <Filter>Code\Libraries\Maths</Filter>
     </ClInclude>
     <ClInclude Include="..\Core\Scripts\Scripts.h">
       <Filter>Code\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Popup.h">
-      <Filter>Code\Libraries\GUI</Filter>
+    <ClInclude Include="..\..\..\NGin\GUI\Button.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Canvas.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Checkbox.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\ClientCore.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Container.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\ControlSetting.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Graphics.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\GraphicsUtils.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\GUIElement.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Image.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Label.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\LabelBind.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Panel.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Plot.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Popup.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Slider.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\stb_image.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\Table.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\GUI\TextInput.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigFloat.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\constants.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\FlowSystem.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\Fraction.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\helperFunctions.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\Keyframe.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\Point.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\Polynomial.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\Types.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignum.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignumf.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignums.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbnl.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cios.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cthr.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Ctty.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exarray.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exdebug.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exstring.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exthread.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Network\Network.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Network\NetworkData.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml.hpp">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml_iterators.hpp">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml_print.hpp">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml_utils.hpp">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\NGin\Scripts\Scripts.h">
+      <Filter>NGin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Core\Definition.h">
+      <Filter>Code\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Core\Maths\BigNumberLibrary\Cbignumf.inl">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </None>
-    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl.inl">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </None>
-    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl64.inl">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </None>
+    <Text Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignum.txt">
+      <Filter>NGin</Filter>
+    </Text>
+    <Text Include="..\..\..\NGin\Maths\BigNumberLibrary\Exarray.txt">
+      <Filter>NGin</Filter>
+    </Text>
+    <Text Include="..\..\..\NGin\rapidxml\license.txt">
+      <Filter>NGin</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Core\Maths\BigNumberLibrary\Cbignum.txt">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </Text>
-    <Text Include="..\Core\Maths\BigNumberLibrary\Exarray.txt">
-      <Filter>Code\Libraries\Maths\BigNumber</Filter>
-    </Text>
+    <None Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignumf.inl">
+      <Filter>NGin</Filter>
+    </None>
+    <None Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbnl.inl">
+      <Filter>NGin</Filter>
+    </None>
+    <None Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbnl64.inl">
+      <Filter>NGin</Filter>
+    </None>
+    <None Include="..\..\..\NGin\rapidxml\manual.html">
+      <Filter>NGin</Filter>
+    </None>
   </ItemGroup>
 </Project>

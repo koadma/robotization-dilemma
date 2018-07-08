@@ -26,7 +26,7 @@ class Game {
   void calcIntersect(Drone* drone);
   void calcIntersect(Path* path);
 public:
-  map<string, Ship*> shipAuth;
+  map<string, NetBinder*> shipAuth;
 
   Game(int count) {
     targetPlayerCount = count;
@@ -58,7 +58,7 @@ public:
   void add(Path* path);
   void add(Event* evt);
   Drone* addDrone(mVec3 pos);
-  Ship* addShip();
+  NetBinder* addShip();
 
   void remove(Path* path);
 

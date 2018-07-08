@@ -28,7 +28,8 @@ void Movement::get(DataElement* data) {
   data->addChild(acce);
 
   DataElement* typee = new DataElement();
-  typee->_core->fromType<int>(type());
+  int typev = type();
+  vGFunc(typev, typee);
   data->addChild(typee);
 
   DataElement* pathe = new DataElement();

@@ -234,6 +234,7 @@ void Ship::load(uint32_t _ID, mVec3 _pos, string filename) {
 
 #ifdef M_SERVER
 Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bool autofire) {
+  cout << "Sighting" << endl;
   Sighting* s = NULL;
   if (closed) {
     for (auto&& it : sightings) {
@@ -274,6 +275,7 @@ Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bo
         Laser* lit = (Laser*)it;
         sVec3 dir;
         bool sf = surefire(mov, s->_keyframes, time, lit->_relativePos, dir);
+        cout << "Returning fire" << endl;
         lit->shoot(time, 100000, dir, g);
       }
     }

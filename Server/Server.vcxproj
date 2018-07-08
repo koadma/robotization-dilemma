@@ -19,20 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\NGin\Maths\BigFloat.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignum.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignumf.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignums.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Ctty.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Exarray.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\BigNumberLibrary\Prime.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\FlowSystem.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\Fraction.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\helperFunctions.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\Keyframe.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\Point.cpp" />
+    <ClCompile Include="..\..\..\NGin\Maths\Polynomial.cpp" />
+    <ClCompile Include="..\..\..\NGin\Network\Network.cpp" />
+    <ClCompile Include="..\..\..\NGin\Network\NetworkData.cpp" />
+    <ClCompile Include="..\..\..\NGin\Scripts\Scripts.cpp" />
     <ClCompile Include="..\Core\Event.cpp" />
-    <ClCompile Include="..\Core\Maths\BigFloat.cpp" />
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignum.cpp" />
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignumf.cpp" />
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Cbignums.cpp" />
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Ctty.cpp" />
-    <ClCompile Include="..\Core\Maths\BigNumberLibrary\Exarray.cpp" />
-    <ClCompile Include="..\Core\Maths\Fraction.cpp" />
-    <ClCompile Include="..\Core\Maths\helperFunctions.cpp" />
-    <ClCompile Include="..\Core\Maths\Keyframe.cpp" />
-    <ClCompile Include="..\Core\Maths\Point.cpp" />
-    <ClCompile Include="..\Core\Maths\Polynomial.cpp" />
-    <ClCompile Include="..\Core\Network\Network.cpp" />
-    <ClCompile Include="..\Core\Network\NetworkData.cpp" />
     <ClCompile Include="..\Core\Object\Battery.cpp" />
     <ClCompile Include="..\Core\Object\Computer.cpp" />
     <ClCompile Include="..\Core\Object\Engine.cpp" />
@@ -45,33 +48,41 @@
     <ClCompile Include="..\Core\Path\Movement.cpp" />
     <ClCompile Include="..\Core\Path\Path.cpp" />
     <ClCompile Include="..\Core\Path\Shot.cpp" />
-    <ClCompile Include="..\Core\Scripts\Scripts.cpp" />
     <ClCompile Include="..\Core\Ship.cpp" />
     <ClCompile Include="..\Core\Sighting.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\NGin\GUI\stb_image.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigFloat.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignum.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignumf.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignums.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbnl.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cios.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Cthr.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Ctty.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exarray.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exdebug.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exstring.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\BigNumberLibrary\Exthread.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\constants.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\FlowSystem.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\Fraction.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\helperFunctions.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\Keyframe.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\Point.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\Polynomial.h" />
+    <ClInclude Include="..\..\..\NGin\Maths\Types.h" />
+    <ClInclude Include="..\..\..\NGin\Network\Network.h" />
+    <ClInclude Include="..\..\..\NGin\Network\NetworkData.h" />
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml.hpp" />
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml_iterators.hpp" />
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml_print.hpp" />
+    <ClInclude Include="..\..\..\NGin\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="..\..\..\NGin\Scripts\Scripts.h" />
     <ClInclude Include="..\Core\Event.h" />
-    <ClInclude Include="..\Core\Maths\BigFloat.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignum.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignumf.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbignums.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cbnl.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Cios.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Ctty.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exarray.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exdebug.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exstring.h" />
-    <ClInclude Include="..\Core\Maths\BigNumberLibrary\Exthread.h" />
-    <ClInclude Include="..\Core\Maths\constants.h" />
-    <ClInclude Include="..\Core\Maths\Fraction.h" />
-    <ClInclude Include="..\Core\Maths\helperFunctions.h" />
-    <ClInclude Include="..\Core\Maths\Keyframe.h" />
-    <ClInclude Include="..\Core\Maths\Point.h" />
-    <ClInclude Include="..\Core\Maths\Polynomial.h" />
-    <ClInclude Include="..\Core\Network\Network.h" />
-    <ClInclude Include="..\Core\Network\NetworkData.h" />
     <ClInclude Include="..\Core\Object\Battery.h" />
     <ClInclude Include="..\Core\Object\Computer.h" />
     <ClInclude Include="..\Core\Object\Engine.h" />
@@ -84,20 +95,21 @@
     <ClInclude Include="..\Core\Path\Movement.h" />
     <ClInclude Include="..\Core\Path\Path.h" />
     <ClInclude Include="..\Core\Path\Shot.h" />
-    <ClInclude Include="..\Core\Scripts\Scripts.h" />
     <ClInclude Include="..\Core\Ship.h" />
     <ClInclude Include="..\Core\Sighting.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Core\Maths\BigNumberLibrary\Cbignumf.inl" />
-    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl.inl" />
-    <None Include="..\Core\Maths\BigNumberLibrary\Cbnl64.inl" />
+    <Text Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignum.txt" />
+    <Text Include="..\..\..\NGin\Maths\BigNumberLibrary\Exarray.txt" />
+    <Text Include="..\..\..\NGin\rapidxml\license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Core\Maths\BigNumberLibrary\Cbignum.txt" />
-    <Text Include="..\Core\Maths\BigNumberLibrary\Exarray.txt" />
+    <None Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbignumf.inl" />
+    <None Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbnl.inl" />
+    <None Include="..\..\..\NGin\Maths\BigNumberLibrary\Cbnl64.inl" />
+    <None Include="..\..\..\NGin\rapidxml\manual.html" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{74475862-5789-4265-A647-096AC8B5A65C}</ProjectGuid>

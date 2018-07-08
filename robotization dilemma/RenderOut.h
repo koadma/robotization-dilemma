@@ -1,7 +1,9 @@
 #pragma once
 
-#include "GUI/Graphics.h"
+#define SCRIPT_GUI
+#include "../Core/Definition.h"
 
+bool recivePacket(DataElement* data, int id, NetworkC* client, NetBinder* lship);
 
 extern Graphics::WinHwnd objectMainWindow;
 extern Graphics::PanelHwnd objectGameSubWindow;

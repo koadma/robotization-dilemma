@@ -163,7 +163,8 @@ list< pair<time_type_s, pair<Object*, Path*>>> Object::intersect(Path* p) {
 }
 void Object::getStatus(DataElement* data) {
   DataElement* typee = new DataElement();
-  typee->_core->fromType<int>(type());
+  int typev = type();
+  typee->_core->fromType<int>(typev);
   data->addChild(typee);
 
   DataElement* rele = new DataElement();

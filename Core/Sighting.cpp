@@ -188,7 +188,7 @@ result coordinates(mpsVec3 vtarget, mVec3 starttarget, mVec3 startship, acc_type
   //az utolso ismert sebesseg es az s vektor altal bezart szog
   distance_type_m vcosgamma = dot(svec, vtarget) / (s);
   //az utolso ismert sebesseg alapjan mikorra erne be a hajot egy lezerlovedek
-  longDouble t3 = s*(-vcosgamma + sqrt(v*v - vcosgamma*vcosgamma + SOL*SOL)) / (SOL*SOL - v*v);
+  longDouble t3 = s*(-vcosgamma + sqrt(vcosgamma*vcosgamma - v*v + SOL*SOL)) / (SOL*SOL - v*v);
   result direction(starttarget + vtarget*t3 - startship, true);
   //idoben beerne meg?
   if ((sqrt(d / amax) - tpassed) < t3)

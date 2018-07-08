@@ -4,7 +4,7 @@
 #include "../../robotization dilemma/RenderOut.h"
 #endif
 #ifdef M_SERVER
-#include "../Scripts/Scripts.h"
+#include "../Definition.h"
 #endif
 
 class Path {

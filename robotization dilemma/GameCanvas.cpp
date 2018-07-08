@@ -4,8 +4,6 @@
 float MainGameCanvas::camcx = 0, MainGameCanvas::camcy = 0, MainGameCanvas::camcz = 0; //World coordiante center
 float MainGameCanvas::camphi = 0, MainGameCanvas::camtheta = 0; //phi: x-z, from x, positive to z. theta: from xz to y.
 float MainGameCanvas::d = to_doubleT<double, vel_type_mpers>(2*SOL);
-int MainGameCanvas::mxold;
-int MainGameCanvas::myold;
 int MainGameCanvas::mousebuttons = 0; //left, center, right
 
 OpenGLData MainGameCanvas::view;
@@ -20,7 +18,7 @@ void MainGameCanvas::normalizeAngles() {
   }
   camphi = wrapAngle(camphi + PI) - PI; //between -180 and 180
 }
-int MainGameCanvas::renderManager(int ax, int ay, int bx, int by) {
+int MainGameCanvas::renderManager(int ax, int ay, int bx, int by, set<key_location>& down) {
 
   glViewport(ax, ay, bx - ax, by - ay);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -162,9 +160,9 @@ int MainGameCanvas::mouseEntryManager(int state) {
   //mousebuttons = 0;
   return 0;
 }
-int MainGameCanvas::mouseMoveManager(int x, int y) {
-  int dx = x - mxold;
-  int dy = y - myold;
+int MainGameCanvas::mouseMoveManager(int x, int y, int ox, int oy, set<key_location>& down) {
+  int dx = x - ox;
+  int dy = y - oy;
 
   int res = 0;
 
@@ -180,9 +178,6 @@ int MainGameCanvas::mouseMoveManager(int x, int y) {
     normalizeAngles();
     res = 1;
   }
-
-  mxold = x;
-  myold = y;
   return res;
 }
 
@@ -267,8 +262,6 @@ int MainGameCanvas::guiEventManager(gui_event evt, int mx, int my, set<key_locat
 float MainGameShipCanvas::camcx = 0, MainGameShipCanvas::camcy = 0, MainGameShipCanvas::camcz = 0;
 float MainGameShipCanvas::camphi = HALF_PI, MainGameShipCanvas::camtheta = QUARTER_PI; //phi: x-z, from x, positive to z. theta: from xz to y.
 float MainGameShipCanvas::d = 1000;
-int MainGameShipCanvas::mxold;
-int MainGameShipCanvas::myold;
 int MainGameShipCanvas::mousebuttons = 0; //left, center, right
 
 OpenGLData MainGameShipCanvas::view;
@@ -283,7 +276,7 @@ void MainGameShipCanvas::normalizeAngles() {
   }
   camphi = wrapAngle(camphi + PI) - PI; //between -180 and 180
 }
-int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by) {
+int MainGameShipCanvas::renderManager(int ax, int ay, int bx, int by, set<key_location>& down) {
 
   glViewport(ax, ay, bx - ax, by - ay);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -424,9 +417,9 @@ int MainGameShipCanvas::mouseEntryManager(int state) {
   mousebuttons = 0;
   return 0;
 }
-int MainGameShipCanvas::mouseMoveManager(int x, int y) {
-  int dx = x - mxold;
-  int dy = y - myold;
+int MainGameShipCanvas::mouseMoveManager(int x, int y, int ox, int oy, set<key_location>& down) {
+  int dx = x - ox;
+  int dy = y - oy;
 
   int res = 0;
 
@@ -443,8 +436,6 @@ int MainGameShipCanvas::mouseMoveManager(int x, int y) {
     res = 1;
   }
 
-  mxold = x;
-  myold = y;
   return res;
 }
 

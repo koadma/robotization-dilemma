@@ -56,14 +56,14 @@ int checkLogin(DataElement* data, int id) {
   return LoginErrorOk;
 }
 
-bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
+bool loginRecv(DataElement* data, int id, NetworkS* thisptr, NetBinder* ship) {
   if(ship == NULL) {
     int loginState = checkLogin(data, id);
     if (loginState == LoginErrorOk) { //If can join
-      Ship* newShip = game->addShip();
+      NetBinder* newShip = game->addShip();
 
       newShip->connectedClient = thisptr;
-      thisptr->ConnectedShip = newShip;
+      thisptr->ConnectedBinder = newShip;
 
       DataElement* de = new DataElement();
 
@@ -101,12 +101,13 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
 
           it->second->connectedClient = thisptr;
         
-          thisptr->ConnectedShip = it->second;
+          thisptr->ConnectedBinder = it->second;
 
           DataElement* de = new DataElement();
 
           DataElement* state = new DataElement();
-          state->_core->fromType<int>(LoginErrorOk);
+          int statev = LoginErrorOk;
+          state->_core->fromType<int>(statev);
           de->addChild(state);
 
           DataElement* ide = new DataElement();
@@ -149,6 +150,11 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, Ship* ship) {
     return ship->packetRecv(data, id, thisptr);
   }
 }
+
+
+int VersionA = 0;
+int VersionB = 7;
+int VersionC = 1;
 
 int main(int argc, char** argv)
 {  

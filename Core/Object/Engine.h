@@ -25,10 +25,10 @@ public:
   }
 
   power_type_W accel2power(mpssVec3 acc) {
-    return acc.sqrlen();
+    return acc.length() * 2000;
   }
   acc_type_mperss power2accel(power_type_W pow) {
-    return to_doubleT<acc_type_mperss>(sqrt(pow));
+    return to_doubleT<acc_type_mperss>(pow / 2000.0);
   }
 
 #ifdef M_SERVER

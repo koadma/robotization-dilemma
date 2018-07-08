@@ -1,12 +1,12 @@
 #include "Main.h"
 
-bool recivePacket(DataElement* data, int id, NetworkC* client, Ship* lship) {
+bool recivePacket(DataElement* data, int id, NetworkC* client, NetBinder* lship) {
   if (ship == NULL) {
     switch (id) {
     case PacketLogin:
       if (data->_children[0]->_core->toType<int>() == LoginErrorOk) {
 
-        Connection->ConnectedShip = ship = new Ship(data->_children[1]->_core->toType<uint64_t>());
+        ship = Connection->ConnectedBinder = new NetBinder(data->_children[1]->_core->toType<uint64_t>());
         
         ofstream last("lastserver.dat");
         last << client->_IP END;
@@ -92,6 +92,10 @@ bool hasSaveFile(vector<string>& data) {
 void testKey(key k) {
   LOG INFO MISC k._keycode << " " << k.toName() END;
 }
+
+int VersionA = 0;
+int VersionB = 7;
+int VersionC = 1;
 
 int main() {
   /*Fraction a;

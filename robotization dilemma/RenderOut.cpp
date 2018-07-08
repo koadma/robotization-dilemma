@@ -135,7 +135,7 @@ void drawXZPlane(float camcx, float camcy, float camcz, float d, int n) {
 }
 
 void renderNewRound(int id) {
-  reinterpret_cast<Graphics::LabelHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Turn " + to_string(id);
+  reinterpret_cast<Graphics::ButtonHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Turn " + to_string(id);
   reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->maxv = to_doubleT<double, time_type_s>(ROUND_TIME)*id;
   reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectMainGameTimeSlider"))->val = to_doubleT<double, time_type_s>(ROUND_TIME)*(id-1);
 }

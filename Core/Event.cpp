@@ -23,11 +23,13 @@ void StateChange::getV(DataElement* data) {
 }
 void StateChange::get(DataElement* data) {
   DataElement* ide = new DataElement();
-  ide->_core->fromType<uint64_t>(type());
+  uint64_t idev = type();
+  ide->_core->fromType<uint64_t>(idev);
   data->addChild(ide);
 
   DataElement* oe = new DataElement();
-  oe->_core->fromType<uint64_t>(_o->getId());
+  uint64_t ov = _o->getId();
+  oe->_core->fromType<uint64_t>(ov);
   data->addChild(oe);
 
   DataElement* timee = new DataElement();
@@ -76,6 +78,7 @@ int SensorPing::type() {
   return EvTSensorPing;
 }
 void SensorPing::getV(DataElement* data) {
+  cout << "Ping event sent" << endl;
   DataElement* enee = new DataElement();
   enee->_core->fromType<energy_type_J>(_energy);
   data->addChild(enee);
@@ -143,6 +146,7 @@ void SensorPow::setV(DataElement* data, Game* game) {
 }
 void LaserShot::applyVV(Game *g) {
   Shot* s = new Shot();
+  LOG INFO GAME "Laser " << _o->getId() << " shot " << s END;
   s->energy = _energy - _o->useEnergy(_time, _energy, g);
   s->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   s->originID = _o->getId();
@@ -177,6 +181,8 @@ void ThermalRadiation::setV(DataElement* data, Game* game) {
 
 }
 void SensorPing::applyVV(Game *g) {
+  cout << "Ping event applied" << endl;
+
   Bubble* b = new Bubble();
   b->setConstrains({constrain(constrain::include, { 1, 0, 0 }, -2)}); //Include all directions
   b->bsource = Bubble_Ping;

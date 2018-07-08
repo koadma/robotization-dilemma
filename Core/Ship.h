@@ -17,7 +17,7 @@ class Game;
 class Drone {
 public:
   keyframe<Movement> mov;
-  long int _droneID;
+  uint64_t _droneID;
   list<Object*> objects;
   list<Sighting*> sightings;
 
@@ -171,6 +171,19 @@ public:
   void clearSightings();
 
   ~Ship();
+};
+
+class NetBinder : public Ship {
+public:
+  NetBinder(uint32_t _ID) : Ship(_ID) {
+
+  }
+  NetBinder(uint32_t _ID, mVec3 _pos, string filename) : Ship(_ID, _pos, filename) {
+
+  }
+  NetBinder(uint32_t _ID, string filename) : Ship(_ID, filename) {
+
+  }
 };
 
 bool surefire(keyframe<Movement>& me, keyframe<Movement>& enemy, time_type_s when, mVec3 posShift, sVec3 &direction);

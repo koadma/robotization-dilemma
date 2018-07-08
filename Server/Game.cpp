@@ -79,6 +79,7 @@ void Game::removeIntersect(Path* path) {
     if (!(*it)->_isApplying && (*it)->type() == Event::EvTCollision && (reinterpret_cast<Collision*>(*it))->_p == path) {
       auto it2 = it;
       ++it;
+      LOG INFO GAME "Event " << *it2 << ": " << (*it2)->type_name() << " deleted with path " << path << " at " << (*it2)->_time END;
       events.erase(it2);
     }
     else {
@@ -134,9 +135,9 @@ void Game::calcIntersect(Path* path) {
   }
 }
 
-Ship* Game::addShip() {
+NetBinder* Game::addShip() {
   int nid = drones.size();
-  Ship* ship = new Ship(nid, shipStarts[nid], "html/Ships/Test/");
+  NetBinder* ship = new NetBinder(nid, shipStarts[nid], "html/Ships/Test/");
   drones.push_back(ship);
   string nCode;
   do {
@@ -158,7 +159,7 @@ void Game::add(Path* path) {
   LOG INFO GAME "Path " << path << ": " << path->type() << " added" END;
 }
 void Game::add(Event* evt) {
-  LOG INFO "Event " << evt << " added at " << evt->_time << ", type " << evt->type_name() END;
+  LOG INFO GAME "Event " << evt << " added at " << evt->_time << ", type " << evt->type_name() END;
   events.insert(evt);
 }
 
@@ -195,6 +196,7 @@ void Game::simulate(time_type_s from, time_type_s till) {
   auto it = events.begin();
   while (it != events.end() && (*it)->_time < till) {
     if(from <= (*it)->_time) {
+      from = (*it)->_time;
       auto it2 = it;
       LOG INFO GAME "Event " << *it << ": " << (*it)->type_name() << " processed at " << (*it)->_time END;
       (*it)->apply(this);
@@ -230,6 +232,7 @@ void Game::simulate(time_type_s from, time_type_s till) {
         auto dpit = pit;
         ++pit;
         removeIntersect(*dpit);
+        LOG INFO GAME "Path " << *dpit << ": " << (*dpit)->type() << " removed" END;
         paths.erase(dpit);
       }
     }
