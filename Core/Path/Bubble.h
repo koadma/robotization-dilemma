@@ -66,8 +66,8 @@ public:
     }
     return res;
   }
-  bool isWellIn(mVec3 point, distance_type_m radius, time_type_s time) {
-    distance_type_m brad = (time - gEmissionTime) * SOL;
+  bool isWellIn(mVec3 point, distance_type_m radius, time_type_s at) {
+    distance_type_m brad = (at - gEmissionTime) * SOL;
     return (2 * (brad + radius)) > ((point - emitter.getAt(gEmissionTime).pos).length());
   }
 

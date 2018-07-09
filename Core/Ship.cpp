@@ -276,6 +276,7 @@ Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bo
         sVec3 dir;
         bool sf = surefire(mov, s->_keyframes, time, lit->_relativePos, dir);
         cout << "Returning fire" << endl;
+        cout << "Surefire?: " << sf << endl;
         lit->shoot(time, 100000, dir, g);
       }
     }
@@ -283,6 +284,7 @@ Sighting* Drone::sightPath(Bubble* p, time_type_s time, Game* g, bool closed, bo
   return s;
 }
 energy_type_J Drone::energyUpdate(time_type_s time, Game* game, Object* chg, energy_type_J chgval) {
+  LOG INFO SHIP "Drone ID " << _droneID << " updating energy." END;
   FlowVertex<energy_type_J, Fraction, time_type_s>* vertex = NULL;
   if(chg != NULL) {
     vertex = chg->_energySystem;

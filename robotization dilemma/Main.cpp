@@ -95,7 +95,7 @@ void testKey(key k) {
 
 int VersionA = 0;
 int VersionB = 7;
-int VersionC = 1;
+int VersionC = 2;
 
 int main() {
   /*Fraction a;

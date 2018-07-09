@@ -349,7 +349,7 @@ void Object::getPath(time_type_s time, Path* p, Game* g) {
     _health.addFrame(time,
       value<int>(max(
         0,
-        _health.getAt(time) - int(to_doubleT<double, energy_type_J>(ps->energy) / 50)
+        _health.getAt(time) - int(to_doubleT<double, energy_type_J>(ps->energy) / 1000)
         ))); //TODO BETTER
     ps->energy -= 10000;
     ps->energy = max(0, ps->energy);

@@ -103,6 +103,7 @@ void Event::applyV(Game *g) {
 }
 void Collision::applyV(Game *g) {
   if (_p->verify(_time, _o->getMovement(_time).pos)) { //for future non full sphere em waves (e.g. cones)
+    LOG INFO GAME "Passed" END;
     _o->getPath(_time, _p, g);
   }
 }
@@ -146,12 +147,12 @@ void SensorPow::setV(DataElement* data, Game* game) {
 }
 void LaserShot::applyVV(Game *g) {
   Shot* s = new Shot();
-  LOG INFO GAME "Laser " << _o->getId() << " shot " << s END;
   s->energy = _energy - _o->useEnergy(_time, _energy, g);
   s->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   s->originID = _o->getId();
   s->origintime = _time;
   s->vel = _dir;
+  LOG INFO GAME "Laser " << _o->getId() << " shot " << s END;
   g->add(s);
 }
 void LaserShot::setV(DataElement* data, Game* game) {
@@ -181,8 +182,6 @@ void ThermalRadiation::setV(DataElement* data, Game* game) {
 
 }
 void SensorPing::applyVV(Game *g) {
-  cout << "Ping event applied" << endl;
-
   Bubble* b = new Bubble();
   b->setConstrains({constrain(constrain::include, { 1, 0, 0 }, -2)}); //Include all directions
   b->bsource = Bubble_Ping;
@@ -192,7 +191,7 @@ void SensorPing::applyVV(Game *g) {
   b->originID = _o->getId();
 
   _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
-
+  LOG INFO GAME "Sensor " << _o->getId() << " pinged " << b END;
   g->add(b);
 }
 void SensorPing::setV(DataElement* data, Game* game) {

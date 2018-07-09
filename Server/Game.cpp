@@ -223,7 +223,11 @@ void Game::simulate(time_type_s from, time_type_s till) {
       while (dit != drones.end() && land) {
         auto oit = (*dit)->objects.begin();
         while (oit != (*dit)->objects.end() && land) {
-          land = land && ((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
+          bool nand = ((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
+          if (!nand) {
+            LOG INFO GAME "Test failed at " << (*oit)->getId() << "(" << ((*oit)->getMovement(till).pos) << "), at " << till << " bubble size of " << (till - ((Bubble*)(*pit))->gEmissionTime) * SOL << " from " << ((Bubble*)(*pit))->emitter.getAt(((Bubble*)(*pit))->gEmissionTime).pos << endl;
+          }
+          land = land && nand;
           ++oit;
         }
         ++dit;
