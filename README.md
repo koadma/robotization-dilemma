@@ -6,11 +6,14 @@ A futuristic turn-based realistic space-shooter with robots.
 
 ## Windows, Visual Studio
 
+The "root folder" or `./` will be the folder containing the `.sln` file.
+
 Clone or download this repository.
 Clone or download [NGin](https://github.com/marci07iq/NGin)
-Place NGin in (or simlink) in the `/NGin` folder of the main directory
+Place NGin (or simlink) it to the `./../../NGin` folder, (such that the `NGin.h` file is at `./../../NGin/NGin.h`)
 
-In the `Debug/Release/...` output directories place the `.lib,.dll,.exp` files from `/robotization dilemma` and copy or simlink the entire `/robotization dilemma/html` folder.
+In the `./Debug, ./Release/` output directories place the `.lib,.dll,.exp` files from `./robotization dilemma` and copy or simlink the entire `./robotization dilemma/html` folder.
+Depending on the build parameters, you might need to rename `freeglutd.dll` to `freeglut.dll`
 
 Build with Visual Studio
 
