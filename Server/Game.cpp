@@ -216,6 +216,7 @@ void Game::simulate(time_type_s from, time_type_s till) {
   //Clean bubbles
   auto pit = paths.begin();
   while(pit != paths.end()) {
+    LOG INFO GAME "Testing " << *pit END;
     bool land = false;
     if ((*pit)->type() == Path::PathTypeBubble) {
       land = true;
@@ -224,9 +225,7 @@ void Game::simulate(time_type_s from, time_type_s till) {
         auto oit = (*dit)->objects.begin();
         while (oit != (*dit)->objects.end() && land) {
           bool nand = ((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
-          if (!nand) {
-            LOG INFO GAME "Test failed at " << (*oit)->getId() << "(" << ((*oit)->getMovement(till).pos) << "), at " << till << " bubble size of " << (till - ((Bubble*)(*pit))->gEmissionTime) * SOL << " from " << ((Bubble*)(*pit))->emitter.getAt(((Bubble*)(*pit))->gEmissionTime).pos << endl;
-          }
+          LOG INFO GAME "Object " << (*oit)->getId() << " (" << ((*oit)->getMovement(till).pos) << ") is " + (nand ? string("in") : string("out")) + " at " << till << " bubble size of " << (till - ((Bubble*)(*pit))->gEmissionTime) * SOL << " from " << ((Bubble*)(*pit))->emitter.getAt(((Bubble*)(*pit))->gEmissionTime).pos << endl;
           land = land && nand;
           ++oit;
         }
