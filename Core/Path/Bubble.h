@@ -8,7 +8,6 @@ private:
   vector<constrain> constrains;
 public:
   double solidangle;
-  time_type_s gEmissionTime;
   Movement emitter;
   energy_type_J energy = 1.0f;
   string data = "";
@@ -26,7 +25,7 @@ public:
     }
   }
   en_flux_type_Jpermm getFlux(time_type_s t, mVec3 pos) {
-    if (t <= gEmissionTime) {
+    if (t <= gStartTime) {
       LOG LERROR MATH "Asked time before creation" END;
       return 0;
     }
@@ -36,10 +35,10 @@ public:
     }
     bool in = false;
     for (auto&& it : constrains) {
-      it.verify(in, pos - emitter.getAt(gEmissionTime).pos);
+      it.verify(in, pos - emitter.getAt(gStartTime).pos);
     }
     if (in) {
-      return energy / (solidangle * (SOL * (t - gEmissionTime)) * (SOL * (t - gEmissionTime)));
+      return energy / (solidangle * (SOL * (t - gStartTime)) * (SOL * (t - gStartTime)));
     }
     return 0;
   }
@@ -57,18 +56,18 @@ public:
       throw 1; //Cant approxiamte bubble
     }
     else {
-      mVec3 origin = emitter.getAt(gEmissionTime).pos;
+      mVec3 origin = emitter.getAt(gStartTime).pos;
       res.eqns['t'] =
         Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "x" }, { -origin.x, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "x" }, { -origin.x, "" }}) +
         Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "y" }, { -origin.y, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "y" }, { -origin.y, "" }}) +
         Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "z" }, { -origin.z, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "z" }, { -origin.z, "" }}) +
-        Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "t" }, { -gEmissionTime, "" }}) * (SOL * SOL * -1.0);
+        Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "t" }, { -gStartTime, "" }}) * Equation<longDouble>(vector<pair<longDouble, string> >{{ 1, "t" }, { -gStartTime, "" }}) * (SOL * SOL * -1.0);
     }
     return res;
   }
   bool isWellIn(mVec3 point, distance_type_m radius, time_type_s at) {
-    distance_type_m brad = (at - gEmissionTime) * SOL;
-    return (0.5 * (brad + radius)) > ((point - emitter.getAt(gEmissionTime).pos).length());
+    distance_type_m brad = (at - gStartTime) * SOL;
+    return (0.5 * (brad + radius)) > ((point - emitter.getAt(gStartTime).pos).length());
   }
 
 };

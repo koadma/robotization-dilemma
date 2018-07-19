@@ -150,7 +150,7 @@ void LaserShot::applyVV(Game *g) {
   s->energy = _energy - _o->useEnergy(_time, _energy, g);
   s->origin = _o->getMovement(_time).getAt(_time, SOL).pos;
   s->originID = _o->getId();
-  s->origintime = _time;
+  s->gStartTime = _time;
   s->vel = _dir;
   LOG INFO GAME "Laser " << _o->getId() << " shot " << s END;
   g->add(s);
@@ -171,7 +171,7 @@ void ThermalRadiation::applyVV(Game *g) {
   b->btype = Bubble_Row_Border;
   b->emitter = _o->getMovement(_time);
   b->energy = to_doubleT<energy_type_J>(_o->getUsedPower(_time));
-  b->gEmissionTime = _time;
+  b->gStartTime = _time;
   b->originID = _o->getId();
 
   //_o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info
@@ -187,7 +187,7 @@ void SensorPing::applyVV(Game *g) {
   b->bsource = Bubble_Ping;
   b->emitter = _o->getMovement(_time);
   b->energy = _energy - _o->useEnergy(_time, _energy, g);
-  b->gEmissionTime = _time;
+  b->gStartTime = _time;
   b->originID = _o->getId();
 
   _o->_parentShip->energyUpdate(_time, game); //recalculate ship energy info

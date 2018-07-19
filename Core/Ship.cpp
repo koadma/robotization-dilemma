@@ -8,7 +8,6 @@ using namespace std;
 
 #ifdef M_CLIENT
 void Ship::setSidebar() {
-  selectedo = NULL;
   Graphics::setElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")), "html/ship_settings.xml");
   reinterpret_cast<Graphics::LabelBindHwnd>(Graphics::getElementById("objectShipSidebarEnergyLabel"))->text =
     new TextBind<
@@ -569,7 +568,7 @@ void Ship::selectSighting(vec3<double> ori, vec3<double> dir, double d) {
 
   Shot p;
   p.origin = ori;
-  p.origintime = 0;
+  p.gStartTime = 0;
   p.vel = dir;
 
   auto it = sightings.begin();
@@ -706,18 +705,21 @@ void Ship::setSightings(DataElement* data) {
   }
 }
 void Ship::clearObjects() {
+#ifdef M_CLIENT
+  selectedo = NULL;
+  Graphics::deleteElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")));
+#endif // M_CLIENT
+
   while (objects.size()) {
     delete *(objects.begin());
     objects.erase(objects.begin());
   }
-
-#ifdef M_CLIENT
-  Graphics::deleteElements(reinterpret_cast<Graphics::PanelHwnd>(Graphics::getElementById("objectIngameMenuSidebar")));
-#endif // M_CLIENT
-
-
 }
 void Ship::clearSightings() {
+#ifdef M_CLIENT
+  selecteds = NULL;
+#endif
+
   while (sightings.size()) {
     delete *(sightings.begin());
     sightings.erase(sightings.begin());

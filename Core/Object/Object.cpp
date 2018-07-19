@@ -94,7 +94,7 @@ void Object::reflectBubble(Bubble* what, time_type_s time, Game* g) {
   reflected->btype = what->btype;
   reflected->emitter = getMovement(time);
   reflected->energy = newEnergy;
-  reflected->gEmissionTime = time;
+  reflected->gStartTime = time;
   reflected->originID = _ID;
 
   if(reflected->btype == BubbleType::Bubble_Row_Border) {
@@ -144,20 +144,29 @@ Movement Object::getMovement(time_type_s time) {
 }
 list< pair<time_type_s, pair<Object*, Path*>>> Object::intersect(Path* p) {
   list< pair<time_type_s, pair<Object*, Path*>>> res;
-  auto it = _parentShip->mov._frames.begin();
-  while (it != _parentShip->mov._frames.end()) {
-    Movement m = it->second;
-    m.pos += _relativePos;
-    m.radius = _radius;
-    vector<time_type_s> times = p->intersect(&m);
-    for (auto&& itt : times) {
-      auto nit = it;
-      ++nit;
-      if (it->first <= itt && (nit == _parentShip->mov._frames.end() || itt < nit->first)) {
-        res.push_back({ itt,{ this, p } });
+  bool go = true;
+
+  if(!p->noIntersect) {
+    //Only intersect with new movement parts
+    auto it = _parentShip->mov._frames.end();
+    while (it != _parentShip->mov._frames.begin() && go) {
+      --it;
+      Movement m = it->second;
+      if (it->first < p->gStartTime) {
+        go = false; //If we passed the emission time, dont check further
+        //But this turn Must still be checked
+      }
+      m.pos += _relativePos;
+      m.radius = _radius;
+      vector<time_type_s> times = p->intersect(&m);
+      for (auto&& itt : times) { //Filter results
+        auto nit = it;
+        ++nit;
+        if (it->first <= itt && (nit == _parentShip->mov._frames.end() || itt < nit->first)) {
+          res.push_back({ itt,{ this, p } });
+        }
       }
     }
-    ++it;
   }
   return res;
 }
@@ -292,13 +301,13 @@ void Object::setSidebar() {
 list< pair<time_type_s, pair<Object*, Path*>>> Object::getIntersect(vec3<double> ori, vec3<double> dir) {
   Shot p;
   p.origin = ori;
-  p.origintime = 0;
+  p.gStartTime = 0;
   p.vel = dir;
   Movement m;
   m.pos = _relativePos /*+ _parentShip->mov.pos*/;
   m.vel = vel_type_mpers(0);
   m.acc = acc_type_mperss(0);
-  m.gTimeStamp = 0;
+  m.gStartTime = 0;
   m.radius = _radius;
   list< pair<time_type_s, pair<Object*, Path*>>> res;
   vector<time_type_s> times = intersectPaths(&m, &p);

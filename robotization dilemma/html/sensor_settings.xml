@@ -88,8 +88,7 @@
 				rel="1.0"
 				abs="-5.0"
 			></right>
-		</location>
-	Ping</button>
+		</location>Ping</button>
 	<label
 		id = "objectSensorAutoFireLabel"
 		align = "1"

@@ -2,9 +2,9 @@
 
 Movement Movement::getAt(time_type_s gTime, vel_type_mpers maxVelocity) const {
   Movement m = *this;
-  m.pos = pos + vel*(gTime - gTimeStamp) + acc*pow(gTime - gTimeStamp, 2) / 2.0;
-  m.vel = vel + acc*(gTime - gTimeStamp);
-  m.gTimeStamp = gTime;
+  m.pos = pos + vel*(gTime - gStartTime) + acc*pow(gTime - gStartTime, 2) / 2.0;
+  m.vel = vel + acc*(gTime - gStartTime);
+  m.gStartTime = gTime;
   return m;
 }
 Movement Movement::getAt(time_type_s gTime) const {
@@ -12,7 +12,7 @@ Movement Movement::getAt(time_type_s gTime) const {
 }
 void Movement::get(DataElement* data) {
   DataElement* timee = new DataElement();
-  timee->_core->fromType<time_type_s>(gTimeStamp);
+  timee->_core->fromType<time_type_s>(gStartTime);
   data->addChild(timee);
 
   DataElement* pose = new DataElement();
@@ -42,7 +42,7 @@ void Movement::get(DataElement* data) {
 }
 void Movement::set(DataElement* data) {
   //gTimeStamp
-  gTimeStamp = data->_children[0]->_core->toType<float>();
+  gStartTime = data->_children[0]->_core->toType<float>();
 
   //pos
   pos.set(data->_children[1]);

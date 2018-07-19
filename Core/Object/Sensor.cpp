@@ -129,7 +129,7 @@ void Sensor::getPathVirt(time_type_s time, Path* p, Game* g) {
     }
     LOG INFO GAME "Pow: " << _selfUsedPower.getAt(time) END;
     LOG INFO GAME "Src: " << reinterpret_cast<Bubble*>(p)->emitter.pos END;
-    LOG INFO GAME "Emt: " << reinterpret_cast<Bubble*>(p)->gEmissionTime END;
+    LOG INFO GAME "Emt: " << p->gStartTime END;
     LOG INFO GAME "OID: " << reinterpret_cast<Bubble*>(p)->originID END;
     LOG INFO GAME "SID: " << _ID END;
     LOG INFO GAME "En : " << b->getFlux(time, getMovement(time).pos) * _radius * _radius * PI END;

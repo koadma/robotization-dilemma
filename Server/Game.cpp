@@ -225,7 +225,7 @@ void Game::simulate(time_type_s from, time_type_s till) {
         auto oit = (*dit)->objects.begin();
         while (oit != (*dit)->objects.end() && land) {
           bool nand = ((Bubble*)(*pit))->isWellIn((*oit)->getMovement(till).pos, (*oit)->getMovement(till).radius, till);
-          LOG INFO GAME "Object " << (*oit)->getId() << " (" << ((*oit)->getMovement(till).pos) << ") is " + (nand ? string("in") : string("out")) + " at " << till << " bubble size of " << (till - ((Bubble*)(*pit))->gEmissionTime) * SOL << " from " << ((Bubble*)(*pit))->emitter.getAt(((Bubble*)(*pit))->gEmissionTime).pos << endl;
+          //LOG INFO GAME "Object " << (*oit)->getId() << " (" << ((*oit)->getMovement(till).pos) << ") is " + (nand ? string("in") : string("out")) + " at " << till << " bubble size of " << (till - (*pit)->gStartTime) * SOL << " from " << ((Bubble*)(*pit))->emitter.getAt((*pit)->gStartTime).pos << endl;
           land = land && nand;
           ++oit;
         }
@@ -234,9 +234,10 @@ void Game::simulate(time_type_s from, time_type_s till) {
       if (land) {
         auto dpit = pit;
         ++pit;
-        removeIntersect(*dpit);
-        LOG INFO GAME "Path " << *dpit << ": " << (*dpit)->type() << " removed" END;
-        paths.erase(dpit);
+        (*dpit)->noIntersect = true;
+        LOG INFO GAME "Path " << *dpit << ": " << (*dpit)->type() << " blocked" END;
+        /*removeIntersect(*dpit);
+        paths.erase(dpit);*/
       }
     }
     if (!land) {

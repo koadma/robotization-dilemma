@@ -11,7 +11,6 @@ public:
   int etype() {
     return EqnType::EqnTypeApproxable;
   }
-  time_type_s gTimeStamp = 0;  //0
   mVec3 pos = mVec3(distance_type_m(0));        //1
   mpsVec3 vel = mpsVec3(vel_type_mpers(0));      //2
   mpssVec3 acc = mpssVec3(acc_type_mperss(0));     //3

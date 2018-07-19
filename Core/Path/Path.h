@@ -22,6 +22,9 @@ public:
     EqnTypeImplicit = 2,
     EqnTypeUndefined = 3
   };
+  time_type_s gStartTime;
+  bool noIntersect = false;
+
   virtual int type();
   virtual int etype();
   virtual Eqnsys getEquations(bool b);
