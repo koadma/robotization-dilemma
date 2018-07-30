@@ -1,53 +1,53 @@
 #include "GameCanvas.h"
 
-void mainMenuStoryModePlayButton() {
+void mainMenuStoryModePlayButton(string sender) {
 	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
 }
-void mainMenuFFAPlayButton() {
+void mainMenuFFAPlayButton(string sender) {
   Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
 }
-void mainMenuSettingsButton() {
+void mainMenuSettingsButton(string sender) {
   Graphics::setElements(objectMenuSubWindow, "html/game_settings.xml");
   Graphics::TableHwnd table = (Graphics::TableHwnd)Graphics::getElementById("objectSettingsMenuTable");
   createSettings(table);
 }
-void mainMenuExitButton() {
+void mainMenuExitButton(string sender) {
   glutExit();
 }
 
 //Main / Story
-void storyMenuNewButton() {
+void storyMenuNewButton(string sender) {
 	Graphics::setElements(objectMenuSubWindow, "html/newsingle_menu.xml");
 }
-void storyMenuLoadButton() {
+void storyMenuLoadButton(string sender) {
   createMainMenu();
 }
-void storyMenuBackButton() {
+void storyMenuBackButton(string sender) {
   createMainMenu();
 }
 
 //Main / Story / New
-void newSingleMenu3PlayerButton() {
+void newSingleMenu3PlayerButton(string sender) {
   createMainMenu();
 }
-void newSingleMenu4PlayerButton() {
+void newSingleMenu4PlayerButton(string sender) {
   createMainMenu();
 }
-void newSingleMenu5PlayerButton() {
+void newSingleMenu5PlayerButton(string sender) {
   createMainMenu();
 }
-void newSingleMenuBackButton() {
+void newSingleMenuBackButton(string sender) {
 	Graphics::setElements(objectMenuSubWindow, "html/story_menu.xml");
 }
 
 //Main / FFA
-void ffaMenuNewGameButton() {
+void ffaMenuNewGameButton(string sender) {
   Graphics::setElements(objectMenuSubWindow, "html/new_menu.xml");
 }
-void ffaMenuJoinGameButton() {
+void ffaMenuJoinGameButton(string sender) {
   Graphics::setElements(objectMenuSubWindow, "html/join_menu.xml");
 }
-void ffaMenuBackButton() {
+void ffaMenuBackButton(string sender) {
   createMainMenu();
 }
 
@@ -55,7 +55,7 @@ void ffaMenuBackButton() {
 void joinMenuInput(string inp) {
 
 }
-void joinMenuInputButton() {
+void joinMenuInputButton(string sender) {
 
   string ip = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuIpInput"))->text;
   string port = reinterpret_cast<Graphics::TextInputHwnd>(Graphics::getElementById("objectJoinMenuPortInput"))->text;
@@ -99,7 +99,7 @@ void connectServer(string ip, string port, string code) {
     Connection->SendData(data, PacketLogin);
   }
 }
-void joinMenuBackButton() {
+void joinMenuBackButton(string sender) {
 	Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
 }
 
@@ -107,7 +107,7 @@ void joinMenuBackButton() {
 void newMenuPlayerSliderInput(float val) {
 
 }
-void newMenuInputButton() {
+void newMenuInputButton(string sender) {
   int players = (int)round(reinterpret_cast<Graphics::SliderHwnd>(Graphics::getElementById("objectNewMenuPlayerCount"))->val);
 
   startServer(players);
@@ -139,7 +139,7 @@ void startServer(int players) {
   CloseHandle(pi.hProcess);
   CloseHandle(pi.hThread);
 }
-void newMenuBackButton() {
+void newMenuBackButton(string sender) {
   Graphics::setElements(objectMenuSubWindow, "html/ffa_menu.xml");
 }
 
@@ -147,20 +147,20 @@ void newMenuBackButton() {
 void settingsMenuInput(key nkey, int id) {
   keybindReply(nkey, id);
 }
-void settingsMenuBackButton() {
+void settingsMenuBackButton(string sender) {
   createMainMenu();
   saveKeybinds();
 }
 
 //Ingame / GUI
-void ingameMenuCommitButton() {
+void ingameMenuCommitButton(string sender) {
   reinterpret_cast<Graphics::ButtonHwnd>(Graphics::getElementById("objectMainGameCommitButton"))->text = "Not your turn";
   ship->commit();
 }
 void ingameTimeSliderInput(float val) {
   timeNow = val;
 }
-void ingameMenuEnergyButton() {
+void ingameMenuEnergyButton(string sender) {
   if (selectedo != NULL) {
     Graphics::WinHwnd win = Graphics::CreateMainWindow("Energy info: " + selectedo->name());
     Graphics::PlotHwnd plt = Graphics::createPlot("plot", fullContainer, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
@@ -171,7 +171,7 @@ void ingameMenuEnergyButton() {
 }
 
 //Ingame / Ship
-void ingameMenuPowerButton() {
+void ingameMenuPowerButton(string sender) {
   if (selectedo != NULL) {
     Graphics::WinHwnd win = Graphics::CreateMainWindow("Power info: " + selectedo->name());
     Graphics::PlotHwnd plt = Graphics::createPlot("plot", fullContainer, hexToInt("ff000000"), hexToInt("ffffffff"), hexToInt("ff00ff00"));
@@ -183,7 +183,7 @@ void ingameMenuPowerButton() {
     plt->plotData.push_back(new PlotLineVUT<value<power_type_W>, power_type_W>(&(selectedo->_usedPower), hexToInt("ff00ffff"), "used power"));
   }
 }
-void ingameMenuExitButton() {
+void ingameMenuExitButton(string sender) {
   Graphics::deleteElements(objectGameSubWindow);
   Graphics::deleteElements(objectMenuSubWindow);
 
