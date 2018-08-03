@@ -14,12 +14,21 @@ class Drone;
 class Game;
 #endif
 
+class LogEntry {
+  string _cause;
+  string _object;
+  time_type_s _time;
+  string _event;
+};
+
 class Drone {
 public:
   keyframe<Movement> mov;
   uint64_t _droneID;
   list<Object*> objects;
   list<Sighting*> sightings;
+
+  list<LogEntry> captainsLog; //Only store user-knowable facts, not all server events!
 
   FlowGraph<energy_type_J, power_type_W, time_type_s> energySystem;
   enum ShipClass {

@@ -7,7 +7,7 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-45.0"
+				abs="-25.0"
 			></bot>
 			<top
 				rel="1.0"
@@ -29,11 +29,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-95.0"
+				abs="-55.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-55.0"
+				abs="-35.0"
 			></top>
 			<left
 				rel="0.0"
@@ -51,11 +51,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-95.0"
+				abs="-55.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-55.0"
+				abs="-35.0"
 			></top>
 			<left
 				rel="0.33"
@@ -73,11 +73,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-95.0"
+				abs="-55.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-55.0"
+				abs="-35.0"
 			></top>
 			<left
 				rel="0.67"
@@ -96,11 +96,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-145.0"
+				abs="-85.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-105.0"
+				abs="-65.0"
 			></top>
 			<left
 				rel="0.0"
@@ -119,11 +119,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-145.0"
+				abs="-85.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-105.0"
+				abs="-65.0"
 			></top>
 			<left
 				rel="0.33"
@@ -142,11 +142,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-145.0"
+				abs="-85.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-105.0"
+				abs="-65.0"
 			></top>
 			<left
 				rel="0.67"
@@ -164,11 +164,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-195.0"
+				abs="-115.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-155.0"
+				abs="-95.0"
 			></top>
 			<left
 				rel="0.0"
@@ -186,11 +186,11 @@
 		<location>
 			<bot
 				rel="1.0"
-				abs="-245.0"
+				abs="-145.0"
 			></bot>
 			<top
 				rel="1.0"
-				abs="-205.0"
+				abs="-125.0"
 			></top>
 			<left
 				rel="0.0"

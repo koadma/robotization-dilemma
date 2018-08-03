@@ -49,7 +49,7 @@ int MainGameCanvas::renderManager(int ax, int ay, int bx, int by, set<key_locati
   glGetIntegerv(GL_VIEWPORT, view.viewport);
 
   drawCoordinatingSystem(camcx/d, camcy/d, camcz/d, 2);
-  drawXZPlane(camcx/d, camcy/d, camcz/d, 0.1, 10);
+  drawXZPlane(camcx/d, camcy/d, camcz/d, getValPerTick(d, 0.1, 0.2)/d, 10);
 
   //drawPointingVector(camcx/d, camcy / d, camcz / d, 2 / d, 3.4 / d, 5 / d, 5);
 

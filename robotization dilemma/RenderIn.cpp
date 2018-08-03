@@ -233,7 +233,7 @@ void ingameLaserSidebarShoot() {
 }
 
 float getCurrentZoom() {
-  return MainGameCanvas::d / 10;
+  return getValPerTick(MainGameCanvas::d, 0.1, 0.2);
 }
 
 string getCurrentName() {

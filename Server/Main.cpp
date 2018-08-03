@@ -153,7 +153,7 @@ bool loginRecv(DataElement* data, int id, NetworkS* thisptr, NetBinder* ship) {
 
 
 int VersionA = 0;
-int VersionB = 7;
+int VersionB = 8;
 int VersionC = 3;
 
 int main(int argc, char** argv)
